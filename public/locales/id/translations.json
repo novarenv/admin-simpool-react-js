@@ -1,0 +1,115 @@
+{
+  "dashboard": {
+    "WELCOME": "Selamat Datang di Simpool!"
+  },
+  "sidebar": {
+    "WELCOME": "Selamat Datang",
+    "heading": {
+      "HEADER": "Navigasi Utama",
+      "COMPONENTS": "Komponen",
+      "MORE": "Selebihnya"
+    },
+    "nav": {
+      "DASHBOARD": "Dasbor",
+      "WIDGETS": "Widget",
+      "DOCUMENTATION": "Dokumentasi",
+      "element": {
+        "ELEMENTS": "Elemen",
+        "BUTTON": "Tombol",
+        "COLOR": "Warna",
+        "NOTIFICATION": "Notifikasi",
+        "CAROUSEL": "Carousel",
+        "SPINNER": "Spinner",
+        "ANIMATION": "Animasi",
+        "DROPDOWN": "Dropdown",
+        "CARD": "Cards",
+        "PORTLET": "Portlet",
+        "GRID": "Grid",
+        "GRID_MASONRY": "Grid Masonry",
+        "TYPO": "Typografi",
+        "FONT_ICON": "Ikon Font",
+        "WEATHER_ICON": "Ikon Cuaca"
+      },
+      "form": {
+        "FORM": "Form",
+        "STANDARD": "Standar",
+        "EXTENDED": "Diperpanjang",
+        "VALIDATION": "Validasi"
+      },
+      "chart": {
+        "CHART": "Grafik",
+        "FLOT": "Flot",
+        "RADIAL": "Radial"
+      },
+      "table": {
+        "TABLE": "Tabel",
+        "STANDARD": "Standa",
+        "EXTENDED": "Diperpanjang",
+        "DATATABLE": "Tabel Data"
+      },
+      "map": {
+        "MAP": "Peta",
+        "GOOGLE": "Google Map",
+        "VECTOR": "Vector Map"
+      },
+      "extra": {
+        "EXTRA": "Ekstra",
+        "MAILBOX": "Kotak Surat",
+        "TIMELINE": "Linimasa",
+        "CALENDAR": "Kalender",
+        "INVOICE": "Invoice",
+        "SEARCH": "Cari",
+        "TODO": "Todo List",
+        "PROFILE": "Profil"
+      },
+      "pages": {
+        "PAGES": "Halaman",
+        "LOGIN": "Login",
+        "REGISTER": "Register",
+        "RECOVER": "Pulihkan Kata Sandi",
+        "PROFILE": "Profil",
+        "LOCK": "Kunci",
+        "STARTER": "Starter Template"
+      },
+      "member": {
+        "MEMBERS": "Anggota",
+        "MEMBER_DATA": "Data Anggota",
+        "SAVING_DATA": "Data Simpanan",
+        "LOAN_DATA": "Data Pinjaman",
+        "USER_DATA": "Data Pengguna"
+      },
+      "transaction": {
+        "TRANSACTIONS": "Transaksi",
+        "DEPOSIT": "Setoran",
+        "WITHDRAWAL": "Penarikan",
+        "INSTALLMENTS": "Bayar Angsuran",
+        "TRANSFER": "Transfer"
+      },
+      "accountancy": {
+        "ACCOUNTANCIES": "Akuntansi",
+        "REGISTER_ACCOUNT_CODE": "Daftar Kode Akun",
+        "JOURNAL_ENTRY": "Entri Jurnal",
+        "NEW_ACCOUNT_BALANCE": "Saldo Akun Baru",
+        "TRANSACTION_CODE": "Kode Transaksi"
+      },
+      "report": {
+        "REPORTS": "Laporan",
+        "MEMBER": "Anggota",
+        "SAVING": "Simpanan",
+        "LOAN": "Pinjaman",
+        "ACCOUNTANCY": "Akuntansi"
+      },
+      "setting": {
+        "SETTINGS": "Pengaturan",
+        "SAVING_PRODUCTS": "Produk Simpanan",
+        "LOAN_PRODUCTS": "Produk Pinjaman",
+        "FEE_PRODUCTS": "Produk Biaya",
+        "SERVICE_OFFICE_LIST": "Daftar Kantor Pelayanan",
+        "BILLER_MANAGEMENT": "Biller Management",
+        "ROLE_AND_PERMISSION": "Role & Permission",
+        "CHECKER_MARKER": "Checker Maker",
+        "Template": "Template"
+      }
+    }
+  }
+}

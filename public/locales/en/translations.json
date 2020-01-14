@@ -1,0 +1,115 @@
+{
+  "dashboard": {
+    "WELCOME": "Welcome to Simpool!"
+  },
+  "sidebar": {
+    "WELCOME": "Welcome",
+    "heading": {
+      "HEADER": "Main Navigation",
+      "COMPONENTS": "Components",
+      "MORE": "More"
+    },
+    "nav": {
+      "DASHBOARD": "Dashboard",
+      "WIDGETS": "Widgets",
+      "DOCUMENTATION": "Documentation",
+      "element": {
+        "ELEMENTS": "Elements",
+        "BUTTON": "Button",
+        "COLOR": "Colors",
+        "NOTIFICATION": "Notification",
+        "CAROUSEL": "Carousel",
+        "SPINNER": "Spinner",
+        "ANIMATION": "Animation",
+        "DROPDOWN": "Dropdown",
+        "CARD": "Cards",
+        "PORTLET": "Portlet",
+        "GRID": "Grid",
+        "GRID_MASONRY": "Grid Masonry",
+        "TYPO": "Typography",
+        "FONT_ICON": "Font Icons",
+        "WEATHER_ICON": "Weather Icons"
+      },
+      "form": {
+        "FORM": "Forms",
+        "STANDARD": "Standard",
+        "EXTENDED": "Extended",
+        "VALIDATION": "Validation"
+      },
+      "chart": {
+        "CHART": "Charts",
+        "FLOT": "Flot",
+        "RADIAL": "Radial"
+      },
+      "table": {
+        "TABLE": "Table",
+        "STANDARD": "Standard",
+        "EXTENDED": "Extended",
+        "DATATABLE": "Datatable"
+      },
+      "map": {
+        "MAP": "Maps",
+        "GOOGLE": "Google Map",
+        "VECTOR": "Vector Map"
+      },
+      "extra": {
+        "EXTRA": "Extras",
+        "MAILBOX": "Mailbox",
+        "TIMELINE": "Timeline",
+        "CALENDAR": "Calendar",
+        "INVOICE": "Invoice",
+        "SEARCH": "Search",
+        "TODO": "Todo List",
+        "PROFILE": "Profile"
+      },
+      "pages": {
+        "PAGES": "Pages",
+        "LOGIN": "Login",
+        "REGISTER": "Register",
+        "RECOVER": "Recover password",
+        "PROFILE": "Profile",
+        "LOCK": "Lock",
+        "STARTER": "Starter Template"
+      },
+      "member": {
+        "MEMBERS": "Members",
+        "MEMBER_DATA": "Member Data",
+        "SAVING_DATA": "Saving Data",
+        "LOAN_DATA": "Loan Data",
+        "USER_DATA": "User Data"
+      },
+      "transactions": {
+        "TRANSACTIONS": "Transactions",
+        "DEPOSIT": "Deposit",
+        "WITHDRAWAL": "Withdrawal",
+        "INSTALLMENTS": "Installments",
+        "TRANSFER": "Transfer"
+      },
+      "accountancy": {
+        "ACCOUNTANCIES": "Accountancies",
+        "REGISTER_ACCOUNT_CODE": "Register Account Code",
+        "JOURNAL_ENTRY": "Journal Entry",
+        "NEW_ACCOUNT_BALANCE": "New Account Balance",
+        "TRANSACTION_CODE": "Transaction Code"
+      },
+      "report": {
+        "REPORTS": "Reports",
+        "MEMBER": "Member",
+        "SAVING": "Saving",
+        "LOAN": "Loan",
+        "ACCOUNTANCY": "Accountancy"
+      },
+      "setting": {
+        "SETTINGS": "Settings",
+        "SAVING_PRODUCTS": "Saving Products",
+        "LOAN_PRODUCTS": "Loan Products",
+        "FEE_PRODUCTS": "Fee Products",
+        "SERVICE_OFFICE_LIST": "Service Office List",
+        "BILLER_MANAGEMENT": "Biller Management",
+        "ROLE_AND_PERMISSION": "Role & Permission",
+        "CHECKER_MAKER": "Checker Maker",
+        "Template": "Template"
+      }
+    }
+  }
+}
