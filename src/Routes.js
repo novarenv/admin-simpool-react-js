@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import Cookies from "js-cookie";
 
 /* loader component for Suspense*/
 import PageLoader from './components/Common/PageLoader';
@@ -8,9 +9,12 @@ import PageLoader from './components/Common/PageLoader';
 import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
 
-const waitFor = Tag => props => <Tag {...props}/>;
+const waitFor = Tag => props => <Tag {...props} />;
 
 const Dashboard = lazy(() => import('./containers/Dashboard'));
+
+// Auth
+const Login = lazy(() => import('./containers/Auth/Login'));
 
 // Members
 const MemberData = lazy(() => import('./containers/Members/MemberData'));
@@ -32,7 +36,6 @@ const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 // Accounting
 const AccountChart = lazy(() => import('./containers/Accounting/AccountChart'));
 
-const Login = lazy(() => import('./components/Pages/Login'));
 const Register = lazy(() => import('./components/Pages/Register'));
 const Recover = lazy(() => import('./components/Pages/Recover'));
 const Lock = lazy(() => import('./components/Pages/Lock'));
@@ -61,68 +64,82 @@ const Routes = ({ location }) => {
 
   const animationName = 'rag-fadeIn'
 
-  if(listofPages.indexOf(location.pathname) > -1) {
+  if (Cookies.get("loginToken")) {
+    if (listofPages.indexOf(location.pathname) > -1) {
       return (
-          // Page Layout component wrapper
-          <BasePage>
-              <Suspense fallback={<PageLoader/>}>
+        // Page Layout component wrapper
+        <BasePage>
+          <Suspense fallback={<PageLoader />}>
+            <Switch location={location}>
+              <Route path="/login" component={waitFor(Login)} />
+              <Route path="/register" component={waitFor(Register)} />
+              <Route path="/recover" component={waitFor(Recover)} />
+              <Route path="/lock" component={waitFor(Lock)} />
+              <Route path="/notfound" component={waitFor(NotFound)} />
+              <Route path="/error500" component={waitFor(Error500)} />
+              <Route path="/maintenance" component={waitFor(Maintenance)} />
+            </Switch>
+          </Suspense>
+        </BasePage>
+      )
+    }
+    else {
+      return (
+        // Layout component wrapper
+        // Use <BaseHorizontal> to change layout
+        <Base>
+          <TransitionGroup>
+            <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
+              <div>
+                <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
-                      <Route path="/login" component={waitFor(Login)}/>
-                      <Route path="/register" component={waitFor(Register)}/>
-                      <Route path="/recover" component={waitFor(Recover)}/>
-                      <Route path="/lock" component={waitFor(Lock)}/>
-                      <Route path="/notfound" component={waitFor(NotFound)}/>
-                      <Route path="/error500" component={waitFor(Error500)}/>
-                      <Route path="/maintenance" component={waitFor(Maintenance)}/>
+
+                    {/*Dashboard*/}
+                    <Route exact path="/" component={waitFor(Dashboard)} />
+                    <Route path="/dashboard" component={waitFor(Dashboard)} />
+
+                    {/* Members */}
+                    <Route path="/member/data" component={waitFor(MemberData)} />
+                    <Route path="/member/data-add" component={waitFor(MemberDataAdd)} />
+                    <Route path="/member/saving-data" component={waitFor(SavingData)} />
+                    <Route path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
+                    <Route path="/member/saving-data-history" component={waitFor(SavingHistory)} />
+                    <Route path="/member/loan-data" component={waitFor(LoanData)} />
+                    <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
+                    <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />
+                    <Route path="/member/loan-data-view" component={waitFor(LoanDataView)} />
+
+                    {/* Transactions */}
+                    <Route path="/transaction/deposit" component={waitFor(Deposit)} />
+                    <Route path="/transaction/withdrawal" component={waitFor(Withdrawal)} />
+                    <Route path="/transaction/loan-payment" component={waitFor(LoanPayment)} />
+                    <Route path="/transaction/transfer" component={waitFor(Transfer)} />
+
+                    {/* Accounting */}
+                    <Route path="/accounting/account-chart" component={waitFor(AccountChart)} />
+
+                    <Redirect to="/notfound" />
+
                   </Switch>
-              </Suspense>
-          </BasePage>
+                </Suspense>
+              </div>
+            </CSSTransition>
+          </TransitionGroup>
+        </Base>
       )
-  }
-  else {
-      return (
-          // Layout component wrapper
-          // Use <BaseHorizontal> to change layout
-          <Base>
-            <TransitionGroup>
-              <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
-                  <div>
-                      <Suspense fallback={<PageLoader/>}>
-                          <Switch location={location}>
+    }
+  } else {
+    return (
+      <BasePage>
+        <Suspense fallback={<PageLoader />}>
+          <Switch location={location}>
+            <Route path="/login" component={waitFor(Login)} />
 
-                              {/*Dashboard*/}
-                              <Route exact path="/" component={waitFor(Dashboard)}/>
-                              <Route path="/dashboard" component={waitFor(Dashboard)}/>
-                              
-                              {/* Members */}
-                              <Route path="/member/data" component={waitFor(MemberData)}/>
-                              <Route path="/member/data-add" component={waitFor(MemberDataAdd)}/>
-                              <Route path="/member/saving-data" component={waitFor(SavingData)}/>
-                              <Route path="/member/saving-data-add" component={waitFor(SavingDataAdd)}/>
-                              <Route path="/member/saving-data-history" component={waitFor(SavingHistory)}/>
-                              <Route path="/member/loan-data" component={waitFor(LoanData)}/>
-                              <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)}/>
-                              <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)}/>
-                              <Route path="/member/loan-data-view" component={waitFor(LoanDataView)}/>
-
-                              {/* Transactions */}
-                              <Route path="/transaction/deposit" component={waitFor(Deposit)}/>
-                              <Route path="/transaction/withdrawal" component={waitFor(Withdrawal)}/>
-                              <Route path="/transaction/loan-payment" component={waitFor(LoanPayment)}/>
-                              <Route path="/transaction/transfer" component={waitFor(Transfer)}/>
-
-                              {/* Accounting */}
-                              <Route path="/accounting/account-chart" component={waitFor(AccountChart)}/>
-                              
-                              <Redirect to="/notfound"/>
-                              
-                          </Switch>
-                      </Suspense>
-                  </div>
-              </CSSTransition>
-            </TransitionGroup>
-          </Base>
-      )
+            <Redirect from="*" to="/login" />
+          </Switch>
+        </Suspense>
+      </BasePage>
+    )
   }
 }
 
