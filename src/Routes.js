@@ -29,6 +29,9 @@ const Withdrawal = lazy(() => import('./containers/Transactions/Withdrawal'));
 const LoanPayment = lazy(() => import('./containers/Transactions/LoanPayment'));
 const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 
+// Accounting
+const AccountChart = lazy(() => import('./containers/Accounting/AccountChart'));
+
 const Login = lazy(() => import('./components/Pages/Login'));
 const Register = lazy(() => import('./components/Pages/Register'));
 const Recover = lazy(() => import('./components/Pages/Recover'));
@@ -107,6 +110,9 @@ const Routes = ({ location }) => {
                               <Route path="/transaction/withdrawal" component={waitFor(Withdrawal)}/>
                               <Route path="/transaction/loan-payment" component={waitFor(LoanPayment)}/>
                               <Route path="/transaction/transfer" component={waitFor(Transfer)}/>
+
+                              {/* Accounting */}
+                              <Route path="/accounting/account-chart" component={waitFor(AccountChart)}/>
                               
                               <Redirect to="/notfound"/>
                               

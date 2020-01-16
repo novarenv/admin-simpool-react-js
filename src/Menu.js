@@ -67,13 +67,8 @@ const Menu = [
         translate: 'sidebar.nav.accountancy.ACCOUNTANCIES',
         submenu: [{
                 name: 'Register Account Code',
-                path: '/accountancy/register-account-code',
+                path: '/accounting/account-chart',
                 translate: 'sidebar.nav.accountancy.REGISTER_ACCOUNT_CODE'
-            },
-            {
-                name: 'Journal Entry',
-                path: '/accountancy/journal-entry',
-                translate: 'sidebar.nav.accountancy.JOURNAL_ENTRY'
             },
             {
                 name: 'Journal Entry',
