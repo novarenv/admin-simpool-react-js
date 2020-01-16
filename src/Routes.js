@@ -12,7 +12,8 @@ const waitFor = Tag => props => <Tag {...props}/>;
 
 const Dashboard = lazy(() => import('./containers/Dashboard'));
 
-const MemberData = lazy(() => import('./containers/Members/MemberData/index'));
+// Members
+const MemberData = lazy(() => import('./containers/Members/MemberData'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const SavingData = lazy(() => import('./containers/Members/SavingData'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
@@ -21,6 +22,12 @@ const LoanData = lazy(() => import('./containers/Members/LoanData'));
 const LoanDataAdd = lazy(() => import('./containers/Members/LoanData/add'));
 const LoanDataHistory = lazy(() => import('./containers/Members/LoanData/history'));
 const LoanDataView = lazy(() => import('./containers/Members/LoanData/view'));
+
+// Transactions
+const Deposit = lazy(() => import('./containers/Transactions/Deposit'));
+const Withdrawal = lazy(() => import('./containers/Transactions/Withdrawal'));
+const LoanPayment = lazy(() => import('./containers/Transactions/LoanPayment'));
+const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 
 const Login = lazy(() => import('./components/Pages/Login'));
 const Register = lazy(() => import('./components/Pages/Register'));
@@ -94,6 +101,12 @@ const Routes = ({ location }) => {
                               <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)}/>
                               <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)}/>
                               <Route path="/member/loan-data-view" component={waitFor(LoanDataView)}/>
+
+                              {/* Transactions */}
+                              <Route path="/transaction/deposit" component={waitFor(Deposit)}/>
+                              <Route path="/transaction/withdrawal" component={waitFor(Withdrawal)}/>
+                              <Route path="/transaction/loan-payment" component={waitFor(LoanPayment)}/>
+                              <Route path="/transaction/transfer" component={waitFor(Transfer)}/>
                               
                               <Redirect to="/notfound"/>
                               

@@ -51,7 +51,7 @@ const Menu = [
             },
             {
                 name: 'Installments',
-                path: '/transaction/installments',
+                path: '/transaction/loan-payment',
                 translate: 'sidebar.nav.transaction.INSTALLMENTS'
             },
             {
