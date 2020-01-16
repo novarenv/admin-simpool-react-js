@@ -1,51 +1,67 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Collapse } from 'reactstrap';
-
+import { Button, Collapse } from 'reactstrap';
 import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
+import { Link, withRouter } from 'react-router-dom';
 
 class SidebarUserBlock extends Component {
 
-    state = {
-        showUserBlock: false
-    }
+  state = {
+    showUserBlock: false
+  }
 
-    componentWillReceiveProps(newProps) {
-        if (newProps.showUserBlock !== this.props.showUserBlock) {
-            this.setState({ showUserBlock: newProps.showUserBlock })
-        }
+  componentWillReceiveProps(newProps) {
+    if (newProps.showUserBlock !== this.props.showUserBlock) {
+      this.setState({ showUserBlock: newProps.showUserBlock })
     }
+  }
 
-    render() {
-        return (
-            <Collapse id="user-block" isOpen={ this.state.showUserBlock }>
-                <div>
-                    <div className="item user-block">
-                       {/* User picture */}
-                       <div className="user-block-picture">
-                          <div className="user-block-status">
-                             <img className="img-fluid-box" src="img/Simpool Box.png" alt="Avatar"/>
-                             <div className="circle bg-success circle-lg"></div>
-                          </div>
-                       </div>
-                       {/* Name and Job */}
-                       <div className="user-block-info">
-                          <span className="user-block-name">Hello, Mike</span>
-                          <span className="user-block-role">Designer</span>
-                       </div>
-                    </div>
-                </div>
-            </Collapse>
-        )
-    }
+  logOut = () => {
+    console.log("Log Out Clicked")
+    Cookies.remove("loginToken")
+  }
+
+  render() {
+    return (
+      <Collapse id="user-block" isOpen={this.state.showUserBlock}>
+        <div>
+          <div className="item user-block center-block">
+            {/* User picture */}
+            <div className="user-block-picture">
+              <div className="user-block-status">
+                <img className="img-fluid-box" src="img/Simpool Box.png" alt="Avatar" />
+                <div className="circle bg-success circle-lg"></div>
+              </div>
+            </div>
+            {/* Name and Job */}
+            <div className="user-block-info">
+              <span className="user-block-name">Hello, Simpool's Admin</span>
+              <span className="user-block-role">Administrator</span>
+              <Link to="/login">
+                <Button
+                  outline
+                  className="mt-2"
+                  color="danger"
+                  type="button"
+                  onClick={this.logOut()}>
+                  Log Out
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Collapse>
+    )
+  }
 }
 
 SidebarUserBlock.propTypes = {
-    showUserBlock: PropTypes.bool
+  showUserBlock: PropTypes.bool
 };
 
 const mapStateToProps = state => ({ showUserBlock: state.settings.showUserBlock })
 
-export default connect(
-    mapStateToProps
-)(SidebarUserBlock);
+export default withRouter(
+  connect(mapStateToProps)(SidebarUserBlock)
+);
