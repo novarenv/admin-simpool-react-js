@@ -5,6 +5,11 @@ import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import { Link, withRouter } from 'react-router-dom';
 
+const logOut = () => {
+  console.log("Log Out Clicked")
+  Cookies.remove("loginToken")
+}
+
 class SidebarUserBlock extends Component {
 
   state = {
@@ -15,11 +20,6 @@ class SidebarUserBlock extends Component {
     if (newProps.showUserBlock !== this.props.showUserBlock) {
       this.setState({ showUserBlock: newProps.showUserBlock })
     }
-  }
-
-  logOut = () => {
-    console.log("Log Out Clicked")
-    Cookies.remove("loginToken")
   }
 
   render() {
@@ -44,7 +44,7 @@ class SidebarUserBlock extends Component {
                   className="mt-2"
                   color="danger"
                   type="button"
-                  onClick={this.logOut()}>
+                  onClick={logOut}>
                   Log Out
                 </Button>
               </Link>

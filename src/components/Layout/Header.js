@@ -75,8 +75,8 @@ class Header extends Component {
                             </a>
                         </li>
                         { /* START User avatar toggle */ }
-                        <li className="nav-item d-none d-md-block">
-                            <a href="" className="nav-link" onClick={ this.toggleUserblock }>
+                        <li className="nav-item">
+                            <a href="" className="nav-link d-none d-md-block d-lg-block d-xl-block" onClick={ this.toggleUserblock }>
                                 <em className="icon-user"></em>
                             </a>
                         </li>
