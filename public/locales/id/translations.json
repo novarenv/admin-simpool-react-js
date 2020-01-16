@@ -103,12 +103,12 @@
         "SETTINGS": "Pengaturan",
         "SAVING_PRODUCTS": "Produk Simpanan",
         "LOAN_PRODUCTS": "Produk Pinjaman",
-        "FEE_PRODUCTS": "Produk Biaya",
+        "CHARGE_PRODUCTS": "Produk Biaya",
         "SERVICE_OFFICE_LIST": "Daftar Kantor Pelayanan",
         "BILLER_MANAGEMENT": "Biller Management",
         "ROLE_AND_PERMISSION": "Role & Permission",
         "CHECKER_MARKER": "Checker Maker",
-        "Template": "Template"
+        "TEMPLATE": "Template"
       }
     }
   }

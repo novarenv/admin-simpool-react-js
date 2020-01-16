@@ -1,4 +1,4 @@
-import { TOGGLE_SETTING, CHANGE_SETTING } from '../actions/actions';
+import { TOGGLE_SETTING, CHANGE_SETTING, CHANGE_DROPDOWN_LANGUAGE } from '../actions/actions';
 
 const initialSettings = {
     /* Layout fixed. Scroll content only */
@@ -26,7 +26,9 @@ const initialSettings = {
     /* Full size layout */
     useFullLayout: false,
     /* Hide footer */
-    hiddenFooter: false
+    hiddenFooter: false,
+
+    dropdownLanguage: "English"
 };
 
 const settingsReducer = (state = initialSettings, action) => {
@@ -41,6 +43,11 @@ const settingsReducer = (state = initialSettings, action) => {
                 ...state,
                 [action.name]: action.value
             };
+        case CHANGE_DROPDOWN_LANGUAGE:
+            return {
+                ...state,
+                [action.name]: action.lng
+            }
         default:
             return state;
     }

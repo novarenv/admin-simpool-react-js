@@ -103,12 +103,12 @@
         "SETTINGS": "Settings",
         "SAVING_PRODUCTS": "Saving Products",
         "LOAN_PRODUCTS": "Loan Products",
-        "FEE_PRODUCTS": "Fee Products",
+        "CHARGE_PRODUCTS": "Fee Products",
         "SERVICE_OFFICE_LIST": "Service Office List",
         "BILLER_MANAGEMENT": "Biller Management",
         "ROLE_AND_PERMISSION": "Role & Permission",
         "CHECKER_MAKER": "Checker Maker",
-        "Template": "Template"
+        "TEMPLATE": "Template"
       }
     }
   }

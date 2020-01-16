@@ -10,7 +10,17 @@ import BasePage from './components/Layout/BasePage';
 
 const waitFor = Tag => props => <Tag {...props}/>;
 
-const Dashboard = lazy(() => import('./components/Dashboard/Dashboard'));
+const Dashboard = lazy(() => import('./containers/Dashboard'));
+
+const MemberData = lazy(() => import('./containers/Members/MemberData/index'));
+const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
+const SavingData = lazy(() => import('./containers/Members/SavingData'));
+const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
+const SavingHistory = lazy(() => import('./containers/Members/SavingData/history'));
+const LoanData = lazy(() => import('./containers/Members/LoanData'));
+const LoanDataAdd = lazy(() => import('./containers/Members/LoanData/add'));
+const LoanDataHistory = lazy(() => import('./containers/Members/LoanData/history'));
+const LoanDataView = lazy(() => import('./containers/Members/LoanData/view'));
 
 const Login = lazy(() => import('./components/Pages/Login'));
 const Register = lazy(() => import('./components/Pages/Register'));
@@ -71,9 +81,21 @@ const Routes = ({ location }) => {
                           <Switch location={location}>
 
                               {/*Dashboard*/}
+                              <Route exact path="/" component={waitFor(Dashboard)}/>
                               <Route path="/dashboard" component={waitFor(Dashboard)}/>
                               
-                              <Redirect to="/dashboard"/>
+                              {/* Members */}
+                              <Route path="/member/data" component={waitFor(MemberData)}/>
+                              <Route path="/member/data-add" component={waitFor(MemberDataAdd)}/>
+                              <Route path="/member/saving-data" component={waitFor(SavingData)}/>
+                              <Route path="/member/saving-data-add" component={waitFor(SavingDataAdd)}/>
+                              <Route path="/member/saving-data-history" component={waitFor(SavingHistory)}/>
+                              <Route path="/member/loan-data" component={waitFor(LoanData)}/>
+                              <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)}/>
+                              <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)}/>
+                              <Route path="/member/loan-data-view" component={waitFor(LoanDataView)}/>
+                              
+                              <Redirect to="/notfound"/>
                               
                           </Switch>
                       </Suspense>
