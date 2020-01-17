@@ -119,6 +119,7 @@ const Routes = ({ location }) => {
                     <Route path="/accounting/account-chart" component={waitFor(AccountChart)} />
 
                     <Redirect to="/notfound" />
+                    <Redirect from="/login" to="/" />
 
                   </Switch>
                 </Suspense>

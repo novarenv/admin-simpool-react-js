@@ -248,19 +248,13 @@ class AddValidation extends Component {
     reader.readAsArrayBuffer(acceptedFiles[0])
   }
 
-  getTodayDate = () => {
-    const dd = String(Date().getDate()).padStart(2, '0')
-    const mm = String(Date().getMonth() + 1).padStart(2, '0') //January is 0!
-    const yyyy = Date().getFullYear()
+  render() {
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
+    const yyyy = new Date().getFullYear()
 
     const today = dd + '/' + mm + '/' + yyyy
 
-    return (today)
-
-    console.log(today)
-  }
-
-  render() {
     return (
       <Form innerRef={this.formRef} name="privateIdentity" onSubmit={this.handleSubmit}>
         <Card className="card-default">
@@ -322,7 +316,7 @@ class AddValidation extends Component {
                       'registrationDate',
                       'required'
                     )}
-                    value={this.state.privateIdentity.registrationDate}
+                    value={today}
                     placeholder="dd-mm-yyyy"
                     data-validate='["required"]'
                   />
