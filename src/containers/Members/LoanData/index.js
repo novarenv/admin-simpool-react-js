@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button} from 'reactstrap';
 import $ from 'jquery';
+import { Link, withRouter } from 'react-router-dom';
 
 import Datatable from '../Datatable';
-import { Link, withRouter } from 'react-router-dom';
+import './style.css';
 
 class LoanData extends Component {
 
@@ -47,6 +48,10 @@ class LoanData extends Component {
       });
   }
 
+  toLoanDataView = () => {
+    this.props.history.push("/member/loan-data-view")
+  }
+
   render() {
     return (
       <ContentWrapper>
@@ -60,7 +65,7 @@ class LoanData extends Component {
                 <Button outline className="float-right mb-3" color="primary" type="button">Add Data Pinjaman</Button>
               </Link>
               <Datatable options={this.state.options}>
-                <table className="table table-striped my-4 w-100">
+                <table className="table table-hover table-striped my-4 w-100">
                   <thead>
                     <tr>
                       <th data-priority="1">No. Pinjaman</th>
@@ -72,12 +77,12 @@ class LoanData extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    { this.state.datas.map((row) => {
+                    { this.state.datas.map((row, rowKey) => {
                       return (
-                        <tr>
-                          { row.map((col, key) => {
+                        <tr className="tr-cursor" key={rowKey} onClick={this.toSavingDataHistory}>
+                          { row.map((col, colKey) => {
                             return (
-                              <td>{ col }</td>
+                              <td key={colKey}>{ col }</td>
                             )
                           }) }
                           <td />

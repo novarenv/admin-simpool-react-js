@@ -9,8 +9,10 @@ class Login extends Component {
 
   state = {
     formLogin: {
-      email: '',
-      password: ''
+      email: 'novarenv@gmail.com',
+      password: 'pensjoss',
+      checkEmail: 'novarenv@gmail.com',
+      checkPassword: 'pensjoss'
     }
   }
 
@@ -57,9 +59,10 @@ class Login extends Component {
     console.log(this.state.formLogin.password)
 
     e.preventDefault()
-
-    Cookies.set("loginToken", "Token", { expires: 7 })
-    this.props.history.push("/")
+    if(this.state.formLogin.email === this.state.formLogin.checkEmail && this.state.formLogin.password === this.state.formLogin.checkPassword ){
+      Cookies.set("loginToken", "Token", { expires: 7 })
+      this.props.history.push("/")
+    }
   }
 
   /* Simplify error check */

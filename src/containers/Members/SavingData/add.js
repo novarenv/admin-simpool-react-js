@@ -64,7 +64,7 @@ export default class SavingDataAdd extends Component {
                 options={MEMBERS}
               />
 
-              <label htmlFor="openDate">Tanggal Buka</label>
+              <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
               <Input
                 type="text"
                 id="openDate"

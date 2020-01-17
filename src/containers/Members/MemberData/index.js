@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button} from 'reactstrap';
 import $ from 'jquery';
+import { Link, withRouter, useHistory } from 'react-router-dom';
 
 import Datatable from '../Datatable';
-import { Link, withRouter } from 'react-router-dom';
+import './style.css'
 
 class MemberData extends Component {
 
@@ -38,7 +39,7 @@ class MemberData extends Component {
 
   // Access to internal datatable instance for customizations
   dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
+    const inputSearchClass = 'datatable_input_col_search';    
     const columnInputs = $('tfoot .' + inputSearchClass);
     // On input keyup trigger filtering
     columnInputs
@@ -60,7 +61,7 @@ class MemberData extends Component {
                 <Button outline className="float-right mb-3" color="primary" type="button">Add Member Data</Button>
               </Link>
               <Datatable options={this.state.options}>
-                <table className="table table-striped my-4 w-100">
+                <table className="table table-hover table-striped my-4 w-100">
                   <thead>
                     <tr>
                       <th data-priority="1" className="sort-numeric">No. Anggota</th>
@@ -72,12 +73,12 @@ class MemberData extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                    { this.state.datas.map((row) => {
+                    { this.state.datas.map((row, rowKey) => {
                       return (
-                        <tr>
-                          { row.map((col, key) => {
+                        <tr className="tr-cursor" key={rowKey}>
+                          { row.map((col, colKey) => {
                             return (
-                              <td key={key}>{ col }</td>
+                              <td key={colKey}>{ col }</td>
                             )
                           }) }
                           <td />

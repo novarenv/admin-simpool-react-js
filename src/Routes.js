@@ -44,9 +44,6 @@ const Error500 = lazy(() => import('./components/Pages/Error500'));
 const Maintenance = lazy(() => import('./components/Pages/Maintenance'));
 
 const listofPages = [
-  '/login',
-  '/register',
-  '/recover',
   '/lock',
   '/notfound',
   '/error500',
@@ -71,9 +68,6 @@ const Routes = ({ location }) => {
         <BasePage>
           <Suspense fallback={<PageLoader />}>
             <Switch location={location}>
-              <Route path="/login" component={waitFor(Login)} />
-              <Route path="/register" component={waitFor(Register)} />
-              <Route path="/recover" component={waitFor(Recover)} />
               <Route path="/lock" component={waitFor(Lock)} />
               <Route path="/notfound" component={waitFor(NotFound)} />
               <Route path="/error500" component={waitFor(Error500)} />
@@ -118,9 +112,8 @@ const Routes = ({ location }) => {
                     {/* Accounting */}
                     <Route path="/accounting/account-chart" component={waitFor(AccountChart)} />
 
-                    <Redirect to="/notfound" />
                     <Redirect from="/login" to="/" />
-
+                    <Redirect to="/notfound" />
                   </Switch>
                 </Suspense>
               </div>
@@ -135,6 +128,8 @@ const Routes = ({ location }) => {
         <Suspense fallback={<PageLoader />}>
           <Switch location={location}>
             <Route path="/login" component={waitFor(Login)} />
+            <Route path="/register" component={waitFor(Register)} />
+            <Route path="/recover" component={waitFor(Recover)} />
 
             <Redirect from="*" to="/login" />
           </Switch>

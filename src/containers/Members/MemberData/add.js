@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
-import FormWizardValidation from './addValidation.js';
+import AddValidation from './addValidation.js';
 
 class MemberDataAdd extends Component {
     render() {
@@ -11,7 +11,7 @@ class MemberDataAdd extends Component {
                     <div>Anggota Baru</div>
                 </div>
 
-                <FormWizardValidation />
+                <AddValidation />
             </ContentWrapper>
         );
     }

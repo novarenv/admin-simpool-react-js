@@ -15,7 +15,7 @@ import {
 import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
 
-import FormValidator from './FormValidator.js';
+import FormValidator from '../../../components/Forms/FormValidator';
 
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
