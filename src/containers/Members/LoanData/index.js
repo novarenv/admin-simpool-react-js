@@ -1,13 +1,60 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button} from 'reactstrap';
-import $ from 'jquery';
+import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
+import ReactDataGrid from 'react-data-grid';
 
-import Datatable from '../Datatable';
 import './style.css';
 
+const COLUMN_WIDTH = 500;
+
 class LoanData extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this._columns = [
+      {
+        key: 'ACTION',
+        name: 'Action',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'ACCOUNT',
+        name: 'Account',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'MEMBER_ID',
+        name: 'Member Id',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'MEMBER',
+        name: 'Member',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'BALANCE',
+        name: 'Balance',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'OFFICE',
+        name: 'Office',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    this.state = { originalRows, rows };
+  }
 
   state = {
     options: {
@@ -29,28 +76,45 @@ class LoanData extends Component {
           sPrevious: '<em class="fa fa-caret-left"></em>'
         }
       }
-    },
-    datas: [
-      [1, 1, "ABC", 1, 1],
-      [1, 1, "ABC", 1, 2],
-      [1, 1, "ABC", 1, 3],
-    ]
-  }
-
-  // Access to internal datatable instance for customizations
-  dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
-    const columnInputs = $('tfoot .' + inputSearchClass);
-    // On input keyup trigger filtering
-    columnInputs
-      .keyup(function () {
-        dtInstance.fnFilter(this.value, columnInputs.index(this));
-      });
+    }
   }
 
   toLoanDataView = () => {
     this.props.history.push("/member/loan-data-view")
   }
+
+
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ACTION: '',
+        ACCOUNT: i,
+        MEMBER_ID: i,
+        MEMBER: 'ABC' + i,
+        BALANCE: i,
+        OFFICE: i
+      });
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
 
   render() {
     return (
@@ -64,34 +128,14 @@ class LoanData extends Component {
               <Link to="/member/loan-data-add">
                 <Button outline className="float-right mb-3" color="primary" type="button">Add Data Pinjaman</Button>
               </Link>
-              <Datatable options={this.state.options}>
-                <table className="table table-hover table-striped my-4 w-100">
-                  <thead>
-                    <tr>
-                      <th data-priority="1">No. Pinjaman</th>
-                      <th>No. Anggota</th>
-                      <th>Nama Anggota</th>
-                      <th>Saldo</th>
-                      <th>Kantor Pelayanan</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    { this.state.datas.map((row, rowKey) => {
-                      return (
-                        <tr className="tr-cursor" key={rowKey} onClick={this.toSavingDataHistory}>
-                          { row.map((col, colKey) => {
-                            return (
-                              <td key={colKey}>{ col }</td>
-                            )
-                          }) }
-                          <td />
-                        </tr>
-                      ) 
-                    })}
-                  </tbody>
-                </table>
-              </Datatable>
+              <Container fluid>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700} />
+              </Container>
             </CardBody>
           </Card>
         </Container>

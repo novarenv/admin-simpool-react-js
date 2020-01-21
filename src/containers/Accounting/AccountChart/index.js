@@ -1,11 +1,52 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button } from 'reactstrap';
-import $ from 'jquery';
-import Datatable from '../Datatable';
 import { Link, withRouter } from 'react-router-dom';
+import ReactDataGrid from 'react-data-grid';
+
+const COLUMN_WIDTH = 500;
 
 class MemberData extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this._columns = [      
+      {
+        key: 'ACTION',
+        name: 'ACTION',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'ACCOUNT_CHART',
+        name: 'ACCOUNT_CHART',
+        width: 150,
+        frozen: true
+      },
+      {
+        key: 'ACCOUNT_NAME',
+        name: 'ACCOUNT_NAME',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'ACCOUNT_TYPE',
+        name: 'ACCOUNT_TYPE',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'USED_AS',
+        name: 'USED_AS',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    this.state = { originalRows, rows };
+  }
 
   state = {
     options: {
@@ -27,23 +68,39 @@ class MemberData extends Component {
           sPrevious: '<em class="fa fa-caret-left"></em>'
         }
       }
-    },
-    datas: [
-      [100, "Aktiva Lancar", "Asset", "Header"],
-      [101, "Kas", "Asset", "Detail"]
-    ]
+    }
   }
 
-  // Access to internal datatable instance for customizations
-  dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
-    const columnInputs = $('tfoot .' + inputSearchClass);
-    // On input keyup trigger filtering
-    columnInputs
-      .keyup(function () {
-        dtInstance.fnFilter(this.value, columnInputs.index(this));
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ACTION: '',
+        ACCOUNT_CHART: i,
+        ACCOUNT_NAME: 'ABC' + i,
+        ACCOUNT_TYPE: 'ABC' + i,
+        USED_AS: i
       });
-  }
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
 
   render() {
     return (
@@ -58,33 +115,15 @@ class MemberData extends Component {
               <Link to="/member/saving-data-add">
                 <Button outline className="float-right mb-3" color="primary" type="button">Tambah</Button>
               </Link>
-              <Datatable options={this.state.options}>
-                <table className="table table-striped my-4 w-100">
-                  <thead>
-                    <tr>
-                      <th data-priority="1">Kode Akun</th>
-                      <th>Nama Akun</th>
-                      <th>Tipe Akun</th>
-                      <th>Digunakan Sebagai</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.datas.map((row) => {
-                      return (
-                        <tr>
-                          {row.map((col, key) => {
-                            return (
-                              <td key={key}>{col}</td>
-                            )
-                          })}
-                          <td/>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </Datatable>
+
+              <Container fluid>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700} />
+              </Container>
             </CardBody>
           </Card>
         </Container>

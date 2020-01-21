@@ -1,11 +1,93 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody } from 'reactstrap';
-import $ from 'jquery';
+import ReactDataGrid from 'react-data-grid';
 
-import Datatable from '../Datatable';
+const COLUMN_WIDTH = 500;
 
 class LoanHistory extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this._columns = [
+      {
+        key: 'ACTION',
+        name: 'ACTION',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'SCHEDULE',
+        name: 'Schedule',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'DUE_DATE',
+        name: 'Due Date',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'AMOUNT',
+        name: 'Amount',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'PRINCIPAL',
+        name: 'Principal',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'INTEREST',
+        name: 'Interest',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'CHARGES',
+        name: 'Charges',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'PENALTY',
+        name: 'Penalty',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'PAYMENT',
+        name: 'Payment',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'PAYMENT_DATE',
+        name: 'Payment Date',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'OVERDUE_AMOUNT',
+        name: 'Overdue Amount',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'DAYS_LATE',
+        name: 'Days Late',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    this.state = { originalRows, rows };
+  }
 
   state = {
     options: {
@@ -34,16 +116,43 @@ class LoanHistory extends Component {
     ]
   }
 
-  // Access to internal datatable instance for customizations
-  dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
-    const columnInputs = $('tfoot .' + inputSearchClass);
-    // On input keyup trigger filtering
-    columnInputs
-      .keyup(function () {
-        dtInstance.fnFilter(this.value, columnInputs.index(this));
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ACTION: '',
+        SCHEDULE: i,
+        DUE_DATE: i,
+        AMOUNT: i,
+        PRINCIPAL: i,
+        INTEREST: i,
+        CHARGES:i,
+        PENALTY: i,
+        PAYMENT: i,
+        PAYMENT_DATE: i,
+        OVERDUE_AMOUNT: i,
+        DAYS_LATE: i
       });
-  }
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
 
   render() {
     return (
@@ -54,40 +163,14 @@ class LoanHistory extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Datatable options={this.state.options}>
-                <table className="table table-striped my-4 w-100">
-                  <thead>
-                    <tr>
-                      <th data-priority="1" className="sort-numeric">Angsuran Ke</th>
-                      <th>Tanggal Jatuh Tempo</th>
-                      <th>Nilai Angsuran</th>
-                      <th>Pokok</th>
-                      <th>Bunga</th>
-                      <th>Biaya</th>
-                      <th>Denda</th>
-                      <th>Nilai Bayar</th>
-                      <th>Tanggal Bayar</th>
-                      <th>Nilai Tunggakan</th>
-                      <th>Hari Tunggakan</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.datas.map((row) => {
-                      return (
-                        <tr>
-                          {row.map((col, key) => {
-                            return (
-                              <td>{col}</td>
-                            )
-                          })}
-                          <td/>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </Datatable>
+              <Container fluid>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700} />
+              </Container>
             </CardBody>
           </Card>
         </Container>

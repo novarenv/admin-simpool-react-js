@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button } from 'reactstrap';
-import $ from 'jquery';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
@@ -17,37 +16,37 @@ class MemberData extends Component {
     this._columns = [      
       {
         key: 'ACTION',
-        name: 'ACTION',
+        name: 'Action',
         width: 100,
         frozen: true
       },
       {
         key: 'ID_MEMBER',
-        name: 'ID_MEMBER',
+        name: 'Id',
         width: 100,
         frozen: true
       },
       {
         key: 'EXTERNAL_ID',
-        name: 'EXTERNAL_ID',
+        name: 'External Id',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'FULL_NAME',
-        name: 'FULL_NAME',
+        name: 'Full Name',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'OFFICE',
-        name: 'OFFICE',
+        name: 'Office',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'STATUS',
-        name: 'STATUS',
+        name: 'Status',
         sortable: true,
         width: COLUMN_WIDTH
       }
@@ -78,32 +77,23 @@ class MemberData extends Component {
           sPrevious: '<em class="fa fa-caret-left"></em>'
         }
       },
-    },
-    datas: [
-      [1, 1, "ABC", 1, 1],
-      [1, 1, "ABC", 1, 2],
-      [1, 1, "ABC", 1, 3],
-    ]
+    }
   }
 
   // componentDidMount() {
   //   this.props.i18n.changeLanguage('id')
   // }
 
-  getRandomDate = (start, end) => {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toLocaleDateString();
-  };
-
   createRows = () => {
     let rows = [];
     for (let i = 1; i < 100; i++) {
       rows.push({
+        ACTION: '',
         ID_MEMBER: i,
         EXTERNAL_ID: i,
         FULL_NAME: 'ABC' + i,
         OFFICE: i,
-        STATUS: i,
-        ACTION: ''
+        STATUS: i
       });
     }
 

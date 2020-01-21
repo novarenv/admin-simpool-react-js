@@ -1,11 +1,63 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody } from 'reactstrap';
-import $ from 'jquery';
+import ReactDataGrid from 'react-data-grid';
 
-import Datatable from '../Datatable';
+const COLUMN_WIDTH = 500;
 
 class SavingHistory extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this._columns = [
+      {
+        key: 'ACTION',
+        name: 'ACTION',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'REF_NUMBER',
+        name: 'Reference Number',
+        width: 200,
+        frozen: true
+      },
+      {
+        key: 'TRANSC_DATE',
+        name: 'Transaction Date',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'TRANSC_TYPE',
+        name: 'Transaction Type',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'DEBIT',
+        name: 'Debit',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'CREDIT',
+        name: 'Credit',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'BALANCE',
+        name: 'Balance',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    this.state = { originalRows, rows };
+  }
 
   state = {
     options: {
@@ -34,16 +86,38 @@ class SavingHistory extends Component {
     ]
   }
 
-  // Access to internal datatable instance for customizations
-  dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
-    const columnInputs = $('tfoot .' + inputSearchClass);
-    // On input keyup trigger filtering
-    columnInputs
-      .keyup(function () {
-        dtInstance.fnFilter(this.value, columnInputs.index(this));
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ACTION: '',
+        REF_NUMBER: i,
+        TRANSC_DATE: i,
+        TRANSC_TYPE: 'ABC' + i,
+        DEBIT: i,
+        CREDIT: i,
+        BALANCE: i
       });
-  }
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
 
   render() {
     return (
@@ -54,35 +128,14 @@ class SavingHistory extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Datatable options={this.state.options}>
-                <table className="table table-striped my-4 w-100">
-                  <thead>
-                    <tr>
-                      <th data-priority="1" className="sort-numeric">No. Referensi</th>
-                      <th>No. Tanggal Transaksi</th>
-                      <th>Tipe Transaksi</th>
-                      <th>Debit</th>
-                      <th>Kredit</th>
-                      <th>Saldo</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.datas.map((row) => {
-                      return (
-                        <tr>
-                          {row.map((col, key) => {
-                            return (
-                              <td>{col}</td>
-                            )
-                          })}
-                          <td/>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </Datatable>
+              <Container fluid>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700} />
+              </Container>
             </CardBody>
           </Card>
         </Container>
