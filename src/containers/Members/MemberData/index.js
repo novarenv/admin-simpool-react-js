@@ -4,12 +4,59 @@ import { Container, Card, CardBody, Button } from 'reactstrap';
 import $ from 'jquery';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
+import ReactDataGrid from 'react-data-grid';
 
-import Datatable from '../Datatable';
 import './style.css'
 
+const COLUMN_WIDTH = 500;
 
 class MemberData extends Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this._columns = [      
+      {
+        key: 'ACTION',
+        name: 'ACTION',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'ID_MEMBER',
+        name: 'ID_MEMBER',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'EXTERNAL_ID',
+        name: 'EXTERNAL_ID',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'FULL_NAME',
+        name: 'FULL_NAME',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'OFFICE',
+        name: 'OFFICE',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'STATUS',
+        name: 'STATUS',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    this.state = { originalRows, rows };
+  }
 
   state = {
     options: {
@@ -30,7 +77,7 @@ class MemberData extends Component {
           sNext: '<em class="fa fa-caret-right"></em>',
           sPrevious: '<em class="fa fa-caret-left"></em>'
         }
-      }
+      },
     },
     datas: [
       [1, 1, "ABC", 1, 1],
@@ -43,16 +90,41 @@ class MemberData extends Component {
   //   this.props.i18n.changeLanguage('id')
   // }
 
-  // Access to internal datatable instance for customizations
-  dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';
-    const columnInputs = $('tfoot .' + inputSearchClass);
-    // On input keyup trigger filtering
-    columnInputs
-      .keyup(function () {
-        dtInstance.fnFilter(this.value, columnInputs.index(this));
+  getRandomDate = (start, end) => {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toLocaleDateString();
+  };
+
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ID_MEMBER: i,
+        EXTERNAL_ID: i,
+        FULL_NAME: 'ABC' + i,
+        OFFICE: i,
+        STATUS: i,
+        ACTION: ''
       });
-  }
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
 
   render() {
     return (
@@ -66,34 +138,15 @@ class MemberData extends Component {
               <Link to="/member/data-add">
                 <Button outline className="float-right mb-3" color="primary" type="button"><Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans></Button>
               </Link>
-              <Datatable options={this.state.options}>
-                <table className="table table-hover table-striped my-4 w-100">
-                  <thead>
-                    <tr>
-                      <th data-priority="1" className="sort-numeric"><Trans i18nKey='member.data.ID_MEMBER'>ID</Trans></th>
-                      <th className="sort-numeric"><Trans i18nKey='member.data.EXTERNAL_ID'>External ID</Trans></th>
-                      <th><Trans i18nKey='member.data.FULL_NAME'>Full Name</Trans></th>
-                      <th><Trans i18nKey='member.data.OFFICE'>Office</Trans></th>
-                      <th><Trans i18nKey='member.data.STATUS'>Status</Trans></th>
-                      <th><Trans i18nKey='member.data.ID_MEMBER'>Action</Trans></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.datas.map((row, rowKey) => {
-                      return (
-                        <tr className="tr-cursor" key={rowKey}>
-                          {row.map((col, colKey) => {
-                            return (
-                              <td key={colKey}>{col}</td>
-                            )
-                          })}
-                          <td />
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </Datatable>
+
+              <Container fluid>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700} />
+              </Container>
             </CardBody>
           </Card>
         </Container>
