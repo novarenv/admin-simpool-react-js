@@ -37,6 +37,12 @@ export default class LoanPayment extends Component {
     const value = selectedOption && selectedOption.value;
     const { selectedOptionMulti } = this.state;
 
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
+    const yyyy = new Date().getFullYear()
+
+    const today = dd + '/' + mm + '/' + yyyy
+
     return (
       <ContentWrapper>
         <div className="content-heading">
@@ -86,6 +92,7 @@ export default class LoanPayment extends Component {
                 id="transactionDate"
                 name="transactionDate"
                 placeholder="dd-mm-yyyy"
+                value={today}
               />
 
               <label className="mt-3" htmlFor="description">Keterangan</label>

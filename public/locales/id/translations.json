@@ -10,7 +10,7 @@
       "MORE": "Selebihnya"
     },
     "nav": {
-      "DASHBOARD": "Dasbor",
+      "DASHBOARD": "Dasboard",
       "WIDGETS": "Widget",
       "DOCUMENTATION": "Dokumentasi",
       "element": {
@@ -88,8 +88,8 @@
       "accountancy": {
         "ACCOUNTANCIES": "Akuntansi",
         "REGISTER_ACCOUNT_CODE": "Daftar Kode Akun",
-        "JOURNAL_ENTRY": "Entri Jurnal",
-        "NEW_ACCOUNT_BALANCE": "Saldo Akun Baru",
+        "JOURNAL_ENTRY": "Journal Entry",
+        "NEW_ACCOUNT_BALANCE": "Saldo Awal Akun",
         "TRANSACTION_CODE": "Kode Transaksi"
       },
       "report": {
@@ -110,6 +110,26 @@
         "CHECKER_MARKER": "Checker Maker",
         "TEMPLATE": "Template"
       }
+    }
+  },
+  "member": {
+    "data": {
+      "MEMBER_DATA": "Data Anggota",
+      "ADD_MEMBER_DATA": "Tambah Data Anggota",
+      "ID_MEMBER": "No. Anggota",
+      "EXTERNAL_ID": "No. Anggota Lama",
+      "FULL_NAME": "Nama Lengkap",
+      "OFFICE": "Kantor Pelayanan",
+      "STATUS": "Status"
+    },
+    "saving-data": {
+      "SAVINGS": "Data Simpanan",
+      "ADD_SAVINGS": "Tambah Simpanan",
+      "ACCOUNT": "No. Simpanan",
+      "MEMBER_ID": "No. Anggota",
+      "MEMBER": "Nama Anggota",
+      "BALANCE": "Saldo",
+      "OFFICE": "Kantor Pelayanan"
     }
   }
 }

@@ -144,7 +144,7 @@ class Login extends Component {
                   <Input id="b-indonesia" type="radio" name="i-radio" defaultValue="b-indonesia"/>
                   <span className="fa fa-circle"></span>Bahasa Indonesia</label>
               </div>
-              <button className="btn btn-block btn-primary mt-3" type="submit">Login</button>
+              <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Login</button>
             </form>
             <p className="pt-3 text-center">Need to Signup?</p>
             <Link to="register" className="btn btn-block btn-secondary">Register Now</Link>

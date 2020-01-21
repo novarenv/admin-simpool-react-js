@@ -88,7 +88,7 @@ hr {
     }
 }
 .card-body {
-    padding: 0.9375rem; //15px
+    padding: 3rem; //15px
 }
 .card-footer {
     padding: 0.625rem 0.9375rem;
@@ -152,7 +152,7 @@ hr {
 
 .btn {
     border-radius: 3px;
-    font-size: 13px;
+    font-size: 16px;
     -webkit-appearance: none;
     outline: none !important; // padding: 0.375rem 1rem;
     @include transition(all .1s);

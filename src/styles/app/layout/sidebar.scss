@@ -53,7 +53,7 @@ $scrollbar-wd:                    17px;
 // First main level
 .sidebar-nav {
     position: relative;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 0;
     padding-left: 0;
     list-style: none; // Only the first item in sidebar
@@ -132,6 +132,7 @@ $tablet-landscape: 1025px;
         color: $sidebar-item-color;
         display: none;
         padding: 10px 20px;
+        margin-top: 20px;
         font-weight: bold;
     }
 

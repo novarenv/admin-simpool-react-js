@@ -2,12 +2,17 @@ import React, { Suspense, lazy } from 'react';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Cookies from "js-cookie";
+import PropTypes from 'prop-types';
+import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /* loader component for Suspense*/
 import PageLoader from './components/Common/PageLoader';
 
 import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
+import * as actions from './store/actions/actions';
 
 const waitFor = Tag => props => <Tag {...props} />;
 
@@ -50,7 +55,7 @@ const listofPages = [
   '/maintenance'
 ];
 
-const Routes = ({ location }) => {
+const Routes = ({ location, ...props } ) => {
   const currentKey = location.pathname.split('/')[1] || '/';
   const timeout = { enter: 500, exit: 500 };
 
@@ -60,6 +65,15 @@ const Routes = ({ location }) => {
   //      'rag-fadeInLeft'
 
   const animationName = 'rag-fadeIn'
+
+  // useEffect(() => {
+  //   console.log(props.dashboard.language)
+  //   console.log(props.i18n)
+
+  //   // props.i18n.changeLanguage('id')
+
+  //   return () => { };
+  // }, [])
 
   if (Cookies.get("loginToken")) {
     if (listofPages.indexOf(location.pathname) > -1) {
@@ -139,4 +153,12 @@ const Routes = ({ location }) => {
   }
 }
 
-export default withRouter(Routes);
+Base.propTypes = {
+  actions: PropTypes.object,
+  dashboard: PropTypes.object
+}
+
+const mapStateToProps = state => ({ dashboard: state.dashboard })
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation('translations')(withRouter(Routes)));

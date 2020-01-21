@@ -53,7 +53,7 @@ class Header extends Component {
                     <div className="navbar-header">
                         <a className="navbar-brand">
                             <div className="brand-logo">
-                                <img className="img-fluid" src="img/Simpool Landscape.png" alt="App Logo" />
+                                <img className="img-fluid" src="img/Simpool 1 Text Dark BG.png" alt="App Logo" />
                             </div>
                             <div className="brand-logo-collapsed">
                                 <img className="img-fluid-box" src="img/Simpool Box.png" alt="App Logo" />

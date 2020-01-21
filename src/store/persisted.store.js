@@ -1,7 +1,7 @@
 import { updateClasses } from './middlewares/settings.middleware.js';
 import { updateTheme } from './middlewares/themes.middleware.js';
 
-const STORAGE_KEY = 'angle-store-key';
+const STORAGE_KEY = 'simpool-store-key';
 
 
 /**

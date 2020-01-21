@@ -10,7 +10,7 @@ const Menu = [
         translate: 'sidebar.nav.DASHBOARD'
     },
     {
-        name: 'Members',
+        name: 'Member',
         icon: 'icon-chemistry',
         translate: 'sidebar.nav.member.MEMBERS',
         submenu: [{
@@ -36,7 +36,7 @@ const Menu = [
         ]
     },
     {
-        name: 'Transactions',
+        name: 'Transaction',
         icon: 'icon-speedometer',
         translate: 'sidebar.nav.transaction.TRANSACTIONS',
         submenu: [{
@@ -50,9 +50,9 @@ const Menu = [
                 translate: 'sidebar.nav.transaction.WITHDRAWAL'
             },
             {
-                name: 'Installments',
+                name: 'Loan Payment',
                 path: '/transaction/loan-payment',
-                translate: 'sidebar.nav.transaction.INSTALLMENTS'
+                translate: 'sidebar.nav.transaction.LOAN_PAYMENT'
             },
             {
                 name: 'Transfer',
@@ -62,7 +62,7 @@ const Menu = [
         ]
     },
     {
-        name: 'Accountancies',
+        name: 'Accounting',
         icon: 'icon-chemistry',
         translate: 'sidebar.nav.accountancy.ACCOUNTANCIES',
         submenu: [{
@@ -88,7 +88,7 @@ const Menu = [
         ]
     },
     {
-        name: 'Reports',
+        name: 'Report',
         icon: 'icon-speedometer',
         translate: 'sidebar.nav.report.REPORTS',
         submenu: [{
@@ -114,7 +114,7 @@ const Menu = [
         ]
     },
     {
-        name: 'Settings',
+        name: 'Setting',
         icon: 'icon-chemistry',
         translate: 'sidebar.nav.setting.SETTINGS',
         submenu: [{

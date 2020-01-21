@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Card,
   CardBody,
+  Col,
   Input
 } from 'reactstrap';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
@@ -20,7 +21,7 @@ const MEMBERS = [
 
 export default class Deposit extends Component {
   state = {
-    selectedOptionMulti: []
+    selectedOption: ''
   };
 
   onSubmit = e => {
@@ -28,14 +29,20 @@ export default class Deposit extends Component {
     e.preventDefault();
   }
 
-  handleChangeSelectMulti = (selectedOptionMulti) => {
-    this.setState({ selectedOptionMulti });
+  handleChangeSelect = (selectedOption) => {
+    this.setState({ selectedOption });
+    console.log(`Selected: ${selectedOption.value}`);
   }
 
   render() {
     const { selectedOption } = this.state;
     const value = selectedOption && selectedOption.value;
-    const { selectedOptionMulti } = this.state;
+
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
+    const yyyy = new Date().getFullYear()
+
+    const today = dd + '/' + mm + '/' + yyyy
 
     return (
       <ContentWrapper>
@@ -45,49 +52,84 @@ export default class Deposit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-              <label className="mt-3" htmlFor="member">Anggota</label>
-              <Select
-                name="member"
-                multi
-                simpleValue
-                value={selectedOptionMulti}
-                onChange={this.handleChangeSelectMulti}
-                options={MEMBERS}
-              />
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <fieldset>
+                <div className="form-group row align-items-center">
+                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="member">Anggota</label>
+                  <Col md={9} lg={10}>
+                    <Select
+                      name="select-name"
+                      className="input-font-size"
+                      value={this.props.children}
+                      onChange={this.handleChangeSelect}
+                      options={MEMBERS}
+                    />
+                  </Col>
+                </div>
+              </fieldset>
 
-              <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="savingNum">
-                <option>No. Simpanan</option>
-                <option defaultValue="savingNum1">No. Simpanan 1</option>
-                <option defaultValue="savingNum2">No. Simpanan 2</option>
-              </select>
+              <fieldset>
+                <div className="form-group row align-items-center">
+                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="savingNum">No. Simpanan</label>
+                  <Col md={9} lg={10}>
+                    <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingNum">
+                      <option>No. Simpanan</option>
+                      <option defaultValue="savingNum1">No. Simpanan 1</option>
+                      <option defaultValue="savingNum2">No. Simpanan 2</option>
+                    </select>
+                  </Col>
+                </div>
+              </fieldset>
 
-              <label className="mt-3" htmlFor="transferAmount">Nilai Setoran</label>
-              <Input
-                type="number"
-                id="transferAmount"
-                name="transferAmount"
-                placeholder="minimal 3.000.000"
-              />
+              <fieldset>
+                <div className="form-group row align-items-center">
+                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="transferAmount">Nilai Setoran</label>
+                  <Col md={9} lg={10}>
+                    <Input
+                      type="number"
+                      id="transferAmount"
+                      name="transferAmount"
+                      className="input-font-size"
+                      placeholder="minimal 3.000.000"
+                    />
+                  </Col>
+                </div>
+              </fieldset>
 
-              <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
-              <Input
-                type="text"
-                id="transactionDate"
-                name="transactionDate"
-                placeholder="dd-mm-yyyy"
-              />
+              <fieldset>
+                <div className="form-group row align-items-center">
+                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="transactionDate">Tanggal Transaksi</label>
+                  <Col md={9} lg={10}>
+                    <Input
+                      type="text"
+                      id="transactionDate"
+                      name="transactionDate"
+                      className="input-font-size"
+                      placeholder="dd-mm-yyyy"
+                      onChange={this.onSubmit}
+                      value={today}
+                    />
+                  </Col>
+                </div>
+              </fieldset>
 
-              <label className="mt-3" htmlFor="description">Keterangan</label>
-              <Input
-                type="text"
-                id="description"
-                name="description"
-                placeholder="Deskripsi simpanan"
-              />
-              
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <fieldset>
+                <div className="form-group row align-items-center">
+                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="description">Keterangan</label>
+                  <Col md={9} lg={10}>
+                    <Input
+                      type="textarea"
+                      id="description"
+                      name="description"
+                      className="input-font-size"
+                      rows="5"
+                      placeholder="Deskripsi deposit"
+                    />
+                  </Col>
+                </div>
+              </fieldset>
+
+              <button className="btn btn-block btn-primary mt-4 d-flex justify-content-center d-md-table mx-auto" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>

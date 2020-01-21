@@ -1,6 +1,5 @@
 export const TOGGLE_SETTING = 'TOGGLE_SETTING';
 export const CHANGE_SETTING = 'CHANGE_SETTING';
-export const CHANGE_DROPDOWN_LANGUAGE = 'CHANGE_DROPDOWN_LANGUAGE';
 
 /**
  * Change a setting value
@@ -16,8 +15,4 @@ export function changeSetting(name, value) {
  */
 export function toggleSetting(name) {
     return { type: TOGGLE_SETTING, name };
-}
-
-export function changeDropdownLanguage(name, lng) {
-    return { type: CHANGE_DROPDOWN_LANGUAGE, name, lng };
 }

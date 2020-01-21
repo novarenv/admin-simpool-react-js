@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import ContentWrapper from '../../components/Layout/ContentWrapper';
-import Now from '../../components/Common/Now';
 import { Row, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 import * as actions from '../../store/actions/actions';
@@ -32,25 +31,25 @@ class Dashboard extends Component {
   }
 
   changeLanguage = lng => {
-    this.props.i18n.changeLanguage(lng);
+    this.props.actions.changeLanguage("language", lng)
     if (lng === 'en') {
       this.props.actions.changeDropdownLanguage("dropdownLanguage", "English")
     } else if (lng === 'id') {
       this.props.actions.changeDropdownLanguage("dropdownLanguage", "B. Indonesia")
     }
+    this.props.i18n.changeLanguage(lng)
   }
 
   render() {
-    console.log(this.props)
-
     return (
       <ContentWrapper>
         <div className="content-heading">
+          <div>Dashboard</div>
           { /* START Language list */}
           <div className="ml-auto">
             <Dropdown isOpen={this.state.dropdownTranslateOpen} toggle={this.toggleDDTranslate}>
               <DropdownToggle>
-                {this.props.settings.dropdownLanguage}
+                {this.props.dashboard.dropdownLanguage}
               </DropdownToggle>
               <DropdownMenu className="dropdown-menu-right-forced animated fadeInUpShort">
                 <DropdownItem onClick={() => this.changeLanguage('en')}>English</DropdownItem>
@@ -144,10 +143,10 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   actions: PropTypes.object,
-  settings: PropTypes.object
+  dashboard: PropTypes.object
 }
 
-const mapStateToProps = state => ({ settings: state.settings })
+const mapStateToProps = state => ({ dashboard: state.dashboard })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(Dashboard);

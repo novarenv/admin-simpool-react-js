@@ -3,6 +3,7 @@ import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button } from 'reactstrap';
 import $ from 'jquery';
 import { Link, withRouter } from 'react-router-dom';
+import { withTranslation, Trans } from 'react-i18next';
 
 import Datatable from '../Datatable';
 import './style.css';
@@ -56,24 +57,26 @@ class MemberData extends Component {
     return (
       <ContentWrapper>
         <div className="content-heading">
-          <div>Saving Data</div>
+          <div><Trans i18nKey='member.saving-data.SAVINGS'>Savings</Trans></div>
         </div>
         <Container fluid>
           <Card>
             <CardBody>
               <Link to="/member/saving-data-add">
-                <Button outline className="float-right mb-3" color="primary" type="button">Add Data Simpanan</Button>
+                <Button outline className="float-right mb-3" color="primary" type="button">
+                  <Trans i18nKey='member.saving-data.ADD_SAVINGS'>Add Savings</Trans>
+                </Button>
               </Link>
               <Datatable options={this.state.options}>
                 <table className="table table-hover table-striped my-4 w-100">
                   <thead>
                     <tr>
-                      <th data-priority="1">No. Simpanan</th>
-                      <th>No. Anggota</th>
-                      <th>Nama Anggota</th>
-                      <th>Saldo</th>
-                      <th>Kantor Pelayanan</th>
-                      <th>Action</th>
+                      <th data-priority="1"><Trans i18nKey='member.saving-data.ACCOUNT'>Account</Trans></th>
+                      <th><Trans i18nKey='member.saving-data.MEMBER_ID'>Member Id</Trans></th>
+                      <th><Trans i18nKey='member.saving-data.MEMBER'>Member</Trans></th>
+                      <th><Trans i18nKey='member.saving-data.BALANCE'>Balance</Trans></th>
+                      <th><Trans i18nKey='member.saving-data.OFFICE'>Office</Trans></th>
+                      <th><Trans i18nKey='member.saving-data.ACTION'>Action</Trans></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -101,4 +104,4 @@ class MemberData extends Component {
 
 }
 
-export default withRouter(MemberData);
+export default withTranslation('translations')(withRouter(MemberData));

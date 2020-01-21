@@ -36,3 +36,45 @@
     transform: rotate(360deg);
   }
 }
+
+html {
+  font-size: 16px;
+}
+
+.form-font-size {
+  font-size: 20px;
+}
+
+.input-font-size {
+  font-size: 16px;
+}
+
+.css-1hwfws3 {
+  height: 16px;
+  font-size: 16px;
+}
+
+input {
+  padding: 0 16px;
+}
+
+input,
+input::-webkit-input-placeholder {
+  font-size: 16px;
+  line-height: 3;
+}
+
+/* Avatar */
+.btn-logout {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.btn-color {
+  background-color: #0e1f57
+}
+
+/* Members */
+.tr-cursor {
+  cursor: pointer
+}

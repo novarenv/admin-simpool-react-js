@@ -5,20 +5,23 @@ import Sidebar from './Sidebar'
 import Offsidebar from './Offsidebar'
 import Footer from './Footer'
 
-const Base = props => (
-    <div className="wrapper">
-        <Header />
+const Base = props => {
 
-        <Sidebar />
+    return (
+        <div className="wrapper">
+            <Header />
 
-        <Offsidebar />
+            <Sidebar />
 
-        <section className="section-container">
-            { props.children }
-        </section>
+            <Offsidebar />
 
-        <Footer />
-    </div>
-)
+            <section className="section-container">
+                {props.children}
+            </section>
 
-export default Base;
+            <Footer />
+        </div>
+    )
+}
+
+export default (Base);

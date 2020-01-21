@@ -10,7 +10,7 @@ import "./Vendor";
 import './styles/bootstrap.scss';
 import './styles/app.scss'
 
-import './App.css';
+import './App.scss';
 
 function App() {
   const basename = '/';

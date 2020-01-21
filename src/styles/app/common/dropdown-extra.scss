@@ -48,6 +48,7 @@
 // Popper doesnt place correctly dropdowns
 // we can use forced class to place them
 .dropdown-menu-right-forced {
+    font-size: 16px;
     right: 0 !important;
     left: auto !important;
 }

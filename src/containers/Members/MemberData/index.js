@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button} from 'reactstrap';
+import { Container, Card, CardBody, Button } from 'reactstrap';
 import $ from 'jquery';
-import { Link, withRouter, useHistory } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+import { withTranslation, Trans } from 'react-i18next';
 
 import Datatable from '../Datatable';
 import './style.css'
+
 
 class MemberData extends Component {
 
@@ -37,9 +39,13 @@ class MemberData extends Component {
     ]
   }
 
+  // componentDidMount() {
+  //   this.props.i18n.changeLanguage('id')
+  // }
+
   // Access to internal datatable instance for customizations
   dtInstance = dtInstance => {
-    const inputSearchClass = 'datatable_input_col_search';    
+    const inputSearchClass = 'datatable_input_col_search';
     const columnInputs = $('tfoot .' + inputSearchClass);
     // On input keyup trigger filtering
     columnInputs
@@ -52,38 +58,38 @@ class MemberData extends Component {
     return (
       <ContentWrapper>
         <div className="content-heading">
-          <div>Member Data</div>
+          <span><Trans i18nKey='member.data.MEMBER_DATA'>Member Data</Trans></span>
         </div>
         <Container fluid>
           <Card>
             <CardBody>
               <Link to="/member/data-add">
-                <Button outline className="float-right mb-3" color="primary" type="button">Add Member Data</Button>
+                <Button outline className="float-right mb-3" color="primary" type="button"><Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans></Button>
               </Link>
               <Datatable options={this.state.options}>
                 <table className="table table-hover table-striped my-4 w-100">
                   <thead>
                     <tr>
-                      <th data-priority="1" className="sort-numeric">No. Anggota</th>
-                      <th className="sort-numeric">No. Anggota Lama</th>
-                      <th>Nama Lengkap</th>
-                      <th>Kantor Pelayanan</th>
-                      <th data-priority="1">Status</th>
-                      <th>Action</th>
+                      <th data-priority="1" className="sort-numeric"><Trans i18nKey='member.data.ID_MEMBER'>ID</Trans></th>
+                      <th className="sort-numeric"><Trans i18nKey='member.data.EXTERNAL_ID'>External ID</Trans></th>
+                      <th><Trans i18nKey='member.data.FULL_NAME'>Full Name</Trans></th>
+                      <th><Trans i18nKey='member.data.OFFICE'>Office</Trans></th>
+                      <th><Trans i18nKey='member.data.STATUS'>Status</Trans></th>
+                      <th><Trans i18nKey='member.data.ID_MEMBER'>Action</Trans></th>
                     </tr>
                   </thead>
                   <tbody>
-                    { this.state.datas.map((row, rowKey) => {
+                    {this.state.datas.map((row, rowKey) => {
                       return (
                         <tr className="tr-cursor" key={rowKey}>
-                          { row.map((col, colKey) => {
+                          {row.map((col, colKey) => {
                             return (
-                              <td key={colKey}>{ col }</td>
+                              <td key={colKey}>{col}</td>
                             )
-                          }) }
+                          })}
                           <td />
                         </tr>
-                      ) 
+                      )
                     })}
                   </tbody>
                 </table>
@@ -97,4 +103,4 @@ class MemberData extends Component {
 
 }
 
-export default withRouter(MemberData);
+export default withTranslation('translations')(withRouter(MemberData));

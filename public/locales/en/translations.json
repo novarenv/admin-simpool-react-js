@@ -72,44 +72,64 @@
         "STARTER": "Starter Template"
       },
       "member": {
-        "MEMBERS": "Members",
+        "MEMBERS": "Member",
         "MEMBER_DATA": "Member Data",
-        "SAVING_DATA": "Saving Data",
-        "LOAN_DATA": "Loan Data",
-        "USER_DATA": "User Data"
+        "SAVING_DATA": "Savings",
+        "LOAN_DATA": "Loan",
+        "USER_DATA": "Mobile User"
       },
       "transactions": {
-        "TRANSACTIONS": "Transactions",
+        "TRANSACTIONS": "Transaction",
         "DEPOSIT": "Deposit",
         "WITHDRAWAL": "Withdrawal",
-        "INSTALLMENTS": "Installments",
+        "LOAN_PAYMENT": "Loan Payment",
         "TRANSFER": "Transfer"
       },
       "accountancy": {
-        "ACCOUNTANCIES": "Accountancies",
-        "REGISTER_ACCOUNT_CODE": "Register Account Code",
+        "ACCOUNTANCIES": "Accounting",
+        "REGISTER_ACCOUNT_CODE": "Chart of Account",
         "JOURNAL_ENTRY": "Journal Entry",
-        "NEW_ACCOUNT_BALANCE": "New Account Balance",
+        "NEW_ACCOUNT_BALANCE": "Beginning Balance",
         "TRANSACTION_CODE": "Transaction Code"
       },
       "report": {
-        "REPORTS": "Reports",
+        "REPORTS": "Report",
         "MEMBER": "Member",
-        "SAVING": "Saving",
+        "SAVING": "Savings",
         "LOAN": "Loan",
-        "ACCOUNTANCY": "Accountancy"
+        "ACCOUNTANCY": "Accounting"
       },
       "setting": {
-        "SETTINGS": "Settings",
-        "SAVING_PRODUCTS": "Saving Products",
-        "LOAN_PRODUCTS": "Loan Products",
-        "CHARGE_PRODUCTS": "Fee Products",
-        "SERVICE_OFFICE_LIST": "Service Office List",
+        "SETTINGS": "Setting",
+        "SAVING_PRODUCTS": "Savings Product",
+        "LOAN_PRODUCTS": "Loan Product",
+        "CHARGE_PRODUCTS": "Charges",
+        "SERVICE_OFFICE_LIST": "Office",
         "BILLER_MANAGEMENT": "Biller Management",
         "ROLE_AND_PERMISSION": "Role & Permission",
         "CHECKER_MAKER": "Checker Maker",
         "TEMPLATE": "Template"
       }
+    }
+  },
+  "member": {
+    "data": {
+      "MEMBER_DATA": "Member Data",
+      "ADD_MEMBER_DATA": "Add Member Data",
+      "ID_MEMBER": "ID",
+      "EXTERNAL_ID": "External Id",
+      "FULL_NAME": "Full Name",
+      "OFFICE": "Office",
+      "STATUS": "Status"
+    },
+    "saving-data": {
+      "SAVINGS": "Savings",
+      "ADD_SAVINGS": "Add Savings",
+      "ACCOUNT": "Account",
+      "MEMBER_ID": "Member Id",
+      "MEMBER": "Member",
+      "BALANCE": "Balance",
+      "OFFICE": "Office"
     }
   }
 }

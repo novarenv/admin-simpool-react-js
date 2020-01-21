@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button } from 'reactstrap';
+import { Container, Card, CardBody } from 'reactstrap';
 import $ from 'jquery';
 
 import Datatable from '../Datatable';
-import { Link, withRouter } from 'react-router-dom';
 
 class SavingHistory extends Component {
 
@@ -93,4 +92,4 @@ class SavingHistory extends Component {
 
 }
 
-export default withRouter(SavingHistory);
+export default SavingHistory;

@@ -41,7 +41,7 @@ class SidebarUserBlock extends Component {
               <Link to="/login">
                 <Button
                   outline
-                  className="mt-2"
+                  className="mt-2 btn-logout"
                   color="danger"
                   type="button"
                   onClick={logOut}>
