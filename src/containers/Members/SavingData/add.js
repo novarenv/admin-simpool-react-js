@@ -49,9 +49,9 @@ export default class SavingDataAdd extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-              <label className="mt-3" htmlFor="savingType">Jenis Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="savingType">
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <label htmlFor="savingType">Jenis Simpanan</label>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType">
                 <option>Jenis Simpanan</option>
                 <option defaultValue="pokok">Pokok</option>
                 <option defaultValue="wajib">Wajib</option>
@@ -61,6 +61,7 @@ export default class SavingDataAdd extends Component {
               <label className="mt-3" htmlFor="member">Anggota</label>
               <Select
                 name="member"
+                className="input-font-size"
                 multi
                 simpleValue
                 value={selectedOptionMulti}
@@ -73,6 +74,7 @@ export default class SavingDataAdd extends Component {
                 type="text"
                 id="openDate"
                 name="openDate"
+                className="input-font-size"
                 placeholder="dd-mm-yyyy"
                 value={today}
               />
@@ -82,6 +84,7 @@ export default class SavingDataAdd extends Component {
                 type="number"
                 id="initDepositValue"
                 name="initDepositValue"
+                className="input-font-size"
                 placeholder="minimal 3.000.000"
               />
 
@@ -90,6 +93,7 @@ export default class SavingDataAdd extends Component {
                 type="text"
                 id="depositNumber"
                 name="depositNumber"
+                className="input-font-size"
               />
 
               <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>

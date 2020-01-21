@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Card,
   CardBody,
-  Col,
   Input
 } from 'reactstrap';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';

@@ -546,12 +546,10 @@ class AddValidation extends Component {
                     onChange={this.validateOnChange}
                     invalid={this.hasError(
                       'addValidation',
-                      'fullName',
-                      'required'
+                      'fullName'
                     )}
                     placeholder="contoh: Ikkat Inovasi Teknologi"
                     value={this.state.addValidation.privateIdentity.fullName}
-                    data-validate='["required"]'
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
 

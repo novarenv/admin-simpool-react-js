@@ -45,9 +45,9 @@ export default class LoanDataAdd extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-              <label className="mt-3" htmlFor="loanType">Jenis Pinjaman</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="loanType">
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <label htmlFor="loanType">Jenis Pinjaman</label>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="loanType">
                 <option>Jenis Pinjaman</option>
                 <option defaultValue="pokok">Pokok</option>
                 <option defaultValue="wajib">Wajib</option>
@@ -57,6 +57,7 @@ export default class LoanDataAdd extends Component {
               <label className="mt-3" htmlFor="member">Anggota</label>
               <Select
                 name="member"
+                className="input-font-size"
                 multi
                 simpleValue
                 value={selectedOptionMulti}
@@ -69,6 +70,8 @@ export default class LoanDataAdd extends Component {
                 type="text"
                 id="openDate"
                 name="openDate"
+                className="input-font-size"
+                className="input-font-size"
                 placeholder="dd-mm-yyyy"
               />
 
@@ -77,6 +80,7 @@ export default class LoanDataAdd extends Component {
                 type="number"
                 id="initLoanValue"
                 name="initLoanValue"
+                className="input-font-size"
                 placeholder="minimal 3.000.000"
               />
 
@@ -85,6 +89,7 @@ export default class LoanDataAdd extends Component {
                 type="number"
                 id="interest"
                 name="interest"
+                className="input-font-size"
                 placeholder="7.5"
               />
 
@@ -93,6 +98,7 @@ export default class LoanDataAdd extends Component {
                 type="number"
                 id="timePeriod"
                 name="timePeriod"
+                className="input-font-size"
                 placeholder="7.5"
               />
 
@@ -101,11 +107,12 @@ export default class LoanDataAdd extends Component {
                 type="text"
                 id="firstInstallment"
                 name="firstInstallment"
+                className="input-font-size"
                 placeholder="dd-mm-yyyy"
               />
 
               <label className="mt-3" htmlFor="disbursement">Pencairan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="disbursement" required>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="disbursement" required>
                 <option>Jenis Pencairan</option>
                 <option defaultValue="depositAccount">Rekening Simpanan</option>
                 <option defaultValue="cashAccount">Rekening Cash</option>
@@ -113,13 +120,13 @@ export default class LoanDataAdd extends Component {
 
               {/* Buat jika memilih simpanan */}
               <label className="mt-3" htmlFor="charge">Biaya</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="charge" required>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="charge" required>
                 <option>Jenis Biaya</option>
                 <option defaultValue="charge1">Biaya 1</option>  
                 <option defaultValue="charge2">Biaya 2</option>
               </select>
 
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <button className="btn btn-block btn-primary mt-4 justify-content-center" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>
