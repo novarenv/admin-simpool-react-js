@@ -51,9 +51,9 @@ export default class LoanPayment extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-              <label className="mt-3" htmlFor="fundSource">Sumber Dana</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="fundSource">
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <label htmlFor="fundSource">Sumber Dana</label>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="fundSource">
                 <option>Pilih Sumber Dana</option>
                 <option defaultValue="cash">Cash</option>
                 <option defaultValue="account">Account</option>
@@ -63,6 +63,7 @@ export default class LoanPayment extends Component {
               <label className="mt-3" htmlFor="member">Anggota</label>
               <Select
                 name="member"
+                className="input-font-size"
                 multi
                 simpleValue
                 value={selectedOptionMulti}
@@ -71,7 +72,7 @@ export default class LoanPayment extends Component {
               />
 
               <label className="mt-3" htmlFor="accountNum">No. Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="accountNum">
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="accountNum">
                 <option>Pilih Nomor Simpanan</option>
                 <option defaultValue="accountNum1">No. Simpanan 1</option>
                 <option defaultValue="accountNum2">No. Simpanan 2</option>
@@ -80,30 +81,34 @@ export default class LoanPayment extends Component {
 
               <label className="mt-3" htmlFor="paymentAmount">Nilai Bayar</label>
               <Input
+                name="paymentAmount"
+                className="input-font-size"
                 type="number"
                 id="paymentAmount"
-                name="paymentAmount"
                 placeholder="minimal 3.000.000"
               />
 
               <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
               <Input
+                name="transactionDate"
+                className="input-font-size"
                 type="text"
                 id="transactionDate"
-                name="transactionDate"
                 placeholder="dd-mm-yyyy"
                 value={today}
               />
 
               <label className="mt-3" htmlFor="description">Keterangan</label>
               <Input
-                type="text"
-                id="description"
                 name="description"
+                className="input-font-size"
+                type="textarea"
+                id="description"
+                rows="5"
                 placeholder="Deskripsi angsuran"
               />
 
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <button className="btn btn-block btn-primary mt-4 justify-content-center" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>

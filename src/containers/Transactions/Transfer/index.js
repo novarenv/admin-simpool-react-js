@@ -49,9 +49,9 @@ export default class Deposit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-              <label className="mt-3" htmlFor="serviceOffice">Pilih Kantor Pelayanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="serviceOffice">
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <label htmlFor="serviceOffice">Pilih Kantor Pelayanan</label>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="serviceOffice">
                 <option>Pilih Kantor Pelayanan</option>
                 <option defaultValue="serviceOffice1">Kantor 1</option>
                 <option defaultValue="serviceOffice2">Kantor 2</option>
@@ -60,6 +60,7 @@ export default class Deposit extends Component {
               <label className="mt-3" htmlFor="member">Anggota</label>
               <Select
                 name="member"
+                className="input-font-size"
                 multi
                 simpleValue
                 value={selectedOptionMulti}
@@ -68,7 +69,7 @@ export default class Deposit extends Component {
               />
 
               <label className="mt-3" htmlFor="serviceNum">No. Pelayanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="serviceNum">
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="serviceNum">
                 <option>Pilih Kantor Pelayanan</option>
                 <option defaultValue="serviceNum1">No. 1</option>
                 <option defaultValue="serviceNum2">No. 2</option>
@@ -76,30 +77,34 @@ export default class Deposit extends Component {
 
               <label className="mt-3" htmlFor="transferAmount">Nilai Transfer</label>
               <Input
+                name="transferAmount"
+                className="input-font-size"
                 type="number"
                 id="transferAmount"
-                name="transferAmount"
                 placeholder="minimal 3.000.000"
               />
 
               <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
               <Input
+                name="transactionDate"
+                className="input-font-size"
                 type="text"
                 id="transactionDate"
-                name="transactionDate"
                 placeholder="dd-mm-yyyy"
                 value={today}
               />
 
               <label className="mt-3" htmlFor="description">Keterangan</label>
               <Input
-                type="text"
-                id="description"
                 name="description"
+                className="input-font-size"
+                type="textarea"
+                id="description"
+                rows="5"
                 placeholder="Deskripsi transfer"
               />
 
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <button className="btn btn-block btn-primary mt-4 justify-content-center" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>

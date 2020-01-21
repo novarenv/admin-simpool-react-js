@@ -53,83 +53,53 @@ export default class Deposit extends Component {
         <Card className="card-default">
           <CardBody>
             <form className="form-font-size" onSubmit={this.onSubmit}>
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="member">Anggota</label>
-                  <Col md={9} lg={10}>
-                    <Select
-                      name="select-name"
-                      className="input-font-size"
-                      value={this.props.children}
-                      onChange={this.handleChangeSelect}
-                      options={MEMBERS}
-                    />
-                  </Col>
-                </div>
-              </fieldset>
+              <label htmlFor="member">Anggota</label>
+              <Select
+                name="select-name"
+                className="input-font-size"
+                value={this.props.children}
+                onChange={this.handleChangeSelect}
+                options={MEMBERS}
+              />
 
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="savingNum">No. Simpanan</label>
-                  <Col md={9} lg={10}>
-                    <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingNum">
-                      <option>No. Simpanan</option>
-                      <option defaultValue="savingNum1">No. Simpanan 1</option>
-                      <option defaultValue="savingNum2">No. Simpanan 2</option>
-                    </select>
-                  </Col>
-                </div>
-              </fieldset>
+              <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingNum">
+                <option>No. Simpanan</option>
+                <option defaultValue="savingNum1">No. Simpanan 1</option>
+                <option defaultValue="savingNum2">No. Simpanan 2</option>
+              </select>
 
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="transferAmount">Nilai Setoran</label>
-                  <Col md={9} lg={10}>
-                    <Input
-                      type="number"
-                      id="transferAmount"
-                      name="transferAmount"
-                      className="input-font-size"
-                      placeholder="minimal 3.000.000"
-                    />
-                  </Col>
-                </div>
-              </fieldset>
+              <label className="mt-3" htmlFor="transferAmount">Nilai Setoran</label>
+              <Input
+                type="number"
+                id="transferAmount"
+                name="transferAmount"
+                className="input-font-size"
+                placeholder="minimal 3.000.000"
+              />
 
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="transactionDate">Tanggal Transaksi</label>
-                  <Col md={9} lg={10}>
-                    <Input
-                      type="text"
-                      id="transactionDate"
-                      name="transactionDate"
-                      className="input-font-size"
-                      placeholder="dd-mm-yyyy"
-                      onChange={this.onSubmit}
-                      value={today}
-                    />
-                  </Col>
-                </div>
-              </fieldset>
+              <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
+              <Input
+                type="text"
+                id="transactionDate"
+                name="transactionDate"
+                className="input-font-size"
+                placeholder="dd-mm-yyyy"
+                onChange={this.onSubmit}
+                value={today}
+              />
 
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="description">Keterangan</label>
-                  <Col md={9} lg={10}>
-                    <Input
-                      type="textarea"
-                      id="description"
-                      name="description"
-                      className="input-font-size"
-                      rows="5"
-                      placeholder="Deskripsi deposit"
-                    />
-                  </Col>
-                </div>
-              </fieldset>
+              <label className="mt-3" htmlFor="description">Keterangan</label>
+              <Input
+                type="textarea"
+                id="description"
+                name="description"
+                className="input-font-size"
+                rows="5"
+                placeholder="Deskripsi deposit"
+              />
 
-              <button className="btn btn-block btn-primary mt-4 d-flex justify-content-center d-md-table mx-auto" type="submit">Buat Baru</button>
+              <button className="btn btn-block btn-primary mt-4 justify-content-center" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>

@@ -52,25 +52,18 @@ export default class Deposit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <form onSubmit={this.onSubmit}>
-
-              <fieldset>
-                <div className="form-group row align-items-center">
-                  <label className="col-md-3 col-lg-2 col-form-label" htmlFor="member">Anggota</label>
-                  <Col md={9} lg={10}>
-                    <Select
-                      name="select-name"
-                      className="input-font-size"
-                      value={this.props.children}
-                      onChange={this.handleChangeSelect}
-                      options={MEMBERS}
-                    />
-                  </Col>
-                </div>
-              </fieldset>
+            <form className="form-font-size" onSubmit={this.onSubmit}>
+              <label htmlFor="member">Anggota</label>
+              <Select
+                name="select-name"
+                className="input-font-size"
+                value={this.props.children}
+                onChange={this.handleChangeSelect}
+                options={MEMBERS}
+              />
 
               <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm" name="savingNum">
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingNum">
                 <option>No. Simpanan</option>
                 <option defaultValue="savingNum1">No. Simpanan 1</option>
                 <option defaultValue="savingNum2">No. Simpanan 2</option>
@@ -81,6 +74,7 @@ export default class Deposit extends Component {
                 type="number"
                 id="withdrawalAmount"
                 name="withdrawalAmount"
+                className="input-font-size"
                 placeholder="minimal 3.000.000"
               />
 
@@ -89,19 +83,22 @@ export default class Deposit extends Component {
                 type="text"
                 id="transactionDate"
                 name="transactionDate"
+                className="input-font-size"
                 placeholder="dd-mm-yyyy"
                 value={today}
               />
 
               <label className="mt-3" htmlFor="description">Keterangan</label>
               <Input
-                type="text"
+                type="textarea"
                 id="description"
                 name="description"
+                className="input-font-size"
+                rows="5"
                 placeholder="Deskripsi penarikan"
               />
 
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <button className="btn btn-block btn-primary mt-4 justify-content-center" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>
