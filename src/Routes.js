@@ -23,7 +23,6 @@ const Login = lazy(() => import('./containers/Auth/Login'));
 
 // Members
 const MemberData = lazy(() => import('./containers/Members/MemberData'));
-const DataGrid = lazy(() => import('./containers/Members/DataGrid'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const SavingData = lazy(() => import('./containers/Members/SavingData'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
@@ -109,7 +108,6 @@ const Routes = ({ location, ...props } ) => {
 
                     {/* Members */}
                     <Route path="/member/data" component={waitFor(MemberData)} />
-                    <Route path="/member/data-grid" component={waitFor(DataGrid)} />
                     <Route path="/member/data-add" component={waitFor(MemberDataAdd)} />
                     <Route path="/member/saving-data" component={waitFor(SavingData)} />
                     <Route path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
