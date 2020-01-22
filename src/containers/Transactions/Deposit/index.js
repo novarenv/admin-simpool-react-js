@@ -35,13 +35,30 @@ export default class Deposit extends Component {
 
   render() {
     const { selectedOption } = this.state;
-    const value = selectedOption && selectedOption.value;
 
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
     const yyyy = new Date().getFullYear()
 
     const today = dd + '/' + mm + '/' + yyyy
+
+    const customStyles = {
+      control: base => ({
+        ...base,
+        padding: 0,
+        margin: 0,
+        height: 36,
+        minHeight: 36,
+        maxHeight: 36,
+        input: {
+          padding: 0,
+          margin: 0,
+          height: 36,
+          minHeight: 36,
+          maxHeight: 36,          
+        }
+      })
+    };
 
     return (
       <ContentWrapper>
@@ -56,9 +73,12 @@ export default class Deposit extends Component {
               <Select
                 name="select-name"
                 className="input-font-size"
+                singleValue
                 value={this.props.children}
                 onChange={this.handleChangeSelect}
                 options={MEMBERS}
+                styles={customStyles}
+                // menuIsOpen={true}
               />
 
               <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>

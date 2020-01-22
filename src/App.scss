@@ -79,6 +79,31 @@ label {
 
 .input-font-size {
   font-size: 16px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+}
+
+.prefix-container,
+.my-className-prefix__control {
+  width: 90px !important;
+}
+
+.prefix__value-container,
+.prefix__indicator-separator,
+.prefix__dropdown-indicator {
+  position: relative;
+  bottom: 16px;
+}
+
+.__control--is-focused {
+  height: 36px;
+}
+
+.prefix__placeholder,
+.prefix__value-container,
+.prefix__menu {
+  font-size: 16px;
 }
 
 
