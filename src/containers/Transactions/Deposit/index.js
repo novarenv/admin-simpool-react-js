@@ -78,7 +78,6 @@ export default class Deposit extends Component {
                 onChange={this.handleChangeSelect}
                 options={MEMBERS}
                 styles={customStyles}
-                // menuIsOpen={true}
               />
 
               <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>
