@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
+import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 
 const COLUMN_WIDTH = 500;
 
-class LoanData extends Component {
+class MobileUser extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this._columns = [
+    this._columns = [      
       {
         key: 'ACTION',
         name: 'Action',
@@ -18,32 +19,32 @@ class LoanData extends Component {
         frozen: true
       },
       {
-        key: 'ACCOUNT',
-        name: 'Account',
+        key: 'NAME',
+        name: 'Name',
         width: 100,
         frozen: true
       },
       {
-        key: 'MEMBER_ID',
-        name: 'Member Id',
+        key: 'USER_NAME',
+        name: 'User Name',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
-        key: 'MEMBER',
-        name: 'Member',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'BALANCE',
-        name: 'Balance',
+        key: 'EMAIL',
+        name: 'Email',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'OFFICE',
         name: 'Office',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'ROLE',
+        name: 'Role',
         sortable: true,
         width: COLUMN_WIDTH
       }
@@ -73,25 +74,24 @@ class LoanData extends Component {
           sNext: '<em class="fa fa-caret-right"></em>',
           sPrevious: '<em class="fa fa-caret-left"></em>'
         }
-      }
+      },
     }
   }
 
-  toLoanDataView = () => {
-    this.props.history.push("/member/loan-data-view")
-  }
-
+  // componentDidMount() {
+  //   this.props.i18n.changeLanguage('id')
+  // }
 
   createRows = () => {
     let rows = [];
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
-        ACCOUNT: i,
-        MEMBER_ID: i,
-        MEMBER: 'ABC' + i,
-        BALANCE: i,
-        OFFICE: i
+        NAME: i,
+        USER_NAME: i,
+        EMAIL: i,
+        OFFICE: i,
+        ROLE: i
       });
     }
 
@@ -118,14 +118,15 @@ class LoanData extends Component {
     return (
       <ContentWrapper>
         <div className="content-heading">
-          <div>Data Pinjaman</div>
+          <span><Trans i18nKey='member.data.MOBILE_USER'>Mobile User</Trans></span>
         </div>
         <Container fluid>
           <Card>
             <CardBody>
-              <Link to="/member/loan-data-add">
-                <Button outline className="float-right mb-3" color="primary" type="button">Add Data Pinjaman</Button>
+              <Link to="/member/data-add">
+                <Button outline className="float-right mb-3" color="primary" type="button"><Trans i18nKey='member.data.ADD_MOBILE_USER'>Add Mobile User</Trans></Button>
               </Link>
+
               <Container fluid>
                 <ReactDataGrid
                   onGridSort={this.handleGridSort}
@@ -143,4 +144,4 @@ class LoanData extends Component {
 
 }
 
-export default withRouter(LoanData);
+export default withTranslation('translations')(withRouter(MobileUser));

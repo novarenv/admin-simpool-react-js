@@ -31,6 +31,7 @@ const LoanData = lazy(() => import('./containers/Members/LoanData'));
 const LoanDataAdd = lazy(() => import('./containers/Members/LoanData/add'));
 const LoanDataHistory = lazy(() => import('./containers/Members/LoanData/history'));
 const LoanDataView = lazy(() => import('./containers/Members/LoanData/view'));
+const MobileUser = lazy(() => import('./containers/Members/MobileUser'));
 
 // Transactions
 const Deposit = lazy(() => import('./containers/Transactions/Deposit'));
@@ -116,6 +117,7 @@ const Routes = ({ location, ...props } ) => {
                     <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
                     <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />
                     <Route path="/member/loan-data-view" component={waitFor(LoanDataView)} />
+                    <Route path="/member/mobile-user" component={waitFor(MobileUser)} />
 
                     {/* Transactions */}
                     <Route path="/transaction/deposit" component={waitFor(Deposit)} />

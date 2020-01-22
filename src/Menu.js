@@ -30,7 +30,7 @@ const Menu = [
             },
             {
                 name: 'User Data',
-                path: '/member/user-data',
+                path: '/member/mobile-user',
                 translate: 'sidebar.nav.member.USER_DATA'
             }
         ]

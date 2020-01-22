@@ -5,8 +5,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 
-import './style.css'
-
 const COLUMN_WIDTH = 500;
 
 class MemberData extends Component {
