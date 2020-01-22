@@ -37,20 +37,8 @@
   }
 }
 
+// Basic
 html {
-  font-size: 16px;
-}
-
-.form-font-size {
-  font-size: 16px;
-}
-
-.input-font-size {
-  font-size: 16px;
-}
-
-.css-1hwfws3 {
-  height: 16px;
   font-size: 16px;
 }
 
@@ -68,6 +56,11 @@ label {
   margin-bottom: 4px;
 }
 
+.nav-tab :hover {
+  cursor: pointer;
+}
+
+
 /* Avatar */
 .btn-logout {
   font-size: 12px;
@@ -77,6 +70,17 @@ label {
 .btn-color {
   background-color: #0e1f57
 }
+
+
+// Form
+.form-font-size {
+  font-size: 16px;
+}
+
+.input-font-size {
+  font-size: 16px;
+}
+
 
 /* Members */
 .tr-cursor {

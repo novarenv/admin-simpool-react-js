@@ -4,7 +4,7 @@ import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 
-const COLUMN_WIDTH = 500;
+const COLUMN_WIDTH = 250;
 
 class LoanData extends Component {
   constructor(props, context) {

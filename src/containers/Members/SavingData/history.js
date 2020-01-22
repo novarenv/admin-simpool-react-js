@@ -3,7 +3,7 @@ import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody } from 'reactstrap';
 import ReactDataGrid from 'react-data-grid';
 
-const COLUMN_WIDTH = 500;
+const COLUMN_WIDTH = 250;
 
 class SavingHistory extends Component {
   constructor(props, context) {

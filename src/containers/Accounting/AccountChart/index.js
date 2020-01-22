@@ -4,13 +4,13 @@ import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 
-const COLUMN_WIDTH = 500;
+const COLUMN_WIDTH = 250;
 
 class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this._columns = [      
+    this._columns = [
       {
         key: 'ACTION',
         name: 'ACTION',
@@ -111,10 +111,11 @@ class MemberData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Button outline className="float-left mb-3" color="primary" type="button">Tree View</Button>
-              <Link to="/member/saving-data-add">
-                <Button outline className="float-right mb-3" color="primary" type="button">Tambah</Button>
+              <Link to="/accounting/account-chart-tree">
+                <Button outline className="float-left mb-3" color="primary" type="button">Tree View</Button>
               </Link>
+
+              <Button outline className="float-right mb-3" color="primary" type="button">Tambah</Button>
 
               <Container fluid>
                 <ReactDataGrid
