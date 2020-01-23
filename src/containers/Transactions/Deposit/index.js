@@ -55,7 +55,7 @@ export default class Deposit extends Component {
           margin: 0,
           height: 36,
           minHeight: 36,
-          maxHeight: 36,          
+          maxHeight: 36         
         }
       })
     };
@@ -112,7 +112,7 @@ export default class Deposit extends Component {
                 type="textarea"
                 id="description"
                 name="description"
-                className="input-font-size"
+                className="input-font-size t-area-h"
                 rows="5"
                 placeholder="Deskripsi deposit"
               />

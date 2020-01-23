@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardBody,
+  CardHeader,
   Container,
   Form,
   Input,
@@ -20,6 +21,21 @@ import FormValidator from '../../../components/Forms/FormValidator';
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
 };
+
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'Mei',
+  'Jun',
+  'Jul',
+  'Agu',
+  'Sep',
+  'Okt',
+  'Nov',
+  'Des',
+];
 
 export function DragDrop(props) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ multiple: false });
@@ -73,40 +89,190 @@ export function DragDropMultiple(props) {
 
 class AddValidation extends Component {
   state = {
-    dropdownOpen: false,
-    activeStep: '2',
+    notDuplicate: false,
+    activeStep: '1',
     files: [],
 
     /* Group each form state in an object.
        Property name MUST match the form name */
     addValidation: {
-      privateIdentity: {
-        registrationDate: '',
-        serviceOffice: '',
-        fullName: '',
-        birthplace: '',
-        birthdate: '',
-        noKTP: '',
-        NPWP: '',
-        oldMemberNumber: '',
-        phoneNumber: '',
-        email: ''
-      },
-      address: {
-        address: '',
-        city: '',
-        zipCode: '',
-        addressDomicile: '',
-        cityDomicile: '',
-        zipCodeDomicile: ''
-      }
+      registrationDate: '',
+      serviceOffice: '',
+      fullName: '',
+      birthplace: '',
+      birthdate: '',
+      noKTP: '',
+      NGIK: '',
+      NPWP: '',
+      oldMemberNumber: '',
+      phoneNumber: '',
+      email: '',
+
+      address: '',
+      city: '',
+      zipCode: '',
+      addressDomicile: '',
+      cityDomicile: '',
+      zipCodeDomicile: ''
     }
   };
 
-  toggleDropDown = () => {
+  isNotDuplicate = () => {
     this.setState({
-      dropdownOpen: !this.state.dropdownOpen
+      notDuplicate: !this.state.notDuplicate
     });
+    console.log(this.state.notDuplicate)
+  }
+
+  showNotDuplicate = () => {
+    return (
+      <div>
+        <label className="mt-3" htmlFor="memberType">Jenis Anggota *</label>
+        <div className="py-2">
+          <label className="c-radio">
+            <Input id="individu" type="radio" name="memberType" className="input-font-size" defaultValue="individu" required />
+            <span className="fa fa-circle"></span>Individu</label>
+          <span className="span-disabled">
+            <label className="c-radio">
+              <Input id="badanUsaha" type="radio" name="memberType" className="input-font-size" defaultValue="badanUsaha" disabled />
+              <span className="fa fa-circle"></span>Badan Usaha</label>
+          </span>
+        </div>
+        <span className="invalid-feedback">Kolom harus diisi!</span>
+
+        <label htmlFor="membership">Keanggotaan</label>
+        <div className="py-2">
+          <label className="c-radio">
+            <Input id="anggota" type="radio" name="membership" defaultValue="anggota" />
+            <span className="fa fa-circle"></span>Anggota</label>
+          <label className="c-radio">
+            <Input id="anggotaLuarBiasa" type="radio" name="membership" defaultValue="anggotaLuarBiasa" />
+            <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
+          <label className="c-radio">
+            <Input id="calonAnggota" type="radio" name="membership" defaultValue="calonAnggota" />
+            <span className="fa fa-circle"></span>Calon Anggota</label>
+        </div>
+        <span className="invalid-feedback">Kolom harus diisi!</span>
+
+        <label className="mt-3" htmlFor="birthplace">Tempat Lahir</label>
+        <Input
+          name="birthplace"
+          className="input-font-size"
+          type="text"
+          id="birthplace"
+          onChange={this.validateOnChange}
+          invalid={this.hasError(
+            'addValidation',
+            'birthplace'
+          )}
+          placeholder="contoh: Tangerang"
+          value={this.state.addValidation.birthplace}
+        />
+
+        <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
+        <div className="py-2">
+          <label className="c-radio">
+            <Input id="man" type="radio" name="gender" className="input-font-size" defaultValue="man" />
+            <span className="fa fa-circle"></span>Laki-laki</label>
+          <label className="c-radio">
+            <Input id="woman" type="radio" name="gender" className="input-font-size" defaultValue="woman" />
+            <span className="fa fa-circle"></span>Perempuan</label>
+        </div>
+
+        <label className="mt-3" htmlFor="NPWP">NPWP</label>
+        <Input
+          name="NPWP"
+          className="input-font-size"
+          type="text"
+          id="NPWP"
+          name="NPWP"
+          className="input-font-size"
+          onChange={this.validateOnChange}
+          invalid={this.hasError(
+            'addValidation',
+            'NPWP'
+          )}
+          type="number"
+          placeholder="101001002"
+          value={this.state.addValidation.NPWP}
+        />
+
+        <label className="mt-3" htmlFor="oldMemberNumber">No. Anggota Lama</label>
+        <Input
+          name="oldMemberNumber"
+          className="input-font-size"
+          type="text"
+          id="oldMemberNumber"
+          name="oldMemberNumber"
+          className="input-font-size"
+          onChange={this.validateOnChange}
+          invalid={this.hasError(
+            'addValidation',
+            'oldMemberNumber'
+          )}
+          placeholder="contoh: 123456789"
+          value={this.state.addValidation.oldMemberNumber}
+        />
+
+        <label className="mt-3" htmlFor="marriageStatus">Status Pernikahan</label>
+        <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="marriageStatus" required>
+          <option>Status Pernikahan</option>
+          <option defaultValue="married">Menikah</option>
+          <option defaultValue="single">Lajang</option>
+        </select>
+
+        <label className="mt-3" htmlFor="religion">Agama</label>
+        <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="religion" required>
+          <option>Agama</option>
+          <option defaultValue="islam">Islam</option>
+          <option defaultValue="kristen">Kristen</option>
+          <option defaultValue="katolik">Katolik</option>
+          <option defaultValue="hindu">Hindu</option>
+          <option defaultValue="buddha">Buddha</option>
+        </select>
+
+        <label className="mt-3" htmlFor="phoneNumber">Nomor Telpon</label>
+        <Input
+          name="phoneNumber"
+          className="input-font-size"
+          type="text"
+          id="phoneNumber"
+          onChange={this.validateOnChange}
+          invalid={this.hasError(
+            'addValidation',
+            'phoneNumber'
+          )}
+          placeholder="contoh: 123456789"
+          value={this.state.addValidation.phoneNumber}
+        />
+
+        <label className="mt-3" htmlFor="email">Email</label>
+        <Input
+          name="email"
+          className="input-font-size"
+          type="email"
+          id="email"
+          invalid={this.hasError('addValidation', 'email', 'email')}
+          onChange={this.validateOnChange}
+          value={this.state.addValidation.email}
+          placeholder="contoh: simpool@ikkat.com" />
+        {this.hasError('addValidation', 'email', 'email') && <span className="invalid-feedback">Field must be valid email</span>}
+
+        <div>
+          <p className="mt-4">(*) Harus Diisi</p>
+          <div className="d-flex">
+            {/*<Button color="secondary">Previous</Button>*/}
+            <Button
+              className="ml-auto"
+              color="primary"
+              onClick={this.toggleStep('2')}
+            >
+              Lanjutkan
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   toggleStep = activeStep => () => {
@@ -252,14 +418,18 @@ class AddValidation extends Component {
 
   render() {
     const dd = String(new Date().getDate()).padStart(2, '0')
-    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
+    const mm = MONTHS[new Date().getMonth()]
     const yyyy = new Date().getFullYear()
 
-    const today = dd + '/' + mm + '/' + yyyy
+    const today = dd + ' ' + mm + ' ' + yyyy
 
     return (
       <Form innerRef={this.formRef} name="addValidation" className="form-font-size" onSubmit={this.handleSubmit}>
         <Card className="card-default">
+          <CardHeader>
+            <div>{today}</div>
+            <div>Kantor Pelayanan</div>
+          </CardHeader>
           <CardBody>
             <Nav pills justified={true}>
               <NavItem style={stepNavitemStyle}>
@@ -271,7 +441,9 @@ class AddValidation extends Component {
                   onClick={this.toggleStep('1')}
                 >
                   <h4 className="text-left my-4">
-                    Identitas Pribadi
+                    1. Identitas Pribadi
+                    <br />
+                    <small>Identitas Anggota yang ingin dimasukkan</small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -284,7 +456,9 @@ class AddValidation extends Component {
                   onClick={this.toggleStep('2')}
                 >
                   <h4 className="text-left my-4">
-                    Alamat
+                    2. Alamat
+                    <br />
+                    <small>Alamat sesuai KTP dan Domisili</small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -297,7 +471,9 @@ class AddValidation extends Component {
                   onClick={this.toggleStep('3')}
                 >
                   <h4 className="text-left my-4">
-                    Dokumen
+                    3. Dokumen
+                    <br />
+                    <small>Berkas penunjuang pendaftaran</small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -309,58 +485,6 @@ class AddValidation extends Component {
             <TabPane id="tabPane1" tabId="1">
               <div className="pt-3 mb-3">
                 <fieldset>
-                  <label htmlFor="registrationDate">Tanggal Pendaftaran *</label>
-                  <Input
-                    name="registrationDate"
-                    className="input-font-size"
-                    type="text"
-                    id="registrationDate"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'registrationDate',
-                      'required'
-                    )}
-                    value={today}
-                    placeholder="dd-mm-yyyy"
-                    data-validate='["required"]'
-                    required
-                  />
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label className="mt-3" htmlFor="serviceOffice">Kantor Pelayanan *</label>
-                  <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="serviceOffice" required>
-                    <option>Kantor Pelayanan</option>
-                    <option defaultValue="office1">Kantor 1</option>
-                    <option defaultValue="office2">Kantor 2</option>
-                    <option defaultValue="office3">Kantor 3</option>
-                  </select>
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label className="mt-3" htmlFor="memberType">Jenis Anggota *</label>
-                  <div className="py-2">
-                    <label className="c-radio">
-                      <Input id="individu" type="radio" name="memberType" className="input-font-size" defaultValue="individu" required />
-                      <span className="fa fa-circle"></span>Individu</label>
-                    <label className="c-radio">
-                      <Input id="badanUsaha" type="radio" name="memberType" className="input-font-size" defaultValue="badanUsaha" disabled />
-                      <span className="fa fa-circle"></span>Badan Usaha</label>
-                  </div>
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label htmlFor="membership">Keanggotaan</label>
-                  <div className="py-2">
-                    <label className="c-radio">
-                      <Input id="anggota" type="radio" name="membership" defaultValue="anggota" />
-                      <span className="fa fa-circle"></span>Anggota</label>
-                    <label className="c-radio">
-                      <Input id="anggotaLuarBiasa" type="radio" name="membership" defaultValue="anggotaLuarBiasa" />
-                      <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
-                    <label className="c-radio">
-                      <Input id="calonAnggota" type="radio" name="membership" defaultValue="calonAnggota" />
-                      <span className="fa fa-circle"></span>Calon Anggota</label>
-                  </div>
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
 
                   <label htmlFor="fullName">Nama Lengkap *</label>
                   <Input
@@ -375,25 +499,10 @@ class AddValidation extends Component {
                       'required'
                     )}
                     placeholder="contoh: Ikkat Inovasi Teknologi"
-                    value={this.state.addValidation.privateIdentity.fullName}
+                    value={this.state.addValidation.fullName}
                     data-validate='["required"]'
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label className="mt-3" htmlFor="birthplace">Tempat Lahir</label>
-                  <Input
-                    name="birthplace"
-                    className="input-font-size"
-                    type="text"
-                    id="birthplace"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'birthplace'
-                    )}
-                    placeholder="contoh: Tangerang"
-                    value={this.state.addValidation.privateIdentity.birthplace}
-                  />
 
                   <label className="mt-3" htmlFor="birthdate">Tanggal Lahir *</label>
                   <Input
@@ -408,170 +517,10 @@ class AddValidation extends Component {
                       'required'
                     )}
                     placeholder="dd-mm-yyyy"
-                    value={this.state.addValidation.privateIdentity.birthdate}
+                    value={this.state.addValidation.birthdate}
                     data-validate='["required"]'
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
-                  <div className="py-2">
-                    <label className="c-radio">
-                      <Input id="man" type="radio" name="gender" className="input-font-size" defaultValue="man" />
-                      <span className="fa fa-circle"></span>Laki-laki</label>
-                    <label className="c-radio">
-                      <Input id="woman" type="radio" name="gender" className="input-font-size" defaultValue="woman" />
-                      <span className="fa fa-circle"></span>Perempuan</label>
-                  </div>
-
-                  <label className="mt-3" htmlFor="noKTP">No. KTP</label>
-                  <Input
-                    name="noKTP"
-                    className="input-font-size"
-                    type="number"
-                    id="noKTP"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'noKTP'
-                    )}
-                    placeholder="101001002"
-                    value={this.state.addValidation.privateIdentity.noKTP}
-                  />
-
-                  <label className="mt-3" htmlFor="NPWP">NPWP</label>
-                  <Input
-                    name="NPWP"
-                    className="input-font-size"
-                    type="text"
-                    id="NPWP"
-                    name="NPWP"
-                    className="input-font-size"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'NPWP'
-                    )}
-                    type="number"
-                    placeholder="101001002"
-                    value={this.state.addValidation.privateIdentity.NPWP}
-                  />
-
-                  <label className="mt-3" htmlFor="oldMemberNumber">No. Anggota Lama</label>
-                  <Input
-                    name="oldMemberNumber"
-                    className="input-font-size"
-                    type="text"
-                    id="oldMemberNumber"
-                    name="oldMemberNumber"
-                    className="input-font-size"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'oldMemberNumber'
-                    )}
-                    placeholder="contoh: 123456789"
-                    value={this.state.addValidation.privateIdentity.oldMemberNumber}
-                  />
-
-                  <label className="mt-3" htmlFor="marriageStatus">Status Pernikahan</label>
-                  <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="marriageStatus" required>
-                    <option>Status Pernikahan</option>
-                    <option defaultValue="married">Menikah</option>
-                    <option defaultValue="single">Lajang</option>
-                  </select>
-
-                  <label className="mt-3" htmlFor="religion">Agama</label>
-                  <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="religion" required>
-                    <option>Agama</option>
-                    <option defaultValue="islam">Islam</option>
-                    <option defaultValue="kristen">Kristen</option>
-                    <option defaultValue="katolik">Katolik</option>
-                    <option defaultValue="hindu">Hindu</option>
-                    <option defaultValue="buddha">Buddha</option>
-                  </select>
-
-                  <label className="mt-3" htmlFor="phoneNumber">Nomor Telpon</label>
-                  <Input
-                    name="phoneNumber"
-                    className="input-font-size"
-                    type="text"
-                    id="phoneNumber"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'phoneNumber'
-                    )}
-                    placeholder="contoh: 123456789"
-                    value={this.state.addValidation.privateIdentity.phoneNumber}
-                  />
-
-                  <label className="mt-3" htmlFor="email">Email</label>
-                  <Input
-                    name="email"
-                    className="input-font-size"
-                    type="email"
-                    id="email"
-                    invalid={this.hasError('addValidation', 'email', 'email')}
-                    onChange={this.validateOnChange}
-                    value={this.state.addValidation.privateIdentity.email}
-                    placeholder="contoh: simpool@ikkat.com" />
-                  {this.hasError('addValidation', 'email', 'email') && <span className="invalid-feedback">Field must be valid email</span>}
-
-                  <div>
-                    <p className="mt-4">(*) Harus Diisi</p>
-                    <div className="d-flex">
-                      {/*<Button color="secondary">Previous</Button>*/}
-                      <Button
-                        className="ml-auto"
-                        color="primary"
-                        onClick={this.toggleStep('2')}
-                      >
-                        Lanjutkan
-                      </Button>
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
-            </TabPane>
-
-            <TabPane id="tabPane2" tabId="2">
-              <div className="pt-3 mb-3">
-                <fieldset>
-                  <label htmlFor="fullName">Nama Lengkap *</label>
-                  <Input
-                    name="fullName"
-                    className="input-font-size"
-                    type="text"
-                    id="fullName"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'fullName'
-                    )}
-                    placeholder="contoh: Ikkat Inovasi Teknologi"
-                    value={this.state.addValidation.privateIdentity.fullName}
-                  />
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                  <label htmlFor="fullName">Alamat Sesuai Identitas</label>
-                  <Input
-                    name="fullName"
-                    className="input-font-size"
-                    type="text"
-                    id="fullName"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'address'
-                    )}
-                    placeholder="contoh: Ikkat Inovasi Teknologi"
-                    value={this.state.addValidation.privateIdentity.fullName}
-                  />
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
-
-
-                  <p className="lead text-center">Identitas</p>
-
 
                   <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
                   <Input
@@ -585,7 +534,78 @@ class AddValidation extends Component {
                       'address'
                     )}
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                    value={this.state.addValidation.address.address}
+                    value={this.state.addValidation.address}
+                  />
+
+                  <label className="mt-3" htmlFor="noKTP">No. KTP</label>
+                  <Input
+                    name="noKTP"
+                    className="input-font-size"
+                    type="number"
+                    id="noKTP"
+                    onChange={this.validateOnChange}
+                    invalid={this.hasError(
+                      'addValidation',
+                      'noKTP'
+                    )}
+                    placeholder="101001002"
+                    value={this.state.addValidation.noKTP}
+                  />
+
+                  <label className="mt-3" htmlFor="NGIK">Nama Gadis Ibu Kandung</label>
+                  <Input
+                    name="NGIK"
+                    className="input-font-size"
+                    type="number"
+                    id="NGIK"
+                    onChange={this.validateOnChange}
+                    invalid={this.hasError(
+                      'addValidation',
+                      'NGIK'
+                    )}
+                    placeholder="contoh: Ibu Pertiwi"
+                    value={this.state.addValidation.NGIK}
+                  />
+
+                  <button
+                    className="btn btn-block btn-primary mt-4 justify-content-center"
+                    type="submit"
+                    onClick={this.isNotDuplicate}>
+                    Duplicate Check
+                  </button>
+
+                  {/* Batas */}
+
+                  {
+                    this.state.notDuplicate ? (
+                      <this.showNotDuplicate />
+                    ) : null
+                  }
+
+                  {/* Hide Duplicate */}
+                </fieldset>
+              </div>
+            </TabPane>
+
+            <TabPane id="tabPane2" tabId="2">
+              <div className="pt-3 mb-3">
+                <fieldset>
+                  <p className="lead text-center">Identitas</p>
+
+                  <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
+                  <Input
+                    name="address"
+                    className="input-font-size"
+                    type="text"
+                    id="address"
+                    onChange={this.validateOnChange}
+                    invalid={this.hasError(
+                      'addValidation',
+                      'address'
+                    )}
+                    placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                    value={this.state.addValidation.address}
+                    readOnly
                   />
 
                   <label className="mt-3" htmlFor="zipCode">Kode Pos</label>
@@ -600,7 +620,7 @@ class AddValidation extends Component {
                       'zipCode'
                     )}
                     placeholder="101001002"
-                    value={this.state.addValidation.address.zipCode}
+                    value={this.state.addValidation.zipCode}
                   />
 
                   <label className="mt-3" htmlFor="city">Kabupaten/Kota</label>
@@ -615,7 +635,7 @@ class AddValidation extends Component {
                       'city'
                     )}
                     placeholder="contoh: Tangerang"
-                    value={this.state.addValidation.address.city}
+                    value={this.state.addValidation.city}
                   />
 
                   <label className="mt-3" htmlFor="province">Provinsi</label>
@@ -640,7 +660,7 @@ class AddValidation extends Component {
                       'addressDomicile'
                     )}
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                    value={this.state.addValidation.address.addressDomicile}
+                    value={this.state.addValidation.addressDomicile}
                   />
 
                   <label className="mt-3" htmlFor="zipCodeDomicile">Kode Pos</label>
@@ -655,7 +675,7 @@ class AddValidation extends Component {
                       'zipCodeDomicile'
                     )}
                     placeholder="101001002"
-                    value={this.state.addValidation.address.zipCodeDomicile}
+                    value={this.state.addValidation.zipCodeDomicile}
                   />
 
                   <label className="mt-3" htmlFor="cityDomicile">Kabupaten/Kota</label>
@@ -670,7 +690,7 @@ class AddValidation extends Component {
                       'cityDomicile'
                     )}
                     placeholder="contoh: Tangerang"
-                    value={this.state.addValidation.address.cityDomicile}
+                    value={this.state.addValidation.cityDomicile}
                   />
 
                   <label className="mt-3" htmlFor="provinceDomicile">Provinsi</label>
@@ -735,7 +755,7 @@ class AddValidation extends Component {
             </TabPane>
           </TabContent>
         </Card>
-      </Form>
+      </Form >
     );
   }
 }
