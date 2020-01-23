@@ -71,7 +71,6 @@ export default class Deposit extends Component {
               <Select
                 name="select-name"
                 className="input-font-size"
-                singleValue
                 value={this.props.children}
                 onChange={this.handleChangeSelect}
                 options={MEMBERS}
