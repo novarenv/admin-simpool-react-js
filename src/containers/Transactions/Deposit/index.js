@@ -34,8 +34,6 @@ export default class Deposit extends Component {
   }
 
   render() {
-    const { selectedOption } = this.state;
-
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
     const yyyy = new Date().getFullYear()

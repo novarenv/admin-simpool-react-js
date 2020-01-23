@@ -69,8 +69,8 @@ const Routes = ({ location, ...props } ) => {
   const animationName = 'rag-fadeIn'
 
   useEffect(() => {
-    props.i18n.changeLanguage('id')
-
+    props.i18n.changeLanguage(props.dashboard.language)
+    
     return () => { };
   }, [])
 

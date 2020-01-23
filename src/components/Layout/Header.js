@@ -45,21 +45,20 @@ class Header extends Component {
   }
 
   render() {
-    console.log(this.props.layout)
     return (
       <header className="topnavbar-wrapper">
         { /* START Top Navbar */}
         <nav className="navbar topnavbar">
           { /* START navbar header */}
           <div className="navbar-header">
-            <a className="navbar-brand">
+            <div className="navbar-brand">
               <div className="brand-logo">
                 <img className="img-fluid" src={this.props.layout.imgLandscapePath} alt="App Logo" />
               </div>
               <div className="brand-logo-collapsed">
                 <img className="img-fluid-box" src={this.props.layout.imgBoxPath} alt="App Logo" />
               </div>
-            </a>
+            </div>
           </div>
           { /* END navbar header */}
 
@@ -67,19 +66,19 @@ class Header extends Component {
           <ul className="navbar-nav mr-auto flex-row">
             <li className="nav-item">
               { /* Button used to collapse the left sidebar. Only visible on tablet and desktops */}
-              <a href="" className="nav-link d-none d-md-block d-lg-block d-xl-block" onClick={this.toggleCollapsed}>
+              <div className="nav-link d-none d-md-block d-lg-block d-xl-block cursor-pointer" onClick={this.toggleCollapsed}>
                 <em className="fas fa-bars"></em>
-              </a>
+              </div>
               { /* Button to show/hide the sidebar on mobile. Visible on mobile only. */}
-              <a href="" className="nav-link sidebar-toggle d-md-none" onClick={this.toggleAside}>
+              <div className="nav-link sidebar-toggle d-md-none cursor-pointer" onClick={this.toggleAside}>
                 <em className="fas fa-bars"></em>
-              </a>
+              </div>
             </li>
             { /* START User avatar toggle */}
             <li className="nav-item">
-              <a href="" className="nav-link d-none d-md-block d-lg-block d-xl-block" onClick={this.toggleUserblock}>
+              <div className="nav-link d-none d-md-block d-lg-block d-xl-block cursor-pointer" onClick={this.toggleUserblock}>
                 <em className="icon-user"></em>
-              </a>
+              </div>
             </li>
             { /* END User avatar toggle */}
           </ul>
@@ -88,13 +87,13 @@ class Header extends Component {
           <ul className="navbar-nav flex-row">
             { /* Fullscreen (only desktops) */}
             <li className="nav-item d-none d-md-block">
-              <ToggleFullscreen href="" className="nav-link" />
+              <ToggleFullscreen className="nav-link cursor-pointer" />
             </li>
             { /* START Offsidebar button */}
             <li className="nav-item">
-              <a className="nav-link" href="" onClick={this.toggleOffsidebar}>
+              <div className="nav-link cursor-pointer" onClick={this.toggleOffsidebar}>
                 <em className="icon-equalizer"></em>
-              </a>
+              </div>
             </li>
             { /* END Offsidebar menu */}
           </ul>

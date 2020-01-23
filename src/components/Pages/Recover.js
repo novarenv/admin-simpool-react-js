@@ -8,9 +8,7 @@ class Recover extends Component {
                 {/* START card */}
                 <div className="card card-flat">
                     <div className="card-header text-center bg-dark">
-                        <a href="">
-                            <img className="block-center rounded" src="img/Simpool Box.png" alt="Logo"/>
-                        </a>
+                        <img className="block-center rounded" src="img/Simpool Box.png" alt="Logo" />
                     </div>
                     <div className="card-body">
                         <p className="text-center py-2">PASSWORD RESET</p>
@@ -19,7 +17,7 @@ class Recover extends Component {
                             <div className="form-group">
                                 <label className="text-muted" htmlFor="resetInputEmail1">Email address</label>
                                 <div className="input-group with-focus">
-                                    <input className="form-control border-right-0" id="resetInputEmail1" type="email" placeholder="Enter email" autoComplete="off"/>
+                                    <input className="form-control border-right-0" id="resetInputEmail1" type="email" placeholder="Enter email" autoComplete="off" />
                                     <div className="input-group-append">
                                         <span className="input-group-text text-muted bg-transparent border-left-0">
                                             <em className="fa fa-envelope"></em>
@@ -37,7 +35,7 @@ class Recover extends Component {
                     <span>2019</span>
                     <span className="mx-2">-</span>
                     <span>Angle</span>
-                    <br/>
+                    <br />
                     <span>Bootstrap Admin Template</span>
                 </div>
             </div>

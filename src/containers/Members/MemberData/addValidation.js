@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import {
   Button,
   Card,
@@ -185,14 +185,11 @@ class AddValidation extends Component {
           className="input-font-size"
           type="text"
           id="NPWP"
-          name="NPWP"
-          className="input-font-size"
           onChange={this.validateOnChange}
           invalid={this.hasError(
             'addValidation',
             'NPWP'
           )}
-          type="number"
           placeholder="101001002"
           value={this.state.addValidation.NPWP}
         />
@@ -203,8 +200,6 @@ class AddValidation extends Component {
           className="input-font-size"
           type="text"
           id="oldMemberNumber"
-          name="oldMemberNumber"
-          className="input-font-size"
           onChange={this.validateOnChange}
           invalid={this.hasError(
             'addValidation',
@@ -522,16 +517,16 @@ class AddValidation extends Component {
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
 
-                  <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
+                  <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
                   <Input
-                    name="address"
+                    name="address1"
                     className="input-font-size"
                     type="text"
-                    id="address"
+                    id="address1"
                     onChange={this.validateOnChange}
                     invalid={this.hasError(
                       'addValidation',
-                      'address'
+                      'address1'
                     )}
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
                     value={this.state.addValidation.address}
@@ -734,7 +729,7 @@ class AddValidation extends Component {
 
                   <Container className="container-md mt-3">
                     <p className="lead text-center">Upload NPWP</p>
-                    <DragDrop name="npwp" />
+                    <DragDrop name="npwpUpload" />
                   </Container>
 
                   <Container className="container-md mt-3">

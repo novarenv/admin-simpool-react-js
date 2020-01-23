@@ -33,8 +33,6 @@ export default class LoanDataAdd extends Component {
   }
 
   render() {
-    const { selectedOption } = this.state;
-    const value = selectedOption && selectedOption.value;
     const { selectedOptionMulti } = this.state;
 
     return (
@@ -70,7 +68,6 @@ export default class LoanDataAdd extends Component {
                 type="text"
                 id="openDate"
                 name="openDate"
-                className="input-font-size"
                 className="input-font-size"
                 placeholder="dd-mm-yyyy"
               />

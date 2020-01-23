@@ -1,5 +1,5 @@
-const apiEntryBiller =
-  'http://demo.ikkat.datacomm.co.id:8081/biller-management/api';
+// const apiEntryBiller =
+//   'http://demo.ikkat.datacomm.co.id:8081/biller-management/api';
 const apiEntrySimpool =
   'https://demo.ikkat.datacomm.co.id:8443/fineract-provider/api/v1';
 

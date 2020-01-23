@@ -33,8 +33,6 @@ export default class LoanPayment extends Component {
   }
 
   render() {
-    const { selectedOption } = this.state;
-    const value = selectedOption && selectedOption.value;
     const { selectedOptionMulti } = this.state;
 
     const dd = String(new Date().getDate()).padStart(2, '0')
