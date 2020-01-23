@@ -6,12 +6,12 @@ const Menu = [
     {
         name: 'Dashboard',
         path: '/dashboard',
-        icon: 'icon-speedometer',
+        icon: 'icon-home',
         translate: 'sidebar.nav.DASHBOARD'
     },
     {
         name: 'Member',
-        icon: 'icon-chemistry',
+        icon: 'icon-people',
         translate: 'sidebar.nav.member.MEMBERS',
         submenu: [{
                 name: 'Member Data',
@@ -37,7 +37,7 @@ const Menu = [
     },
     {
         name: 'Transaction',
-        icon: 'icon-speedometer',
+        icon: 'icon-basket',
         translate: 'sidebar.nav.transaction.TRANSACTIONS',
         submenu: [{
                 name: 'Deposit',
@@ -63,7 +63,7 @@ const Menu = [
     },
     {
         name: 'Accounting',
-        icon: 'icon-chemistry',
+        icon: 'icon-calculator',
         translate: 'sidebar.nav.accountancy.ACCOUNTANCIES',
         submenu: [{
                 name: 'Register Account Code',
@@ -89,7 +89,7 @@ const Menu = [
     },
     {
         name: 'Report',
-        icon: 'icon-speedometer',
+        icon: 'icon-notebook',
         translate: 'sidebar.nav.report.REPORTS',
         submenu: [{
                 name: 'Member',
@@ -115,7 +115,7 @@ const Menu = [
     },
     {
         name: 'Setting',
-        icon: 'icon-chemistry',
+        icon: 'icon-equalizer',
         translate: 'sidebar.nav.setting.SETTINGS',
         submenu: [{
                 name: 'Saving Products',
