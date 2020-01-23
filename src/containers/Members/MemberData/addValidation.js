@@ -18,6 +18,10 @@ import { useDropzone } from 'react-dropzone';
 
 import FormValidator from '../../../components/Forms/FormValidator';
 
+// DateTimePicker
+import Datetime from 'react-datetime';
+import 'react-datetime/css/react-datetime.css';
+
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
 };
@@ -109,6 +113,7 @@ class AddValidation extends Component {
       email: '',
 
       address: '',
+      address1: '',
       city: '',
       zipCode: '',
       addressDomicile: '',
@@ -121,7 +126,6 @@ class AddValidation extends Component {
     this.setState({
       notDuplicate: !this.state.notDuplicate
     });
-    console.log(this.state.notDuplicate)
   }
 
   showNotDuplicate = () => {
@@ -411,6 +415,17 @@ class AddValidation extends Component {
     reader.readAsArrayBuffer(acceptedFiles[0])
   }
 
+  renderInputGroup = props => {
+    return (
+      <div className="input-group date">
+        <input className="form-control" {...props} />
+        <span className="input-group-append input-group-addon">
+          <span className="input-group-text fas fa-calendar-alt"></span>
+        </span>
+      </div>
+    )
+  }
+
   render() {
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = MONTHS[new Date().getMonth()]
@@ -499,23 +514,19 @@ class AddValidation extends Component {
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
 
+                  {/* Tanggal Lahir */}
                   <label className="mt-3" htmlFor="birthdate">Tanggal Lahir *</label>
-                  <Input
-                    name="birthdate"
-                    className="input-font-size"
-                    type="text"
-                    id="birthdate"
-                    onChange={this.validateOnChange}
-                    invalid={this.hasError(
-                      'addValidation',
-                      'birthdate',
-                      'required'
-                    )}
-                    placeholder="dd-mm-yyyy"
-                    value={this.state.addValidation.birthdate}
-                    data-validate='["required"]'
+                  <Datetime
+                    inputProps={{ 
+                      name: "birthdate",
+                      className: "form-control input-font-size",
+                      id: "birthdate",
+                      placeholder: "dd-mm-yyyy",
+                      required: true
+                    }}
+                    closeOnSelect={true}
+                    renderInput={this.renderInputGroup}
                   />
-                  <span className="invalid-feedback">Kolom harus diisi!</span>
 
                   <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
                   <Input
@@ -529,7 +540,7 @@ class AddValidation extends Component {
                       'address1'
                     )}
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                    value={this.state.addValidation.address}
+                    value={this.state.addValidation.address1}
                   />
 
                   <label className="mt-3" htmlFor="noKTP">No. KTP</label>
@@ -569,15 +580,11 @@ class AddValidation extends Component {
                     Duplicate Check
                   </button>
 
-                  {/* Batas */}
-
                   {
                     this.state.notDuplicate ? (
                       <this.showNotDuplicate />
                     ) : null
                   }
-
-                  {/* Hide Duplicate */}
                 </fieldset>
               </div>
             </TabPane>
