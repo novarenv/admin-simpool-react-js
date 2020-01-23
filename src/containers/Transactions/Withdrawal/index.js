@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Card,
   CardBody,
-  Col,
   Input
 } from 'reactstrap';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
@@ -36,7 +35,6 @@ export default class Deposit extends Component {
 
   render() {
     const { selectedOption } = this.state;
-    const value = selectedOption && selectedOption.value;
 
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!

@@ -35,6 +35,8 @@ export default function configureStore() {
 
     // Update the initial theme
     updateTheme(store.getState())
+    
+    console.log(store)
 
     return store;
 

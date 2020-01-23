@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Cookies from "js-cookie";
@@ -68,14 +68,11 @@ const Routes = ({ location, ...props } ) => {
 
   const animationName = 'rag-fadeIn'
 
-  // useEffect(() => {
-  //   console.log(props.dashboard.language)
-  //   console.log(props.i18n)
+  useEffect(() => {
+    props.i18n.changeLanguage('id')
 
-  //   // props.i18n.changeLanguage('id')
-
-  //   return () => { };
-  // }, [])
+    return () => { };
+  }, [])
 
   if (Cookies.get("loginToken")) {
     if (listofPages.indexOf(location.pathname) > -1) {
@@ -157,7 +154,7 @@ const Routes = ({ location, ...props } ) => {
   }
 }
 
-Base.propTypes = {
+Routes.propTypes = {
   actions: PropTypes.object,
   dashboard: PropTypes.object
 }

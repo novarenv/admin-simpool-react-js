@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
+import { AgGridReact } from 'ag-grid-react';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
 const COLUMN_WIDTH = 250;
 
@@ -11,7 +13,24 @@ class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this._columns = [      
+    this.state = {
+      columnDefs: [{
+        headerName: "Make", field: "make"
+      }, {
+        headerName: "Model", field: "model"
+      }, {
+        headerName: "Price", field: "price"
+      }],
+      rowData: [{
+        make: "Toyota", model: "Celica", price: 35000
+      }, {
+        make: "Ford", model: "Mondeo", price: 32000
+      }, {
+        make: "Porsche", model: "Boxter", price: 72000
+      }]
+    }
+
+    this._columns = [
       {
         key: 'ACTION',
         name: 'Action',
@@ -78,10 +97,6 @@ class MemberData extends Component {
     }
   }
 
-  // componentDidMount() {
-  //   this.props.i18n.changeLanguage('id')
-  // }
-
   createRows = () => {
     let rows = [];
     for (let i = 1; i < 100; i++) {
@@ -135,6 +150,20 @@ class MemberData extends Component {
                   rowsCount={this.state.rows.length}
                   minHeight={700} />
               </Container>
+
+              <div
+                className="ag-theme-balham"
+                style={{
+                  height: '500px',
+                  width: '600px'
+                }}
+              >
+                <AgGridReact
+                  columnDefs={this.state.columnDefs}
+                  rowData={this.state.rowData}>
+                </AgGridReact>
+              </div>
+
             </CardBody>
           </Card>
         </Container>
