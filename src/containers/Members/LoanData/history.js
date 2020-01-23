@@ -1,9 +1,35 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody } from 'reactstrap';
+import { Button, Container, Card, CardBody } from 'reactstrap';
 import ReactDataGrid from 'react-data-grid';
 
 const COLUMN_WIDTH = 250;
+
+const AddBar = () => {
+  return (
+    <div className="row mb-3 mr-1">
+      <div className="ml-auto mr-0">
+        <Button outline color="primary" type="button">
+          Add Loan History
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+const SearchBar = () => {
+  return (
+    <div className="row mr-1">
+      <div className="col-md-10 mb-3">
+        <input className="form-control mr-3" type="text" placeholder="Search loan history" />
+      </div>
+      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button">
+        <i className="fas fa-search mr-2" />
+        Search
+      </Button>
+    </div>
+  )
+}
 
 class LoanHistory extends Component {
   constructor(props, context) {
@@ -145,6 +171,9 @@ class LoanHistory extends Component {
         <Container fluid>
           <Card>
             <CardBody>
+              <AddBar />
+              <SearchBar />
+
               <Container fluid>
                 <ReactDataGrid
                   onGridSort={this.handleGridSort}

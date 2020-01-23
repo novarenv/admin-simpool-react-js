@@ -6,6 +6,34 @@ import ReactDataGrid from 'react-data-grid';
 
 const COLUMN_WIDTH = 250;
 
+const AddBar = () => {
+  return (
+    <div className="row mb-3 mr-1">
+      <div className="ml-auto mr-0">
+        <Link to="/member/loan-data-add" >
+          <Button outline color="primary" type="button">
+            Add Data Pinjaman
+          </Button>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+const SearchBar = () => {
+  return (
+    <div className="row mr-1">
+      <div className="col-md-10 mb-3">
+        <input className="form-control mr-3" type="text" placeholder="Search data pinjaman" />
+      </div>
+      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button">
+        <i className="fas fa-search mr-2" />
+        Search
+      </Button>
+    </div>
+  )
+}
+
 class LoanData extends Component {
   constructor(props, context) {
     super(props, context);
@@ -123,9 +151,9 @@ class LoanData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Link to="/member/loan-data-add">
-                <Button outline className="float-right mb-3" color="primary" type="button">Add Data Pinjaman</Button>
-              </Link>
+              <AddBar />
+              <SearchBar />
+
               <Container fluid>
                 <ReactDataGrid
                   onGridSort={this.handleGridSort}

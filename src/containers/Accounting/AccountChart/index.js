@@ -1,10 +1,40 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button } from 'reactstrap';
+import { Button, Container, Card, CardBody } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 
 const COLUMN_WIDTH = 250;
+
+const TreeAddBar = () => {
+  return (
+    <div className="row mb-3 ml-1 mr-1">
+      <Link to="/accounting/account-chart-tree">
+        <Button className="float-left" color="primary" type="button">Tree View</Button>
+      </Link>
+
+      <div className="ml-auto mr-0">
+        <Button outline color="primary" type="button">
+          Add Kode Akun
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+const SearchBar = () => {
+  return (
+    <div className="row mr-1">
+      <div className="col-md-10 mb-3">
+        <input className="form-control mr-3" type="text" placeholder="Search kode akun" />
+      </div>
+      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button">
+        <i className="fas fa-search mr-2" />
+        Search
+      </Button>
+    </div>
+  )
+}
 
 class MemberData extends Component {
   constructor(props, context) {
@@ -111,11 +141,8 @@ class MemberData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <Link to="/accounting/account-chart-tree">
-                <Button outline className="float-left mb-3" color="primary" type="button">Tree View</Button>
-              </Link>
-
-              <Button outline className="float-right mb-3" color="primary" type="button">Tambah</Button>
+              <TreeAddBar />
+              <SearchBar />
 
               <Container fluid>
                 <ReactDataGrid

@@ -81,10 +81,10 @@ const Routes = ({ location, ...props } ) => {
         <BasePage>
           <Suspense fallback={<PageLoader />}>
             <Switch location={location}>
-              <Route path="/lock" component={waitFor(Lock)} />
-              <Route path="/notfound" component={waitFor(NotFound)} />
-              <Route path="/error500" component={waitFor(Error500)} />
-              <Route path="/maintenance" component={waitFor(Maintenance)} />
+              <Route exact path="/lock" component={waitFor(Lock)} />
+              <Route exact path="/notfound" component={waitFor(NotFound)} />
+              <Route exact path="/error500" component={waitFor(Error500)} />
+              <Route exact path="/maintenance" component={waitFor(Maintenance)} />
             </Switch>
           </Suspense>
         </BasePage>
@@ -103,29 +103,29 @@ const Routes = ({ location, ...props } ) => {
 
                     {/*Dashboard*/}
                     <Route exact path="/" component={waitFor(Dashboard)} />
-                    <Route path="/dashboard" component={waitFor(Dashboard)} />
+                    <Route exact path="/dashboard" component={waitFor(Dashboard)} />
 
                     {/* Members */}
-                    <Route path="/member/data" component={waitFor(MemberData)} />
-                    <Route path="/member/data-add" component={waitFor(MemberDataAdd)} />
-                    <Route path="/member/saving-data" component={waitFor(SavingData)} />
-                    <Route path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
-                    <Route path="/member/saving-data-history" component={waitFor(SavingHistory)} />
-                    <Route path="/member/loan-data" component={waitFor(LoanData)} />
-                    <Route path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
-                    <Route path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />
-                    <Route path="/member/loan-data-view" component={waitFor(LoanDataView)} />
-                    <Route path="/member/mobile-user" component={waitFor(MobileUser)} />
+                    <Route exact path="/member/data" component={waitFor(MemberData)} />
+                    <Route exact path="/member/data-add" component={waitFor(MemberDataAdd)} />
+                    <Route exact path="/member/saving-data" component={waitFor(SavingData)} />
+                    <Route exact path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
+                    <Route exact path="/member/saving-data-history" component={waitFor(SavingHistory)} />
+                    <Route exact path="/member/loan-data" component={waitFor(LoanData)} />
+                    <Route exact path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
+                    <Route exact path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />
+                    <Route exact path="/member/loan-data-view" component={waitFor(LoanDataView)} />
+                    <Route exact path="/member/mobile-user" component={waitFor(MobileUser)} />
 
                     {/* Transactions */}
-                    <Route path="/transaction/deposit" component={waitFor(Deposit)} />
-                    <Route path="/transaction/withdrawal" component={waitFor(Withdrawal)} />
-                    <Route path="/transaction/loan-payment" component={waitFor(LoanPayment)} />
-                    <Route path="/transaction/transfer" component={waitFor(Transfer)} />
+                    <Route exact path="/transaction/deposit" component={waitFor(Deposit)} />
+                    <Route exact path="/transaction/withdrawal" component={waitFor(Withdrawal)} />
+                    <Route exact path="/transaction/loan-payment" component={waitFor(LoanPayment)} />
+                    <Route exact path="/transaction/transfer" component={waitFor(Transfer)} />
 
                     {/* Accounting */}
-                    <Route path="/accounting/account-chart" component={waitFor(AccountChart)} />
-                    <Route path="/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
+                    <Route exact path="/accounting/account-chart" component={waitFor(AccountChart)} />
+                    <Route exact path="/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
 
                     <Redirect from="/login" to="/" />
                     <Redirect to="/notfound" />
@@ -142,9 +142,9 @@ const Routes = ({ location, ...props } ) => {
       <BasePage>
         <Suspense fallback={<PageLoader />}>
           <Switch location={location}>
-            <Route path="/login" component={waitFor(Login)} />
-            <Route path="/register" component={waitFor(Register)} />
-            <Route path="/recover" component={waitFor(Recover)} />
+            <Route exact path="/login" component={waitFor(Login)} />
+            <Route exact path="/register" component={waitFor(Register)} />
+            <Route exact path="/recover" component={waitFor(Recover)} />
 
             <Redirect from="*" to="/login" />
           </Switch>
