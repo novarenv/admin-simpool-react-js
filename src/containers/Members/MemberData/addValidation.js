@@ -58,7 +58,7 @@ export function DragDrop(props) {
           <p className="text-center box-placeholder m-0">Drag 'n' drop some files here, or click to select files</p>
         </div>
         <aside>
-          <h4>Files</h4>
+          <h4>File</h4>
           <ul>{files}</ul>
         </aside>
       </section>
@@ -134,7 +134,7 @@ class AddValidation extends Component {
         <label className="mt-3" htmlFor="memberType">Jenis Anggota *</label>
         <div className="py-2">
           <label className="c-radio">
-            <Input id="individu" type="radio" name="memberType" className="input-font-size" defaultValue="individu" required />
+            <Input id="individu" type="radio" name="memberType" className="input-font-size" defaultValue="individu" tabIndex="7" defaultChecked required />
             <span className="fa fa-circle"></span>Individu</label>
           <span className="span-disabled">
             <label className="c-radio">
@@ -265,6 +265,7 @@ class AddValidation extends Component {
               className="ml-auto"
               color="primary"
               onClick={this.toggleStep('2')}
+              type="submit"
             >
               Lanjutkan
             </Button>
@@ -328,24 +329,6 @@ class AddValidation extends Component {
 
   }
 
-  onSubmit = e => {
-    const form = e.target;
-    const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName))
-
-    const { errors, hasError } = FormValidator.bulkValidate(inputs)
-
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        errors
-      }
-    });
-
-    console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
-
-    e.preventDefault()
-  }
-
   /* Simplify error check */
   hasError = (formName, inputName, method) => {
     return (
@@ -378,10 +361,20 @@ class AddValidation extends Component {
       }
     });
 
+    this.setState({
+      [this.state.address1]: this.state.address
+    })
+
     console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!');
 
     e.preventDefault();
   };
+
+  handleDate(birthdate){
+    this.setState({birthdate}); 
+
+    console.log(birthdate);
+ };
 
   // Keep a reference to the form to access from the steps methods
   formRef = node => (this.formWizardRef = node);
@@ -508,6 +501,7 @@ class AddValidation extends Component {
                       'fullName',
                       'required'
                     )}
+                    tabIndex="1"
                     placeholder="contoh: Ikkat Inovasi Teknologi"
                     value={this.state.addValidation.fullName}
                     data-validate='["required"]'
@@ -522,10 +516,14 @@ class AddValidation extends Component {
                       className: "form-control input-font-size",
                       id: "birthdate",
                       placeholder: "dd-mm-yyyy",
+                      tabIndex: "2",
                       required: true
                     }}
+                    value={this.state.addValidation.birthdate}
+                    dateFormat="DD MMM YYYY"
                     closeOnSelect={true}
                     renderInput={this.renderInputGroup}
+                    onChange={this.props.handleDate}
                   />
 
                   <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
@@ -539,6 +537,7 @@ class AddValidation extends Component {
                       'addValidation',
                       'address1'
                     )}
+                    tabIndex="3"
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
                     value={this.state.addValidation.address1}
                   />
@@ -554,8 +553,10 @@ class AddValidation extends Component {
                       'addValidation',
                       'noKTP'
                     )}
+                    tabIndex="4"
                     placeholder="101001002"
                     value={this.state.addValidation.noKTP}
+                    required
                   />
 
                   <label className="mt-3" htmlFor="NGIK">Nama Gadis Ibu Kandung</label>
@@ -569,15 +570,21 @@ class AddValidation extends Component {
                       'addValidation',
                       'NGIK'
                     )}
+                    tabIndex="5"
                     placeholder="contoh: Ibu Pertiwi"
                     value={this.state.addValidation.NGIK}
+                    required
                   />
+
+                  <p className="mt-3">(*) Harus Diisi</p>
 
                   <button
                     className="btn btn-block btn-primary mt-4 justify-content-center"
                     type="submit"
-                    onClick={this.isNotDuplicate}>
-                    Duplicate Check
+                    onClick={this.isNotDuplicate}
+                    tabIndex="6"
+                  >
+                    Cek Duplikasi
                   </button>
 
                   {
@@ -606,7 +613,7 @@ class AddValidation extends Component {
                       'address'
                     )}
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                    value={this.state.addValidation.address}
+                    value={this.state.addValidation.address1}
                     readOnly
                   />
 
@@ -702,8 +709,6 @@ class AddValidation extends Component {
                     <option defaultValue="province2">Provinsi 2</option>
                     <option defaultValue="province3">Provinsi 3</option>
                   </select>
-
-                  <p className="mt-3">(*) Mandatory</p>
                 </fieldset>
               </div>
               <hr />
