@@ -103,52 +103,51 @@ class MemberData extends Component {
 
                 <TabContent activeTab={this.state.activeTab}>
                   <TabPane tabId="neraca" role="tabpanel">
-                    <Container fluid className="row">
-                      <div className="col-6">
-                        <div className="card card-default" style={{ height: "100%" }}>
-                          <div className="card-header">
-                            <div className="card-title">Assets</div>
-                          </div>
-                          <div className="card-body bt">
-                            <ControlledTreeView />
-                          </div>
-                          <div className="card-body">
-                            <div>Bagian 1</div>
-                          </div>
-                          <div className="card-footer text-center">
-                            <button type="button" className="btn btn-secondary btn-oval">Footer</button>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-6">
-                        <div className="card card-default" style={{ height: "50%" }}>
-                          <div className="card-header">
-                            <div className="card-title">Liability</div>
-                          </div>
-                          <div className="card-body bt" />
-                          <div className="card-body bb">
-                            <div>Bagian 1</div>
-                          </div>
-                          <div className="card-body">
-                            <div>Bagian 2</div>
-                          </div>
-                          <div className="card-footer text-center">
-                            <button type="button" className="btn btn-secondary btn-oval">Footer</button>
+                    <Container fluid>
+                      <div className="row mt-3">
+                        <div className="col-lg-6 mb-3">
+                          <div className="card card-default" style={{ height: "100%" }}>
+                            <div className="card-header">
+                              <div className="card-title">Assets</div>
+                            </div>
+                            <div className="card-body bt">
+                              <ControlledTreeView />
+                            </div>
+                            <div className="card-footer text-center">
+                              <button type="button" className="btn btn-secondary btn-oval">Footer</button>
+                            </div>
                           </div>
                         </div>
-                        <div className="card card-default" style={{ height: "50%" }}>
-                          <div className="card-header">
-                            <div className="card-title">Equity</div>
+                        <div className="col-lg-6">
+                          <div className="card card-default mb-4">
+                            <div className="card-header">
+                              <div className="card-title">Liability</div>
+                            </div>
+                            <div className="card-body bt" />
+                            <div className="card-body bb">
+                              <div>Bagian 1</div>
+                            </div>
+                            <div className="card-body">
+                              <div>Bagian 2</div>
+                            </div>
+                            <div className="card-footer text-center">
+                              <button type="button" className="btn btn-secondary btn-oval">Footer</button>
+                            </div>
                           </div>
-                          <div className="card-body bt" />
-                          <div className="card-body bb">
-                            <div>Bagian 1</div>
-                          </div>
-                          <div className="card-body">
-                            <div>Bagian 2</div>
-                          </div>
-                          <div className="card-footer text-center">
-                            <button type="button" className="btn btn-secondary btn-oval">Footer</button>
+                          <div className="card card-default mb-3" style={{ height: "800px" }}>
+                            <div className="card-header">
+                              <div className="card-title">Equity</div>
+                            </div>
+                            <div className="card-body bt" />
+                            <div className="card-body bb">
+                              <div>Bagian 1</div>
+                            </div>
+                            <div className="card-body">
+                              <div>Bagian 2</div>
+                            </div>
+                            <div className="card-footer text-center">
+                              <button type="button" className="btn btn-secondary btn-oval">Footer</button>
+                            </div>
                           </div>
                         </div>
                       </div>
