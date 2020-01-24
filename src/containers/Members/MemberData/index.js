@@ -177,20 +177,6 @@ class MemberData extends Component {
                   rowsCount={this.state.rows.length}
                   minHeight={700} />
               </Container>
-
-              <div
-                className="ag-theme-balham"
-                style={{
-                  height: '500px',
-                  width: '600px'
-                }}
-              >
-                <AgGridReact
-                  columnDefs={this.state.columnDefs}
-                  rowData={this.state.rowData}>
-                </AgGridReact>
-              </div>
-
             </CardBody>
           </Card>
         </Container>
