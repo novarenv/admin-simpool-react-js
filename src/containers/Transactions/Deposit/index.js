@@ -4,8 +4,10 @@ import {
   CardBody,
   Input
 } from 'reactstrap';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Select from 'react-select';
+import NumberFormat from 'react-number-format';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
 const MEMBERS = [
   { value: 'australian-capital-territory', label: 'Australian Capital Territory', className: 'State-ACT' },
@@ -53,7 +55,7 @@ export default class Deposit extends Component {
           margin: 0,
           height: 36,
           minHeight: 36,
-          maxHeight: 36         
+          maxHeight: 36
         }
       })
     };
@@ -85,12 +87,14 @@ export default class Deposit extends Component {
               </select>
 
               <label className="mt-3" htmlFor="transferAmount">Nilai Setoran</label>
-              <Input
-                type="number"
+              <NumberFormat
                 id="transferAmount"
                 name="transferAmount"
-                className="input-font-size"
-                placeholder="minimal 3.000.000"
+                className="input-font-size input-number"
+                thousandSeparator={'.'}
+                decimalSeparator={','}
+                prefix={'Rp'}
+                placeholder="contoh: Rp3.000.000"
               />
 
               <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
