@@ -1,7 +1,7 @@
 import { CHANGE_THEME } from '../actions/actions';
 
 const initialState = {
-    path: 'themes/simpool.css'
+    path: ''
 }
 
 const themesReducer = (state = initialState, action) => {

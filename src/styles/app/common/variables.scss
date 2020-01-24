@@ -20,6 +20,8 @@ $info:                  #23b7e5;
 $warning:               #ff902b;
 $danger:                #f05050;
 $dark:                  #3a3f51;
+$simpool-blue:          #0e1f57;
+$simpool-orange:        #FF8831;
 
 // Custom color variants
 $amountOfLight: 10%;
@@ -34,6 +36,8 @@ $green-light:           lighten($green, $amountOfLight);
 $pink-light:            lighten($pink, $amountOfLight);
 $purple-light:          lighten($purple, $amountOfLight);
 $yellow-light:          lighten($yellow, $amountOfLight);
+$simpool-blue-light:    lighten($simpool-blue, $amountOfLight);
+$simpool-orange-light:    lighten($simpool-orange, $amountOfLight);
 $primary-dark:          darken($primary, $amountOfLight);
 $success-dark:          darken($success, $amountOfLight);
 $info-dark:             darken($info, $amountOfLight);
@@ -44,6 +48,8 @@ $green-dark:            darken($green, $amountOfLight);
 $pink-dark:             darken($pink, $amountOfLight);
 $purple-dark:           darken($purple, $amountOfLight);
 $yellow-dark:           darken($yellow, $amountOfLight);
+$simpool-blue-dark:    darken($simpool-blue, $amountOfLight);
+$simpool-orange-dark:    darken($simpool-orange, $amountOfLight);
 
 // Theme variables
 
@@ -103,6 +109,7 @@ $colors: (
     "warning":    $warning,
     "danger":     $danger,
     'inverse':    $inverse,
+    "simpool-blue":    $simpool-blue,
 
     'primary-light': $primary-light,
     'primary-dark':  $primary-dark,
@@ -133,7 +140,8 @@ $theme-colors: (
   "success":    $success,
   "info":       $info,
   "warning":    $warning,
-  "danger":     $danger
+  "danger":     $danger,
+  "simpool-blue":    $simpool-blue
 );
 
 // Body

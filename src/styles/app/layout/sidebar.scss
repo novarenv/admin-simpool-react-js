@@ -5,11 +5,11 @@
 $sidebar-bg:                      $aside-bg;
 
 $sidebar-item-color:              #515253;
-$sidebar-item-color-active:       $nav-top-bg;
+$sidebar-item-color-active:       $simpool-orange-dark;
 $sidebar-item-bg-active:          darken($sidebar-bg, 1%);
 
 $sidebar-icon-color:              inherits;
-$sidebar-icon-color-active:       $nav-top-bg;
+$sidebar-icon-color-active:       $simpool-orange-dark;
 
 $sidebar-bullet-color:            rgba(0,0,0,.25);
 $sidebar-bullet-color-active:     $sidebar-icon-color-active;
