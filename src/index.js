@@ -19,6 +19,9 @@ import './i18n';
 
 import * as serviceWorker from './serviceWorker';
 
+import SlidingPane from 'react-sliding-pane';
+import 'react-sliding-pane/dist/react-sliding-pane.css';
+
 import configureStore from './store/store';
 const store = configureStore();
 
