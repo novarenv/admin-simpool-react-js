@@ -24,8 +24,8 @@ class NewAccountBalance extends Component {
             <CardBody>
               <ReactDataSheet
                 data={grid}
-                valueRenderer={(cell, j) => j === 2 ? cell.value.toDateString() : cell.value}
-                dataRenderer={(cell, j) => j === 2 ? cell.value.toISOString() : cell.expr}
+                valueRenderer={(cell, i,  j) => j === 2 ? cell.value.toDateString() : cell.value}
+                dataRenderer={(cell, i, j) => j === 2 ? cell.value.toISOString() : cell.expr}
                 onCellsChanged={onCellsChanged}
               />
             </CardBody>
