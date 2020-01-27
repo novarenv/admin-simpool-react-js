@@ -94,25 +94,28 @@ export function DragDropMultiple(props) {
 class AddValidation extends Component {
   state = {
     notDuplicate: false,
+    formValidateDuplicate: false,
     activeStep: '1',
     files: [],
 
     /* Group each form state in an object.
        Property name MUST match the form name */
     addValidation: {
-      registrationDate: '',
-      serviceOffice: '',
       fullName: '',
       birthplace: '',
-      birthdate: '',
+      address: '',
       noKTP: '',
-      NGIK: '',
+      motherName: '',
+
+      registrationDate: '',
+      serviceOffice: '',
+      birthdate: '',
       NPWP: '',
       oldMemberNumber: '',
       phoneNumber: '',
       email: '',
 
-      address: '',
+
       address1: '',
       city: '',
       zipCode: '',
@@ -370,11 +373,11 @@ class AddValidation extends Component {
     e.preventDefault();
   };
 
-  handleDate(birthdate){
-    this.setState({birthdate}); 
+  handleDate(birthdate) {
+    this.setState({ birthdate });
 
     console.log(birthdate);
- };
+  };
 
   // Keep a reference to the form to access from the steps methods
   formRef = node => (this.formWizardRef = node);
@@ -489,7 +492,7 @@ class AddValidation extends Component {
               <div className="pt-3 mb-3">
                 <fieldset>
 
-                  <label htmlFor="fullName">Nama Lengkap *</label>
+                  <label htmlFor="fullName">Nama Lengkap</label>
                   <Input
                     name="fullName"
                     className="input-font-size"
@@ -508,10 +511,9 @@ class AddValidation extends Component {
                   />
                   <span className="invalid-feedback">Kolom harus diisi!</span>
 
-                  {/* Tanggal Lahir */}
-                  <label className="mt-3" htmlFor="birthdate">Tanggal Lahir *</label>
+                  <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
                   <Datetime
-                    inputProps={{ 
+                    inputProps={{
                       name: "birthdate",
                       className: "form-control input-font-size",
                       id: "birthdate",
@@ -539,7 +541,7 @@ class AddValidation extends Component {
                     )}
                     tabIndex="3"
                     placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                    value={this.state.addValidation.address1}
+                    value={this.state.addValidation.address}
                   />
 
                   <label className="mt-3" htmlFor="noKTP">No. KTP</label>
@@ -559,24 +561,22 @@ class AddValidation extends Component {
                     required
                   />
 
-                  <label className="mt-3" htmlFor="NGIK">Nama Gadis Ibu Kandung</label>
+                  <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
                   <Input
-                    name="NGIK"
+                    name="motherName"
                     className="input-font-size"
-                    type="number"
-                    id="NGIK"
+                    type="text"
+                    id="motherName"
                     onChange={this.validateOnChange}
                     invalid={this.hasError(
                       'addValidation',
-                      'NGIK'
+                      'motherName'
                     )}
                     tabIndex="5"
                     placeholder="contoh: Ibu Pertiwi"
-                    value={this.state.addValidation.NGIK}
+                    value={this.state.addValidation.motherName}
                     required
                   />
-
-                  <p className="mt-3">(*) Harus Diisi</p>
 
                   <button
                     className="btn btn-block btn-primary mt-4 justify-content-center"
