@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { Input, CustomInput } from 'reactstrap';
 import Cookies from "js-cookie";
 
@@ -100,8 +99,7 @@ class Login extends Component {
                       <em className="fa fa-envelope"></em>
                     </span>
                   </div>
-                  { this.hasError('formLogin','email','required') && <span className="invalid-feedback">Field is required</span> }
-                  { this.hasError('formLogin','email','email') && <span className="invalid-feedback">Field must be valid email</span> }
+                  { this.hasError('formLogin','username','required') && <span className="invalid-feedback">Field is required</span> }
                 </div>
               </div>
               <div className="form-group">
@@ -126,9 +124,9 @@ class Login extends Component {
                 </div>
               </div>
               <div className="clearfix">
-                <CustomInput type="checkbox" id="rememberme"
+                <CustomInput type="checkbox" id="remember-me"
                   className="float-left mt-0"
-                  name="remember"
+                  name="remember-me"
                   label="Remember Me">
                 </CustomInput>
               </div>

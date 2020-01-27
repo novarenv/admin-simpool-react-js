@@ -3,7 +3,6 @@ import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
-import { AgGridReact } from 'ag-grid-react';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button } from 'reactstrap';
+import { Button, Container, Card, CardBody } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
 const COLUMN_WIDTH = 250;
 
@@ -82,33 +83,9 @@ class LoanData extends Component {
     this.state = { originalRows, rows };
   }
 
-  state = {
-    options: {
-      'paging': true, // Table pagination
-      'ordering': true, // Column ordering
-      'info': true, // Bottom left status text
-      responsive: true,
-      // Text translation options
-      // Note the required keywords between underscores (e.g _MENU_)
-      oLanguage: {
-        sSearch: '<em class="fa fa-search"></em>',
-        sLengthMenu: '_MENU_ records per page',
-        info: 'Showing page _PAGE_ of _PAGES_',
-        zeroRecords: 'Nothing found - sorry',
-        infoEmpty: 'No records available',
-        infoFiltered: '(filtered from _MAX_ total records)',
-        oPaginate: {
-          sNext: '<em class="fa fa-caret-right"></em>',
-          sPrevious: '<em class="fa fa-caret-left"></em>'
-        }
-      }
-    }
-  }
-
   toLoanDataView = () => {
     this.props.history.push("/member/loan-data-view")
   }
-
 
   createRows = () => {
     let rows = [];

@@ -42,6 +42,7 @@ const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 // Accounting
 const AccountChart = lazy(() => import('./containers/Accounting/AccountChart'));
 const AccountChartTree = lazy(() => import('./containers/Accounting/AccountChart/TreeView'));
+const BeginningBalance = lazy(() => import('./containers/Accounting/BeginningBalance'));
 
 const Register = lazy(() => import('./components/Pages/Register'));
 const Recover = lazy(() => import('./components/Pages/Recover'));
@@ -126,6 +127,7 @@ const Routes = ({ location, ...props } ) => {
                     {/* Accounting */}
                     <Route exact path="/accounting/account-chart" component={waitFor(AccountChart)} />
                     <Route exact path="/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
+                    <Route exact path="/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
                     <Redirect from="/login" to="/" />
                     <Redirect to="/notfound" />

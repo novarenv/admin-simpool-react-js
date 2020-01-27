@@ -89,7 +89,7 @@
         "ACCOUNTANCIES": "Accounting",
         "REGISTER_ACCOUNT_CODE": "Chart of Account",
         "JOURNAL_ENTRY": "Journal Entry",
-        "NEW_ACCOUNT_BALANCE": "Beginning Balance",
+        "BEGINNING_BALANCE": "Beginning Balance",
         "TRANSACTION_CODE": "Transaction Code"
       },
       "report": {

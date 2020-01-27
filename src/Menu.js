@@ -76,8 +76,8 @@ const Menu = [
                 translate: 'sidebar.nav.accountancy.JOURNAL_ENTRY'
             },
             {
-                name: 'New Account Balance',
-                path: '/accountancy/new-account-balance',
+                name: 'Beginning Balance',
+                path: '/accounting/beginning-balance',
                 translate: 'sidebar.nav.accountancy.NEW_ACCOUNT_BALANCE'
             },
             {

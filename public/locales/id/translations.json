@@ -89,7 +89,7 @@
         "ACCOUNTANCIES": "Akuntansi",
         "REGISTER_ACCOUNT_CODE": "Daftar Kode Akun",
         "JOURNAL_ENTRY": "Journal Entry",
-        "NEW_ACCOUNT_BALANCE": "Saldo Awal Akun",
+        "BEGINNING_BALANCE": "Saldo Awal Akun",
         "TRANSACTION_CODE": "Kode Transaksi"
       },
       "report": {
