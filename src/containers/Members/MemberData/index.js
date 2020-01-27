@@ -39,7 +39,6 @@ const SearchBar = () => {
 class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
-
     this._columns = [
       {
         key: 'ACTION',
@@ -81,11 +80,23 @@ class MemberData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    this.state = { originalRows, rows };
+    this.state = {
+      originalRows,
+      rows,
+      rowIdx: ''
+    }
   }
 
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      ID_MEMBER: 12313,
+      EXTERNAL_ID: 12313,
+      FULL_NAME: 'zzz',
+      OFFICE: 12313,
+      STATUS: 12313
+    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -119,32 +130,17 @@ class MemberData extends Component {
 
   actionCell = [
     {
-      icon: <span className="fas fa-search" />,
-      actions: [
-        {
-          text: "Option 1",
-          callback: () => {
-            alert("Option 1 clicked");
-          }
-        },
-        {
-          text: "Option 2",
-          callback: () => {
-            alert("Option 2 clicked");
-          }
-        },
-        {
-          text: "Option 3",
-          callback: () => {
-            alert("Option 3 clicked");
-          }
-        }
-      ]
-    },    
-    {
-      icon: <span className="fas fa-shopping-cart" />,
+      icon: <span className="fas fa-times" style={{ alignSelf: 'center' }} />,
       callback: () => {
-        console.log("Shopping..")
+        console.log("Delete")
+        this.state.rows.splice(this.state.rowIdx+1, 1)
+
+      }
+    },
+    {
+      icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />,
+      callback: () => {
+        console.log("Edit")
       }
     }
   ];
@@ -152,12 +148,21 @@ class MemberData extends Component {
     const cellActions = {
       ACTION: this.actionCell
     };
+
     return cellActions[column.key];
   }
 
   onCellSelected = ({ rowIdx, idx }) => {
     console.log(rowIdx);
+    this.setState({
+      rowIdx: rowIdx
+    })
+    // this.props.history.push('/')
   };
+
+  componentDidMount() {
+
+  }
 
   render() {
     return (
@@ -173,13 +178,14 @@ class MemberData extends Component {
 
               <Container fluid>
                 <ReactDataGrid
+                  className="tr-cursor"
                   onGridSort={this.handleGridSort}
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
                   minHeight={700}
                   getCellActions={this.getCellActions}
-                  onCellSelected={this.onCellSelected}
+                  onCellSelected={this.onCellSelected.bind(this)}
                 />
               </Container>
             </CardBody>

@@ -118,7 +118,9 @@ input:focus {
 }
 
 
-/* Members */
+/* Table */
 .tr-cursor {
-  cursor: pointer
+  &:hover {
+    cursor: pointer !important;
+  }
 }
