@@ -155,6 +155,10 @@ class MemberData extends Component {
     return cellActions[column.key];
   }
 
+  onCellSelected = ({ rowIdx, idx }) => {
+    console.log(rowIdx);
+  };
+
   render() {
     return (
       <ContentWrapper>
@@ -175,6 +179,7 @@ class MemberData extends Component {
                   rowsCount={this.state.rows.length}
                   minHeight={700}
                   getCellActions={this.getCellActions}
+                  onCellSelected={this.onCellSelected}
                 />
               </Container>
             </CardBody>
