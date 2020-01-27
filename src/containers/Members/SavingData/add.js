@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import {
+  Button,
   Card,
   CardBody,
   Input
 } from 'reactstrap';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Select from 'react-select';
+import Modal from 'react-modal';
+import SlidingPane from 'react-sliding-pane';
+import 'react-sliding-pane/dist/react-sliding-pane.css';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
 const MEMBERS = [
   { value: 'australian-capital-territory', label: 'Australian Capital Territory', className: 'State-ACT' },
@@ -19,9 +24,17 @@ const MEMBERS = [
 ]
 
 export default class SavingDataAdd extends Component {
-  state = {
-    selectedOptionMulti: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPaneOpen: false,
+      selectedOptionMulti: []
+    };
+  }
+
+  componentDidMount() {
+    Modal.setAppElement(this.el);
+  }
 
   onSubmit = e => {
     console.log('Form submitted..');
@@ -32,9 +45,14 @@ export default class SavingDataAdd extends Component {
     this.setState({ selectedOptionMulti });
   }
 
+  openPane = () => {
+    this.setState({ isPaneOpen: !this.state.isPaneOpen })
+    console.log(this.state.isPaneOpen)
+  }
+
   render() {
     const { selectedOptionMulti } = this.state;
-    
+
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
     const yyyy = new Date().getFullYear()
@@ -43,7 +61,7 @@ export default class SavingDataAdd extends Component {
 
     return (
       <ContentWrapper>
-        <div className="content-heading">
+        <div className="content-heading" ref={ref => this.el = ref}>
           <div>Simpanan Baru</div>
         </div>
 
@@ -59,6 +77,17 @@ export default class SavingDataAdd extends Component {
               </select>
 
               <label className="mt-3" htmlFor="member">Anggota</label>
+
+              <div className="row mr-1">
+                <div className="col-md-10 mb-3">
+                  <input className="form-control mr-3" type="text" placeholder="Search savings" />
+                </div>
+                <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button" onClick={this.openPane}>
+                  <i className="fas fa-search mr-2" />
+                  Cari Anggota
+                </Button>
+              </div>
+
               <Select
                 name="member"
                 className="input-font-size"
@@ -76,7 +105,7 @@ export default class SavingDataAdd extends Component {
                 name="openDate"
                 className="input-font-size"
                 placeholder="dd-mm-yyyy"
-                value={today}
+                defaultValue={today}
               />
 
               <label className="mt-3" htmlFor="initDepositValue">Nilai Setoran Awal</label>
@@ -98,6 +127,20 @@ export default class SavingDataAdd extends Component {
 
               <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
             </form>
+
+            <SlidingPane
+              className='pos-absolute slide-pane'
+              isOpen={this.state.isPaneOpen}
+              title='Hey, it is optional pane title.  I can be React component too.'
+              subtitle='Optional subtitle.'
+              onRequestClose={() => {
+                // triggered on "<" on left top click or on outside click
+                this.setState({ isPaneOpen: false });
+              }}>
+              <div>And I am pane content. BTW, what rocks?</div>
+              <br />
+              <img src='img.png' />
+            </SlidingPane>
           </CardBody>
         </Card>
       </ContentWrapper>

@@ -19,11 +19,6 @@ class Header extends Component {
     this.props.actions.toggleSetting('showUserBlock');
   }
 
-  toggleOffsidebar = e => {
-    e.preventDefault()
-    this.props.actions.toggleSetting('offsidebarOpen');
-  }
-
   toggleCollapsed = e => {
     e.preventDefault()
     this.props.actions.toggleSetting('isCollapsed');
@@ -88,12 +83,6 @@ class Header extends Component {
             { /* Fullscreen (only desktops) */}
             <li className="nav-item d-none d-md-block">
               <ToggleFullscreen className="nav-link cursor-pointer" />
-            </li>
-            { /* START Offsidebar button */}
-            <li className="nav-item">
-              <div className="nav-link cursor-pointer" onClick={this.toggleOffsidebar}>
-                <em className="icon-equalizer"></em>
-              </div>
             </li>
             { /* END Offsidebar menu */}
           </ul>

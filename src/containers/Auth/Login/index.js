@@ -9,9 +9,9 @@ class Login extends Component {
 
   state = {
     formLogin: {
-      email: 'novarenv@gmail.com',
+      username: 'novarenv',
       password: 'pensjoss',
-      checkEmail: 'novarenv@gmail.com',
+      checkUsername: 'novarenv',
       checkPassword: 'pensjoss'
     }
   }
@@ -23,7 +23,7 @@ class Login extends Component {
     */
   validateOnChange = event => {
     const input = event.target;
-    const form = input.form
+    const form = input.form;
     const value = input.type === 'checkbox' ? input.checked : input.value;
 
     const result = FormValidator.validate(input);
@@ -38,7 +38,6 @@ class Login extends Component {
         }
       }
     });
-
   }
 
   onSubmit = e => {
@@ -55,11 +54,11 @@ class Login extends Component {
     });
 
     console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
-    console.log(this.state.formLogin.email)
+    console.log(this.state.formLogin.username)
     console.log(this.state.formLogin.password)
 
     e.preventDefault()
-    if(this.state.formLogin.email === this.state.formLogin.checkEmail && this.state.formLogin.password === this.state.formLogin.checkPassword ){
+    if(this.state.formLogin.username === this.state.formLogin.checkUsername && this.state.formLogin.password === this.state.formLogin.checkPassword ){
       Cookies.set("loginToken", "Token", { expires: 7 })
       this.props.history.push("/")
     }
@@ -83,19 +82,19 @@ class Login extends Component {
             </div>
           </div>
           <div className="card-body">
-            <p className="text-center py-2">SIGN IN TO CONTINUE.</p>
             <form className="mb-3" name="formLogin" onSubmit={this.onSubmit.bind(this)}>
               <div className="form-group">
-                <label className="text-muted" htmlFor="resetInputEmail1">Email address</label>
+                <label className="text-muted" htmlFor="username">Username</label>
                 <div className="input-group with-focus">
-                  <Input type="email"
-                    name="email"
+                  <Input
+                    type="text"
+                    name="username"
                     className="border-right-0"
-                    placeholder="simpool@simpool.com"
-                    invalid={this.hasError('formLogin','email','required')||this.hasError('formLogin','email','email')}
+                    placeholder="simpoool"
+                    invalid={this.hasError('formLogin','username','required')}
                     onChange={this.validateOnChange}
-                    data-validate='["required", "email"]'
-                    value={this.state.formLogin.email}/>
+                    data-validate='["required"]'
+                    value={this.state.formLogin.username}/>
                   <div className="input-group-append">
                     <span className="input-group-text text-muted bg-transparent border-left-0">
                       <em className="fa fa-envelope"></em>
@@ -132,22 +131,17 @@ class Login extends Component {
                   name="remember"
                   label="Remember Me">
                 </CustomInput>
-                <div className="float-right">
-                  <Link to="recover" className="text-muted">Forgot your password?</Link>
-                </div>
               </div>
               <div className="text-center py-2">
                 <label className="c-radio">
-                  <Input id="english" type="radio" name="i-radio" defaultValue="english" defaultChecked/>
-                  <span className="fa fa-circle"></span>English</label>
-                <label className="c-radio">
                   <Input id="b-indonesia" type="radio" name="i-radio" defaultValue="b-indonesia"/>
                   <span className="fa fa-circle"></span>Bahasa Indonesia</label>
+                <label className="c-radio">
+                  <Input id="english" type="radio" name="i-radio" defaultValue="english" defaultChecked/>
+                  <span className="fa fa-circle"></span>English</label>
               </div>
               <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Login</button>
             </form>
-            <p className="pt-3 text-center">Need to Signup?</p>
-            <Link to="register" className="btn btn-block btn-secondary">Register Now</Link>
           </div>
         </div>
         <div className="p-3 text-center">
