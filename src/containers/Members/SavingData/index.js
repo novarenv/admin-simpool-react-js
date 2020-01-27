@@ -5,6 +5,8 @@ import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 
+import Swal from './Swal';
+
 const COLUMN_WIDTH = 250;
 
 const AddBar = () => {
@@ -80,28 +82,51 @@ class MemberData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    this.state = { originalRows, rows };
+    this.state = {
+      originalRows,
+      rows,
+      swalOption: {
+        title: 'Are you sure?',
+        text: 'Your will not be able to recover this imaginary file!',
+        icon: 'warning',
+        buttons: {
+          cancel: {
+            text: 'No, cancel plx!',
+            value: null,
+            visible: true,
+            className: "",
+            closeModal: false
+          },
+          confirm: {
+            text: 'Yes, delete it!',
+            value: true,
+            visible: true,
+            className: "bg-danger",
+            closeModal: false
+          }
+        }
+      }
+    };
   }
 
-  state = {
-    options: {
-      'paging': true, // Table pagination
-      'ordering': true, // Column ordering
-      'info': true, // Bottom left status text
-      responsive: true,
-      // Text translation options
-      // Note the required keywords between underscores (e.g _MENU_)
-      oLanguage: {
-        sSearch: '<em class="fa fa-search"></em>',
-        sLengthMenu: '_MENU_ records per page',
-        info: 'Showing page _PAGE_ of _PAGES_',
-        zeroRecords: 'Nothing found - sorry',
-        infoEmpty: 'No records available',
-        infoFiltered: '(filtered from _MAX_ total records)',
-        oPaginate: {
-          sNext: '<em class="fa fa-caret-right"></em>',
-          sPrevious: '<em class="fa fa-caret-left"></em>'
-        }
+  swalOption= {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
       }
     }
   }
@@ -142,7 +167,63 @@ class MemberData extends Component {
     this.setState({ rows });
   };
 
+  deleteRow = () => {
+    const rows = [...this.state.rows];
+    rows.splice(this.state.rowIdx, 1);
+    this.setState({ rows: rows });
+  }
+
+  swalCallback(isConfirm, swal) {
+    if (isConfirm) {
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    } else {
+      swal("Cancelled", "Your imaginary file is safe :)", "error");
+    }
+  }
+
+  actionCell = [
+    {
+      icon: <Swal options={this.swalOption} callback={this.swalCallback} className="swal-del"> <span className="fas fa-times swal-del"/> </Swal>,
+      callback: () => {
+        console.log("Delete")
+      }
+    },
+    {
+      icon: <span className="fas fa-pen-square"/>,
+      callback: () => {
+        console.log("Edit")
+      }
+    }
+  ];
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
+
+    return cellActions[column.key];
+  }
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    this.setState({
+      rowIdx: rowIdx
+    })
+    if (idx != 0) {
+      this.props.history.push('/')
+    }
+  };
+
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
+  };
+
   render() {
+
     return (
       <ContentWrapper>
         <div className="content-heading">
@@ -160,7 +241,11 @@ class MemberData extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
-                  minHeight={700} />
+                  minHeight={700}
+                  getCellActions={this.getCellActions.bind(this)}
+                  onCellSelected={this.onCellSelected.bind(this)}
+                  onGridRowsUpdated={this.onGridRowsUpdated}
+                />
               </Container>
             </CardBody>
           </Card>

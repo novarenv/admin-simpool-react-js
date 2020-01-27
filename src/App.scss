@@ -124,3 +124,13 @@ input:focus {
     cursor: pointer !important;
   }
 }
+
+.swal-del {
+  height: 34px;
+}
+
+// Sliding Pane
+.ReactModalPortal {
+  position: relative;
+  z-index: 1000;
+}

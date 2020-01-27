@@ -160,10 +160,6 @@ class MemberData extends Component {
     // this.props.history.push('/')
   };
 
-  componentDidMount() {
-
-  }
-
   render() {
     return (
       <ContentWrapper>
