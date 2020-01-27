@@ -73,7 +73,7 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="block-center mt-4 wd-xl">
+      <div className="block-center mt-4 col-md-6">
         <div className="card card-flat">
           <div className="card-header text-center bg-dark">
             <div>
@@ -132,10 +132,10 @@ class Login extends Component {
               </div>
               <div className="text-center py-2">
                 <label className="c-radio">
-                  <Input id="b-indonesia" type="radio" name="i-radio" defaultValue="b-indonesia"/>
+                  <Input id="b-indonesia" type="radio" name="i-radio" defaultValue="b-indonesia" defaultChecked/>
                   <span className="fa fa-circle"></span>Bahasa Indonesia</label>
                 <label className="c-radio">
-                  <Input id="english" type="radio" name="i-radio" defaultValue="english" defaultChecked/>
+                  <Input id="english" type="radio" name="i-radio" defaultValue="english"/>
                   <span className="fa fa-circle"></span>English</label>
               </div>
               <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Login</button>
