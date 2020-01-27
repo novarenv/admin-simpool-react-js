@@ -102,6 +102,13 @@ class MemberData extends Component {
 
   rowGetter = (i) => this.state.rows[i]
 
+  RowRenderer = ({ row, idx }) => {
+    const { firstName, lastName } = row;
+    return (
+      <h1></h1>
+    );
+  };
+
   handleGridSort = (sortColumn, sortDirection) => {
     const comparer = (a, b) => {
       if (sortDirection === 'ASC') {
@@ -173,6 +180,7 @@ class MemberData extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
+                  rowRenderer={RowRenderer}
                   minHeight={700}
                   getCellActions={this.getCellActions}
                 />
