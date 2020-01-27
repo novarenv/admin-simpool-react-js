@@ -40,23 +40,6 @@ class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.state = {
-      columnDefs: [{
-        headerName: "Make", field: "make"
-      }, {
-        headerName: "Model", field: "model"
-      }, {
-        headerName: "Price", field: "price"
-      }],
-      rowData: [{
-        make: "Toyota", model: "Celica", price: 35000
-      }, {
-        make: "Ford", model: "Mondeo", price: 32000
-      }, {
-        make: "Porsche", model: "Boxter", price: 72000
-      }]
-    }
-
     this._columns = [
       {
         key: 'ACTION',
@@ -101,29 +84,6 @@ class MemberData extends Component {
     this.state = { originalRows, rows };
   }
 
-  state = {
-    options: {
-      'paging': true, // Table pagination
-      'ordering': true, // Column ordering
-      'info': true, // Bottom left status text
-      responsive: true,
-      // Text translation options
-      // Note the required keywords between underscores (e.g _MENU_)
-      oLanguage: {
-        sSearch: '<em class="fa fa-search"></em>',
-        sLengthMenu: '_MENU_ records per page',
-        info: 'Showing page _PAGE_ of _PAGES_',
-        zeroRecords: 'Nothing found - sorry',
-        infoEmpty: 'No records available',
-        infoFiltered: '(filtered from _MAX_ total records)',
-        oPaginate: {
-          sNext: '<em class="fa fa-caret-right"></em>',
-          sPrevious: '<em class="fa fa-caret-left"></em>'
-        }
-      },
-    }
-  }
-
   createRows = () => {
     let rows = [];
     for (let i = 1; i < 100; i++) {
@@ -156,6 +116,45 @@ class MemberData extends Component {
     this.setState({ rows });
   };
 
+
+  actionCell = [
+    {
+      icon: <span className="fas fa-search" />,
+      actions: [
+        {
+          text: "Option 1",
+          callback: () => {
+            alert("Option 1 clicked");
+          }
+        },
+        {
+          text: "Option 2",
+          callback: () => {
+            alert("Option 2 clicked");
+          }
+        },
+        {
+          text: "Option 3",
+          callback: () => {
+            alert("Option 3 clicked");
+          }
+        }
+      ]
+    },    
+    {
+      icon: <span className="fas fa-shopping-cart" />,
+      callback: () => {
+        console.log("Shopping..")
+      }
+    }
+  ];
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
+    return cellActions[column.key];
+  }
+
   render() {
     return (
       <ContentWrapper>
@@ -165,8 +164,8 @@ class MemberData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-                <AddBar />
-                <SearchBar />
+              <AddBar />
+              <SearchBar />
 
               <Container fluid>
                 <ReactDataGrid
@@ -174,7 +173,9 @@ class MemberData extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
-                  minHeight={700} />
+                  minHeight={700}
+                  getCellActions={this.getCellActions}
+                />
               </Container>
             </CardBody>
           </Card>
