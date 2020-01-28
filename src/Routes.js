@@ -26,7 +26,9 @@ const MemberData = lazy(() => import('./containers/Members/MemberData'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const SavingData = lazy(() => import('./containers/Members/SavingData'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
-const SavingHistory = lazy(() => import('./containers/Members/SavingData/history'));
+const SavingDataDetail = lazy(() => import('./containers/Members/SavingData/detail'));
+const SavingDataEdit = lazy(() => import('./containers/Members/SavingData/edit'));
+const SavingDataHistory = lazy(() => import('./containers/Members/SavingData/history'));
 const LoanData = lazy(() => import('./containers/Members/LoanData'));
 const LoanDataAdd = lazy(() => import('./containers/Members/LoanData/add'));
 const LoanDataHistory = lazy(() => import('./containers/Members/LoanData/history'));
@@ -102,7 +104,7 @@ const Routes = ({ location, ...props } ) => {
                 <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
 
-                    {/*Dashboard*/}
+                    {/* Dashboard */}
                     <Route exact path="/" component={waitFor(Dashboard)} />
                     <Route exact path="/dashboard" component={waitFor(Dashboard)} />
 
@@ -111,7 +113,9 @@ const Routes = ({ location, ...props } ) => {
                     <Route exact path="/member/data-add" component={waitFor(MemberDataAdd)} />
                     <Route exact path="/member/saving-data" component={waitFor(SavingData)} />
                     <Route exact path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
-                    <Route exact path="/member/saving-data-history" component={waitFor(SavingHistory)} />
+                    <Route exact path="/member/saving-data-detail" component={waitFor(SavingDataDetail)} />
+                    <Route exact path="/member/saving-data-edit" component={waitFor(SavingDataEdit)} />
+                    <Route exact path="/member/saving-data-history" component={waitFor(SavingDataHistory)} />
                     <Route exact path="/member/loan-data" component={waitFor(LoanData)} />
                     <Route exact path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
                     <Route exact path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />

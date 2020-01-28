@@ -122,7 +122,7 @@ export default class SavingDataAdd extends Component {
         </SlidingPane>
 
         <div className="content-heading">
-          <div>Simpanan Baru</div>
+          <div>Edit Simpanan</div>
         </div>
 
         <Card className="card-default">
@@ -184,7 +184,7 @@ export default class SavingDataAdd extends Component {
                 tabIndex={6}
               />
 
-              <Button className="mt-3 col-12" color="primary" type="submit" tabIndex={7}>Buat Baru</Button>
+              <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
             </form>
           </CardBody>
         </Card>

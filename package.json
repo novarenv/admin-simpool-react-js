@@ -62,6 +62,7 @@
     "screenfull": "^5.0.1",
     "simple-line-icons": "^2.4.1",
     "sweetalert": "^2.1.2",
+    "sweetalert2": "^9.7.0",
     "validator": "^12.1.0",
     "weather-icons": "github:erikflowers/weather-icons"
   },

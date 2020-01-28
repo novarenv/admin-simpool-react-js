@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import { Container, Card, CardBody, Button } from 'reactstrap';
+import { Button, Container, Card, CardBody } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
@@ -87,6 +87,7 @@ class MemberData extends Component {
       originalRows,
       rows,
       rowIdx: '',
+      actionRow: 0,
       swalOption: {
         title: 'Are you sure?',
         text: 'Your will not be able to recover this imaginary file!',
@@ -185,7 +186,7 @@ class MemberData extends Component {
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback} className="swal-del"> <span className="fas fa-times swal-del"/> </Swal>,
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del"/> </Swal>,
       callback: () => {
         console.log("Delete")
       }
@@ -194,6 +195,7 @@ class MemberData extends Component {
       icon: <span className="fas fa-pen-square"/>,
       callback: () => {
         console.log("Edit")
+        this.props.history.push('/member/saving-data-edit')
       }
     }
   ];
@@ -202,15 +204,17 @@ class MemberData extends Component {
       ACTION: this.actionCell
     };
 
+    console.log(row)
+
     return cellActions[column.key];
   }
 
   onCellSelected = ({ rowIdx, idx }) => {
     this.state.rowIdx = rowIdx
-    this.deleteRow()
+    // this.deleteRow()
     
     if (idx != 0) {
-      this.props.history.push('/')
+      this.props.history.push('/member/saving-data-detail')
     }
   };
 
