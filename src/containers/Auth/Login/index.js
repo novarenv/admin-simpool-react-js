@@ -62,12 +62,12 @@ class Login extends Component {
 
     e.preventDefault()
     if (this.state.formLogin.username === this.state.formLogin.checkUsername && this.state.formLogin.password === this.state.formLogin.checkPassword) {
-      // Cookies.set("loginToken", "Token", { expires: 7 })
+      Cookies.set("loginToken", "Token", { expires: 7 })
       this.setState({
         OTPStatus: true
       })
       console.log(this.state.OTPStatus)
-      // this.props.history.push("/")
+      this.props.history.push("/")
     }
   }
 
