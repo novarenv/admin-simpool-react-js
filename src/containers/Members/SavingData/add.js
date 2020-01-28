@@ -78,7 +78,7 @@ export default class SavingDataAdd extends Component {
     const today = dd + '/' + mm + '/' + yyyy
 
     return (
-      <ContentWrapper>
+      <ContentWrapper ref={ref => this.el = ref}>
         <SlidingPane
           className='pos-absolute slide-pane'
           closeIcon={<i className="fas fa-angle-right" />}
@@ -114,7 +114,7 @@ export default class SavingDataAdd extends Component {
           </div>
         </SlidingPane>
 
-        <div className="content-heading" ref={ref => this.el = ref}>
+        <div className="content-heading">
           <div>Simpanan Baru</div>
         </div>
 
@@ -130,7 +130,6 @@ export default class SavingDataAdd extends Component {
               </select>
 
               <label className="mt-3" htmlFor="member">Anggota</label>
-
               <div className="row mr-1">
                 <div className="col-md-10">
                   <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2}/>

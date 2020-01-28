@@ -1,38 +1,74 @@
 import React, { Component } from 'react';
 import {
+  Button,
   Card,
   CardBody,
   Input
 } from 'reactstrap';
-import Select from 'react-select';
 import NumberFormat from 'react-number-format';
+import Modal from 'react-modal';
+import SlidingPane from 'react-sliding-pane';
+import 'react-sliding-pane/dist/react-sliding-pane.css';
+import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
-const MEMBERS = [
-  { value: 'australian-capital-territory', label: 'Australian Capital Territory', className: 'State-ACT' },
-  { value: 'new-south-wales', label: 'New South Wales', className: 'State-NSW' },
-  { value: 'victoria', label: 'Victoria', className: 'State-Vic' },
-  { value: 'queensland', label: 'Queensland', className: 'State-Qld' },
-  { value: 'western-australia', label: 'Western Australia', className: 'State-WA' },
-  { value: 'south-australia', label: 'South Australia', className: 'State-SA' },
-  { value: 'tasmania', label: 'Tasmania', className: 'State-Tas' },
-  { value: 'northern-territory', label: 'Northern Territory', className: 'State-NT' },
-]
-
 export default class Deposit extends Component {
-  state = {
-    selectedOption: ''
+  constructor(props) {
+    super(props);
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    
+    this.state = {
+      isPaneOpen: false,
+      rows,
+      selectedMember: ''
+    };
+    
+    this._columns = [
+      {
+        key: 'ANGGOTA',
+        name: 'Anggota',
+        width: 1000
+      }
+    ];
+  }
+
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ANGGOTA: i
+      });
+    }
+
+    return rows;
   };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    this.setState({
+      isPaneOpen: false,
+      rowIdx: rowIdx,
+      selectedMember: this.state.rows[rowIdx].ANGGOTA
+    })
+    console.log(this.state.rows[rowIdx].ANGGOTA)
+  };
+
+  componentDidMount() {
+    Modal.setAppElement(this.el);
+  }
 
   onSubmit = e => {
     console.log('Form submitted..');
     e.preventDefault();
   }
-
-  handleChangeSelect = (selectedOption) => {
-    this.setState({ selectedOption });
-    console.log(`Selected: ${selectedOption.value}`);
+  
+  openPane = () => {
+    this.setState({ isPaneOpen: !this.state.isPaneOpen })
+    console.log(this.state.isPaneOpen)
   }
 
   render() {
@@ -42,26 +78,43 @@ export default class Deposit extends Component {
 
     const today = dd + '/' + mm + '/' + yyyy
 
-    const customStyles = {
-      control: base => ({
-        ...base,
-        padding: 0,
-        margin: 0,
-        height: 36,
-        minHeight: 36,
-        maxHeight: 36,
-        input: {
-          padding: 0,
-          margin: 0,
-          height: 36,
-          minHeight: 36,
-          maxHeight: 36
-        }
-      })
-    };
-
     return (
       <ContentWrapper>
+        <SlidingPane
+          className='pos-absolute slide-pane'
+          closeIcon={<i className="fas fa-angle-right" />}
+          isOpen={this.state.isPaneOpen}
+          title='Hasil Pencarian Anggota'
+          subtitle='Pilih salah satu'
+          onRequestClose={() => {
+            this.setState({ isPaneOpen: false });
+          }}
+        >
+          <div className="row mr-1">
+            <div className="col-md-10">
+              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." tabIndex={2}/>
+            </div>
+            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+              <i className="fas fa-search mr-2" />
+              Cari Anggota
+            </Button>
+
+            <Card>
+              <CardBody>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700}
+                  minWidth={1000}
+                  onCellSelected={this.onCellSelected}
+                />
+              </CardBody>
+            </Card>
+          </div>
+        </SlidingPane>
+
         <div className="content-heading">
           <div>Deposit</div>
         </div>
@@ -70,14 +123,15 @@ export default class Deposit extends Component {
           <CardBody>
             <form className="form-font-size" onSubmit={this.onSubmit}>
               <label htmlFor="member">Anggota</label>
-              <Select
-                name="select-name"
-                className="input-font-size"
-                value={this.props.children}
-                onChange={this.handleChangeSelect}
-                options={MEMBERS}
-                styles={customStyles}
-              />
+              <div className="row mr-1">
+                <div className="col-md-10">
+                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2}/>
+                </div>
+                <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+                  <i className="fas fa-search mr-2" />
+                  Cari Anggota
+                </Button>
+              </div>
 
               <label className="mt-3" htmlFor="savingNum">No. Simpanan</label>
               <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingNum">
