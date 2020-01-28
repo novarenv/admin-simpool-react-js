@@ -82,9 +82,11 @@ class MemberData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
+    
     this.state = {
       originalRows,
       rows,
+      rowIdx: '',
       swalOption: {
         title: 'Are you sure?',
         text: 'Your will not be able to recover this imaginary file!',
@@ -204,9 +206,9 @@ class MemberData extends Component {
   }
 
   onCellSelected = ({ rowIdx, idx }) => {
-    this.setState({
-      rowIdx: rowIdx
-    })
+    this.state.rowIdx = rowIdx
+    this.deleteRow()
+    
     if (idx != 0) {
       this.props.history.push('/')
     }

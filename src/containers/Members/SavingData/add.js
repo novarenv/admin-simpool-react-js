@@ -5,21 +5,56 @@ import {
   CardBody,
   Input
 } from 'reactstrap';
-import Select from 'react-select';
 import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
+import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
 export default class SavingDataAdd extends Component {
   constructor(props) {
     super(props);
+
+    let originalRows = this.createRows(1000);
+    let rows = originalRows.slice(0);
+    
     this.state = {
       isPaneOpen: false,
-      selectedOptionMulti: []
+      rows,
+      selectedMember: ''
     };
+    
+    this._columns = [
+      {
+        key: 'ANGGOTA',
+        name: 'Anggota',
+        width: 1000
+      }
+    ];
   }
+
+  createRows = () => {
+    let rows = [];
+    for (let i = 1; i < 100; i++) {
+      rows.push({
+        ANGGOTA: i
+      });
+    }
+
+    return rows;
+  };
+
+  rowGetter = (i) => this.state.rows[i]
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    this.setState({
+      isPaneOpen: false,
+      rowIdx: rowIdx,
+      selectedMember: this.state.rows[rowIdx].ANGGOTA
+    })
+    console.log(this.state.rows[rowIdx].ANGGOTA)
+  };
 
   componentDidMount() {
     Modal.setAppElement(this.el);
@@ -30,18 +65,12 @@ export default class SavingDataAdd extends Component {
     e.preventDefault();
   }
 
-  handleChangeSelectMulti = (selectedOptionMulti) => {
-    this.setState({ selectedOptionMulti });
-  }
-
   openPane = () => {
     this.setState({ isPaneOpen: !this.state.isPaneOpen })
     console.log(this.state.isPaneOpen)
   }
 
   render() {
-    const { selectedOptionMulti } = this.state;
-
     const dd = String(new Date().getDate()).padStart(2, '0')
     const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
     const yyyy = new Date().getFullYear()
@@ -52,16 +81,37 @@ export default class SavingDataAdd extends Component {
       <ContentWrapper>
         <SlidingPane
           className='pos-absolute slide-pane'
+          closeIcon={<i className="fas fa-angle-right" />}
           isOpen={this.state.isPaneOpen}
-          title='Hey, it is optional pane title.  I can be React component too.'
-          subtitle='Optional subtitle.'
+          title='Hasil Pencarian Anggota'
+          subtitle='Pilih salah satu'
           onRequestClose={() => {
-            // triggered on "<" on left top click or on outside click
             this.setState({ isPaneOpen: false });
-          }}>
-          <div>And I am pane content. BTW, what rocks?</div>
-          <br />
-          <img src='img.png' />
+          }}
+        >
+          <div className="row mr-1">
+            <div className="col-md-10">
+              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." tabIndex={2}/>
+            </div>
+            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+              <i className="fas fa-search mr-2" />
+              Cari Anggota
+            </Button>
+
+            <Card>
+              <CardBody>
+                <ReactDataGrid
+                  onGridSort={this.handleGridSort}
+                  columns={this._columns}
+                  rowGetter={this.rowGetter}
+                  rowsCount={this.state.rows.length}
+                  minHeight={700}
+                  minWidth={1000}
+                  onCellSelected={this.onCellSelected}
+                />
+              </CardBody>
+            </Card>
+          </div>
         </SlidingPane>
 
         <div className="content-heading" ref={ref => this.el = ref}>
@@ -83,7 +133,7 @@ export default class SavingDataAdd extends Component {
 
               <div className="row mr-1">
                 <div className="col-md-10">
-                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search savings" tabIndex={2}/>
+                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2}/>
                 </div>
                 <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
                   <i className="fas fa-search mr-2" />
@@ -123,7 +173,7 @@ export default class SavingDataAdd extends Component {
                 tabIndex={6}
               />
 
-              <button className="btn btn-sm btn-primary mt-3" type="submit">Buat Baru</button>
+              <button className="btn btn-sm btn-primary mt-3 col-12" type="submit">Buat Baru</button>
             </form>
           </CardBody>
         </Card>
