@@ -13,6 +13,25 @@ import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
+// DateTimePicker
+import Datetime from 'react-datetime';
+import 'react-datetime/css/react-datetime.css';
+
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'Mei',
+  'Jun',
+  'Jul',
+  'Agu',
+  'Sep',
+  'Okt',
+  'Nov',
+  'Des',
+];
+
 export default class Deposit extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +42,8 @@ export default class Deposit extends Component {
     this.state = {
       isPaneOpen: false,
       rows,
-      selectedMember: ''
+      selectedMember: '',
+      transactionDate: ''
     };
     
     this._columns = [
@@ -58,7 +78,29 @@ export default class Deposit extends Component {
   };
 
   componentDidMount() {
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mm = MONTHS[new Date().getMonth()]
+    const yyyy = new Date().getFullYear()
+
+    const today = dd + ' ' + mm + ' ' + yyyy
+
+    this.setState({
+      transactionDate: today
+    })
+
     Modal.setAppElement(this.el);
+  }
+
+  handleDate = e => {
+    let dd = String(e.toDate().getDate()).padStart(2, '0')
+    let mm = MONTHS[e.toDate().getMonth()]
+    let yyyy = e.toDate().getFullYear()
+
+    let today = dd + " " + mm + " " + yyyy
+
+    this.setState({
+      transactionDate: today
+    })
   }
 
   handleChange = e => {
@@ -77,12 +119,6 @@ export default class Deposit extends Component {
   }
 
   render() {
-    const dd = String(new Date().getDate()).padStart(2, '0')
-    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
-    const yyyy = new Date().getFullYear()
-
-    const today = dd + '/' + mm + '/' + yyyy
-
     return (
       <ContentWrapper>
         <SlidingPane
@@ -158,14 +194,21 @@ export default class Deposit extends Component {
               />
 
               <label className="mt-3" htmlFor="transactionDate">Tanggal Transaksi</label>
-              <Input
-                type="text"
-                id="transactionDate"
-                name="transactionDate"
-                className="input-font-size"
-                placeholder="dd-mm-yyyy"
-                onChange={this.onSubmit}
-                value={today}
+              <Datetime
+                inputProps={{
+                  name: "birthdate",
+                  className: "form-control input-font-size",
+                  id: "birthdate",
+                  placeholder: "dd mmm yyyy",
+                  tabIndex: "2",
+                  required: true
+                }}
+                value={this.state.transactionDate}
+                dateFormat="DD MMM YYYY"
+                timeFormat={false}
+                closeOnSelect={true}
+                renderInput={this.renderInputGroup}
+                onChange={this.handleDate}
               />
 
               <label className="mt-3" htmlFor="description">Keterangan</label>

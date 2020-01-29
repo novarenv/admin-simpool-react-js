@@ -109,6 +109,7 @@ class MemberDataAdd extends Component {
       noKTP: '',
       motherName: '',
 
+
       registrationDate: '',
       serviceOffice: '',
       birthdate: '',
@@ -117,8 +118,6 @@ class MemberDataAdd extends Component {
       phoneNumber: '',
       email: '',
 
-
-      address1: '',
       city: '',
       zipCode: '',
       addressDomicile: '',
@@ -366,20 +365,29 @@ class MemberDataAdd extends Component {
       }
     });
 
-    this.setState({
-      [this.state.address1]: this.state.address
-    })
-
     console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!');
 
     e.preventDefault();
   };
 
-  handleDate(birthdate) {
-    this.setState({ birthdate });
+  componentDidUpdate() {
+    console.log(this.state.addValidation)
+  }
 
-    console.log(birthdate);
-  };
+  handleDate = e => {
+    let dd = String(e.toDate().getDate()).padStart(2, '0')
+    let mm = MONTHS[e.toDate().getMonth()]
+    let yyyy = e.toDate().getFullYear()
+
+    let date = dd + " " + mm + " " + yyyy
+
+    this.setState({
+      addValidation: {
+        ...this.state.addValidation,
+        birthdate: date
+      }
+    })
+  }
 
   // Keep a reference to the form to access from the steps methods
   formRef = node => (this.formWizardRef = node);
@@ -524,27 +532,28 @@ class MemberDataAdd extends Component {
                         name: "birthdate",
                         className: "form-control input-font-size",
                         id: "birthdate",
-                        placeholder: "dd-mm-yyyy",
+                        placeholder: "dd mmm yyyy",
                         tabIndex: "2",
                         required: true
                       }}
                       value={this.state.addValidation.birthdate}
                       dateFormat="DD MMM YYYY"
+                      timeFormat={false}
                       closeOnSelect={true}
                       renderInput={this.renderInputGroup}
-                      onChange={this.props.handleDate}
+                      onChange={this.handleDate}
                     />
 
-                    <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
+                    <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
                     <Input
-                      name="address1"
+                      name="address"
                       className="input-font-size"
                       type="text"
-                      id="address1"
+                      id="address"
                       onChange={this.validateOnChange}
                       invalid={this.hasError(
                         'addValidation',
-                        'address1'
+                        'address'
                       )}
                       tabIndex="3"
                       placeholder="contoh: One PM, Gading Serpong, Tangerang"
@@ -608,19 +617,19 @@ class MemberDataAdd extends Component {
                   <fieldset>
                     <p className="lead text-center">Identitas</p>
 
-                    <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
+                    <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
                     <Input
-                      name="address"
+                      name="address1"
                       className="input-font-size"
                       type="text"
-                      id="address"
+                      id="address1"
                       onChange={this.validateOnChange}
                       invalid={this.hasError(
                         'addValidation',
-                        'address'
+                        'address1'
                       )}
                       placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                      value={this.state.addValidation.address1}
+                      value={this.state.addValidation.address}
                       readOnly
                     />
 
