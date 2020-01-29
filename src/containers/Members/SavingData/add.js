@@ -98,9 +98,9 @@ export default class SavingDataAdd extends Component {
         >
           <div className="row mr-1">
             <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2} onChange={this.handleChange}/>
+              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={1} onChange={this.handleChange}/>
             </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
               <i className="fas fa-search mr-2" />
               Cari Anggota
             </Button>
@@ -128,7 +128,7 @@ export default class SavingDataAdd extends Component {
         <Card className="card-default">
           <CardBody>
             <Link to="/member/saving-data">
-              <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
+              <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit">Kembali</Button>
             </Link>
             
             <form className="form-font-size mt-3" onSubmit={this.onSubmit}>

@@ -61,6 +61,11 @@ export default class Deposit extends Component {
     Modal.setAppElement(this.el);
   }
 
+  handleChange = e => {
+    this.setState({selectedMember: e.target.value});
+    console.log(this.state.selectedMember)
+  }
+
   onSubmit = e => {
     console.log('Form submitted..');
     e.preventDefault();
@@ -92,9 +97,9 @@ export default class Deposit extends Component {
         >
           <div className="row mr-1">
             <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." tabIndex={2}/>
+              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={1} onChange={this.handleChange} />
             </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
               <i className="fas fa-search mr-2" />
               Cari Anggota
             </Button>
@@ -124,10 +129,11 @@ export default class Deposit extends Component {
             <form className="form-font-size" onSubmit={this.onSubmit}>
               <label htmlFor="member">Anggota</label>
               <div className="row mr-1">
-                <div className="col-md-10">
-                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2}/>
+                <div className="col-md-8">
+                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
+                      value={this.state.selectedMember} onChange={this.handleChange} tabIndex={1}/>
                 </div>
-                <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+                <Button outline className="col-md-4 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
                   <i className="fas fa-search mr-2" />
                   Cari Anggota
                 </Button>

@@ -18,13 +18,13 @@ export default class LoanDataAdd extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    
+
     this.state = {
       isPaneOpen: false,
       rows,
       selectedMember: ''
     };
-    
+
     this._columns = [
       {
         key: 'ANGGOTA',
@@ -60,11 +60,16 @@ export default class LoanDataAdd extends Component {
     Modal.setAppElement(this.el);
   }
 
+  handleChange = e => {
+    this.setState({selectedMember: e.target.value});
+    console.log(this.state.selectedMember)
+  }
+
   onSubmit = e => {
     console.log('Form submitted..');
     e.preventDefault();
   }
-  
+
   openPane = () => {
     this.setState({ isPaneOpen: !this.state.isPaneOpen })
     console.log(this.state.isPaneOpen)
@@ -91,9 +96,9 @@ export default class LoanDataAdd extends Component {
         >
           <div className="row mr-1">
             <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." tabIndex={2}/>
+              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={1} onChange={this.handleChange} />
             </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
               <i className="fas fa-search mr-2" />
               Cari Anggota
             </Button>
@@ -122,7 +127,7 @@ export default class LoanDataAdd extends Component {
           <CardBody>
             <form className="form-font-size" onSubmit={this.onSubmit}>
               <label htmlFor="loanType">Jenis Pinjaman</label>
-              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="loanType">
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="loanType" tabIndex={1}>
                 <option>Jenis Pinjaman</option>
                 <option defaultValue="pokok">Pokok</option>
                 <option defaultValue="wajib">Wajib</option>
@@ -131,10 +136,11 @@ export default class LoanDataAdd extends Component {
 
               <label className="mt-3" htmlFor="member">Anggota</label>
               <div className="row mr-1">
-                <div className="col-md-10">
-                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2}/>
+                <div className="col-md-8">
+                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
+                      value={this.state.selectedMember} onChange={this.handleChange} tabIndex={2}/>
                 </div>
-                <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
+                <Button outline className="col-md-4 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
                   <i className="fas fa-search mr-2" />
                   Cari Anggota
                 </Button>
@@ -197,7 +203,7 @@ export default class LoanDataAdd extends Component {
               <label className="mt-3" htmlFor="charge">Biaya</label>
               <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="charge" required>
                 <option>Jenis Biaya</option>
-                <option defaultValue="charge1">Biaya 1</option>  
+                <option defaultValue="charge1">Biaya 1</option>
                 <option defaultValue="charge2">Biaya 2</option>
               </select>
 
