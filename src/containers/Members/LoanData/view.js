@@ -229,7 +229,7 @@ class LoanHistory extends Component {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
         console.log("Edit")
-        this.props.history.push('/member/saving-data-edit')
+        this.props.history.push('/member/loan-data-view-edit')
       }
     }
   ];
@@ -245,7 +245,7 @@ class LoanHistory extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/saving-data-detail')
+      this.props.history.push('/member/loan-data-view-detail')
     }
     else if (idx === 0) {
       this.state.rowIdx = rowIdx

@@ -32,7 +32,7 @@ const MONTHS = [
   'Des',
 ];
 
-export default class SavingDataEdit extends Component {
+export default class SavingDataHistoryEdit extends Component {
   constructor(props) {
     super(props);
 
@@ -163,12 +163,12 @@ export default class SavingDataEdit extends Component {
         </SlidingPane>
 
         <div className="content-heading">
-          <div>Edit Simpanan</div>
+          <div>Edit Savings History</div>
         </div>
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/saving-data">
+            <Link to="/member/saving-data-history">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             

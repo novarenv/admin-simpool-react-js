@@ -13,7 +13,7 @@ import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
-export default class SavingDataAdd extends Component {
+export default class SavingDataDetail extends Component {
   constructor(props) {
     super(props);
 

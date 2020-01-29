@@ -176,6 +176,7 @@ class MemberData extends Component {
       icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />,
       callback: () => {
         console.log("Edit")
+        this.props.history.push('/member/data-edit')
       }
     }
   ];
@@ -189,7 +190,7 @@ class MemberData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/saving-data-detail')
+      this.props.history.push('/member/data-detail')
     }
     else if (idx === 0) {
       this.state.rowIdx = rowIdx

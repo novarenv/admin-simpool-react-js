@@ -24,15 +24,25 @@ const Login = lazy(() => import('./containers/Auth/Login'));
 // Members
 const MemberData = lazy(() => import('./containers/Members/MemberData'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
+const MemberDataDetail = lazy(() => import('./containers/Members/MemberData/detail'));
+const MemberDataEdit = lazy(() => import('./containers/Members/MemberData/edit'));
 const SavingData = lazy(() => import('./containers/Members/SavingData'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
 const SavingDataDetail = lazy(() => import('./containers/Members/SavingData/detail'));
 const SavingDataEdit = lazy(() => import('./containers/Members/SavingData/edit'));
 const SavingDataHistory = lazy(() => import('./containers/Members/SavingData/history'));
+const SavingDataHistoryDetail = lazy(() => import('./containers/Members/SavingData/historyDetail'));
+const SavingDataHistoryEdit = lazy(() => import('./containers/Members/SavingData/historyEdit'));
 const LoanData = lazy(() => import('./containers/Members/LoanData'));
 const LoanDataAdd = lazy(() => import('./containers/Members/LoanData/add'));
+const LoanDataDetail = lazy(() => import('./containers/Members/LoanData/detail'));
+const LoanDataEdit = lazy(() => import('./containers/Members/LoanData/edit'));
 const LoanDataHistory = lazy(() => import('./containers/Members/LoanData/history'));
+const LoanDataHistoryDetail = lazy(() => import('./containers/Members/LoanData/historyDetail'));
+const LoanDataHistoryEdit = lazy(() => import('./containers/Members/LoanData/historyEdit'));
 const LoanDataView = lazy(() => import('./containers/Members/LoanData/view'));
+const LoanDataViewDetail = lazy(() => import('./containers/Members/LoanData/viewDetail'));
+const LoanDataViewEdit = lazy(() => import('./containers/Members/LoanData/viewEdit'));
 const MobileUser = lazy(() => import('./containers/Members/MobileUser'));
 
 // Transactions
@@ -111,15 +121,25 @@ const Routes = ({ location, ...props } ) => {
                     {/* Members */}
                     <Route exact path="/member/data" component={waitFor(MemberData)} />
                     <Route exact path="/member/data-add" component={waitFor(MemberDataAdd)} />
+                    <Route exact path="/member/data-detail" component={waitFor(MemberDataDetail)} />
+                    <Route exact path="/member/data-edit" component={waitFor(MemberDataEdit)} />
                     <Route exact path="/member/saving-data" component={waitFor(SavingData)} />
                     <Route exact path="/member/saving-data-add" component={waitFor(SavingDataAdd)} />
                     <Route exact path="/member/saving-data-detail" component={waitFor(SavingDataDetail)} />
                     <Route exact path="/member/saving-data-edit" component={waitFor(SavingDataEdit)} />
                     <Route exact path="/member/saving-data-history" component={waitFor(SavingDataHistory)} />
+                    <Route exact path="/member/saving-data-history-detail" component={waitFor(SavingDataHistoryDetail)} />
+                    <Route exact path="/member/saving-data-history-edit" component={waitFor(SavingDataHistoryEdit)} />
                     <Route exact path="/member/loan-data" component={waitFor(LoanData)} />
                     <Route exact path="/member/loan-data-add" component={waitFor(LoanDataAdd)} />
+                    <Route exact path="/member/loan-data-detail" component={waitFor(LoanDataDetail)} />
+                    <Route exact path="/member/loan-data-edit" component={waitFor(LoanDataEdit)} />
                     <Route exact path="/member/loan-data-history" component={waitFor(LoanDataHistory)} />
+                    <Route exact path="/member/loan-data-history-detail" component={waitFor(LoanDataHistoryDetail)} />
+                    <Route exact path="/member/loan-data-history-edit" component={waitFor(LoanDataHistoryEdit)} />
                     <Route exact path="/member/loan-data-view" component={waitFor(LoanDataView)} />
+                    <Route exact path="/member/loan-data-view-detail" component={waitFor(LoanDataViewDetail)} />
+                    <Route exact path="/member/loan-data-view-edit" component={waitFor(LoanDataViewEdit)} />
                     <Route exact path="/member/mobile-user" component={waitFor(MobileUser)} />
 
                     {/* Transactions */}

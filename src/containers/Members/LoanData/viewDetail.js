@@ -13,26 +13,7 @@ import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
-// DateTimePicker
-import Datetime from 'react-datetime';
-import 'react-datetime/css/react-datetime.css';
-
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'Mei',
-  'Jun',
-  'Jul',
-  'Agu',
-  'Sep',
-  'Okt',
-  'Nov',
-  'Des',
-];
-
-export default class SavingDataEdit extends Component {
+export default class LoanDataDetail extends Component {
   constructor(props) {
     super(props);
 
@@ -42,8 +23,7 @@ export default class SavingDataEdit extends Component {
     this.state = {
       isPaneOpen: false,
       rows,
-      selectedMember: '',
-      openDate: ''
+      selectedMember: ''
     };
     
     this._columns = [
@@ -78,35 +58,8 @@ export default class SavingDataEdit extends Component {
     console.log(this.state.rows[rowIdx].ANGGOTA)
   };
 
-  componentDidUpdate() {
-    console.log(this.state.openDate)
-  }
-
   componentDidMount() {
-    const dd = String(new Date().getDate()).padStart(2, '0')
-    const mm = MONTHS[new Date().getMonth()]
-    const yyyy = new Date().getFullYear()
-
-    const today = dd + ' ' + mm + ' ' + yyyy
-
-    this.setState({
-      openDate: today
-    })
-
-
     Modal.setAppElement(this.el);
-  }
-
-  handleDate = e => {
-    let dd = String(e.toDate().getDate()).padStart(2, '0')
-    let mm = MONTHS[e.toDate().getMonth()]
-    let yyyy = e.toDate().getFullYear()
-
-    let today = dd + " " + mm + " " + yyyy
-
-    this.setState({
-      openDate: today
-    })
   }
 
   handleChange = e => {
@@ -125,6 +78,12 @@ export default class SavingDataEdit extends Component {
   }
 
   render() {
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
+    const yyyy = new Date().getFullYear()
+
+    const today = dd + '/' + mm + '/' + yyyy
+
     return (
       <ContentWrapper ref={ref => this.el = ref}>
         <SlidingPane
@@ -163,18 +122,18 @@ export default class SavingDataEdit extends Component {
         </SlidingPane>
 
         <div className="content-heading">
-          <div>Edit Simpanan</div>
+          <div>Detail Loan View</div>
         </div>
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/saving-data">
+            <Link to="/member/loan-data-view">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
-            
+
             <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
               <label htmlFor="savingType">Jenis Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1}>
+              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1} disabled>
                 <option>Jenis Simpanan</option>
                 <option defaultValue="pokok">Pokok</option>
                 <option defaultValue="wajib">Wajib</option>
@@ -182,33 +141,19 @@ export default class SavingDataEdit extends Component {
               </select>
 
               <label className="mt-3" htmlFor="member">Anggota</label>
-              <div className="row mr-1">
-                <div className="col-md-8">
-                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
-                      value={this.state.selectedMember} onChange={this.handleChange} tabIndex={2}/>
-                </div>
-                <Button outline className="col-md-4 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
-                  <i className="fas fa-search mr-2" />
-                  Cari Anggota
-                </Button>
-              </div>
+              <Input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
+                  value={this.state.selectedMember} onChange={this.handleChange} tabIndex={2} readOnly/>
 
               <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
-              <Datetime
-                inputProps={{
-                  name: "birthdate",
-                  className: "form-control input-font-size",
-                  id: "birthdate",
-                  placeholder: "dd mmm yyyy",
-                  tabIndex: "2",
-                  required: true
-                }}
-                value={this.state.openDate}
-                dateFormat="DD MMM YYYY"
-                timeFormat={false}
-                closeOnSelect={true}
-                renderInput={this.renderInputGroup}
-                onChange={this.handleDate}
+              <Input
+                type="text"
+                id="openDate"
+                name="openDate"
+                className="input-font-size"
+                placeholder="dd-mm-yyyy"
+                value={today}
+                tabIndex={4}
+                readOnly
               />
 
               <label className="mt-3" htmlFor="initDepositValue">// Nanti Ambil dari API</label><br />
@@ -220,6 +165,7 @@ export default class SavingDataEdit extends Component {
                 className="input-font-size"
                 placeholder="minimal 3.000.000"
                 tabIndex={5}
+                readOnly
               />
 
               <label className="mt-3" htmlFor="initDepositValue">// Nomor Rekening Ambil dari Anggota</label><br />
@@ -230,9 +176,12 @@ export default class SavingDataEdit extends Component {
                 name="depositNumber"
                 className="input-font-size"
                 tabIndex={6}
+                readOnly
               />
 
-              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              <Link to="/member/saving-data-edit">
+                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              </Link>
             </form>
           </CardBody>
         </Card>
