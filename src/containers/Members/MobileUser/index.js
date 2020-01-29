@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import { Link } from 'react-router-dom';
 import { Container, Card, CardBody, Button } from 'reactstrap';
-import { Link, withRouter } from 'react-router-dom';
-import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import Swal from '../../../components/Common/Swal';
 
 const COLUMN_WIDTH = 500;
 
@@ -13,7 +14,7 @@ const AddBar = () => {
       <div className="ml-auto mr-0">
         <Link to="/member/saving-data-add" >
           <Button outline color="primary" type="button">
-            <Trans i18nKey='member.data.ADD_MOBILE_USER'>Add Mobile User</Trans>
+            Add Mobile User
           </Button>
         </Link>
       </div>
@@ -80,38 +81,24 @@ class MobileUser extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    this.state = { originalRows, rows };
-  }
 
-  state = {
-    options: {
-      'paging': true, // Table pagination
-      'ordering': true, // Column ordering
-      'info': true, // Bottom left status text
-      responsive: true,
-      // Text translation options
-      // Note the required keywords between underscores (e.g _MENU_)
-      oLanguage: {
-        sSearch: '<em class="fa fa-search"></em>',
-        sLengthMenu: '_MENU_ records per page',
-        info: 'Showing page _PAGE_ of _PAGES_',
-        zeroRecords: 'Nothing found - sorry',
-        infoEmpty: 'No records available',
-        infoFiltered: '(filtered from _MAX_ total records)',
-        oPaginate: {
-          sNext: '<em class="fa fa-caret-right"></em>',
-          sPrevious: '<em class="fa fa-caret-left"></em>'
-        }
-      },
-    }
+    this.state = {
+      originalRows,
+      rows,
+      rowIdx: ''
+    };
   }
-
-  // componentDidMount() {
-  //   this.props.i18n.changeLanguage('id')
-  // }
 
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      NAME: '',
+      USER_NAME: '',
+      EMAIL: '',
+      OFFICE: '',
+      ROLE: ''
+    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -142,11 +129,92 @@ class MobileUser extends Component {
     this.setState({ rows });
   };
 
+  deleteRow = () => {
+    const rows = [...this.state.rows];
+    rows.splice(this.state.rowIdx, 1);
+    this.setState({ rows: rows });
+  }
+
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  swalCallback(isConfirm, swal) {
+    if (isConfirm) {
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    } else {
+      swal("Cancelled", "Your imaginary file is safe :)", "error");
+    }
+  }
+
+  actionCell = [
+    {
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
+      callback: () => {
+        console.log("Delete")
+      }
+    },
+    {
+      icon: <span className="fas fa-pen-square" />,
+      callback: () => {
+        console.log("Edit")
+        this.props.history.push('/member/saving-data-edit')
+      }
+    }
+  ];
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
+
+    console.log(row)
+
+    return cellActions[column.key];
+  }
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    if (idx !== 0) {
+      this.props.history.push('/member/saving-data-detail')
+    }
+    else if (idx === 0) {
+      this.state.rowIdx = rowIdx
+      this.deleteRow()
+    }
+  };
+
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
+  };
+
   render() {
     return (
       <ContentWrapper>
         <div className="content-heading">
-          <span><Trans i18nKey='member.data.MOBILE_USER'>Mobile User</Trans></span>
+          <span>Mobile User</span>
         </div>
         <Container fluid>
           <Card>
@@ -160,7 +228,11 @@ class MobileUser extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
-                  minHeight={700} />
+                  minHeight={700}
+                  getCellActions={this.getCellActions.bind(this)}
+                  onCellSelected={this.onCellSelected.bind(this)}
+                  onGridRowsUpdated={this.onGridRowsUpdated}
+                />
               </Container>
             </CardBody>
           </Card>
@@ -171,4 +243,4 @@ class MobileUser extends Component {
 
 }
 
-export default withTranslation('translations')(withRouter(MobileUser));
+export default MobileUser;

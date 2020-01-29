@@ -5,17 +5,22 @@ import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 
-import Swal from './Swal';
+import Swal from '../../../components/Common/Swal';
 
 const COLUMN_WIDTH = 250;
 
-const AddBar = () => {
+const HistoryAddBar = () => {
   return (
-    <div className="row mb-3 mr-1">
-      <div className="ml-auto mr-0">
-        <Link to="/member/saving-data-add" >
-          <Button outline color="primary" type="button">
-            <Trans i18nKey='member.data.ADD_SAVINGS'>Add Savings</Trans>
+    <div className="row mb-3">
+      <div className="col-md-3 col-lg-2">
+        <Link to="/member/saving-data-history">
+          <Button className="col-12" color="primary" type="button">History</Button>
+        </Link>
+      </div>
+      <div className="ml-auto col-md-4 offset-md-5 col-lg-2 offset-lg-8">
+        <Link to="/member/saving-data-add">
+          <Button outline className="col-12" color="primary" type="button">
+            Add Simpanan
           </Button>
         </Link>
       </div>
@@ -82,64 +87,24 @@ class MemberData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    
+
     this.state = {
       originalRows,
       rows,
-      rowIdx: '',
-      actionRow: 0,
-      swalOption: {
-        title: 'Are you sure?',
-        text: 'Your will not be able to recover this imaginary file!',
-        icon: 'warning',
-        buttons: {
-          cancel: {
-            text: 'No, cancel plx!',
-            value: null,
-            visible: true,
-            className: "",
-            closeModal: false
-          },
-          confirm: {
-            text: 'Yes, delete it!',
-            value: true,
-            visible: true,
-            className: "bg-danger",
-            closeModal: false
-          }
-        }
-      }
+      rowIdx: ''
     };
-  }
-
-  swalOption= {
-    title: 'Are you sure?',
-    text: 'Your will not be able to recover this imaginary file!',
-    icon: 'warning',
-    buttons: {
-      cancel: {
-        text: 'No, cancel plx!',
-        value: null,
-        visible: true,
-        className: "",
-        closeModal: false
-      },
-      confirm: {
-        text: 'Yes, delete it!',
-        value: true,
-        visible: true,
-        className: "bg-danger",
-        closeModal: false
-      }
-    }
-  }
-
-  toSavingDataHistory = () => {
-    this.props.history.push("/member/saving-data-history")
   }
 
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      ACCOUNT: '',
+      MEMBER_ID: '',
+      MEMBER: '',
+      BALANCE: '',
+      OFFICE: ''
+    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -175,6 +140,28 @@ class MemberData extends Component {
     rows.splice(this.state.rowIdx, 1);
     this.setState({ rows: rows });
   }
+  
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
 
   swalCallback(isConfirm, swal) {
     if (isConfirm) {
@@ -186,13 +173,13 @@ class MemberData extends Component {
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del"/> </Swal>,
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
       callback: () => {
         console.log("Delete")
       }
     },
     {
-      icon: <span className="fas fa-pen-square"/>,
+      icon: <span className="fas fa-pen-square" />,
       callback: () => {
         console.log("Edit")
         this.props.history.push('/member/saving-data-edit')
@@ -210,11 +197,12 @@ class MemberData extends Component {
   }
 
   onCellSelected = ({ rowIdx, idx }) => {
-    this.state.rowIdx = rowIdx
-    // this.deleteRow()
-    
-    if (idx != 0) {
+    if (idx !== 0) {
       this.props.history.push('/member/saving-data-detail')
+    }
+    else if (idx === 0) {
+      this.state.rowIdx = rowIdx
+      this.deleteRow()
     }
   };
 
@@ -229,7 +217,6 @@ class MemberData extends Component {
   };
 
   render() {
-
     return (
       <ContentWrapper>
         <div className="content-heading">
@@ -238,7 +225,7 @@ class MemberData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <AddBar />
+              <HistoryAddBar />
               <SearchBar />
 
               <Container fluid>

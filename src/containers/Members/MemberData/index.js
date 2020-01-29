@@ -5,6 +5,7 @@ import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import Swal from '../../../components/Common/Swal';
 
 const COLUMN_WIDTH = 250;
 
@@ -80,22 +81,23 @@ class MemberData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
+
     this.state = {
       originalRows,
       rows,
       rowIdx: ''
-    }
+    };
   }
 
   createRows = () => {
     let rows = [];
     rows.push({
       ACTION: '',
-      ID_MEMBER: 12313,
-      EXTERNAL_ID: 12313,
-      FULL_NAME: 'zzz',
-      OFFICE: 12313,
-      STATUS: 12313
+      ID_MEMBER: '',
+      EXTERNAL_ID: '',
+      FULL_NAME: '',
+      OFFICE: '',
+      STATUS: ''
     });
     for (let i = 1; i < 100; i++) {
       rows.push({
@@ -127,14 +129,47 @@ class MemberData extends Component {
     this.setState({ rows });
   };
 
+  deleteRow = () => {
+    const rows = [...this.state.rows];
+    rows.splice(this.state.rowIdx, 1);
+    this.setState({ rows: rows });
+  }
+
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  swalCallback(isConfirm, swal) {
+    if (isConfirm) {
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    } else {
+      swal("Cancelled", "Your imaginary file is safe :)", "error");
+    }
+  }
 
   actionCell = [
     {
-      icon: <span className="fas fa-times" style={{ alignSelf: 'center' }} />,
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
       callback: () => {
         console.log("Delete")
-        this.state.rows.splice(this.state.rowIdx+1, 1)
-
       }
     },
     {
@@ -153,11 +188,23 @@ class MemberData extends Component {
   }
 
   onCellSelected = ({ rowIdx, idx }) => {
-    console.log(rowIdx);
-    this.setState({
-      rowIdx: rowIdx
-    })
-    // this.props.history.push('/')
+    if (idx !== 0) {
+      this.props.history.push('/member/saving-data-detail')
+    }
+    else if (idx === 0) {
+      this.state.rowIdx = rowIdx
+      this.deleteRow()
+    }
+  };
+
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
   };
 
   render() {
@@ -174,14 +221,14 @@ class MemberData extends Component {
 
               <Container fluid>
                 <ReactDataGrid
-                  className="tr-cursor"
                   onGridSort={this.handleGridSort}
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
                   minHeight={700}
-                  getCellActions={this.getCellActions}
+                  getCellActions={this.getCellActions.bind(this)}
                   onCellSelected={this.onCellSelected.bind(this)}
+                  onGridRowsUpdated={this.onGridRowsUpdated}
                 />
               </Container>
             </CardBody>

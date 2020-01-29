@@ -1,17 +1,27 @@
 import React, { Component } from 'react';
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import { Link } from 'react-router-dom';
 import { Button, Container, Card, CardBody } from 'reactstrap';
 import ReactDataGrid from 'react-data-grid';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import Swal from '../../../components/Common/Swal';
 
 const COLUMN_WIDTH = 250;
 
 const AddBar = () => {
   return (
-    <div className="row mb-3 mr-1">
-      <div className="ml-auto mr-0">
-        <Button outline color="primary" type="button">
-          Add Loan View
+    <div className="row mb-3">
+      <div className="col-md-3 col-lg-2">
+        <Link to="/member/loan-data">
+          <Button outline className="col-12" color="primary" type="button">Kembali</Button>
+        </Link>
+      </div>
+      <div className="ml-auto col-md-4 offset-md-5 col-lg-2 offset-lg-8">
+        <Link to="/member/loan-data-add">
+          <Button outline className="col-12" color="primary" type="button">
+            Add Loan View
         </Button>
+        </Link>
       </div>
     </div>
   )
@@ -112,38 +122,30 @@ class LoanHistory extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    this.state = { originalRows, rows };
-  }
 
-  state = {
-    options: {
-      'paging': true, // Table pagination
-      'ordering': true, // Column ordering
-      'info': true, // Bottom left status text
-      responsive: true,
-      // Text translation options
-      // Note the required keywords between underscores (e.g _MENU_)
-      oLanguage: {
-        sSearch: '<em class="fa fa-search"></em>',
-        sLengthMenu: '_MENU_ records per page',
-        info: 'Showing page _PAGE_ of _PAGES_',
-        zeroRecords: 'Nothing found - sorry',
-        infoEmpty: 'No records available',
-        infoFiltered: '(filtered from _MAX_ total records)',
-        oPaginate: {
-          sNext: '<em class="fa fa-caret-right"></em>',
-          sPrevious: '<em class="fa fa-caret-left"></em>'
-        }
-      }
-    },
-    datas: [
-      [1, "20 Jul 2019", 500000, 0, 0, 0, 0, 0, 0, 0, 0],
-      [2, "20 Aug 2019", 500000, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
+    this.state = {
+      originalRows,
+      rows,
+      rowIdx: ''
+    };
   }
 
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      SCHEDULE: '',
+      DUE_DATE: '',
+      AMOUNT: '',
+      PRINCIPAL: '',
+      INTEREST: '',
+      CHARGES: '',
+      PENALTY: '',
+      PAYMENT: '',
+      PAYMENT_DATE: '',
+      OVERDUE_AMOUNT: '',
+      DAYS_LATE: ''
+    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -152,7 +154,7 @@ class LoanHistory extends Component {
         AMOUNT: i,
         PRINCIPAL: i,
         INTEREST: i,
-        CHARGES:i,
+        CHARGES: i,
         PENALTY: i,
         PAYMENT: i,
         PAYMENT_DATE: i,
@@ -180,6 +182,87 @@ class LoanHistory extends Component {
     this.setState({ rows });
   };
 
+  deleteRow = () => {
+    const rows = [...this.state.rows];
+    rows.splice(this.state.rowIdx, 1);
+    this.setState({ rows: rows });
+  }
+
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  swalCallback(isConfirm, swal) {
+    if (isConfirm) {
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    } else {
+      swal("Cancelled", "Your imaginary file is safe :)", "error");
+    }
+  }
+
+  actionCell = [
+    {
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
+      callback: () => {
+        console.log("Delete")
+      }
+    },
+    {
+      icon: <span className="fas fa-pen-square" />,
+      callback: () => {
+        console.log("Edit")
+        this.props.history.push('/member/saving-data-edit')
+      }
+    }
+  ];
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
+
+    console.log(row)
+
+    return cellActions[column.key];
+  }
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    if (idx !== 0) {
+      this.props.history.push('/member/saving-data-detail')
+    }
+    else if (idx === 0) {
+      this.state.rowIdx = rowIdx
+      this.deleteRow()
+    }
+  };
+
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
+  };
+
   render() {
     return (
       <ContentWrapper>
@@ -198,7 +281,11 @@ class LoanHistory extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
-                  minHeight={700} />
+                  minHeight={700}
+                  getCellActions={this.getCellActions.bind(this)}
+                  onCellSelected={this.onCellSelected.bind(this)}
+                  onGridRowsUpdated={this.onGridRowsUpdated}
+                />
               </Container>
             </CardBody>
           </Card>

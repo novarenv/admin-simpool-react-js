@@ -4,17 +4,28 @@ import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import Swal from '../../../components/Common/Swal';
 
 const COLUMN_WIDTH = 250;
 
 const AddBar = () => {
   return (
-    <div className="row mb-3 mr-1">
-      <div className="ml-auto mr-0">
-        <Link to="/member/loan-data-add" >
-          <Button outline color="primary" type="button">
+    <div className="row mb-3">
+      <div className="col-md-4 col-lg-2">
+        <Link to="/member/loan-data-history">
+          <Button className="col-12" color="primary" type="button">History</Button>
+        </Link>
+      </div>
+      <div className="col-md-3 col-lg-2">
+        <Link to="/member/loan-data-view">
+          <Button className="col-12" color="primary" type="button">View</Button>
+        </Link>
+      </div>
+      <div className="ml-auto col-md-4 offset-md-1 col-lg-3 offset-lg-5">
+        <Link to="/member/loan-data-add">
+          <Button outline className="col-12" color="primary" type="button">
             Add Data Pinjaman
-          </Button>
+        </Button>
         </Link>
       </div>
     </div>
@@ -83,12 +94,16 @@ class LoanData extends Component {
     this.state = { originalRows, rows };
   }
 
-  toLoanDataView = () => {
-    this.props.history.push("/member/loan-data-view")
-  }
-
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      ACCOUNT: '',
+      MEMBER_ID: '',
+      MEMBER: '',
+      BALANCE: '',
+      OFFICE: ''
+    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -119,6 +134,88 @@ class LoanData extends Component {
     this.setState({ rows });
   };
 
+  deleteRow = () => {
+    const rows = [...this.state.rows];
+    rows.splice(this.state.rowIdx, 1);
+    this.setState({ rows: rows });
+  }
+
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Your will not be able to recover this imaginary file!',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, cancel plx!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  swalCallback(isConfirm, swal) {
+    if (isConfirm) {
+      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+    } else {
+      swal("Cancelled", "Your imaginary file is safe :)", "error");
+    }
+  }
+
+  actionCell = [
+    {
+      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
+      callback: () => {
+        console.log("Delete")
+      }
+    },
+    {
+      icon: <span className="fas fa-pen-square" />,
+      callback: () => {
+        console.log("Edit")
+        this.props.history.push('/member/saving-data-edit')
+      }
+    }
+  ];
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
+
+    console.log(row)
+
+    return cellActions[column.key];
+  }
+
+  onCellSelected = ({ rowIdx, idx }) => {
+    if (idx !== 0) {
+      this.props.history.push('/member/saving-data-detail')
+    }
+    else if (idx === 0) {
+      this.state.rowIdx = rowIdx
+      this.deleteRow()
+    }
+  };
+
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
+  };
+
+
   render() {
     return (
       <ContentWrapper>
@@ -137,7 +234,11 @@ class LoanData extends Component {
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
-                  minHeight={700} />
+                  minHeight={700}
+                  getCellActions={this.getCellActions.bind(this)}
+                  onCellSelected={this.onCellSelected.bind(this)}
+                  onGridRowsUpdated={this.onGridRowsUpdated}
+                />
               </Container>
             </CardBody>
           </Card>
