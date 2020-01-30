@@ -179,8 +179,8 @@ export default class SavingDataHistoryDetail extends Component {
                 readOnly
               />
 
-              <Link to="/member/saving-data-edit">
-                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              <Link to="/member/saving-data-history-edit">
+                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Savings History</Button>
               </Link>
             </form>
           </CardBody>

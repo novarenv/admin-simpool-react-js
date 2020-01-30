@@ -44,6 +44,8 @@ const LoanDataView = lazy(() => import('./containers/Members/LoanData/view'));
 const LoanDataViewDetail = lazy(() => import('./containers/Members/LoanData/viewDetail'));
 const LoanDataViewEdit = lazy(() => import('./containers/Members/LoanData/viewEdit'));
 const MobileUser = lazy(() => import('./containers/Members/MobileUser'));
+const MobileUserDetail = lazy(() => import('./containers/Members/MobileUser/detail'));
+const MobileUserEdit = lazy(() => import('./containers/Members/MobileUser/edit'));
 
 // Transactions
 const Deposit = lazy(() => import('./containers/Transactions/Deposit'));
@@ -53,6 +55,8 @@ const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 
 // Accounting
 const AccountChart = lazy(() => import('./containers/Accounting/AccountChart'));
+const AccountChartDetail = lazy(() => import('./containers/Accounting/AccountChart/detail'));
+const AccountChartEdit = lazy(() => import('./containers/Accounting/AccountChart/edit'));
 const AccountChartTree = lazy(() => import('./containers/Accounting/AccountChart/TreeView'));
 const BeginningBalance = lazy(() => import('./containers/Accounting/BeginningBalance'));
 
@@ -141,6 +145,8 @@ const Routes = ({ location, ...props } ) => {
                     <Route exact path="/member/loan-data-view-detail" component={waitFor(LoanDataViewDetail)} />
                     <Route exact path="/member/loan-data-view-edit" component={waitFor(LoanDataViewEdit)} />
                     <Route exact path="/member/mobile-user" component={waitFor(MobileUser)} />
+                    <Route exact path="/member/mobile-user-detail" component={waitFor(MobileUserDetail)} />
+                    <Route exact path="/member/mobile-user-edit" component={waitFor(MobileUserEdit)} />
 
                     {/* Transactions */}
                     <Route exact path="/transaction/deposit" component={waitFor(Deposit)} />
@@ -150,6 +156,8 @@ const Routes = ({ location, ...props } ) => {
 
                     {/* Accounting */}
                     <Route exact path="/accounting/account-chart" component={waitFor(AccountChart)} />
+                    <Route exact path="/accounting/account-chart-detail" component={waitFor(AccountChartDetail)} />
+                    <Route exact path="/accounting/account-chart-edit" component={waitFor(AccountChartEdit)} />
                     <Route exact path="/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
                     <Route exact path="/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 

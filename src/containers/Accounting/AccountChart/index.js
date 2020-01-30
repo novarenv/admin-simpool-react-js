@@ -46,31 +46,31 @@ class MemberData extends Component {
     this._columns = [
       {
         key: 'ACTION',
-        name: 'ACTION',
+        name: 'Action',
         width: 100,
         frozen: true
       },
       {
         key: 'ACCOUNT_CHART',
-        name: 'ACCOUNT_CHART',
+        name: 'Account Chart',
         width: 150,
         frozen: true
       },
       {
         key: 'ACCOUNT_NAME',
-        name: 'ACCOUNT_NAME',
+        name: 'Account Name',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'ACCOUNT_TYPE',
-        name: 'ACCOUNT_TYPE',
+        name: 'Account Type',
         sortable: true,
         width: COLUMN_WIDTH
       },
       {
         key: 'USED_AS',
-        name: 'USED_AS',
+        name: 'Used As',
         sortable: true,
         width: COLUMN_WIDTH
       }
@@ -170,7 +170,7 @@ class MemberData extends Component {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
         console.log("Edit")
-        this.props.history.push('/member/saving-data-edit')
+        this.props.history.push('/accounting/account-chart-edit')
       }
     }
   ];
@@ -186,7 +186,7 @@ class MemberData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/saving-data-detail')
+      this.props.history.push('/accounting/account-chart-detail')
     }
     else if (idx === 0) {
       this.state.rowIdx = rowIdx

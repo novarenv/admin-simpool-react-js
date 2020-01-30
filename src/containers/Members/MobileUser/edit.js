@@ -32,7 +32,7 @@ const MONTHS = [
   'Des',
 ];
 
-export default class MemberDataEdit extends Component {
+export default class MobileUserEdit extends Component {
   constructor(props) {
     super(props);
 
@@ -163,12 +163,12 @@ export default class MemberDataEdit extends Component {
         </SlidingPane>
 
         <div className="content-heading">
-          <div>Edit Member</div>
+          <div>Edit Mobile User</div>
         </div>
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/data">
+            <Link to="/member/mobile-user">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             
@@ -232,7 +232,7 @@ export default class MemberDataEdit extends Component {
                 tabIndex={6}
               />
 
-              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Member</Button>
+              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Mobile USer</Button>
             </form>
           </CardBody>
         </Card>

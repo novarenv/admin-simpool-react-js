@@ -232,7 +232,7 @@ export default class LoanDataViewEdit extends Component {
                 tabIndex={6}
               />
 
-              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Loan Data View</Button>
             </form>
           </CardBody>
         </Card>

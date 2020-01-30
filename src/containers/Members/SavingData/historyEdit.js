@@ -232,7 +232,7 @@ export default class SavingDataHistoryEdit extends Component {
                 tabIndex={6}
               />
 
-              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              <Button className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Savings History</Button>
             </form>
           </CardBody>
         </Card>

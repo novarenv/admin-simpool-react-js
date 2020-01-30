@@ -179,8 +179,8 @@ export default class MemberDataDetail extends Component {
                 readOnly
               />
 
-              <Link to="/member/saving-data-edit">
-                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Simpanan</Button>
+              <Link to="/member/data-edit">
+                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Anggota</Button>
               </Link>
             </form>
           </CardBody>
