@@ -25,6 +25,65 @@ export function ACTreeView(props) {
 
   const classes = useStyles();
   const [expanded, setExpanded] = useState([]);
+  const [treeItems, setTreeItem] = useState([
+    {
+      nodeId: 101003600000000,
+      label: "101003600000000 Kas",
+      children1: [
+        {
+          nodeId: 101013600000000,
+          label: "101013600000000 Kas Besar"
+        },
+        {
+          nodeId: 101023600000000,
+          label: "101023600000000 Kas Teller"
+        },
+        {
+          nodeId: 101033600000000,
+          label: "101033600000000 Kas Kecil"
+        },
+        {
+          nodeId: 101014600000000,
+          label: "101014600000000 Kas ATM"
+        }
+      ]
+    },
+    {
+      nodeId: 102003600000000,
+      label: "102003600000000 Bank",
+      children1: [
+        {
+          nodeId: 102003600000001,
+          label: "102003600000001 Bank - Dassa"
+        },
+        {
+          nodeId: 102003600000002,
+          label: "102003600000002 Bank - BCA"
+        },
+        {
+          nodeId: 102003600000003,
+          label: "102003600000003 Bank - Mandiri"
+        },
+        {
+          nodeId: 102003600000004,
+          label: "102003600000004 Bank BRI"
+        },
+        {
+          nodeId: 102003600000005,
+          label: "102003600000005 Bank BNI"
+        },
+        {
+          nodeId: 102003600000006,
+          label: "102003600000006 Bank Permata"
+        }
+      ]
+    },
+    {
+      nodeId: 103003600000000,
+      label: "Surat Berharga",
+      children1: []
+    }
+  ])
 
   const handleChange = (event, nodes) => {
     setExpanded(nodes);
@@ -38,44 +97,28 @@ export function ACTreeView(props) {
       expanded={expanded}
       onNodeToggle={handleChange}
     >
-      <TreeItem nodeId="1" label="Applications">
-        <TreeItem nodeId="2" label="Calendar" onClick={() => { props.openPane() }} />
-        <TreeItem nodeId="3" label="Chrome" />
-        <TreeItem nodeId="4" label="Webstorm" />
-      </TreeItem>
-      <TreeItem nodeId="5" label="Documents">
-        <TreeItem nodeId="6" label="Material-UI">
-          <TreeItem nodeId="7" label="src">
-            <TreeItem nodeId="8" label="index.js" />
-            <TreeItem nodeId="9" label="tree-view.js" />
-
-            <TreeItem nodeId="10" label="src2">
-              <TreeItem nodeId="11" label="index.js2" />
-              <TreeItem nodeId="12" label="tree-view.js2" />
-
-              <TreeItem nodeId="13" label="src3">
-                <TreeItem nodeId="14" label="index.js3" />
-                <TreeItem nodeId="15" label="tree-view.js3" />
-
-                <TreeItem nodeId="16" label="src4">
-                  <TreeItem nodeId="17" label="index.js4" />
-                  <TreeItem nodeId="18" label="tree-view.js4" />
-
-                  <TreeItem nodeId="19" label="src5">
-                    <TreeItem nodeId="20" label="index.js5" />
-                    <TreeItem nodeId="21" label="tree-view.js5" />
-
-                    <TreeItem nodeId="22" label="src6">
-                      <TreeItem nodeId="23" label="index.js6" />
-                      <TreeItem nodeId="24" label="tree-view.js6" />
-                    </TreeItem>
-                  </TreeItem>
-                </TreeItem>
+      {
+        treeItems.map(treeItem => {
+          if (treeItem.children1.length == 0) {
+            return (
+              <TreeItem nodeId={treeItem.nodeId} label={treeItem.label} onClick={props.openPane} />
+            )
+          }
+          else {
+            return (
+              <TreeItem nodeId={treeItem.nodeId} label={treeItem.label}>
+                {
+                  treeItem.children1.map(child1 => {
+                    return (
+                      <TreeItem nodeId={child1.nodeId} label={child1.label} onClick={props.openPane} />
+                    )
+                  })
+                }
               </TreeItem>
-            </TreeItem>
-          </TreeItem>
-        </TreeItem>
-      </TreeItem>
+            )
+          }
+        })
+      }
     </TreeView>
   );
 }
@@ -95,20 +138,47 @@ class MemberData extends Component {
 
     this._columns = [
       {
-        key: 'ANGGOTA',
-        name: 'Anggota',
-        width: 1000
+        key: 'FIELD',
+        name: 'Field',
+        width: 500,
+        resizable: true
+      },
+      {
+        key: 'VALUE',
+        name: 'Value',
+        width: 500,
+        resizable: true
       }
     ];
   }
 
   createRows = () => {
     let rows = [];
-    for (let i = 1; i < 100; i++) {
-      rows.push({
-        ANGGOTA: i
-      });
-    }
+
+    rows.push({
+      FIELD: "GL Code",
+      VALUE: 102003600000001
+    })
+    rows.push({
+      FIELD: "Account Type",
+      VALUE: "ASSET"
+    })
+    rows.push({
+      FIELD: "Account Usage",
+      VALUE: "DETAIL"
+    })
+    rows.push({
+      FIELD: "Manual Entries Allowed",
+      VALUE: "true"
+    })
+    rows.push({
+      FIELD: "Is General Transaction",
+      VALUE: "Yes"
+    })
+    rows.push({
+      FIELD: "Description",
+      VALUE: ""
+    })
 
     return rows;
   };
@@ -116,11 +186,10 @@ class MemberData extends Component {
   rowGetter = (i) => this.state.rows[i]
 
   onCellSelected = ({ rowIdx, idx }) => {
-    // setPaneOpen(false)
     this.setState({
+      isPaneOpen: false,
       rowIdx: rowIdx
     })
-    // console.log(rows[rowIdx].ANGGOTA)
   };
 
   toggleTab = tab => {
@@ -143,30 +212,21 @@ class MemberData extends Component {
           className='pos-absolute slide-pane'
           closeIcon={<i className="fas fa-angle-right" />}
           isOpen={this.state.isPaneOpen}
-          title='Hasil Pencarian Anggota'
-          subtitle='Pilih salah satu'
+          title='Account Chart'
+          subtitle='Assets Detail'
           onRequestClose={() => {
             this.setState({ isPaneOpen: false });
           }}
         >
           <div className="row mr-1">
-            <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={1} tabIndex={1} />
-            </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
-              <i className="fas fa-search mr-2" />
-              Cari Anggota
-          </Button>
-
             <Card>
               <CardBody>
                 <ReactDataGrid
-                  // onGridSort={this.handleGridSort}
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={this.state.rows.length}
                   minHeight={700}
-                  minWidth={1000}
+                  minWidth={1300}
                   onCellSelected={this.onCellSelected}
                 />
               </CardBody>
