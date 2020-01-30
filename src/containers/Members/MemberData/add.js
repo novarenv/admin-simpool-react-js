@@ -127,9 +127,30 @@ class MemberDataAdd extends Component {
   };
 
   isNotDuplicate = () => {
+    // For submit we can obtain the form from the event
+    // but for each step we need a global ref to the element
+    const form = this.formWizardRef;
+    // To validate only the inputs in the current steps, we use an id to query the tabPane
+    // and then find all form elements for the current step only.
+    const tabPane = document.getElementById('tabPane' + this.state.activeStep);
+    const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
+
+    const { errors, hasError } = FormValidator.bulkValidate(inputs);
+
+    // Update state so the validation message are shown/hidden
     this.setState({
-      notDuplicate: !this.state.notDuplicate
+      [form.name]: {
+        ...this.state[form.name],
+        errors
+      }
     });
+
+    // and prevent change the if form is not valid
+    if (!hasError) {
+      this.setState({
+        notDuplicate: true
+      });
+    }
   }
 
   showNotDuplicate = () => {
@@ -522,9 +543,10 @@ class MemberDataAdd extends Component {
                       tabIndex="1"
                       placeholder="contoh: Ikkat Inovasi Teknologi"
                       value={this.state.addValidation.fullName}
+                      required
                       data-validate='["required"]'
                     />
-                    <span className="invalid-feedback">Kolom harus diisi!</span>
+                    <span className="invalid-feedback">Tolong isi nama lengkap anda!</span>
 
                     <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
                     <Datetime
@@ -540,9 +562,10 @@ class MemberDataAdd extends Component {
                       dateFormat="DD MMM YYYY"
                       timeFormat={false}
                       closeOnSelect={true}
-                      renderInput={this.renderInputGroup}
                       onChange={this.handleDate}
+                      data-validate='["required"]'
                     />
+                    <span className="invalid-feedback">Tolong pilih tanggal lahir!</span>
 
                     <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
                     <Input
@@ -553,12 +576,16 @@ class MemberDataAdd extends Component {
                       onChange={this.validateOnChange}
                       invalid={this.hasError(
                         'addValidation',
-                        'address'
+                        'address',
+                        'required'
                       )}
                       tabIndex="3"
                       placeholder="contoh: One PM, Gading Serpong, Tangerang"
                       value={this.state.addValidation.address}
+                      required
+                      data-validate='["required"]'
                     />
+                    <span className="invalid-feedback">Tolong isi alamat!</span>
 
                     <label className="mt-3" htmlFor="noKTP">No. KTP</label>
                     <Input
@@ -569,13 +596,16 @@ class MemberDataAdd extends Component {
                       onChange={this.validateOnChange}
                       invalid={this.hasError(
                         'addValidation',
-                        'noKTP'
+                        'noKTP',
+                        'required'
                       )}
                       tabIndex="4"
                       placeholder="101001002"
                       value={this.state.addValidation.noKTP}
                       required
+                      data-validate='["required"]'
                     />
+                    <span className="invalid-feedback">Tolong isi no. KTP!</span>
 
                     <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
                     <Input
@@ -586,18 +616,22 @@ class MemberDataAdd extends Component {
                       onChange={this.validateOnChange}
                       invalid={this.hasError(
                         'addValidation',
-                        'motherName'
+                        'motherName',
+                        'required'
                       )}
                       tabIndex="5"
                       placeholder="contoh: Ibu Pertiwi"
                       value={this.state.addValidation.motherName}
                       required
+                      data-validate='["required"]'
                     />
+                    <span className="invalid-feedback">Tolong isi Nama Gadis Ibu Kandung anda!</span>
 
                     <button
                       className="btn btn-block btn-primary mt-4 justify-content-center"
                       type="submit"
                       onClick={this.isNotDuplicate}
+                      onSubmit={this.handleSubmit}
                       tabIndex="6"
                     >
                       Cek Duplikasi
