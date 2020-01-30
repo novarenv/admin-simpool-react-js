@@ -57,7 +57,7 @@ const Transfer = lazy(() => import('./containers/Transactions/Transfer'));
 const AccountChart = lazy(() => import('./containers/Accounting/AccountChart'));
 const AccountChartDetail = lazy(() => import('./containers/Accounting/AccountChart/detail'));
 const AccountChartEdit = lazy(() => import('./containers/Accounting/AccountChart/edit'));
-const AccountChartTree = lazy(() => import('./containers/Accounting/AccountChart/TreeView'));
+const AccountChartTree = lazy(() => import('./containers/Accounting/AccountChart/treeView'));
 const BeginningBalance = lazy(() => import('./containers/Accounting/BeginningBalance'));
 
 const Register = lazy(() => import('./components/Pages/Register'));
