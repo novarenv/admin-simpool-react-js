@@ -126,10 +126,26 @@ export default class MemberDataDetail extends Component {
         </div>
 
         <Card className="card-default">
-          <CardBody>
-            <Link to="/member/data">
-              <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
-            </Link>
+          <CardBody>    
+            <div className="row mb-3">
+              <div className="col-md-4 col-lg-2">
+                <Link to="/member/data">
+                  <Button outline className="col-12" color="primary" type="submit" tabIndex={7}>Kembali</Button>
+                </Link>
+              </div>
+              <div className="ml-auto col-md-8 col-lg-10">
+                <Link to="/member/saving-data-add">
+                  <Button className="col-md-5 offset-md-1 col-lg-3 offset-lg-5" color="primary" type="button">
+                    Simpanan
+                  </Button>
+                </Link>
+                <Link to="/member/loan-data-add">
+                  <Button className="col-md-5 offset-md-1 col-lg-3 offset-lg-1" color="primary" type="button">
+                    Pinjaman
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
             <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
               <label htmlFor="savingType">Jenis Simpanan</label>
