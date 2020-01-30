@@ -49,6 +49,9 @@ class Login extends Component {
 
     const { errors, hasError } = FormValidator.bulkValidate(inputs)
 
+    const time = new Date()
+    time.setTime(time.getTime() + (30*60*1000))
+
     this.setState({
       [form.name]: {
         ...this.state[form.name],
@@ -62,7 +65,7 @@ class Login extends Component {
 
     e.preventDefault()
     if (this.state.formLogin.username === this.state.formLogin.checkUsername && this.state.formLogin.password === this.state.formLogin.checkPassword) {
-      Cookies.set("loginToken", "Token", { expires: 7 })
+      Cookies.set("loginToken", "Token", { expires: time })
       this.setState({
         OTPStatus: true
       })
