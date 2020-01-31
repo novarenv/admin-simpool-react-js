@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
 import { Link, withRouter } from 'react-router-dom';
-import { Collapse, Badge } from 'reactstrap';
+import { Badge, Button, Collapse } from 'reactstrap';
+import Cookies from 'js-cookie';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -51,6 +52,11 @@ const SidebarSubItem = ({ item, isActive, handler, children, isOpen }) => (
 const SidebarSubHeader = ({ item }) => (
   <li className="sidebar-subnav-header">{item.name}</li>
 )
+
+const logOut = () => {
+  console.log("Log Out Clicked")
+  Cookies.remove("loginToken")
+}
 
 class Sidebar extends Component {
 

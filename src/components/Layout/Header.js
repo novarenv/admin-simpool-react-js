@@ -71,7 +71,7 @@ class Header extends Component {
             </li>
             { /* START User avatar toggle */}
             <li className="nav-item">
-              <div className="nav-link d-none d-md-block d-lg-block d-xl-block cursor-pointer" onClick={this.toggleUserblock}>
+              <div className="nav-link d-block d-md-block d-lg-block d-xl-block cursor-pointer" onClick={this.toggleUserblock}>
                 <em className="icon-user"></em>
               </div>
             </li>

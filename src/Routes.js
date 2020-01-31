@@ -87,6 +87,8 @@ const Routes = ({ location, ...props } ) => {
 
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)
+
+    console.log(props.layout.imgBoxPath)
     
     return () => { };
   }, [])
@@ -190,10 +192,11 @@ const Routes = ({ location, ...props } ) => {
 
 Routes.propTypes = {
   actions: PropTypes.object,
-  dashboard: PropTypes.object
+  dashboard: PropTypes.object,
+  layout: PropTypes.object
 }
 
-const mapStateToProps = state => ({ dashboard: state.dashboard })
+const mapStateToProps = state => ({ dashboard: state.dashboard, layout: state.layout })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation('translations')(withRouter(Routes)));

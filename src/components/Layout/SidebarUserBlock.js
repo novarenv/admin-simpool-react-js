@@ -11,20 +11,9 @@ const logOut = () => {
 }
 
 class SidebarUserBlock extends Component {
-
-  state = {
-    showUserBlock: false
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.showUserBlock !== this.props.showUserBlock) {
-      this.setState({ showUserBlock: newProps.showUserBlock })
-    }
-  }
-
   render() {
     return (
-      <Collapse id="user-block" isOpen={this.state.showUserBlock}>
+      <Collapse id="user-block" isOpen={this.props.showUserBlock}>
         <div>
           <div className="item user-block center-block">
             {/* User picture */}
