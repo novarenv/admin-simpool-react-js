@@ -26,7 +26,7 @@ const MemberData = lazy(() => import('./containers/Members/MemberData'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const MemberDataDetail = lazy(() => import('./containers/Members/MemberData/detail'));
 const MemberDataEdit = lazy(() => import('./containers/Members/MemberData/edit'));
-const SavingData = lazy(() => import('./containers/Members/SavingData'));
+const SavingData = lazy(() => import('./containers/Members/SavingData/indexFilter'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
 const SavingDataDetail = lazy(() => import('./containers/Members/SavingData/detail'));
 const SavingDataEdit = lazy(() => import('./containers/Members/SavingData/edit'));
