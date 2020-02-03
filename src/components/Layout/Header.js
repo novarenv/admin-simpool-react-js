@@ -48,10 +48,10 @@ class Header extends Component {
           <div className="navbar-header">
             <div className="navbar-brand">
               <div className="brand-logo">
-                <img className="img-fluid" src={this.props.layout.imgLandscapePath} alt="App Logo" />
+                <img className="img-fluid" src="/img/Simpool 1 Text Dark BG.png" alt="App Logo" />
               </div>
               <div className="brand-logo-collapsed">
-                <img className="img-fluid-box" src={this.props.layout.imgBoxPath} alt="App Logo" />
+                <img className="img-fluid-box" src="/img/Simpool Box.png" alt="App Logo" />
               </div>
             </div>
           </div>
@@ -97,11 +97,10 @@ class Header extends Component {
 
 Header.propTypes = {
   actions: PropTypes.object,
-  settings: PropTypes.object,
-  layout: PropTypes.object
+  settings: PropTypes.object
 };
 
-const mapStateToProps = state => ({ settings: state.settings, layout: state.layout })
+const mapStateToProps = state => ({ settings: state.settings })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default compose(connect(
