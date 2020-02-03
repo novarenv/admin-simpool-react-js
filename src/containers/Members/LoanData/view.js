@@ -132,20 +132,6 @@ class LoanHistory extends Component {
 
   createRows = () => {
     let rows = [];
-    rows.push({
-      ACTION: '',
-      SCHEDULE: '',
-      DUE_DATE: '',
-      AMOUNT: '',
-      PRINCIPAL: '',
-      INTEREST: '',
-      CHARGES: '',
-      PENALTY: '',
-      PAYMENT: '',
-      PAYMENT_DATE: '',
-      OVERDUE_AMOUNT: '',
-      DAYS_LATE: ''
-    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -190,11 +176,11 @@ class LoanHistory extends Component {
 
   swalOption = {
     title: 'Are you sure?',
-    text: 'Your will not be able to recover this imaginary file!',
+    text: 'Do you want to delete loan view?',
     icon: 'warning',
     buttons: {
       cancel: {
-        text: 'No, cancel plx!',
+        text: 'No, I\'d like to save it!',
         value: null,
         visible: true,
         className: "",
@@ -210,25 +196,22 @@ class LoanHistory extends Component {
     }
   }
 
-  swalCallback(isConfirm, swal) {
+  swalCallback(isConfirm, swal, deleteRow) {
     if (isConfirm) {
-      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+      swal("Deleted!", "Your loan view has been deleted.", "success")
+      deleteRow()
     } else {
-      swal("Cancelled", "Your imaginary file is safe :)", "error");
+      swal("Cancelled", "Your loan view is safe :)", "error");
     }
   }
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
-      callback: () => {
-        console.log("Delete")
-      }
+      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteRow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        console.log("Edit")
         this.props.history.push('/member/loan-data-view-edit')
       }
     }
@@ -238,8 +221,6 @@ class LoanHistory extends Component {
       ACTION: this.actionCell
     };
 
-    console.log(row)
-
     return cellActions[column.key];
   }
 
@@ -247,10 +228,7 @@ class LoanHistory extends Component {
     if (idx !== 0) {
       this.props.history.push('/member/loan-data-view-detail')
     }
-    else if (idx === 0) {
-      this.state.rowIdx = rowIdx
-      this.deleteRow()
-    }
+    this.state.rowIdx = rowIdx
   };
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {

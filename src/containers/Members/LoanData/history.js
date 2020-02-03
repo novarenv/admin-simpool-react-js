@@ -48,13 +48,13 @@ class LoanHistory extends Component {
     this._columns = [
       {
         key: 'ACTION',
-        name: 'ACTION',
+        name: 'Action',
         width: 100,
         frozen: true
       },
       {
         key: 'REF_NUMBER',
-        name: 'Reference Nuber',
+        name: 'Reference Number',
         width: 200,
         frozen: true
       },
@@ -120,19 +120,6 @@ class LoanHistory extends Component {
 
   createRows = () => {
     let rows = [];
-    rows.push({
-      ACTION: '',
-      REF_NUMBER: '',
-      TRANSC_DATE: '',
-      TRANSC_TYPE: '',
-      AMOUNT: '',
-      PRINCIPAL: '',
-      INTEREST: '',
-      CHARGES: '',
-      PENALTY: '',
-      REMAINING_LOAN: ''
-    });
-
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -175,11 +162,11 @@ class LoanHistory extends Component {
 
   swalOption = {
     title: 'Are you sure?',
-    text: 'Your will not be able to recover this imaginary file!',
+    text: 'Do you want to delete loan history?',
     icon: 'warning',
     buttons: {
       cancel: {
-        text: 'No, cancel plx!',
+        text: 'No, I\'d like to save it!',
         value: null,
         visible: true,
         className: "",
@@ -195,25 +182,22 @@ class LoanHistory extends Component {
     }
   }
 
-  swalCallback(isConfirm, swal) {
+  swalCallback(isConfirm, swal, deleteRow) {
     if (isConfirm) {
-      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+      swal("Deleted!", "Your loan history has been deleted.", "success")
+      deleteRow()
     } else {
-      swal("Cancelled", "Your imaginary file is safe :)", "error");
+      swal("Cancelled", "Your loan is safe :)", "error");
     }
   }
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
-      callback: () => {
-        console.log("Delete")
-      }
+      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteRow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        console.log("Edit")
         this.props.history.push('/member/loan-data-history-edit')
       }
     }
@@ -223,8 +207,6 @@ class LoanHistory extends Component {
       ACTION: this.actionCell
     };
 
-    console.log(row)
-
     return cellActions[column.key];
   }
 
@@ -232,10 +214,7 @@ class LoanHistory extends Component {
     if (idx !== 0) {
       this.props.history.push('/member/loan-data-history-detail')
     }
-    else if (idx === 0) {
-      this.state.rowIdx = rowIdx
-      this.deleteRow()
-    }
+    this.state.rowIdx = rowIdx
   };
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {

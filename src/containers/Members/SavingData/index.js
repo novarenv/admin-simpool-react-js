@@ -4,6 +4,7 @@ import { Button, Container, Card, CardBody } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
+import { Toolbar, Data } from 'react-data-grid-addons';
 
 import Swal from '../../../components/Common/Swal';
 
@@ -42,9 +43,11 @@ const SearchBar = () => {
   )
 }
 
-class MemberData extends Component {
+class SavingData extends Component {
   constructor(props, context) {
     super(props, context);
+
+    this.selectors = Data.Selectors;
 
     this._columns = [
       {
@@ -57,7 +60,8 @@ class MemberData extends Component {
         key: 'ACCOUNT',
         name: 'Account',
         width: 100,
-        frozen: true
+        frozen: true,
+        filterable: true
       },
       {
         key: 'MEMBER_ID',
@@ -91,20 +95,34 @@ class MemberData extends Component {
     this.state = {
       originalRows,
       rows,
-      rowIdx: ''
+      rowIdx: '',
+      filters: {}
     };
   }
 
+  onAddFilter = filter => {
+    const newFilters = this.handleFilterChange(filter)
+
+    console.log("New Filters: " + newFilters)
+    this.setFilters(newFilters)
+  }
+
+  handleFilterChange = filter => filters => {
+    const newFilters = { ...filters };
+    console.log("Handle Filter" + filters)
+
+    if (filter.filterTerm) {
+      newFilters[filter.column.key] = filter;
+    } else {
+      delete newFilters[filter.column.key];
+    }
+
+    console.log("New Filters Handle: " + newFilters)
+    return newFilters;
+  };
+
   createRows = () => {
     let rows = [];
-    rows.push({
-      ACTION: '',
-      ACCOUNT: '',
-      MEMBER_ID: '',
-      MEMBER: '',
-      BALANCE: '',
-      OFFICE: ''
-    });
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -119,7 +137,16 @@ class MemberData extends Component {
     return rows;
   };
 
-  rowGetter = (i) => this.state.rows[i]
+  getRows(rows, filters) {
+    return this.selectors.getRows({ rows, filters });
+  }
+
+  setFilters = filters => {
+    console.log("Set Filters: " + filters)
+    this.setState({
+      filters: filters
+    })
+  }
 
   handleGridSort = (sortColumn, sortDirection) => {
     const comparer = (a, b) => {
@@ -140,14 +167,14 @@ class MemberData extends Component {
     rows.splice(this.state.rowIdx, 1);
     this.setState({ rows: rows });
   }
-  
+
   swalOption = {
     title: 'Are you sure?',
-    text: 'Your will not be able to recover this imaginary file!',
+    text: 'Do you want to delete this saving?',
     icon: 'warning',
     buttons: {
       cancel: {
-        text: 'No, cancel plx!',
+        text: 'No, I\'d like to save it!',
         value: null,
         visible: true,
         className: "",
@@ -163,25 +190,22 @@ class MemberData extends Component {
     }
   }
 
-  swalCallback(isConfirm, swal) {
+  swalCallback = (isConfirm, swal, deleteRow) => {
     if (isConfirm) {
-      swal("Deleted!", "Your imaginary file has been deleted.", "success");
+      swal("Deleted!", "Your savings has been deleted.", "success")
+      deleteRow()
     } else {
-      swal("Cancelled", "Your imaginary file is safe :)", "error");
+      swal("Cancelled", "Your savings is safe :)", "error");
     }
   }
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback}> <span className="fas fa-times swal-del" /> </Swal>,
-      callback: () => {
-        console.log("Delete")
-      }
+      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteRow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        console.log("Edit")
         this.props.history.push('/member/saving-data-edit')
       }
     }
@@ -191,8 +215,6 @@ class MemberData extends Component {
       ACTION: this.actionCell
     };
 
-    console.log(row)
-
     return cellActions[column.key];
   }
 
@@ -200,10 +222,9 @@ class MemberData extends Component {
     if (idx !== 0) {
       this.props.history.push('/member/saving-data-detail')
     }
-    else if (idx === 0) {
-      this.state.rowIdx = rowIdx
-      this.deleteRow()
-    }
+    this.setState({
+      rowIdx: rowIdx
+    })
   };
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
@@ -217,6 +238,8 @@ class MemberData extends Component {
   };
 
   render() {
+    const filteredRows = this.getRows(this.state.rows, this.state.filters);
+
     return (
       <ContentWrapper>
         <div className="content-heading">
@@ -232,12 +255,15 @@ class MemberData extends Component {
                 <ReactDataGrid
                   onGridSort={this.handleGridSort}
                   columns={this._columns}
-                  rowGetter={this.rowGetter}
-                  rowsCount={this.state.rows.length}
+                  rowGetter={i => filteredRows[i]}
+                  rowsCount={filteredRows.length}
                   minHeight={700}
                   getCellActions={this.getCellActions.bind(this)}
                   onCellSelected={this.onCellSelected.bind(this)}
                   onGridRowsUpdated={this.onGridRowsUpdated}
+                  toolbar={<Toolbar enableFilter={true} />}
+                  onAddFilter={filter => this.onAddFilter(filter)}
+                  onClearFilters={() => this.setFilters({})}
                 />
               </Container>
             </CardBody>
@@ -249,4 +275,4 @@ class MemberData extends Component {
 
 }
 
-export default withTranslation('translations')(withRouter(MemberData));
+export default withTranslation('translations')(withRouter(SavingData));

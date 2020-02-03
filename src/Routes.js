@@ -26,7 +26,7 @@ const MemberData = lazy(() => import('./containers/Members/MemberData'));
 const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const MemberDataDetail = lazy(() => import('./containers/Members/MemberData/detail'));
 const MemberDataEdit = lazy(() => import('./containers/Members/MemberData/edit'));
-const SavingData = lazy(() => import('./containers/Members/SavingData/indexFilter'));
+const SavingData = lazy(() => import('./containers/Members/SavingData/index'));
 const SavingDataAdd = lazy(() => import('./containers/Members/SavingData/add'));
 const SavingDataDetail = lazy(() => import('./containers/Members/SavingData/detail'));
 const SavingDataEdit = lazy(() => import('./containers/Members/SavingData/edit'));
@@ -87,8 +87,6 @@ const Routes = ({ location, ...props } ) => {
 
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)
-
-    console.log(props.layout.imgBoxPath)
     
     return () => { };
   }, [])
@@ -192,11 +190,10 @@ const Routes = ({ location, ...props } ) => {
 
 Routes.propTypes = {
   actions: PropTypes.object,
-  dashboard: PropTypes.object,
-  layout: PropTypes.object
+  dashboard: PropTypes.object
 }
 
-const mapStateToProps = state => ({ dashboard: state.dashboard, layout: state.layout })
+const mapStateToProps = state => ({ dashboard: state.dashboard })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTranslation('translations')(withRouter(Routes)));

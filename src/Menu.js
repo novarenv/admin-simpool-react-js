@@ -19,7 +19,7 @@ const Menu = [
                 translate: 'sidebar.nav.member.MEMBER_DATA'
             },
             {
-                name: 'Saving Data',
+                name: 'Savings',
                 path: '/member/saving-data',
                 translate: 'sidebar.nav.member.SAVING_DATA'
             },
@@ -66,7 +66,7 @@ const Menu = [
         icon: 'icon-calculator',
         translate: 'sidebar.nav.accountancy.ACCOUNTANCIES',
         submenu: [{
-                name: 'Register Account Code',
+                name: 'Account of Chart',
                 path: '/accounting/account-chart',
                 translate: 'sidebar.nav.accountancy.REGISTER_ACCOUNT_CODE'
             },

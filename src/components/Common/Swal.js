@@ -11,7 +11,7 @@ const Swal = props => {
     const handleClick = e => {
         e.preventDefault();
         // pass swal reference so is possible to chain popups
-        swal(props.options).then(p => props.callback(p, swal));
+        swal(props.options).then(p => props.callback(p, swal, props.deleteRow));
     }
 
     const { callback, ...rest } = props;
@@ -26,7 +26,8 @@ Swal.propType = {
     /** swal options object */
     options: PropTypes.object.isRequired,
     /** callback function for swal response */
-    callback: PropTypes.func
+    callback: PropTypes.func,
+    deleteRow: PropTypes.func
 }
 
 Swal.defaultProps = {
