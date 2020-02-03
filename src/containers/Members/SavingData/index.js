@@ -237,6 +237,12 @@ class SavingData extends Component {
     });
   };
 
+  onScroll = ({ rowVisibleStartIdx, rowVisibleEndIdx }) => {
+    console.log(rowVisibleStartIdx, rowVisibleEndIdx);
+    // The visible indexes will be updated as your canvas view port changes.
+    // use this to assert the currently visible rows from your data.
+ };
+
   render() {
     const filteredRows = this.getRows(this.state.rows, this.state.filters);
 
@@ -264,6 +270,9 @@ class SavingData extends Component {
                   toolbar={<Toolbar enableFilter={true} />}
                   onAddFilter={filter => this.onAddFilter(filter)}
                   onClearFilters={() => this.setFilters({})}
+                  rowVisibleStartIdx={10}
+                  rowVisibleEndIdx={29}
+                  onScroll={this.onScroll}
                 />
               </Container>
             </CardBody>

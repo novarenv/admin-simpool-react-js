@@ -74,14 +74,15 @@ label {
 }
 
 .btn-color {
-  background-color: #0e1f57
+  background-color: #061956;
+  border-color: #061956;
 }
 
 
 .otp {
   width: 60px;
   height: 60px;
-  border: 2px solid #0e1f57;
+  border: 2px solid #061956;
   font-size: 28px;
   text-align: center;
 }
@@ -151,6 +152,11 @@ input:focus {
 .fa-times {
   color: #DC3545;
   cursor: pointer;
+}
+
+.fa-size {
+  width: 7px;
+  height: 14px;
 }
 
 

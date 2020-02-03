@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Container, Card, CardBody } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
+import { createUltimatePagination } from 'react-ultimate-pagination';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Swal from '../../../components/Common/Swal';
@@ -45,6 +46,27 @@ const SearchBar = () => {
     </div>
   )
 }
+
+const ButtonPage = ({ value, isActive, disabled, onClick }) => (
+  <button
+    style={isActive ? { fontWeight: "bold" } : null}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {value}
+  </button>
+);
+
+const PaginatedPage = createUltimatePagination({
+  itemTypeToComponent: {
+    PAGE: ButtonPage,
+    ELLIPSIS: () => <ButtonPage value="..." />,
+    FIRST_PAGE_LINK: () => <ButtonPage value="First" />,
+    PREVIOUS_PAGE_LINK: () => <ButtonPage value="Prev" />,
+    NEXT_PAGE_LINK: () => <ButtonPage value="Next" />,
+    LAST_PAGE_LINK: () => <ButtonPage value="Last" />
+  }
+});
 
 class LoanData extends Component {
   constructor(props, context) {
@@ -91,7 +113,11 @@ class LoanData extends Component {
 
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
-    this.state = { originalRows, rows };
+    this.state = {
+      originalRows,
+      rows,
+      page: 1
+    };
   }
 
   createRows = () => {
@@ -110,7 +136,14 @@ class LoanData extends Component {
     return rows;
   };
 
-  rowGetter = (i) => this.state.rows[i]
+  // rowGetter = (i) => this.state.rows[i]
+
+  rowGetter = (i) => {
+    const rows = [...this.state.rows]
+    let rowShown = rows.splice(5, 25)
+
+    return rowShown[i]
+  }
 
   handleGridSort = (sortColumn, sortDirection) => {
     const comparer = (a, b) => {
@@ -216,11 +249,17 @@ class LoanData extends Component {
                   onGridSort={this.handleGridSort}
                   columns={this._columns}
                   rowGetter={this.rowGetter}
-                  rowsCount={this.state.rows.length}
+                  rowsCount={25}
                   minHeight={700}
                   getCellActions={this.getCellActions.bind(this)}
                   onCellSelected={this.onCellSelected.bind(this)}
                   onGridRowsUpdated={this.onGridRowsUpdated}
+                />
+
+                <PaginatedPage
+                  totalPages={10}
+                  currentPage={this.state.page}
+                  onChange={page => this.setState({ page })}
                 />
               </Container>
             </CardBody>
