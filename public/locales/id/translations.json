@@ -1,4 +1,10 @@
 {
+  "login": {
+    "USERNAME": "Nama Pengguna",
+    "PASSWORD": "Kata Sandi",
+    "REMEMBER_ME": "Ingat Saya",
+    "LOGIN": "Masuk"
+  },
   "dashboard": {
     "WELCOME": "Selamat Datang di Simpool!"
   },
@@ -131,5 +137,8 @@
       "BALANCE": "Saldo",
       "OFFICE": "Kantor Pelayanan"
     }
+  },
+  "forms": {
+    "REQUIRED": "Kolom harus diisi!"
   }
 }

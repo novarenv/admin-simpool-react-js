@@ -1,4 +1,10 @@
 {
+  "login": {
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "REMEMBER_ME": "Remember Me",
+    "LOGIN": "Login"
+  },
   "dashboard": {
     "WELCOME": "Welcome to Simpool!"
   },
@@ -131,5 +137,8 @@
       "BALANCE": "Balance",
       "OFFICE": "Office"
     }
+  },
+  "forms": {
+    "REQUIRED": "Kolom harus diisi!"
   }
 }
