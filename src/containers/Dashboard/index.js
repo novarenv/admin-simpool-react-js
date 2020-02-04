@@ -9,13 +9,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 
 class Dashboard extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      dropdownTranslateOpen: false,
+      activeTab: 'tasks',
 
-  state = {
-    dropdownTranslateOpen: false,
-    activeTab: 'tasks',
-
+    }
   }
-
   toggleDDTranslate = () => {
     this.setState({
       dropdownTranslateOpen: !this.state.dropdownTranslateOpen

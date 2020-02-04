@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 import { Link, withRouter } from 'react-router-dom';
 
 const logOut = () => {
-  console.log("Log Out Clicked")
   Cookies.remove("loginToken")
 }
 

@@ -8,10 +8,5 @@ export const headers = {
   'Fineract-Platform-TenantId': '010006',
 };
 
-export const basicAuth = {
-  'username': 'agung',
-  'password': '123'
-}
-
-
-export const loginUrl = `${apiEntrySimpool}/mobile/authentication`;
+export const loginUrl = `${apiEntrySimpool}/authentication`;
+export const otpUrl = `${apiEntrySimpool}/authentication/otp`;

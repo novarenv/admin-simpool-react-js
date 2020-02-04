@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Input, CustomInput } from 'reactstrap';
 import Cookies from "js-cookie";
-import OtpInput from 'react-otp-input';
 import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
 
@@ -12,17 +11,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 
 class Login extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
-      loginStatus: false,
-      OTPStatus: false,
-      OTP: '',
+      loginSuccess: false,
+      transactionReference: '',
+      isOtpShown: false,
       formLogin: {
-        username: 'novarenv',
-        password: 'pensjoss',
-        checkUsername: 'novarenv',
-        checkPassword: 'pensjoss'
+        username: 'coba',
+        password: '123456',
+        checkUsername: 'coba',
+        checkPassword: '123456'
       }
     }
   }
@@ -51,14 +50,14 @@ class Login extends Component {
     });
   }
 
-  onSubmit = e => {
+  onSubmitLogin = e => {
+    e.preventDefault()
+
     const form = e.target;
     const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName))
+    const formLogin = this.state.formLogin
 
     const { errors, hasError } = FormValidator.bulkValidate(inputs)
-
-    const time = new Date()
-    time.setTime(time.getTime() + (30*60*1000))
 
     this.setState({
       [form.name]: {
@@ -68,19 +67,48 @@ class Login extends Component {
     });
 
     console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
-    console.log(this.state.formLogin.username)
-    console.log(this.state.formLogin.password)
 
+    this.props.actions.loginUser(
+      {
+        username: formLogin.username,
+        password: formLogin.password
+      },
+      this.onLoginSuccess
+    )
+  }
+
+  onSubmitLoginOtp = e => {
     e.preventDefault()
-    if (this.state.formLogin.username === this.state.formLogin.checkUsername && this.state.formLogin.password === this.state.formLogin.checkPassword) {
+
+    const time = new Date()
+    time.setTime(time.getTime() + (30 * 60 * 1000))
+
+    const state = this.state
+    const otp = e.target.elements.otp.value
+    console.log(otp)
+
+    const onLoginOtpSuccess = () => {
       Cookies.set("loginToken", "Token", { expires: time })
       this.setState({
         OTPStatus: true
       })
-      console.log(this.state.OTPStatus)
       this.props.history.push("/")
     }
+
+    this.props.actions.loginOtpUser(
+      {
+        username: state.formLogin.username,
+        password: state.formLogin.password,
+        transactionReference: state.transactionReference,
+        otpCode: otp,
+      },
+      onLoginOtpSuccess
+    )
   }
+
+  onLoginSuccess = () => {
+    this.setState({ loginSuccess: true })
+  };
 
   /* Simplify error check */
   hasError = (formName, inputName, method) => {
@@ -88,10 +116,6 @@ class Login extends Component {
       this.state[formName].errors &&
       this.state[formName].errors[inputName] &&
       this.state[formName].errors[inputName][method]
-  }
-
-  changeOTP = () => {
-    console.log("OTP")
   }
 
   changeLanguage = lng => {
@@ -108,13 +132,13 @@ class Login extends Component {
     let isId, isEn
     if (this.props.dashboard.language === 'id')
       isId = true
-    else if(this.props.dashboard.language === 'en')
+    else if (this.props.dashboard.language === 'en')
       isEn = true
 
     const LoginInput = () => {
       return (
         <div className="card-body">
-          <form className="mb-3" name="formLogin" onSubmit={this.onSubmit.bind(this)}>
+          <form className="mb-3" name="formLogin" onSubmit={this.onSubmitLogin.bind(this)}>
             <div className="form-group">
               <label className="text-muted" htmlFor="username"><Trans i18nKey='login.USERNAME'>Username</Trans></label>
               <div className="input-group with-focus">
@@ -157,15 +181,16 @@ class Login extends Component {
               </div>
             </div>
             <div className="clearfix">
-              <CustomInput type="checkbox" id="remember-me"
+              <CustomInput
+                type="checkbox"
+                id="remember-me"
                 className="float-left mt-0"
                 name="remember-me"
-                label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>}>
-              </CustomInput>
+                label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>} />
             </div>
             <div className="text-center py-2">
               <label className="c-radio">
-                <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')}/>
+                <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')} />
                 <span className="fa fa-circle"></span>Bahasa Indonesia</label>
               <label className="c-radio">
                 <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
@@ -178,25 +203,46 @@ class Login extends Component {
     }
 
     const OTP = () => {
+      const formLogin = this.state.formLogin
+
+      const generateOtp = () => {
+        this.setState({isOtpShown: true})
+        this.props.actions.otpFun(
+          {
+            username: formLogin.username,
+            password: formLogin.password
+          },
+          onOtpSuccess
+        )
+      }
+
+      const onOtpSuccess = (transactionReference) => {
+        this.setState({
+          transactionReference: transactionReference
+        })
+      }
+      
       return (
         <div className="card-body">
-          <form className="mb-3" name="formOTP" onSubmit={this.onSubmit.bind(this)}>
-            <div>
-              <OtpInput 
-                inputStyle="otp"
-                numInputs={6}
-                onChange={otp => console.log(otp)}
-                separator="-"
-                value={this.state.OTP}
-              />
+          {
+            this.state.isOtpShown
+              ? (
+                <form className="mb-3" name="formOTP" onSubmit={this.onSubmitLoginOtp.bind(this)}>
+                  <Input
+                    type="text"
+                    name="otp"
+                    maxLength="6"
+                    className="otp col-lg-4 offset-lg-4"
+                    data-validate='["required"]'
+                  />
 
-              <Input 
-                type="tel" maxLength="1" className="otp"
-              />
-            </div>
+                  <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Submit OTP</button>
+                </form>
+              )
+              : (<button className="btn btn-block btn-primary mt-3 btn-color" onClick={() => generateOtp()}>Generate OTP</button>)
+          }
 
-            <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Login</button>
-          </form>
+
         </div>
       )
     }
@@ -210,7 +256,7 @@ class Login extends Component {
             </div>
           </div>
           {
-            this.state.OTPStatus ? (<OTP />) : (<LoginInput />)
+            this.state.loginSuccess ? (<OTP />) : (<LoginInput />)
           }
         </div>
         <div className="p-3 text-center">
@@ -226,10 +272,14 @@ class Login extends Component {
 
 Login.propTypes = {
   actions: PropTypes.object,
+  auth: PropTypes.object,
   dashboard: PropTypes.object
 }
 
-const mapStateToProps = state => ({ dashboard: state.dashboard })
+const mapStateToProps = state => ({
+  auth: state.auth,
+  dashboard: state.dashboard
+})
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(Login);

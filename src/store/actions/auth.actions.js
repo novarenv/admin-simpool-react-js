@@ -1,15 +1,15 @@
 export const LOGIN = 'LOGIN';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const OTP = 'OTP';
+export const LOGIN_OTP = 'LOGIN_OTP';
 
-export function loginUser(payload) {
-  return { type: LOGIN, payload };
+export function loginUser(payload, onLoginSuccess) {
+  return { type: LOGIN, payload, onLoginSuccess };
 }
 
-export function loginUserSuccess(payload) {
-  return { type: LOGIN_SUCCESS, payload };
+export function otpFun(payload, onOtpSuccess) {
+  return { type: OTP, payload, onOtpSuccess }
 }
 
-export function loginUserFailure(payload) {
-  return { type: LOGIN_FAILURE, payload };
+export function loginOtpUser(payload, onLoginOtpSuccess) {
+  return { type: LOGIN_OTP, payload, onLoginOtpSuccess };
 }

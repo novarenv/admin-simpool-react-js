@@ -1,38 +1,72 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { LOGIN, loginUserSuccess } from '../actions/actions';
-import { loginUrl, headers, basicAuth } from '../../lib/jsonPlaceholderAPI';
+import {
+  LOGIN,
+  OTP,
+  LOGIN_OTP
+} from '../actions/actions';
+import {
+  headers,
+  loginUrl,
+  otpUrl
+} from '../../lib/jsonPlaceholderAPI';
 import axios from 'axios';
+
+const loginError = (data, action) => {
+  if (data.httpStatusCode === "403") {
+    action.onLoginSuccess()
+  }
+}
+
+const otpSuccessFun = (data, action) => {
+  action.onOtpSuccess(data.transactionReference)
+}
+
+const loginOtpSuccess = (data, action) => {
+  action.onLoginOtpSuccess(data.transactionReference)
+}
 
 function* loginUser(action) {
   try {
-
-    console.log(action.payload)
-
-    const auth = yield axios
+    const login = yield axios
       .post(loginUrl, action.payload, {
-        auth: basicAuth,
+        headers: headers
+      })
+      .then(response => console.log(response))
+      .catch(error => loginError(error.response.data, action))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* otpFun(action) {
+  try {
+    const otp = yield axios
+      .post(otpUrl, action.payload, {
+        headers: headers
+      })
+      .then(response => otpSuccessFun(response.data, action))
+      .catch(error => console.log(error.response.data))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* loginOtpUser(action) {
+  console.log(action)
+  try {
+    const otp = yield axios
+      .post(loginUrl, action.payload, {
         headers: headers,
       })
-      .then(response => response.data);
-
-    yield put(
-      loginUserSuccess({
-        token: auth.token,
-      }),
-    );
-
-    console.log(auth)
-    action.onSuccess();
-
+      .then(response => loginOtpSuccess(response.data, action))
+      .catch(error => console.log(error.response.data))
   } catch (error) {
-
-    console.log(error.response.data.defaultUserMessage);
-
-    action.onError(error.response.data.defaultUserMessage);
-    
+    console.log(error)
   }
 }
 
 export default function* root() {
   yield takeEvery(LOGIN, loginUser);
+  yield takeEvery(OTP, otpFun);
+  yield takeEvery(LOGIN_OTP, loginOtpUser);
 }
