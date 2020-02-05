@@ -73,42 +73,44 @@ class Login extends Component {
         username: formLogin.username,
         password: formLogin.password
       },
-      this.onLoginSuccess
+      this.onLoginSuccess,
+      this.onLoginOtpSuccess
     )
   }
 
   onSubmitLoginOtp = e => {
     e.preventDefault()
 
-    const time = new Date()
-    time.setTime(time.getTime() + (30 * 60 * 1000))
-
     const state = this.state
     const otp = e.target.elements.otp.value
     console.log(otp)
-
-    const onLoginOtpSuccess = () => {
-      Cookies.set("loginToken", "Token", { expires: time })
-      this.setState({
-        OTPStatus: true
-      })
-      this.props.history.push("/")
-    }
 
     this.props.actions.loginOtpUser(
       {
         username: state.formLogin.username,
         password: state.formLogin.password,
         transactionReference: state.transactionReference,
+        rememberMe: false,
         otpCode: otp,
       },
-      onLoginOtpSuccess
+      this.onLoginOtpSuccess
     )
   }
 
   onLoginSuccess = () => {
     this.setState({ loginSuccess: true })
   };
+
+  onLoginOtpSuccess = () => {
+    const time = new Date()
+    time.setTime(time.getTime() + (30 * 60 * 1000))
+
+    Cookies.set("loginToken", "Token", { expires: time })
+    this.setState({
+      OTPStatus: true
+    })
+    this.props.history.push("/")
+  }
 
   /* Simplify error check */
   hasError = (formName, inputName, method) => {

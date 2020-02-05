@@ -2,8 +2,8 @@ export const LOGIN = 'LOGIN';
 export const OTP = 'OTP';
 export const LOGIN_OTP = 'LOGIN_OTP';
 
-export function loginUser(payload, onLoginSuccess) {
-  return { type: LOGIN, payload, onLoginSuccess };
+export function loginUser(payload, onLoginSuccess, onLoginOtpSuccess) {
+  return { type: LOGIN, payload, onLoginSuccess, onLoginOtpSuccess };
 }
 
 export function otpFun(payload, onOtpSuccess) {

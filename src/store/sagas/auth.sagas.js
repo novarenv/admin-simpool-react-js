@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 
 const loginError = (data, action) => {
-  if (data.httpStatusCode === "403") {
+  if (data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
     action.onLoginSuccess()
   }
 }
@@ -31,8 +31,13 @@ function* loginUser(action) {
       .post(loginUrl, action.payload, {
         headers: headers
       })
-      .then(response => console.log(response))
+      .then(response => response.data)
       .catch(error => loginError(error.response.data, action))
+
+    if (login.authenticated) {
+      console.log(login)
+      action.onLoginOtpSuccess()
+    }
   } catch (error) {
     console.log(error)
   }
@@ -52,7 +57,6 @@ function* otpFun(action) {
 }
 
 function* loginOtpUser(action) {
-  console.log(action)
   try {
     const otp = yield axios
       .post(loginUrl, action.payload, {
