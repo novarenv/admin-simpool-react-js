@@ -2,7 +2,8 @@ import { put, takeEvery } from 'redux-saga/effects';
 import {
   LOGIN,
   OTP,
-  LOGIN_OTP
+  LOGIN_OTP,
+  loginOtpUserSuccess
 } from '../actions/actions';
 import {
   headers,
@@ -17,14 +18,6 @@ const loginError = (data, action) => {
   }
 }
 
-const otpSuccessFun = (data, action) => {
-  action.onOtpSuccess(data.transactionReference)
-}
-
-const loginOtpSuccess = (data, action) => {
-  action.onLoginOtpSuccess(data.transactionReference)
-}
-
 function* loginUser(action) {
   try {
     const login = yield axios
@@ -35,8 +28,8 @@ function* loginUser(action) {
       .catch(error => loginError(error.response.data, action))
 
     if (login.authenticated) {
-      console.log(login)
       action.onLoginOtpSuccess()
+      yield put(loginOtpUserSuccess(login.base64EncodedAuthenticationKey))
     }
   } catch (error) {
     console.log(error)
@@ -49,8 +42,11 @@ function* otpFun(action) {
       .post(otpUrl, action.payload, {
         headers: headers
       })
-      .then(response => otpSuccessFun(response.data, action))
+      .then(response => response.data)
       .catch(error => console.log(error.response.data))
+
+    action.onOtpSuccess(otp.transactionReference)
+
   } catch (error) {
     console.log(error)
   }
@@ -58,12 +54,16 @@ function* otpFun(action) {
 
 function* loginOtpUser(action) {
   try {
-    const otp = yield axios
+    const loginOtp = yield axios
       .post(loginUrl, action.payload, {
         headers: headers,
       })
-      .then(response => loginOtpSuccess(response.data, action))
+      .then(response => response.data)
       .catch(error => console.log(error.response.data))
+    
+    action.onLoginOtpSuccess()
+    yield put(loginOtpUserSuccess(loginOtp.base64EncodedAuthenticationKey))
+
   } catch (error) {
     console.log(error)
   }

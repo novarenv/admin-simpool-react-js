@@ -83,7 +83,6 @@ class Login extends Component {
 
     const state = this.state
     const otp = e.target.elements.otp.value
-    console.log(otp)
 
     this.props.actions.loginOtpUser(
       {
