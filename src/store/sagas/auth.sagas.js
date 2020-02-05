@@ -31,6 +31,7 @@ function* loginUser(action) {
       action.onLoginOtpSuccess()
       yield put(loginOtpUserSuccess(login.base64EncodedAuthenticationKey))
     }
+
   } catch (error) {
     console.log(error)
   }
@@ -56,7 +57,7 @@ function* loginOtpUser(action) {
   try {
     const loginOtp = yield axios
       .post(loginUrl, action.payload, {
-        headers: headers,
+        headers: headers
       })
       .then(response => response.data)
       .catch(error => console.log(error.response.data))

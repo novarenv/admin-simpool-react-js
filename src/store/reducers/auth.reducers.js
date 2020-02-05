@@ -8,6 +8,8 @@ const initialState = {
   base64EncodedAuthenticationKey: null
 };
 
+export const authSelector = state => state.auth.base64EncodedAuthenticationKey
+
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN:

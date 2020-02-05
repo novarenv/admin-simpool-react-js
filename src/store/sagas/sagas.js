@@ -1,9 +1,13 @@
 import { all } from 'redux-saga/effects';
 
-import authSaga from './auth.sagas.js';
+import auth from './auth.sagas.js';
+import memberData from './memberData.sagas.js';
+import search from './search.sagas.js';
 
 export default function* combineSaga(){
   yield all([
-    authSaga()
+    auth(),
+    memberData(),
+    search()
   ])
 }

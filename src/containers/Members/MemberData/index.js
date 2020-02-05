@@ -3,9 +3,15 @@ import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
+import PropTypes from 'prop-types';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Swal from '../../../components/Common/Swal';
+
+import * as actions from '../../../store/actions/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
+import { searchResponse } from '../../../store/actions/actions';
 
 const COLUMN_WIDTH = 250;
 
@@ -23,13 +29,32 @@ const AddBar = () => {
   )
 }
 
-const SearchBar = () => {
+const SearchBar = props => {
+  let searchInput
+
+  const search = () => {
+    props.props.actions.search(
+      {
+        input: searchInput
+      },
+      searchResponse
+    )
+  }
+
+  const searchResponse = res => {
+    props.searchRow(res)
+  }
+
+  const handleChange = e => {
+    searchInput = e.target.value
+  }
+
   return (
     <div className="row mr-1">
       <div className="col-md-10 mb-3">
-        <input className="form-control mr-3" type="text" placeholder="Search member data" />
+        <input className="form-control mr-3" type="text" placeholder="Search member data" onChange={handleChange} />
       </div>
-      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button">
+      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button" onClick={search}>
         <i className="fas fa-search mr-2" />
         Search
       </Button>
@@ -79,6 +104,13 @@ class MemberData extends Component {
       }
     ];
 
+    this.props.actions.index(
+      {
+        limit: 15,
+        offset: 0
+      }
+    )
+
     let originalRows = this.createRows(1000);
     let rows = originalRows.slice(0);
 
@@ -87,6 +119,21 @@ class MemberData extends Component {
       rows,
       rowIdx: ''
     };
+
+    const search = () => {
+      this.props.actions.search(
+        {
+          input: "0"
+        },
+        searchResponse
+      )
+    }
+  
+    const searchResponse = res => {
+      this.searchRow(res)
+    }
+
+    search()
   }
 
   createRows = () => {
@@ -194,6 +241,23 @@ class MemberData extends Component {
     });
   };
 
+  searchRow = rows => {
+    let rowsTemp = [];
+    rows.map(row => {
+      rowsTemp.push({
+        ACTION: '',
+        ID_MEMBER: row.entityAccountNo,
+        EXTERNAL_ID: 1,
+        FULL_NAME: row.entityName,
+        OFFICE: row.parentName,
+        STATUS: row.entityStatus.value
+      })
+    })
+    this.setState({
+      rows: rowsTemp
+    })
+  }
+
   render() {
     return (
       <ContentWrapper>
@@ -204,7 +268,7 @@ class MemberData extends Component {
           <Card>
             <CardBody>
               <AddBar />
-              <SearchBar />
+              <SearchBar props={this.props} searchRow={this.searchRow} />
 
               <Container fluid>
                 <ReactDataGrid
@@ -224,7 +288,20 @@ class MemberData extends Component {
       </ContentWrapper>
     );
   }
-
 }
 
-export default withTranslation('translations')(withRouter(MemberData));
+MemberData.propTypes = {
+  actions: PropTypes.object,
+  auth: PropTypes.object,
+  memberData: PropTypes.object,
+  search: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  memberData: state.memberData,
+  search: state.search
+})
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(MemberData));
