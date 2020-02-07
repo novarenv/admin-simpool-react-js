@@ -11,7 +11,6 @@ import Swal from '../../../components/Common/Swal';
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import { searchResponse } from '../../../store/actions/actions';
 
 const COLUMN_WIDTH = 250;
 
@@ -42,7 +41,7 @@ const SearchBar = props => {
   }
 
   const searchResponse = res => {
-    props.searchRow(res)
+    props.searchRows(res)
   }
 
   const handleChange = e => {
@@ -104,52 +103,52 @@ class MemberData extends Component {
       }
     ];
 
-    this.props.actions.index(
+    this.props.actions.clientIndex(
       {
-        limit: 15,
+        limit: 25,
         offset: 0
-      }
+      },
+      this.createRows
     )
 
-    let originalRows = this.createRows(1000);
-    let rows = originalRows.slice(0);
-
     this.state = {
-      originalRows,
-      rows,
+      rows: [],
       rowIdx: ''
     };
-
-    const search = () => {
-      this.props.actions.search(
-        {
-          input: "0"
-        },
-        searchResponse
-      )
-    }
-  
-    const searchResponse = res => {
-      this.searchRow(res)
-    }
-
-    search()
   }
 
-  createRows = () => {
-    let rows = [];
-    for (let i = 1; i < 100; i++) {
-      rows.push({
+  createRows = rows => {
+    let rowsTemp = [];
+    rows.map(row => {
+      rowsTemp.push({
         ACTION: '',
-        ID_MEMBER: i,
-        EXTERNAL_ID: i,
-        FULL_NAME: 'ABC' + i,
-        OFFICE: i,
-        STATUS: i
-      });
-    }
+        ID_MEMBER: row.accountNo,
+        EXTERNAL_ID: row.legalForm.value,
+        FULL_NAME: row.displayName,
+        OFFICE: row.officeName,
+        STATUS: row.status.value
+      })
+    })
+    this.setState({
+      rows: rowsTemp
+    })
+  };
 
-    return rows;
+  searchRows = rows => {
+    let rowsTemp = [];
+    rows.map(row => {
+      rowsTemp.push({
+        ACTION: '',
+        ID_MEMBER: row.entityAccountNo,
+        EXTERNAL_ID: row.entityType,
+        FULL_NAME: row.entityName,
+        OFFICE: row.parentName,
+        STATUS: row.entityStatus.value
+      })
+    })
+    this.setState({
+      rows: rowsTemp
+    })
   };
 
   rowGetter = (i) => this.state.rows[i]
@@ -241,23 +240,6 @@ class MemberData extends Component {
     });
   };
 
-  searchRow = rows => {
-    let rowsTemp = [];
-    rows.map(row => {
-      rowsTemp.push({
-        ACTION: '',
-        ID_MEMBER: row.entityAccountNo,
-        EXTERNAL_ID: 1,
-        FULL_NAME: row.entityName,
-        OFFICE: row.parentName,
-        STATUS: row.entityStatus.value
-      })
-    })
-    this.setState({
-      rows: rowsTemp
-    })
-  }
-
   render() {
     return (
       <ContentWrapper>
@@ -268,7 +250,7 @@ class MemberData extends Component {
           <Card>
             <CardBody>
               <AddBar />
-              <SearchBar props={this.props} searchRow={this.searchRow} />
+              <SearchBar props={this.props} searchRows={this.searchRows} />
 
               <Container fluid>
                 <ReactDataGrid

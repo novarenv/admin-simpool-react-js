@@ -102,7 +102,7 @@ class Login extends Component {
 
   onLoginOtpSuccess = () => {
     const time = new Date()
-    time.setTime(time.getTime() + (30 * 60 * 1000))
+    time.setTime(time.getTime() + (10000 * 60 * 1000))
 
     Cookies.set("loginToken", "Token", { expires: time })
     this.setState({

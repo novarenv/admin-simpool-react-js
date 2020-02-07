@@ -1,5 +1,4 @@
 import { updateClasses } from './middlewares/settings.middleware.js';
-import { updateTheme } from './middlewares/themes.middleware.js';
 
 const STORAGE_KEY = 'simpool-store-key';
 
@@ -13,7 +12,6 @@ const callMiddlewares = state => {
     // for settings and themes, is necessary to call middleware
     // directly to set the initial state loaded from storage
     updateClasses(state);
-    updateTheme(state)
 }
 
 /* Use an IIFE to export the persisted state in a variable */
@@ -33,7 +31,7 @@ export const persistedState = (() => {
 export const saveState = (state) => {
     try {
         let stateFilter = JSON.parse(JSON.stringify(state)); // deep clone
-        ['offsidebarOpen', 'asideToggled', 'horizontal'] // states which we don't want to persist.
+        ['asideToggled', 'horizontal'] // states which we don't want to persist.
         .forEach(item => delete stateFilter.settings[item])
         const rawState = JSON.stringify(stateFilter);
         localStorage.setItem(STORAGE_KEY, rawState);

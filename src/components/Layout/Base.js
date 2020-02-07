@@ -2,7 +2,6 @@ import React from 'react';
 
 import Header from './Header'
 import Sidebar from './Sidebar'
-import Offsidebar from './Offsidebar'
 import Footer from './Footer'
 
 const Base = props => {
@@ -12,8 +11,6 @@ const Base = props => {
             <Header />
 
             <Sidebar />
-
-            <Offsidebar />
 
             <section className="section-container">
                 {props.children}

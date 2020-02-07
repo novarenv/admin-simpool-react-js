@@ -9,7 +9,6 @@ import {
   searchUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
-import { searchResSelector } from '../reducers/search.reducers'
 
 function* search(action) {
   const auth = yield select(authSelector)

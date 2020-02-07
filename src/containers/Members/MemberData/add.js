@@ -15,20 +15,27 @@ import {
 } from 'reactstrap';
 import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
+import PropTypes from 'prop-types';
+import { withRouter, Link } from 'react-router-dom';
+import { withTranslation, Trans } from 'react-i18next';
+import { Formik } from 'formik';
 
+import * as actions from '../../../store/actions/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
+
+import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import FormValidator from '../../../components/Forms/FormValidator';
 
 // DateTimePicker
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
-
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
 };
 
-const MONTHS = [
+const SHORT_MONTHS_ID = [
   'Jan',
   'Feb',
   'Mar',
@@ -43,7 +50,22 @@ const MONTHS = [
   'Des',
 ];
 
-export function DragDrop(props) {
+const MONTHS_ID = [
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember'
+]
+
+function DragDrop(props) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ multiple: false });
 
   const files = acceptedFiles.map(file => (
@@ -68,7 +90,7 @@ export function DragDrop(props) {
   );
 }
 
-export function DragDropMultiple(props) {
+function DragDropMultiple(props) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   const files = acceptedFiles.map(file => (
@@ -94,118 +116,240 @@ export function DragDropMultiple(props) {
 }
 
 class MemberDataAdd extends Component {
-  state = {
-    notDuplicate: false,
-    formValidateDuplicate: false,
-    activeStep: '1',
-    files: [],
+  constructor(props) {
+    super(props)
 
-    /* Group each form state in an object.
-       Property name MUST match the form name */
-    addValidation: {
-      fullName: '',
-      birthplace: '',
-      address: '',
-      noKTP: '',
-      motherName: '',
+    this.state = {
+      notDuplicate: false,
+      privateIdentity: false,
+      formValidateDuplicate: false,
+      totalFilteredRecords: false,
+      today: '',
+      activeStep: '1',
+      files: [],
+
+      /* Group each form state in an object.
+         Property name MUST match the form name */
+      addValidation: {
+        registrationDate: '',
+        legalFormId: '1',
+        typeOfIdentityId: 'default',
+        identityTypeOptions: [],
+        fullname: '',
+        placeOfBirth: '',
+        addressBasedOnIdentity: '',
+        identityNumber: '',
+        motherName: '',
+
+        officeId: '',
+        birthdate: '',
+        NPWP: '',
+        oldMemberNumber: '',
+        religion: '',
+        religionOptions: [],
+        gender: '',
+        mobileNo: '',
+        email: '',
 
 
-      registrationDate: '',
-      serviceOffice: '',
-      birthdate: '',
-      NPWP: '',
-      oldMemberNumber: '',
-      phoneNumber: '',
-      email: '',
-
-      city: '',
-      zipCode: '',
-      addressDomicile: '',
-      cityDomicile: '',
-      zipCodeDomicile: ''
-    }
-  };
-
-  isNotDuplicate = () => {
-    // For submit we can obtain the form from the event
-    // but for each step we need a global ref to the element
-    const form = this.formWizardRef;
-    // To validate only the inputs in the current steps, we use an id to query the tabPane
-    // and then find all form elements for the current step only.
-    const tabPane = document.getElementById('tabPane' + this.state.activeStep);
-    const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
-
-    const { errors, hasError } = FormValidator.bulkValidate(inputs);
-
-    // Update state so the validation message are shown/hidden
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        errors
+        identityProvinceId: 'default',
+        provinceOptions: [],
+        identityCityId: 'default',
+        cityOptions: [],
+        cityOptionsFilter: [],
+        identityPostalCode: '',
+        addressDomicile: '',
+        cityDomicile: '',
+        zipCodeDomicile: ''
       }
-    });
+    };
+
+    this.props.actions.clientTemplate({}, this.setClientTemplate)
+  }
+
+  componentDidMount() {
+    const dd = String(new Date().getDate()).padStart(2, '0')
+    const mmmm = MONTHS_ID[new Date().getMonth()]
+    const yyyy = new Date().getFullYear()
+
+    const today = dd + ' ' + mmmm + ' ' + yyyy
+    this.setState({
+      today: today
+    })
+    console.log(today)
+  }
+
+  setClientTemplate = res => {
+    console.log(res)
+    let identityTypeOptions = [];
+    res.typeOfIdentityOptions.map(row => {
+      identityTypeOptions.push(row)
+    })
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          identityTypeOptions: identityTypeOptions
+        }
+      })
+    )
+
+    let religionOptions = [];
+    res.religionOption.map(row => {
+      religionOptions.push(row)
+    })
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          religionOptions: religionOptions
+        }
+      })
+    )
+    console.log(this.state.addValidation.religionOptions)
+
+    let provinceOptions = [];
+    res.provinceOptions.map(row => {
+      provinceOptions.push(row)
+    })
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          provinceOptions: provinceOptions
+        }
+      })
+    )
+
+    let cityOptions = [];
+    res.cityOptions.map(row => {
+      cityOptions.push(row)
+    })
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          cityOptions: cityOptions
+        }
+      })
+    )
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          cityOptionsFilter: cityOptions
+        }
+      })
+    )
+  }
+
+  checkDuplicate = () => {
+    const addValidation = this.state.addValidation
+
+    const checkTotalFilter = res => {
+      console.log(res)
+      if (res.totalFilteredRecords > 0) {
+        this.setState({
+          totalFilteredRecords: true
+        })
+      }
+    }
+
+    this.props.actions.checkDuplicate(
+      {
+        fullname: addValidation.fullname,
+        dateOfBirth: addValidation.birthdate,
+        addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+        motherName: addValidation.motherName,
+        typeOfIdentityId: addValidation.typeOfIdentityId,
+        identityNumber: addValidation.identityNumber
+      },
+      checkTotalFilter
+    )
+    // const form = "addValidation"
+    // const inputs = 
+
+    // const { errors, hasError } = FormValidator.bulkValidate(inputs)
+
+    // this.setState(prevState => ({
+    //   addValidation: {
+    //     ...this.state[addValidation],
+    //     errors
+    //   }
+    // }))
+
+    // console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
 
     // and prevent change the if form is not valid
-    if (!hasError) {
+    // if (!hasError) {
+    this.setState({
+      notDuplicate: true,
+      privateIdentity: false
+    });
+    // }
+  }
+
+  ShowNotDuplicate = () => {
+    const setNotDuplicate = () => {
       this.setState({
-        notDuplicate: true
+        notDuplicate: false,
+        privateIdentity: true
       });
+    }
+
+    if (this.state.totalFilteredRecords) {
+      return (
+        <div>
+          <Button>Ini Tabel</Button>
+          <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
+            onClick={() => setNotDuplicate()}>Create Member</Button>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Button>Tidak ada data yang sama!</Button>
+          <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
+            onClick={() => setNotDuplicate()}>Create Member</Button>
+        </div>
+      )
     }
   }
 
-  showNotDuplicate = () => {
+  PrivateIdentity = () => {
     return (
       <div>
-        <label className="mt-3" htmlFor="memberType">Jenis Anggota *</label>
-        <div className="py-2">
-          <label className="c-radio">
-            <Input id="individu" type="radio" name="memberType" className="input-font-size" defaultValue="individu" tabIndex="7" defaultChecked required />
-            <span className="fa fa-circle"></span>Individu</label>
-          <span className="span-disabled">
-            <label className="c-radio">
-              <Input id="badanUsaha" type="radio" name="memberType" className="input-font-size" defaultValue="badanUsaha" disabled />
-              <span className="fa fa-circle"></span>Badan Usaha</label>
-          </span>
-        </div>
-        <span className="invalid-feedback">Kolom harus diisi!</span>
-
-        <label htmlFor="membership">Keanggotaan</label>
-        <div className="py-2">
-          <label className="c-radio">
-            <Input id="anggota" type="radio" name="membership" defaultValue="anggota" />
-            <span className="fa fa-circle"></span>Anggota</label>
-          <label className="c-radio">
-            <Input id="anggotaLuarBiasa" type="radio" name="membership" defaultValue="anggotaLuarBiasa" />
-            <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
-          <label className="c-radio">
-            <Input id="calonAnggota" type="radio" name="membership" defaultValue="calonAnggota" />
-            <span className="fa fa-circle"></span>Calon Anggota</label>
-        </div>
-        <span className="invalid-feedback">Kolom harus diisi!</span>
-
-        <label className="mt-3" htmlFor="birthplace">Tempat Lahir</label>
+        <label className="mt-3" htmlFor="placeOfBirth">Tempat Lahir</label>
         <Input
-          name="birthplace"
+          name="placeOfBirth"
           className="input-font-size"
           type="text"
-          id="birthplace"
+          id="placeOfBirth"
           onChange={this.validateOnChange}
           invalid={this.hasError(
             'addValidation',
-            'birthplace'
+            'placeOfBirth'
           )}
           placeholder="contoh: Tangerang"
-          value={this.state.addValidation.birthplace}
+          value={this.state.addValidation.placeOfBirth}
         />
 
         <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
         <div className="py-2">
           <label className="c-radio">
-            <Input id="man" type="radio" name="gender" className="input-font-size" defaultValue="man" />
-            <span className="fa fa-circle"></span>Laki-laki</label>
+            <Input id="man" type="radio" name="gender" className="input-font-size" 
+              value="M" onChange={e => this.changeGender(e.target.value)}
+            />
+            <span className="fa fa-circle" />
+            Laki-laki
+          </label>
           <label className="c-radio">
-            <Input id="woman" type="radio" name="gender" className="input-font-size" defaultValue="woman" />
-            <span className="fa fa-circle"></span>Perempuan</label>
+            <Input id="woman" type="radio" name="gender" className="input-font-size" 
+              value="F" onChange={e => this.changeGender(e.target.value)}
+            />
+            <span className="fa fa-circle" />
+            Perempuan
+            </label>
         </div>
 
         <label className="mt-3" htmlFor="NPWP">NPWP</label>
@@ -246,28 +390,32 @@ class MemberDataAdd extends Component {
         </select>
 
         <label className="mt-3" htmlFor="religion">Agama</label>
-        <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="religion" required>
-          <option>Agama</option>
-          <option defaultValue="islam">Islam</option>
-          <option defaultValue="kristen">Kristen</option>
-          <option defaultValue="katolik">Katolik</option>
-          <option defaultValue="hindu">Hindu</option>
-          <option defaultValue="buddha">Buddha</option>
+        <select value={this.state.addValidation.religion}
+          className="custom-select custom-select-sm input-font-size" name="religion"
+          onChange={e => this.changeReligion(e.target.value)}>
+          <option value="default">Pilih agama anda</option>
+          {
+            this.state.addValidation.religionOptions.map((option, i) => {
+              return (
+                <option value={option.name} key={"identityType " + i} >{option.description}</option>
+              )
+            })
+          }
         </select>
 
-        <label className="mt-3" htmlFor="phoneNumber">Nomor Telpon</label>
+        <label className="mt-3" htmlFor="mobileNo">Nomor Telpon</label>
         <Input
-          name="phoneNumber"
+          name="mobileNo"
           className="input-font-size"
           type="text"
-          id="phoneNumber"
+          id="mobileNo"
           onChange={this.validateOnChange}
           invalid={this.hasError(
             'addValidation',
-            'phoneNumber'
+            'mobileNo'
           )}
           placeholder="contoh: 123456789"
-          value={this.state.addValidation.phoneNumber}
+          value={this.state.addValidation.mobileNo}
         />
 
         <label className="mt-3" htmlFor="email">Email</label>
@@ -283,7 +431,6 @@ class MemberDataAdd extends Component {
         {this.hasError('addValidation', 'email', 'email') && <span className="invalid-feedback">Field must be valid email</span>}
 
         <div>
-          <p className="mt-4">(*) Harus Diisi</p>
           <div className="d-flex">
             {/*<Button color="secondary">Previous</Button>*/}
             <Button
@@ -374,6 +521,7 @@ class MemberDataAdd extends Component {
   };
 
   handleSubmit = e => {
+    e.preventDefault();
     const form = e.target;
     const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName));
 
@@ -387,17 +535,11 @@ class MemberDataAdd extends Component {
     });
 
     console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!');
-
-    e.preventDefault();
   };
-
-  componentDidUpdate() {
-    console.log(this.state.addValidation)
-  }
 
   handleDate = e => {
     let dd = String(e.toDate().getDate()).padStart(2, '0')
-    let mm = MONTHS[e.toDate().getMonth()]
+    let mm = MONTHS_ID[e.toDate().getMonth()]
     let yyyy = e.toDate().getFullYear()
 
     let date = dd + " " + mm + " " + yyyy
@@ -453,369 +595,601 @@ class MemberDataAdd extends Component {
     )
   }
 
+  changeLegalFormId = val => {
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          legalFormId: val
+        }
+      })
+    )
+  }
+
+  changeTypeOfIdentityId = val => {
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          typeOfIdentityId: val
+        }
+      })
+    )
+  }
+
+  changeReligion = val => {
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          religion: val
+        }
+      })
+    )
+  }
+
+  changeGender = val => {
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          gender: val
+        }
+      })
+    )
+  }
+
+  changeProvince = val => {
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          identityProvinceId: val
+        }
+      })
+    )
+
+    let cityOptions = [];
+    this.state.addValidation.cityOptions.map(row => {
+      if (row.provinceId === val) {
+        cityOptions.push(row)
+      }
+    })
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          cityOptionsFilter: cityOptions
+        }
+      })
+    )
+  }
+
+  changeCity = val => {
+    console.log(val)
+    this.setState(prevState =>
+      ({
+        addValidation: {
+          ...prevState.addValidation,
+          identityCityId: val
+        }
+      })
+    )
+  }
+
+  finishForm = () => {
+    const state = this.state
+    const addValidation = state.addValidation
+
+    console.log(state.today)
+
+    this.props.actions.clientAdd({
+      legalFormId: addValidation.legalFormId,
+      officeId: 1,
+      flagTaxCodeValue: "Y",
+      fullname: addValidation.fullname,
+      typeOfIdentityId: addValidation.typeOfIdentityId,
+      motherName: addValidation.motherName,
+      addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+      taxNumber: addValidation.NPWP,
+      identityNumber: addValidation.identityNumber,
+      sectorId: 1000,
+      identityCountryCodeValue: "IDN",
+      identityProvinceId: addValidation.identityProvinceId,
+      identityCityId: addValidation.identityCityId,
+      identitySubDistrict: "novaren1",
+      identityVillage: "novaren1",
+      identityPostalCode: addValidation.identityPostalCode,
+      genderCodeValue: addValidation.gender,
+      placeOfBirth: addValidation.placeOfBirth,
+      mobileNo: addValidation.mobileNo,
+      religion: addValidation.religion,
+      taxName: "novarena",
+      taxAddress: "novarena",
+      submittedOnDate: "07 Februari 2020",
+      dateOfBirth: "06 Februari 2020",
+
+      clientNonPersonDetails: { "locale": "id", "dateFormat": "dd MMMM yyyy" },
+      externalId: "",
+      locale: "id",
+      active: false,
+      dateFormat: "dd MMMM yyyy",
+      activationDate: "07 Februari 2020",
+      savingsProductId: null
+    })
+  }
+
   render() {
-    const dd = String(new Date().getDate()).padStart(2, '0')
-    const mm = MONTHS[new Date().getMonth()]
-    const yyyy = new Date().getFullYear()
-
-    const today = dd + ' ' + mm + ' ' + yyyy
-
     return (
       <ContentWrapper>
         <div className="content-heading">
           <div>Anggota Baru</div>
         </div>
 
-        <Form innerRef={this.formRef} name="addValidation" className="form-font-size" onSubmit={this.handleSubmit}>
-          <Card className="card-default">
-            <CardHeader>
-              <div>{today}</div>
-              <div>Kantor Pelayanan</div>
-            </CardHeader>
-            <CardBody>
-              <Nav pills justified={true}>
-                <NavItem style={stepNavitemStyle}>
-                  <NavLink
-                    tag="div"
-                    className={classnames({
-                      active: this.state.activeStep === '1'
-                    })}
-                    onClick={this.toggleStep('1')}
-                  >
-                    <h4 className="text-left my-4">
-                      1. Identitas Pribadi
-                    <br />
-                      <small>Identitas Anggota yang ingin dimasukkan</small>
-                    </h4>
-                  </NavLink>
-                </NavItem>
-                <NavItem style={stepNavitemStyle}>
-                  <NavLink
-                    tag="div"
-                    className={classnames({
-                      active: this.state.activeStep === '2'
-                    })}
-                    onClick={this.toggleStep('2')}
-                  >
-                    <h4 className="text-left my-4">
-                      2. Alamat
-                    <br />
-                      <small>Alamat sesuai KTP dan Domisili</small>
-                    </h4>
-                  </NavLink>
-                </NavItem>
-                <NavItem style={stepNavitemStyle}>
-                  <NavLink
-                    tag="div"
-                    className={classnames({
-                      active: this.state.activeStep === '3'
-                    })}
-                    onClick={this.toggleStep('3')}
-                  >
-                    <h4 className="text-left my-4">
-                      3. Dokumen
-                    <br />
-                      <small>Berkas penunjuang pendaftaran</small>
-                    </h4>
-                  </NavLink>
-                </NavItem>
-              </Nav>
-            </CardBody>
-
-
-            <TabContent activeTab={this.state.activeStep}>
-              <TabPane id="tabPane1" tabId="1">
-                <div className="pt-3 mb-3">
-                  <fieldset>
-
-                    <label htmlFor="fullName">Nama Lengkap</label>
-                    <Input
-                      name="fullName"
-                      className="input-font-size"
-                      type="text"
-                      id="fullName"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'fullName',
-                        'required'
-                      )}
-                      tabIndex="1"
-                      placeholder="contoh: Ikkat Inovasi Teknologi"
-                      value={this.state.addValidation.fullName}
-                      required
-                      data-validate='["required"]'
-                    />
-                    <span className="invalid-feedback">Tolong isi nama lengkap anda!</span>
-
-                    <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
-                    <Datetime
-                      inputProps={{
-                        name: "birthdate",
-                        className: "form-control input-font-size",
-                        id: "birthdate",
-                        placeholder: "dd mmm yyyy",
-                        tabIndex: "2",
-                        required: true
-                      }}
-                      value={this.state.addValidation.birthdate}
-                      dateFormat="DD MMM YYYY"
-                      timeFormat={false}
-                      closeOnSelect={true}
-                      onChange={this.handleDate}
-                      data-validate='["required"]'
-                    />
-                    <span className="invalid-feedback">Tolong pilih tanggal lahir!</span>
-
-                    <label className="mt-3" htmlFor="address">Alamat Sesuai Identitas</label>
-                    <Input
-                      name="address"
-                      className="input-font-size"
-                      type="text"
-                      id="address"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'address',
-                        'required'
-                      )}
-                      tabIndex="3"
-                      placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                      value={this.state.addValidation.address}
-                      required
-                      data-validate='["required"]'
-                    />
-                    <span className="invalid-feedback">Tolong isi alamat!</span>
-
-                    <label className="mt-3" htmlFor="noKTP">No. KTP</label>
-                    <Input
-                      name="noKTP"
-                      className="input-font-size"
-                      type="number"
-                      id="noKTP"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'noKTP',
-                        'required'
-                      )}
-                      tabIndex="4"
-                      placeholder="101001002"
-                      value={this.state.addValidation.noKTP}
-                      required
-                      data-validate='["required"]'
-                    />
-                    <span className="invalid-feedback">Tolong isi no. KTP!</span>
-
-                    <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
-                    <Input
-                      name="motherName"
-                      className="input-font-size"
-                      type="text"
-                      id="motherName"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'motherName',
-                        'required'
-                      )}
-                      tabIndex="5"
-                      placeholder="contoh: Ibu Pertiwi"
-                      value={this.state.addValidation.motherName}
-                      required
-                      data-validate='["required"]'
-                    />
-                    <span className="invalid-feedback">Tolong isi Nama Gadis Ibu Kandung anda!</span>
-
-                    <button
-                      className="btn btn-block btn-primary mt-4 justify-content-center"
-                      type="submit"
-                      onClick={this.isNotDuplicate}
-                      onSubmit={this.handleSubmit}
-                      tabIndex="6"
+        <Card className="card-default">
+          <CardHeader>
+            <div>{this.state.today} | Kantor Pelayanan</div>
+            <div>
+              <Link to="/member/data">
+                <Button className="btn col-4 col-lg-2 mt-4 justify-content-center" color="primary" outline>Kembali</Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <Formik>
+            <Form innerRef={this.formRef} name="addValidation" className="form-font-size" onSubmit={this.handleSubmit}
+              autoComplete="on"
+            >
+              <CardBody>
+                <Nav pills justified={true}>
+                  <NavItem style={stepNavitemStyle}>
+                    <NavLink
+                      tag="div"
+                      className={classnames({
+                        active: this.state.activeStep === '1'
+                      })}
+                      onClick={this.toggleStep('1')}
                     >
-                      Cek Duplikasi
-                  </button>
-
-                    {
-                      this.state.notDuplicate ? (
-                        <this.showNotDuplicate />
-                      ) : null
-                    }
-                  </fieldset>
-                </div>
-              </TabPane>
-
-              <TabPane id="tabPane2" tabId="2">
-                <div className="pt-3 mb-3">
-                  <fieldset>
-                    <p className="lead text-center">Identitas</p>
-
-                    <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
-                    <Input
-                      name="address1"
-                      className="input-font-size"
-                      type="text"
-                      id="address1"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'address1'
-                      )}
-                      placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                      value={this.state.addValidation.address}
-                      readOnly
-                    />
-
-                    <label className="mt-3" htmlFor="zipCode">Kode Pos</label>
-                    <Input
-                      name="zipCode"
-                      className="input-font-size"
-                      type="number"
-                      id="zipCode"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'zipCode'
-                      )}
-                      placeholder="101001002"
-                      value={this.state.addValidation.zipCode}
-                    />
-
-                    <label className="mt-3" htmlFor="city">Kabupaten/Kota</label>
-                    <Input
-                      name="city"
-                      className="input-font-size"
-                      type="text"
-                      id="city"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'city'
-                      )}
-                      placeholder="contoh: Tangerang"
-                      value={this.state.addValidation.city}
-                    />
-
-                    <label className="mt-3" htmlFor="province">Provinsi</label>
-                    <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="province">
-                      <option>List Provinsi</option>
-                      <option defaultValue="province1">Provinsi 1</option>
-                      <option defaultValue="province2">Provinsi 2</option>
-                      <option defaultValue="province3">Provinsi 3</option>
-                    </select>
+                      <h4 className="text-left my-4">
+                        1. Identitas Pribadi
+                    <br />
+                        <small>Identitas Anggota yang ingin dimasukkan</small>
+                      </h4>
+                    </NavLink>
+                  </NavItem>
+                  <NavItem style={stepNavitemStyle}>
+                    <NavLink
+                      tag="div"
+                      className={classnames({
+                        active: this.state.activeStep === '2'
+                      })}
+                      onClick={this.toggleStep('2')}
+                    >
+                      <h4 className="text-left my-4">
+                        2. Alamat
+                    <br />
+                        <small>Alamat sesuai KTP dan Domisili</small>
+                      </h4>
+                    </NavLink>
+                  </NavItem>
+                  <NavItem style={stepNavitemStyle}>
+                    <NavLink
+                      tag="div"
+                      className={classnames({
+                        active: this.state.activeStep === '3'
+                      })}
+                      onClick={this.toggleStep('3')}
+                    >
+                      <h4 className="text-left my-4">
+                        3. Dokumen
+                    <br />
+                        <small>Berkas penunjuang pendaftaran</small>
+                      </h4>
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+              </CardBody>
 
 
-                    <p className="lead text-center mt-5">Domisili</p>
-                    <label className="mt-3" htmlFor="addressDomicile">Alamat Sesuai Domisili</label>
-                    <Input
-                      name="addressDomicile"
-                      className="input-font-size"
-                      type="text"
-                      id="addressDomicile"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'addressDomicile'
-                      )}
-                      placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                      value={this.state.addValidation.addressDomicile}
-                    />
+              <TabContent activeTab={this.state.activeStep}>
+                <TabPane id="tabPane1" tabId="1">
+                  <div className="pt-3 mb-3">
+                    <fieldset>
+                      <label className="mt-3" htmlFor="legalFormId">Jenis Anggota</label>
+                      <div className="py-2">
+                        <label className="c-radio">
+                          <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1" tabIndex="7"
+                            defaultChecked required onChange={e => this.changeLegalFormId(e.target.value)}
+                          />
+                          <span className="fa fa-circle"></span>Individu</label>
+                        <span className="span-disabled">
+                          <label className="c-radio">
+                            <Input id="badanUsaha" type="radio" name="legalFormId" className="input-font-size" value="2" disabled
+                              onChange={e => this.changeLegalFormId(e.target.value)}
+                            />
+                            <span className="fa fa-circle"></span>Badan Usaha</label>
+                        </span>
+                      </div>
+                      <span className="invalid-feedback">Kolom harus diisi!</span>
 
-                    <label className="mt-3" htmlFor="zipCodeDomicile">Kode Pos</label>
-                    <Input
-                      name="zipCodeDomicile"
-                      className="input-font-size"
-                      type="number"
-                      id="zipCodeDomicile"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'zipCodeDomicile'
-                      )}
-                      placeholder="101001002"
-                      value={this.state.addValidation.zipCodeDomicile}
-                    />
+                      {
+                        this.state.addValidation.legalFormId === "1"
+                          ? (
+                            <div>
+                              <label htmlFor="membership">Keanggotaan</label>
+                              <div className="py-2">
+                                <label className="c-radio">
+                                  <Input id="anggota" type="radio" name="membership" value="anggota" />
+                                  <span className="fa fa-circle"></span>Anggota</label>
+                                <label className="c-radio">
+                                  <Input id="anggotaLuarBiasa" type="radio" name="membership" value="anggotaLuarBiasa" />
+                                  <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
+                                <label className="c-radio">
+                                  <Input id="calonAnggota" type="radio" name="membership" value="calonAnggota" />
+                                  <span className="fa fa-circle"></span>Calon Anggota</label>
+                              </div>
+                              <span className="invalid-feedback">Kolom harus diisi!</span>
 
-                    <label className="mt-3" htmlFor="cityDomicile">Kabupaten/Kota</label>
-                    <Input
-                      name="cityDomicile"
-                      className="input-font-size"
-                      type="text"
-                      id="cityDomicile"
-                      onChange={this.validateOnChange}
-                      invalid={this.hasError(
-                        'addValidation',
-                        'cityDomicile'
-                      )}
-                      placeholder="contoh: Tangerang"
-                      value={this.state.addValidation.cityDomicile}
-                    />
+                              <label className="mt-3" htmlFor="fullname">Nama Lengkap</label>
+                              <Input
+                                name="fullname"
+                                className="input-font-size"
+                                type="text"
+                                id="fullname"
+                                onChange={this.validateOnChange}
+                                invalid={this.hasError(
+                                  'addValidation',
+                                  'fullname',
+                                  'required'
+                                )}
+                                tabIndex="1"
+                                placeholder="contoh: Ikkat Inovasi Teknologi"
+                                value={this.state.addValidation.fullname}
+                                required
+                                data-validate='["required"]'
+                              />
+                              <span className="invalid-feedback">Tolong isi nama lengkap anda!</span>
 
-                    <label className="mt-3" htmlFor="provinceDomicile">Provinsi</label>
-                    <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="provinceDomicile">
-                      <option>List Provinsi</option>
-                      <option defaultValue="province1">Provinsi 1</option>
-                      <option defaultValue="province2">Provinsi 2</option>
-                      <option defaultValue="province3">Provinsi 3</option>
-                    </select>
-                  </fieldset>
-                </div>
-                <hr />
-                <div className="d-flex">
-                  <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('1')}>
-                    Sebelumnya
-                </Button>
-                  <Button
-                    color="primary"
-                    onClick={this.toggleStep('3')}
-                  >
-                    Lanjutkan
-                </Button>
-                </div>
-              </TabPane>
+                              <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
+                              <Datetime
+                                inputProps={{
+                                  name: "birthdate",
+                                  className: "form-control input-font-size",
+                                  id: "birthdate",
+                                  placeholder: "dd mmm yyyy",
+                                  tabIndex: "2",
+                                  required: true,
+                                  autoComplete: "off"
+                                }}
+                                value={this.state.addValidation.birthdate}
+                                dateFormat="DD MMM YYYY"
+                                timeFormat={false}
+                                closeOnSelect={true}
+                                onChange={this.handleDate}
+                                locale={this.props.dashboard.language}
+                                data-validate='["required"]'
+                              />
+                              <span className="invalid-feedback">Tolong pilih tanggal lahir!</span>
+
+                              <label className="mt-3" htmlFor="addressaddressBasedOnIdentity">Alamat Sesuai Identitas</label>
+                              <Input
+                                name="addressBasedOnIdentity"
+                                className="input-font-size"
+                                type="text"
+                                id="addressBasedOnIdentity"
+                                onChange={this.validateOnChange}
+                                invalid={this.hasError(
+                                  'addValidation',
+                                  'addressBasedOnIdentity',
+                                  'required'
+                                )}
+                                tabIndex="3"
+                                placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                                value={this.state.addValidation.addressBasedOnIdentity}
+                                required
+                                data-validate='["required"]'
+                              />
+                              <span className="invalid-feedback">Tolong isi alamat!</span>
+
+                              <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
+                              <Input
+                                name="motherName"
+                                className="input-font-size"
+                                type="text"
+                                id="motherName"
+                                onChange={this.validateOnChange}
+                                invalid={this.hasError(
+                                  'addValidation',
+                                  'motherName',
+                                  'required'
+                                )}
+                                tabIndex="5"
+                                placeholder="contoh: Ibu Pertiwi"
+                                value={this.state.addValidation.motherName}
+                                required
+                                data-validate='["required"]'
+                              />
+                              <span className="invalid-feedback">Tolong isi Nama Gadis Ibu Kandung anda!</span>
+
+                              <label className="mt-3" htmlFor="typeOfIdentityId">Tipe Identitas</label>
+                              <select value={this.state.addValidation.typeOfIdentityId}
+                                className="custom-select custom-select-sm input-font-size" name="typeOfIdentityId"
+                                onChange={e => this.changeTypeOfIdentityId(e.target.value)}>
+                                <option value="default">Pilih Kartu Identitas!</option>
+                                {
+                                  this.state.addValidation.identityTypeOptions.map((option, i) => {
+                                    return (
+                                      <option value={option.name} key={"identityType " + i} >{option.description}</option>
+                                    )
+                                  })
+                                }
+                              </select>
+
+                              {
+                                this.state.addValidation.typeOfIdentityId !== "default"
+                                  ? (
+                                    <div>
+                                      <label className="mt-3" htmlFor="identityNumber">
+                                        No. {
+                                          this.state.addValidation.identityTypeOptions.map((identity, i) => {
+                                            if (identity.name === this.state.addValidation.typeOfIdentityId) {
+                                              return (<span key={"No. Identity " + i}>{identity.description}</span>)
+                                            }
+                                          })
+                                        }
+                                      </label>
+                                      <Input
+                                        name="identityNumber"
+                                        className="input-font-size"
+                                        type="number"
+                                        id="identityNumber"
+                                        onChange={this.validateOnChange}
+                                        invalid={this.hasError(
+                                          'addValidation',
+                                          'identityNumber',
+                                          'required'
+                                        )}
+                                        tabIndex="4"
+                                        placeholder="101001002"
+                                        value={this.state.addValidation.identityNumber}
+                                        required
+                                        data-validate='["required"]'
+                                      />
+                                      <span className="invalid-feedback">Tolong isi {
+                                        this.state.addValidation.identityTypeOptions.map((identity, i) => {
+                                          if (identity.name === this.state.addValidation.typeOfIdentityId) {
+                                            return (<span key={"No. Identity " + i}>{identity.description}</span>)
+                                          }
+                                        })
+                                      }!</span>
+                                    </div>
+                                  )
+                                  : null
+                              }
+                            </div>
+                          )
+                          : null
+                      }
+
+                      <Button
+                        className="btn btn-block mt-4 justify-content-center"
+                        type="submit"
+                        color="primary"
+                        onClick={this.checkDuplicate}
+                        onSubmit={this.handleSubmit}
+                        tabIndex="6"
+                        outlined="true"
+                      >
+                        Cek Duplikasi
+                      </Button>
+
+                      {
+                        this.state.notDuplicate
+                          ? (
+                            <this.ShowNotDuplicate />
+                          )
+                          : null
+                      }
+                      {
+                        this.state.privateIdentity
+                          ? (
+                            <this.PrivateIdentity />
+                          )
+                          : null
+                      }
+                    </fieldset>
+                  </div>
+                </TabPane>
+
+                <TabPane id="tabPane2" tabId="2">
+                  <div className="pt-3 mb-3">
+                    <fieldset>
+                      <p className="lead text-center">Identitas</p>
+
+                      <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
+                      <Input
+                        name="address1"
+                        className="input-font-size"
+                        type="text"
+                        id="address1"
+                        onChange={this.validateOnChange}
+                        invalid={this.hasError(
+                          'addValidation',
+                          'address1'
+                        )}
+                        placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                        value={this.state.addValidation.addressBasedOnIdentity}
+                        readOnly
+                      />
+
+                      <label className="mt-3" htmlFor="province">Provinsi</label>
+                      <select value={this.state.addValidation.identityProvinceId} className="custom-select custom-select-sm input-font-size" name="province"
+                        onChange={e => this.changeProvince(e.target.value)}>
+                        <option value="default">Pilih provinsi anda!</option>
+                        {
+                          this.state.addValidation.provinceOptions.map((option, i) => {
+                            return (
+                              <option value={option.code} key={"identityType " + i} >{option.description}</option>
+                            )
+                          })
+                        }
+                      </select>
+
+                      <label className="mt-3" htmlFor="city">Kabupaten / Kota</label>
+                      <select value={this.state.addValidation.identityCityId} className="custom-select custom-select-sm input-font-size" name="city"
+                        onChange={e => this.changeCity(e.target.value)}>
+                        <option value="default">Pilih kota anda!</option>
+                        {
+                          this.state.addValidation.cityOptionsFilter.map((option, i) => {
+                            return (
+                              <option value={option.code} key={"identityType " + i} >{option.description}</option>
+                            )
+                          })
+                        }
+                      </select>
+
+                      <label className="mt-3" htmlFor="identityPostalCode">Kode Pos</label>
+                      <Input
+                        name="identityPostalCode"
+                        className="input-font-size"
+                        type="number"
+                        id="identityPostalCode"
+                        onChange={this.validateOnChange}
+                        invalid={this.hasError(
+                          'addValidation',
+                          'identityPostalCode'
+                        )}
+                        placeholder="101001002"
+                        value={this.state.addValidation.identityPostalCode}
+                      />
 
 
-              <TabPane id="tabPane3" tabId="3">
-                <div className="pt-3 mb-3">
-                  <fieldset>
-                    <Container className="container-md">
-                      <p className="lead text-center">Upload Foto</p>
-                      <DragDrop name="photo" />
-                    </Container>
+                      <p className="lead text-center mt-5">Domisili</p>
+                      <label className="mt-3" htmlFor="addressDomicile">Alamat Sesuai Domisili</label>
+                      <Input
+                        name="addressDomicile"
+                        className="input-font-size"
+                        type="text"
+                        id="addressDomicile"
+                        onChange={this.validateOnChange}
+                        invalid={this.hasError(
+                          'addValidation',
+                          'addressDomicile'
+                        )}
+                        placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                        value={this.state.addValidation.addressDomicile}
+                      />
 
-                    <Container className="container-md mt-3">
-                      <p className="lead text-center">Upload KTP</p>
-                      <DragDrop name="ktp" />
-                    </Container>
+                      <label className="mt-3" htmlFor="provinceDomicile">Provinsi</label>
+                      <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="provinceDomicile">
+                        <option>List Provinsi</option>
+                        <option defaultValue="province1">Provinsi 1</option>
+                        <option defaultValue="province2">Provinsi 2</option>
+                        <option defaultValue="province3">Provinsi 3</option>
+                      </select>
 
-                    <Container className="container-md mt-3">
-                      <p className="lead text-center">Upload NPWP</p>
-                      <DragDrop name="npwpUpload" />
-                    </Container>
+                      <label className="mt-3" htmlFor="cityDomicile">Kabupaten/Kota</label>
+                      <Input
+                        name="cityDomicile"
+                        className="input-font-size"
+                        type="text"
+                        id="cityDomicile"
+                        onChange={this.validateOnChange}
+                        invalid={this.hasError(
+                          'addValidation',
+                          'cityDomicile'
+                        )}
+                        placeholder="contoh: Tangerang"
+                        value={this.state.addValidation.cityDomicile}
+                      />
 
-                    <Container className="container-md mt-3">
-                      <p className="lead text-center">Upload Dokumen Lain</p>
-                      <DragDropMultiple name="otherDocuments" />
-                    </Container>
-                  </fieldset>
-                </div>
-                <hr />
-                <div className="d-flex">
-                  <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('2')}>
-                    Sebelumnya
-                </Button>
-                  <Button color="primary" type="submit">
-                    Finish
-                </Button>
-                </div>
-              </TabPane>
-            </TabContent>
-          </Card>
-        </Form >
+                      <label className="mt-3" htmlFor="zipCodeDomicile">Kode Pos</label>
+                      <Input
+                        name="zipCodeDomicile"
+                        className="input-font-size"
+                        type="number"
+                        id="zipCodeDomicile"
+                        onChange={this.validateOnChange}
+                        invalid={this.hasError(
+                          'addValidation',
+                          'zipCodeDomicile'
+                        )}
+                        placeholder="101001002"
+                        value={this.state.addValidation.zipCodeDomicile}
+                      />
+                    </fieldset>
+                  </div>
+                  <hr />
+                  <div className="d-flex">
+                    <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('1')}>
+                      Sebelumnya
+                    </Button>
+                    <Button
+                      color="primary"
+                      onClick={this.toggleStep('3')}
+                    >
+                      Lanjutkan
+                    </Button>
+                  </div>
+                </TabPane>
+
+
+                <TabPane id="tabPane3" tabId="3">
+                  <div className="pt-3 mb-3">
+                    <fieldset>
+                      <Container className="container-md">
+                        <p className="lead text-center">Upload Foto</p>
+                        <DragDrop name="photo" />
+                      </Container>
+
+                      <Container className="container-md mt-3">
+                        <p className="lead text-center">Upload KTP</p>
+                        <DragDrop name="ktp" />
+                      </Container>
+
+                      <Container className="container-md mt-3">
+                        <p className="lead text-center">Upload NPWP</p>
+                        <DragDrop name="npwpUpload" />
+                      </Container>
+
+                      <Container className="container-md mt-3">
+                        <p className="lead text-center">Upload Dokumen Lain</p>
+                        <DragDropMultiple name="otherDocuments" />
+                      </Container>
+                    </fieldset>
+                  </div>
+                  <hr />
+                  <div className="d-flex">
+                    <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('2')}>
+                      Sebelumnya
+                    </Button>
+                    <Button color="primary" type="submit" onClick={() => this.finishForm()}>
+                      Finish
+                    </Button>
+                  </div>
+                </TabPane>
+              </TabContent>
+            </Form >
+          </Formik>
+        </Card>
       </ContentWrapper>
     );
   }
 }
 
-export default MemberDataAdd;
+MemberDataAdd.propTypes = {
+  actions: PropTypes.object,
+  auth: PropTypes.object,
+  dasboard: PropTypes.object,
+  memberData: PropTypes.object,
+  search: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  dashboard: state.dashboard,
+  memberData: state.memberData,
+  search: state.search
+})
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(MemberDataAdd));

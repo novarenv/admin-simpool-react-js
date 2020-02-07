@@ -15,5 +15,9 @@ export const headers = {
 
 export const loginUrl = `${apiEntrySimpool}/authentication`;
 export const otpUrl = `${apiEntrySimpool}/authentication/otp`;
+
+export const checkDuplicateUrl = `${apiEntrySimpool}/clients/checkduplicate`;
 export const clientUrl = `${apiEntrySimpool}/clients`;
+export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`;
+
 export const searchUrl = `${apiEntrySimpool}/search`;
