@@ -168,7 +168,7 @@ export default class MobileUserEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/mobile-user">
+            <Link to="/simpool/member/mobile-user">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             

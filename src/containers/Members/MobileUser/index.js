@@ -12,7 +12,7 @@ const AddBar = () => {
   return (
     <div className="row mb-3 mr-1">
       <div className="ml-auto mr-0">
-        <Link to="/member/saving-data-add" >
+        <Link to="/simpool/member/saving-data-add" >
           <Button outline color="primary" type="button">
             Add Mobile User
           </Button>
@@ -165,7 +165,7 @@ class MobileUser extends Component {
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        this.props.history.push('/member/mobile-user-edit')
+        this.props.history.push('/simpool/member/mobile-user-edit')
       }
     }
   ];
@@ -179,7 +179,7 @@ class MobileUser extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/mobile-user-detail')
+      this.props.history.push('/simpool/member/mobile-user-detail')
     }
     this.state.rowIdx = rowIdx
   };

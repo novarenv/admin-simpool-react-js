@@ -241,7 +241,7 @@ class MemberData extends Component {
           <Card>
             <CardBody>
               <div className="ml-1 row">
-                <Link to="/accounting/account-chart">
+                <Link to="/simpool/accounting/account-chart">
                   <Button outline className="float-left mb-3" color="primary" type="button">List View</Button>
                 </Link>
               </div>

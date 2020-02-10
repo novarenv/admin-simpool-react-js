@@ -168,7 +168,7 @@ export default class MemberDataEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/data">
+            <Link to="/simpool/member/data">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             

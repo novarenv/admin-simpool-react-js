@@ -168,7 +168,7 @@ export default class LoanDataHistoryEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/loan-data-history">
+            <Link to="/simpool/member/loan-data-history">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             

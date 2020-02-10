@@ -168,7 +168,7 @@ export default class AccountChartEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/accounting/account-chart">
+            <Link to="/simpool/accounting/account-chart">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
             

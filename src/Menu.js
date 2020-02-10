@@ -5,7 +5,7 @@ const Menu = [
     },
     {
         name: 'Dashboard',
-        path: '/dashboard',
+        path: '/simpool/dashboard/',
         icon: 'icon-home',
         translate: 'sidebar.nav.DASHBOARD'
     },
@@ -15,22 +15,22 @@ const Menu = [
         translate: 'sidebar.nav.member.MEMBERS',
         submenu: [{
                 name: 'Member Data',
-                path: '/member/data',
+                path: '/simpool/member/data',
                 translate: 'sidebar.nav.member.MEMBER_DATA'
             },
             {
                 name: 'Savings',
-                path: '/member/saving-data',
+                path: '/simpool/member/saving-data',
                 translate: 'sidebar.nav.member.SAVING_DATA'
             },
             {
                 name: 'Loan Data',
-                path: '/member/loan-data',
+                path: '/simpool/member/loan-data',
                 translate: 'sidebar.nav.member.LOAN_DATA'
             },
             {
                 name: 'User Data',
-                path: '/member/mobile-user',
+                path: '/simpool/member/mobile-user',
                 translate: 'sidebar.nav.member.USER_DATA'
             }
         ]
@@ -41,22 +41,22 @@ const Menu = [
         translate: 'sidebar.nav.transaction.TRANSACTIONS',
         submenu: [{
                 name: 'Deposit',
-                path: '/transaction/deposit',
+                path: '/simpool/transaction/deposit',
                 translate: 'sidebar.nav.transaction.DEPOSIT'
             },
             {
                 name: 'Withdrawal',
-                path: '/transaction/withdrawal',
+                path: '/simpool/transaction/withdrawal',
                 translate: 'sidebar.nav.transaction.WITHDRAWAL'
             },
             {
                 name: 'Loan Payment',
-                path: '/transaction/loan-payment',
+                path: '/simpool/transaction/loan-payment',
                 translate: 'sidebar.nav.transaction.LOAN_PAYMENT'
             },
             {
                 name: 'Transfer',
-                path: '/transaction/transfer',
+                path: '/simpool/transaction/transfer',
                 translate: 'sidebar.nav.transaction.TRANSFER'
             }
         ]
@@ -67,7 +67,7 @@ const Menu = [
         translate: 'sidebar.nav.accountancy.ACCOUNTANCIES',
         submenu: [{
                 name: 'Account of Chart',
-                path: '/accounting/account-chart',
+                path: '/simpool/accounting/account-chart',
                 translate: 'sidebar.nav.accountancy.REGISTER_ACCOUNT_CODE'
             },
             {
@@ -77,12 +77,12 @@ const Menu = [
             },
             {
                 name: 'Beginning Balance',
-                path: '/accounting/beginning-balance',
+                path: '/simpool/accounting/beginning-balance',
                 translate: 'sidebar.nav.accountancy.NEW_ACCOUNT_BALANCE'
             },
             {
                 name: 'Transaction Code',
-                path: '/accountancy/transaction-code',
+                path: '/accountancy/simpool/transaction-code',
                 translate: 'sidebar.nav.accountancy.TRANSACTION_CODE'
             }
         ]

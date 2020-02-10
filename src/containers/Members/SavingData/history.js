@@ -12,12 +12,12 @@ const AddBar = () => {
   return (
     <div className="row mb-3">
       <div className="col-md-3 col-lg-2">
-        <Link to="/member/saving-data">
+        <Link to="/simpool/member/saving-data">
           <Button outline className="col-12" color="primary" type="button">Kembali</Button>
         </Link>
       </div>
       <div className="ml-auto col-md-4 offset-md-5 col-lg-2 offset-lg-8">
-        <Link to="/member/saving-data-add">
+        <Link to="/simpool/member/saving-data-add">
           <Button outline className="col-12" color="primary" type="button">
             Add Savings History
         </Button>
@@ -177,7 +177,7 @@ class SavingHistory extends Component {
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        this.props.history.push('/member/saving-data-history-edit')
+        this.props.history.push('/simpool/member/saving-data-history-edit')
       }
     }
   ];
@@ -191,7 +191,7 @@ class SavingHistory extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/saving-data-history-detail')
+      this.props.history.push('/simpool/member/saving-data-history-detail')
     }
     this.state.rowIdx = rowIdx
   };

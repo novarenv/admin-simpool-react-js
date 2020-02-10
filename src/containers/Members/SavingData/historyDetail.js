@@ -127,7 +127,7 @@ export default class SavingDataHistoryDetail extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/saving-data-history">
+            <Link to="/simpool/member/saving-data-history">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
 
@@ -179,7 +179,7 @@ export default class SavingDataHistoryDetail extends Component {
                 readOnly
               />
 
-              <Link to="/member/saving-data-history-edit">
+              <Link to="/simpool/member/saving-data-history-edit">
                 <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Savings History</Button>
               </Link>
             </form>

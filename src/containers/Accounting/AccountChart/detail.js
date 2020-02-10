@@ -127,7 +127,7 @@ export default class AccountChartDetail extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/accounting/account-chart">
+            <Link to="/simpool/accounting/account-chart">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
 
@@ -179,7 +179,7 @@ export default class AccountChartDetail extends Component {
                 readOnly
               />
 
-              <Link to="/accounting/account-chart-edit">
+              <Link to="/simpool/accounting/account-chart-edit">
                 <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Account Chart</Button>
               </Link>
             </form>

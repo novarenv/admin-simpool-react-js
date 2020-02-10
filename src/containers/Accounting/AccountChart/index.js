@@ -12,7 +12,7 @@ const TreeAddBar = () => {
   return (
     <div className="row mb-3">
       <div className="col-md-3 col-lg-2">
-        <Link to="/accounting/account-chart-tree">
+        <Link to="/simpool/accounting/account-chart-tree">
           <Button className="col-12" color="primary" type="button">Tree View</Button>
         </Link>
       </div>
@@ -161,7 +161,7 @@ class MemberData extends Component {
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        this.props.history.push('/accounting/account-chart-edit')
+        this.props.history.push('/simpool/accounting/account-chart-edit')
       }
     }
   ];
@@ -175,7 +175,7 @@ class MemberData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/accounting/account-chart-detail')
+      this.props.history.push('/simpool/accounting/account-chart-detail')
     }
     this.state.rowIdx = rowIdx
   };

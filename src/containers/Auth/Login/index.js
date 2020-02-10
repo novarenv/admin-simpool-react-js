@@ -17,6 +17,7 @@ class Login extends Component {
       loginSuccess: false,
       transactionReference: '',
       isOtpShown: false,
+      rememberMe: false,
       formLogin: {
         username: 'coba',
         password: '123456',
@@ -108,7 +109,7 @@ class Login extends Component {
     this.setState({
       OTPStatus: true
     })
-    this.props.history.push("/")
+    this.props.history.push("/simpool/")
   }
 
   /* Simplify error check */
@@ -136,82 +137,16 @@ class Login extends Component {
     else if (this.props.dashboard.language === 'en')
       isEn = true
 
-    const LoginInput = () => {
-      return (
-        <div className="card-body">
-          <form className="mb-3" name="formLogin" onSubmit={this.onSubmitLogin.bind(this)}>
-            <div className="form-group">
-              <label className="text-muted" htmlFor="username"><Trans i18nKey='login.USERNAME'>Username</Trans></label>
-              <div className="input-group with-focus">
-                <input
-                  type="text"
-                  name="username"
-                  className="form-control border-right-0 input-font-size"
-                  placeholder="contoh: simpool"
-                  invalid={this.hasError('formLogin', 'username', 'required')}
-                  onChange={this.validateOnChange}
-                  data-validate='["required"]'
-                  value={this.state.formLogin.username} />
-                <div className="input-group-append">
-                  <span className="input-group-text text-muted bg-transparent border-left-0">
-                    <em className="fa fa-envelope"></em>
-                  </span>
-                </div>
-                {this.hasError('formLogin', 'username', 'required') && <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>}
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="text-muted" htmlFor="resetInputEmail1"><Trans i18nKey='login.PASSWORD'>Password</Trans></label>
-              <div className="input-group with-focus">
-                <input type="password"
-                  id="id-password"
-                  name="password"
-                  className="form-control border-right-0 input-font-size"
-                  placeholder="Xxxx12345"
-                  invalid={this.hasError('formLogin', 'password', 'required')}
-                  onChange={this.validateOnChange}
-                  data-validate='["required"]'
-                  value={this.state.formLogin.password}
-                />
-                <div className="input-group-append">
-                  <span className="input-group-text text-muted bg-transparent border-left-0">
-                    <em className="fa fa-lock"></em>
-                  </span>
-                </div>
-                <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>
-              </div>
-            </div>
-            <div className="clearfix">
-              <CustomInput
-                type="checkbox"
-                id="remember-me"
-                className="float-left mt-0"
-                name="remember-me"
-                label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>} />
-            </div>
-            <div className="text-center py-2">
-              <label className="c-radio">
-                <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')} />
-                <span className="fa fa-circle"></span>Bahasa Indonesia</label>
-              <label className="c-radio">
-                <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
-                <span className="fa fa-circle"></span>English</label>
-            </div>
-            <button className="btn btn-block btn-primary mt-3 btn-color" type="submit"><Trans i18nKey='login.LOGIN'>Login</Trans></button>
-          </form>
-        </div>
-      )
-    }
-
     const OTP = () => {
       const formLogin = this.state.formLogin
 
       const generateOtp = () => {
-        this.setState({isOtpShown: true})
+        this.setState({ isOtpShown: true })
         this.props.actions.otpFun(
           {
             username: formLogin.username,
-            password: formLogin.password
+            password: formLogin.password,
+            rememberMe: this.state.rememberMe
           },
           onOtpSuccess
         )
@@ -222,7 +157,11 @@ class Login extends Component {
           transactionReference: transactionReference
         })
       }
-      
+
+      const rememberMe = () => {
+        this.setState({rememberMe: !this.state.rememberMe})
+      }
+
       return (
         <div className="card-body">
           {
@@ -240,7 +179,22 @@ class Login extends Component {
                   <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Submit OTP</button>
                 </form>
               )
-              : (<button className="btn btn-block btn-primary mt-3 btn-color" onClick={() => generateOtp()}>Generate OTP</button>)
+              : (
+                <div>
+                  <div className="clearfix">
+                    <CustomInput
+                      type="checkbox"
+                      id="remember-me"
+                      className="float-left mt-0"
+                      name="remember-me"
+                      checked={this.state.rememberMe}
+                      label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>}
+                      onChange={() => rememberMe()}
+                    />
+                  </div>
+                  <button className="btn btn-block btn-primary mt-3 btn-color" onClick={() => generateOtp()}>Generate OTP</button>
+                </div>
+              )
           }
 
 
@@ -253,11 +207,68 @@ class Login extends Component {
         <div className="card card-flat">
           <div className="card-header text-center bg-dark">
             <div>
-              <img className="block-center rounded" src="img/Simpool Box.png" alt="Logo" />
+              <img className="block-center rounded" src="/img/Simpool Box.png" alt="Logo" />
             </div>
           </div>
           {
-            this.state.loginSuccess ? (<OTP />) : (<LoginInput />)
+            this.state.loginSuccess
+              ? (<OTP />)
+              : (
+                <div className="card-body">
+                  <form className="mb-3" name="formLogin" onSubmit={this.onSubmitLogin.bind(this)}>
+                    <div className="form-group">
+                      <label className="text-muted" htmlFor="username"><Trans i18nKey='login.USERNAME'>Username</Trans></label>
+                      <div className="input-group with-focus">
+                        <input
+                          type="text"
+                          name="username"
+                          className="form-control border-right-0 input-font-size"
+                          placeholder="contoh: simpool"
+                          invalid={this.hasError('formLogin', 'username', 'required')}
+                          onChange={this.validateOnChange}
+                          data-validate='["required"]'
+                          value={this.state.formLogin.username} />
+                        <div className="input-group-append">
+                          <span className="input-group-text text-muted bg-transparent border-left-0">
+                            <em className="fa fa-envelope"></em>
+                          </span>
+                        </div>
+                        {this.hasError('formLogin', 'username', 'required') && <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>}
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label className="text-muted" htmlFor="resetInputEmail1"><Trans i18nKey='login.PASSWORD'>Password</Trans></label>
+                      <div className="input-group with-focus">
+                        <input type="password"
+                          id="id-password"
+                          name="password"
+                          className="form-control border-right-0 input-font-size"
+                          placeholder="Xxxx12345"
+                          invalid={this.hasError('formLogin', 'password', 'required')}
+                          onChange={this.validateOnChange}
+                          data-validate='["required"]'
+                          value={this.state.formLogin.password}
+                        />
+                        <div className="input-group-append">
+                          <span className="input-group-text text-muted bg-transparent border-left-0">
+                            <em className="fa fa-lock"></em>
+                          </span>
+                        </div>
+                        <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>
+                      </div>
+                    </div>
+                    <div className="text-center py-2">
+                      <label className="c-radio">
+                        <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')} />
+                        <span className="fa fa-circle"></span>Bahasa Indonesia</label>
+                      <label className="c-radio">
+                        <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
+                        <span className="fa fa-circle"></span>English</label>
+                    </div>
+                    <button className="btn btn-block btn-primary mt-3 btn-color" type="submit"><Trans i18nKey='login.LOGIN'>Login</Trans></button>
+                  </form>
+                </div>
+              )
           }
         </div>
         <div className="p-3 text-center">

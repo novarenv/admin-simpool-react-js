@@ -1,8 +1,3 @@
-import PropTypes from 'prop-types';
-import * as actions from '../store/actions/actions';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
 // const apiEntryBiller =
 //   'http://demo.ikkat.datacomm.co.id:8081/biller-management/api';
 const apiEntrySimpool =

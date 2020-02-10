@@ -18,7 +18,7 @@ class SidebarUserBlock extends Component {
             {/* User picture */}
             <div className="user-block-picture">
               <div className="user-block-status">
-                <img className="img-fluid-box" src="img/Simpool Box.png" alt="Avatar" />
+                <img className="img-fluid-box" src="/img/Simpool Box.png" alt="Avatar" />
                 <div className="circle bg-success circle-lg"></div>
               </div>
             </div>
@@ -26,7 +26,7 @@ class SidebarUserBlock extends Component {
             <div className="user-block-info">
               <span className="user-block-name">Hello, Simpool's Admin</span>
               <span className="user-block-role">Administrator</span>
-              <Link to="/login">
+              <Link to="/simpool/login">
                 <Button
                   outline
                   className="mt-2 btn-logout"

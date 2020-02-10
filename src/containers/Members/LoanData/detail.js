@@ -127,7 +127,7 @@ export default class LoanDataDetail extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/loan-data">
+            <Link to="/simpool/member/loan-data">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
             </Link>
 
@@ -179,7 +179,7 @@ export default class LoanDataDetail extends Component {
                 readOnly
               />
 
-              <Link to="/member/loan-data-edit">
+              <Link to="/simpool/member/loan-data-edit">
                 <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Pinjaman</Button>
               </Link>
             </form>

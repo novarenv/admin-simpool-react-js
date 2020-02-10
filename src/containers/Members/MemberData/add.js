@@ -18,6 +18,7 @@ import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
+import ReactDataGrid from 'react-data-grid';
 import { Formik } from 'formik';
 
 import * as actions from '../../../store/actions/actions';
@@ -64,6 +65,8 @@ const MONTHS_ID = [
   'November',
   'Desember'
 ]
+
+const COLUMN_WIDTH = 250;
 
 function DragDrop(props) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ multiple: false });
@@ -119,14 +122,52 @@ class MemberDataAdd extends Component {
   constructor(props) {
     super(props)
 
+    this._columns = [
+      {
+        key: 'ID_MEMBER',
+        name: 'Id',
+        width: 100,
+        frozen: true
+      },
+      {
+        key: 'EXTERNAL_ID',
+        name: 'External Id',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'FULL_NAME',
+        name: 'Full Name',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'OFFICE',
+        name: 'Office',
+        sortable: true,
+        width: COLUMN_WIDTH
+      },
+      {
+        key: 'STATUS',
+        name: 'Status',
+        sortable: true,
+        width: COLUMN_WIDTH
+      }
+    ];
+
     this.state = {
       notDuplicate: false,
       privateIdentity: false,
       formValidateDuplicate: false,
       totalFilteredRecords: false,
+      pageItems: [],
       today: '',
       activeStep: '1',
       files: [],
+
+      
+      rows: [],
+      rowIdx: '',
 
       /* Group each form state in an object.
          Property name MUST match the form name */
@@ -176,11 +217,9 @@ class MemberDataAdd extends Component {
     this.setState({
       today: today
     })
-    console.log(today)
   }
 
   setClientTemplate = res => {
-    console.log(res)
     let identityTypeOptions = [];
     res.typeOfIdentityOptions.map(row => {
       identityTypeOptions.push(row)
@@ -206,7 +245,6 @@ class MemberDataAdd extends Component {
         }
       })
     )
-    console.log(this.state.addValidation.religionOptions)
 
     let provinceOptions = [];
     res.provinceOptions.map(row => {
@@ -246,12 +284,29 @@ class MemberDataAdd extends Component {
   checkDuplicate = () => {
     const addValidation = this.state.addValidation
 
+    const createRows = rows => {
+      let rowsTemp = [];
+      rows.map(row => {
+        rowsTemp.push({
+          ID_MEMBER: row.accountNo,
+          EXTERNAL_ID: row.legalForm.value,
+          FULL_NAME: row.displayName,
+          OFFICE: row.officeName,
+          STATUS: row.status.value
+        })
+      })
+      this.setState({
+        rows: rowsTemp
+      })
+    };
+
     const checkTotalFilter = res => {
-      console.log(res)
       if (res.totalFilteredRecords > 0) {
         this.setState({
-          totalFilteredRecords: true
+          totalFilteredRecords: true,
+          pageItems: res.pageItems
         })
+        createRows(res.pageItems)
       }
     }
 
@@ -289,6 +344,22 @@ class MemberDataAdd extends Component {
     // }
   }
 
+  rowGetter = (i) => this.state.rows[i]
+
+  handleGridSort = (sortColumn, sortDirection) => {
+    const comparer = (a, b) => {
+      if (sortDirection === 'ASC') {
+        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
+      } else if (sortDirection === 'DESC') {
+        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
+      }
+    };
+
+    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+
+    this.setState({ rows });
+  };
+
   ShowNotDuplicate = () => {
     const setNotDuplicate = () => {
       this.setState({
@@ -300,7 +371,15 @@ class MemberDataAdd extends Component {
     if (this.state.totalFilteredRecords) {
       return (
         <div>
-          <Button>Ini Tabel</Button>
+          <ReactDataGrid
+            onGridSort={this.handleGridSort}
+            columns={this._columns}
+            rowGetter={this.rowGetter}
+            rowsCount={this.state.rows.length}
+            minHeight={700}
+            onCellSelected={this.onCellSelected}
+            onGridRowsUpdated={this.onGridRowsUpdated}
+          />
           <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
             onClick={() => setNotDuplicate()}>Create Member</Button>
         </div>
@@ -308,7 +387,7 @@ class MemberDataAdd extends Component {
     } else {
       return (
         <div>
-          <Button>Tidak ada data yang sama!</Button>
+          <Button disabled className="col-12">Tidak ada data yang sama!</Button>
           <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
             onClick={() => setNotDuplicate()}>Create Member</Button>
         </div>
@@ -337,14 +416,14 @@ class MemberDataAdd extends Component {
         <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
         <div className="py-2">
           <label className="c-radio">
-            <Input id="man" type="radio" name="gender" className="input-font-size" 
+            <Input id="man" type="radio" name="gender" className="input-font-size"
               value="M" onChange={e => this.changeGender(e.target.value)}
             />
             <span className="fa fa-circle" />
             Laki-laki
           </label>
           <label className="c-radio">
-            <Input id="woman" type="radio" name="gender" className="input-font-size" 
+            <Input id="woman" type="radio" name="gender" className="input-font-size"
               value="F" onChange={e => this.changeGender(e.target.value)}
             />
             <span className="fa fa-circle" />
@@ -707,7 +786,7 @@ class MemberDataAdd extends Component {
       taxName: "novarena",
       taxAddress: "novarena",
       submittedOnDate: "07 Februari 2020",
-      dateOfBirth: "06 Februari 2020",
+      dateOfBirth: addValidation.birthdate,
 
       clientNonPersonDetails: { "locale": "id", "dateFormat": "dd MMMM yyyy" },
       externalId: "",
@@ -730,7 +809,7 @@ class MemberDataAdd extends Component {
           <CardHeader>
             <div>{this.state.today} | Kantor Pelayanan</div>
             <div>
-              <Link to="/member/data">
+              <Link to="/simpool/member/data">
                 <Button className="btn col-4 col-lg-2 mt-4 justify-content-center" color="primary" outline>Kembali</Button>
               </Link>
             </div>
@@ -855,13 +934,13 @@ class MemberDataAdd extends Component {
                                   name: "birthdate",
                                   className: "form-control input-font-size",
                                   id: "birthdate",
-                                  placeholder: "dd mmm yyyy",
+                                  placeholder: "dd mmmm yyyy",
                                   tabIndex: "2",
                                   required: true,
                                   autoComplete: "off"
                                 }}
                                 value={this.state.addValidation.birthdate}
-                                dateFormat="DD MMM YYYY"
+                                dateFormat="DD MMMM YYYY"
                                 timeFormat={false}
                                 closeOnSelect={true}
                                 onChange={this.handleDate}

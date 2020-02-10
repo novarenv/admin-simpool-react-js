@@ -18,7 +18,7 @@ const AddBar = () => {
   return (
     <div className="row mb-3 mr-1">
       <div className="ml-auto mr-0">
-        <Link to="/member/data-add" >
+        <Link to="/simpool/member/data-add" >
           <Button outline color="primary" type="button">
             <Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans>
           </Button>
@@ -211,7 +211,7 @@ class MemberData extends Component {
     {
       icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />,
       callback: () => {
-        this.props.history.push('/member/data-edit')
+        this.props.history.push('/simpool/member/data-edit')
       }
     }
   ];
@@ -225,7 +225,7 @@ class MemberData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/data-detail')
+      this.props.history.push('/simpool/member/data-detail')
     }
     this.state.rowIdx = rowIdx
   };
@@ -253,16 +253,28 @@ class MemberData extends Component {
               <SearchBar props={this.props} searchRows={this.searchRows} />
 
               <Container fluid>
-                <ReactDataGrid
-                  onGridSort={this.handleGridSort}
-                  columns={this._columns}
-                  rowGetter={this.rowGetter}
-                  rowsCount={this.state.rows.length}
-                  minHeight={700}
-                  getCellActions={this.getCellActions.bind(this)}
-                  onCellSelected={this.onCellSelected.bind(this)}
-                  onGridRowsUpdated={this.onGridRowsUpdated}
-                />
+                {
+                  this.state.rows.length > 0
+                    ? (
+                      <ReactDataGrid
+                        onGridSort={this.handleGridSort}
+                        columns={this._columns}
+                        rowGetter={this.rowGetter}
+                        rowsCount={this.state.rows.length}
+                        minHeight={700}
+                        getCellActions={this.getCellActions.bind(this)}
+                        onCellSelected={this.onCellSelected.bind(this)}
+                        onGridRowsUpdated={this.onGridRowsUpdated}
+                      />
+                    )
+                    : (
+                      <div className="ball-pulse-sync">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                    )
+                }
               </Container>
             </CardBody>
           </Card>

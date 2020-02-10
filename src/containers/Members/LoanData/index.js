@@ -13,17 +13,17 @@ const AddBar = () => {
   return (
     <div className="row mb-3">
       <div className="col-md-4 col-lg-2">
-        <Link to="/member/loan-data-history">
+        <Link to="/simpool/member/loan-data-history">
           <Button className="col-12" color="primary" type="button">History</Button>
         </Link>
       </div>
       <div className="col-md-3 col-lg-2">
-        <Link to="/member/loan-data-view">
+        <Link to="/simpool/member/loan-data-view">
           <Button className="col-12" color="primary" type="button">View</Button>
         </Link>
       </div>
       <div className="ml-auto col-md-4 offset-md-1 col-lg-3 offset-lg-5">
-        <Link to="/member/loan-data-add">
+        <Link to="/simpool/member/loan-data-add">
           <Button outline className="col-12" color="primary" type="button">
             Add Data Pinjaman
         </Button>
@@ -203,7 +203,7 @@ class LoanData extends Component {
     {
       icon: <span className="fas fa-pen-square" />,
       callback: () => {
-        this.props.history.push('/member/loan-data-edit')
+        this.props.history.push('/simpool/member/loan-data-edit')
       }
     }
   ];
@@ -217,7 +217,7 @@ class LoanData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/member/loan-data-detail')
+      this.props.history.push('/simpool/member/loan-data-detail')
     }
     this.state.rowIdx = rowIdx
   };

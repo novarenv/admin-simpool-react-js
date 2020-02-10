@@ -129,17 +129,17 @@ export default class MemberDataDetail extends Component {
           <CardBody>    
             <div className="row mb-3">
               <div className="col-md-4 col-lg-2">
-                <Link to="/member/data">
+                <Link to="/simpool/member/data">
                   <Button outline className="col-12" color="primary" type="submit" tabIndex={7}>Kembali</Button>
                 </Link>
               </div>
               <div className="ml-auto col-md-8 col-lg-10">
-                <Link to="/member/saving-data-add">
+                <Link to="/simpool/member/saving-data-add">
                   <Button className="col-md-5 offset-md-1 col-lg-3 offset-lg-5" color="primary" type="button">
                     Simpanan
                   </Button>
                 </Link>
-                <Link to="/member/loan-data-add">
+                <Link to="/simpool/member/loan-data-add">
                   <Button className="col-md-5 offset-md-1 col-lg-3 offset-lg-1" color="primary" type="button">
                     Pinjaman
                   </Button>
@@ -195,7 +195,7 @@ export default class MemberDataDetail extends Component {
                 readOnly
               />
 
-              <Link to="/member/data-edit">
+              <Link to="/simpool/member/data-edit">
                 <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Anggota</Button>
               </Link>
             </form>

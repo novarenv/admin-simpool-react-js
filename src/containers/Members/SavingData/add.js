@@ -163,7 +163,7 @@ export default class SavingDataAdd extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/member/saving-data">
+            <Link to="/simpool/member/saving-data">
               <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit">Kembali</Button>
             </Link>
             
