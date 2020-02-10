@@ -17,6 +17,7 @@ export const searchUrl = `${apiEntrySimpool}/search`;
 export const checkDuplicateUrl = `${apiEntrySimpool}/clients/checkduplicate`;
 export const clientUrl = `${apiEntrySimpool}/clients`;
 export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`;
+export const clientImageUrl = clientId => `${apiEntrySimpool}/clients/${clientId}/images`;
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`;

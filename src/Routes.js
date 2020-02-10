@@ -86,9 +86,8 @@ const Routes = ({ location, ...props }) => {
 
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)
-    console.log(props)
-  
-    return () => {};
+
+    return () => { };
   }, [])
 
   if (Cookies.get("loginToken")) {
@@ -117,7 +116,10 @@ const Routes = ({ location, ...props }) => {
               <div>
                 <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
-
+              <Route exact path="/simpool/lock" component={waitFor(Lock)} />
+              <Route exact path="/simpool/notfound" component={waitFor(NotFound)} />
+              <Route exact path="/simpool/error500" component={waitFor(Error500)} />
+              <Route exact path="/simpool/maintenance" component={waitFor(Maintenance)} />
                     {/* Dashboard */}
                     <Route exact path="/simpool/" component={waitFor(Dashboard)} />
                     <Route exact path="/simpool/dashboard/" component={waitFor(Dashboard)} />
@@ -162,7 +164,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
                     <Redirect from="/simpool/login" to="/simpool/" />
-                    <Redirect to="/simpool/notfound" />
+                    <Redirect from="*" to="/simpool/" />
                   </Switch>
                 </Suspense>
               </div>

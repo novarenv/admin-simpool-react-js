@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
   Button,
   Card,
@@ -68,50 +68,108 @@ const MONTHS_ID = [
 
 const COLUMN_WIDTH = 250;
 
-function DragDrop(props) {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ multiple: false });
+const DragDrop = props => {
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      multiple: false,
+      onDrop: acceptedFiles => {
+        props.setPhotos(props.name, acceptedFiles[0])
+        acceptedFiles.map(file => Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        }));
+      }
+    });
 
-  const files = acceptedFiles.map(file => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-      </li>
-  ));
+  const img = {
+    width: "50%",
+    height: "50%"
+  }
+
+  const files = acceptedFiles.map(file => {
+    if (file.preview != null) {
+      return (
+        <div key={"File " + file.path}>
+          <h5>
+            {file.path} - {file.size} bytes
+          </h5>
+          <img src={file.preview} style={img} />
+        </div>
+      )
+    } else {
+      return (
+        <div key={"File " + file.path}>
+          <h4>File is being uploaded..</h4>
+          <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+        </div>
+      )
+    }
+  });
 
   return (
     <Container className="container-md mt-3">
       <section>
         <div {...getRootProps({ className: 'dropzone' })}>
           <input name={props.name} {...getInputProps()} />
-          <p className="text-center box-placeholder m-0">Drag 'n' drop some files here, or click to select files</p>
+          <p className="text-center box-placeholder m-0">
+            {!isDragActive && "Drag 'n' drop some files here, or click to select files"}
+            {isDragActive && "Drop Here!"}
+          </p>
         </div>
         <aside>
-          <h4>File</h4>
-          <ul>{files}</ul>
+          {files}
         </aside>
       </section>
     </Container>
   );
 }
 
-function DragDropMultiple(props) {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+const DragDropMultiple = props => {
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: acceptedFiles => {
+      props.setPhotos(props.name, acceptedFiles)
+      acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      }));
+    }
+  });
 
-  const files = acceptedFiles.map(file => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-      </li>
-  ));
+  const img = {
+    width: "50%",
+    height: "50%"
+  }
+
+  const files = acceptedFiles.map(file => {
+    if (file.preview != null) {
+      return (
+        <div key={"File " + file.path}>
+          <h5>
+            {file.path} - {file.size} bytes
+          </h5>
+          <img src={file.preview} style={img} />
+        </div>
+      )
+    } else {
+      return (
+        <div key={"File " + file.path}>
+          <h4>File is being uploaded..</h4>
+          <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+        </div>
+      )
+    }
+  });
 
   return (
     <Container className="container-md mt-3">
       <section>
         <div {...getRootProps({ className: 'dropzone' })}>
           <input name={props.name} {...getInputProps()} />
-          <p className="text-center box-placeholder m-0">Drag 'n' drop some files here, or click to select files</p>
+          <p className="text-center box-placeholder m-0">
+            {!isDragActive && "Drag 'n' drop some files here, or click to select files"}
+            {isDragActive && "Drop Here!"}
+          </p>
         </div>
         <aside>
-          <h4>Files</h4>
-          <ul>{files}</ul>
+          {files}
         </aside>
       </section>
     </Container>
@@ -162,10 +220,9 @@ class MemberDataAdd extends Component {
       totalFilteredRecords: false,
       pageItems: [],
       today: '',
-      activeStep: '1',
+      activeStep: '3',
       files: [],
 
-      
       rows: [],
       rowIdx: '',
 
@@ -201,7 +258,13 @@ class MemberDataAdd extends Component {
         identityPostalCode: '',
         addressDomicile: '',
         cityDomicile: '',
-        zipCodeDomicile: ''
+        zipCodeDomicile: '',
+
+
+        selfiePhoto: {},
+        ktpPhoto: {},
+        npwpPhoto: {},
+        otherDocuments: []
       }
     };
 
@@ -321,27 +384,11 @@ class MemberDataAdd extends Component {
       },
       checkTotalFilter
     )
-    // const form = "addValidation"
-    // const inputs = 
 
-    // const { errors, hasError } = FormValidator.bulkValidate(inputs)
-
-    // this.setState(prevState => ({
-    //   addValidation: {
-    //     ...this.state[addValidation],
-    //     errors
-    //   }
-    // }))
-
-    // console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
-
-    // and prevent change the if form is not valid
-    // if (!hasError) {
     this.setState({
       notDuplicate: true,
       privateIdentity: false
     });
-    // }
   }
 
   rowGetter = (i) => this.state.rows[i]
@@ -756,11 +803,34 @@ class MemberDataAdd extends Component {
     )
   }
 
+  setPhotos = (name, files) => {
+    this.setState(prevState => ({
+      addValidation: {
+        ...prevState.addValidation,
+        name: files
+      }
+    }))
+
+    this.test(name)
+  }
+
+  test = name => {
+    console.log(this.state.addValidation.name)
+  }
+
   finishForm = () => {
     const state = this.state
     const addValidation = state.addValidation
+    const clientAdd = new FormData()
 
-    console.log(state.today)
+    clientAdd.append("file", addValidation.selfiePhoto)
+
+    const setClientAddRes = res => {
+      console.log(clientAdd)
+      this.props.actions.clientAddImage(res, {
+        file: clientAdd
+      })
+    }
 
     this.props.actions.clientAdd({
       legalFormId: addValidation.legalFormId,
@@ -795,7 +865,9 @@ class MemberDataAdd extends Component {
       dateFormat: "dd MMMM yyyy",
       activationDate: "10 Februari 2020",
       savingsProductId: null
-    })
+    },
+      setClientAddRes
+    )
   }
 
   render() {
@@ -1217,22 +1289,22 @@ class MemberDataAdd extends Component {
                     <fieldset>
                       <Container className="container-md">
                         <p className="lead text-center">Upload Foto</p>
-                        <DragDrop name="photo" />
+                        <DragDrop name="selfPhoto" setPhotos={this.setPhotos} />
                       </Container>
 
                       <Container className="container-md mt-3">
                         <p className="lead text-center">Upload KTP</p>
-                        <DragDrop name="ktp" />
+                        <DragDrop name="ktpPhoto" setPhotos={this.setPhotos} />
                       </Container>
 
                       <Container className="container-md mt-3">
                         <p className="lead text-center">Upload NPWP</p>
-                        <DragDrop name="npwpUpload" />
+                        <DragDrop name="npwpPhoto" setPhotos={this.setPhotos} />
                       </Container>
 
                       <Container className="container-md mt-3">
                         <p className="lead text-center">Upload Dokumen Lain</p>
-                        <DragDropMultiple name="otherDocuments" />
+                        <DragDropMultiple name="otherDocuments" setPhotos={this.setPhotos} />
                       </Container>
                     </fieldset>
                   </div>

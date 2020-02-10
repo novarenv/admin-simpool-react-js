@@ -5,13 +5,17 @@ import {
   CLIENT_INDEX,
   CHECK_DUPLICATE,
   CLIENT_TEMPLATE,
-  CLIENT_ADD
+  CLIENT_ADD,
+  CLIENT_ADD_IMAGE
 } from '../actions/actions';
 import {
   headers,
   clientUrl,
   checkDuplicateUrl,
-  clientTemplateUrl
+  clientTemplateUrl,
+  clientImageUrl,
+
+  setClientId
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
 
@@ -22,7 +26,8 @@ function* clientIndex(action) {
       .get(clientUrl, {
         headers: {
           ...headers,
-          'Authorization': 'Basic ' + auth
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
         },
         params: {
           limit: action.payload.limit,
@@ -108,7 +113,28 @@ function* clientAdd(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
-    console.log(clientAdd)
+    action.setClientAddRes(clientAdd)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* clientAddImage(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const clientAddImage = yield axios
+      .post(clientImageUrl(action.payload.clientId), action.payload, {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    console.log(clientAddImage)
 
   } catch (error) {
     console.log(error)
@@ -120,4 +146,5 @@ export default function* root() {
   yield takeEvery(CHECK_DUPLICATE, checkDuplicate);
   yield takeEvery(CLIENT_TEMPLATE, clientTemplate);
   yield takeEvery(CLIENT_ADD, clientAdd);
+  yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
 }
