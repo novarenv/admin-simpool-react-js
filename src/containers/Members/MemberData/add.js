@@ -785,15 +785,15 @@ class MemberDataAdd extends Component {
       religion: addValidation.religion,
       taxName: "novarena",
       taxAddress: "novarena",
-      submittedOnDate: "07 Februari 2020",
-      dateOfBirth: addValidation.birthdate,
+      submittedOnDate: "10 Februari 2020",
+      dateOfBirth: "10 Februari 2020",
 
       clientNonPersonDetails: { "locale": "id", "dateFormat": "dd MMMM yyyy" },
       externalId: "",
       locale: "id",
       active: false,
       dateFormat: "dd MMMM yyyy",
-      activationDate: "07 Februari 2020",
+      activationDate: "10 Februari 2020",
       savingsProductId: null
     })
   }

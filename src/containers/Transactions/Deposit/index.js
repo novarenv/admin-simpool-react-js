@@ -10,6 +10,12 @@ import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import ReactDataGrid from 'react-data-grid';
+import PropTypes from 'prop-types';
+import { withTranslation, Trans } from 'react-i18next';
+
+import * as actions from '../../../store/actions/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
@@ -32,7 +38,7 @@ const MONTHS = [
   'Des',
 ];
 
-export default class Deposit extends Component {
+class Deposit extends Component {
   constructor(props) {
     super(props);
 
@@ -74,7 +80,6 @@ export default class Deposit extends Component {
       rowIdx: rowIdx,
       selectedMember: this.state.rows[rowIdx].ANGGOTA
     })
-    console.log(this.state.rows[rowIdx].ANGGOTA)
   };
 
   componentDidMount() {
@@ -105,7 +110,6 @@ export default class Deposit extends Component {
 
   handleChange = e => {
     this.setState({selectedMember: e.target.value});
-    console.log(this.state.selectedMember)
   }
 
   onSubmit = e => {
@@ -115,7 +119,6 @@ export default class Deposit extends Component {
   
   openPane = () => {
     this.setState({ isPaneOpen: !this.state.isPaneOpen })
-    console.log(this.state.isPaneOpen)
   }
 
   render() {
@@ -167,9 +170,12 @@ export default class Deposit extends Component {
               <div className="row mr-1">
                 <div className="col-md-8">
                   <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
-                      value={this.state.selectedMember} onChange={this.handleChange} tabIndex={1}/>
+                    value={this.state.selectedMember} onChange={this.handleChange} tabIndex={1}
+                  />
                 </div>
-                <Button outline className="col-md-4 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={2}>
+                <Button outline className="col-md-4 btn-search" color="primary"
+                  type="button" onClick={() => this.openPane} tabIndex={2}
+                >
                   <i className="fas fa-search mr-2" />
                   Cari Anggota
                 </Button>
@@ -229,3 +235,21 @@ export default class Deposit extends Component {
     )
   }
 }
+
+Deposit.propTypes = {
+  actions: PropTypes.object,
+  auth: PropTypes.object,
+  dasboard: PropTypes.object,
+  memberData: PropTypes.object,
+  search: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  dashboard: state.dashboard,
+  memberData: state.memberData,
+  search: state.search
+})
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(Deposit);
