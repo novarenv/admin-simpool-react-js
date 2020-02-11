@@ -74,11 +74,12 @@ const DragDrop = props => {
       multiple: false,
       onDrop: acceptedFiles => {
         props.setPhotos(props.name, acceptedFiles[0])
+        console.log(acceptedFiles)
         acceptedFiles.map(file => Object.assign(file, {
           preview: URL.createObjectURL(file)
         }));
       }
-    });
+    })
 
   const img = {
     width: "50%",
@@ -803,37 +804,46 @@ class MemberDataAdd extends Component {
     )
   }
 
-  setPhotos = (name, files) => {
-    this.setState(prevState => ({
-      addValidation: {
-        ...prevState.addValidation,
-        name: files
-      }
-    }))
-
-    this.test(name)
+  getBase64 = file => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
   }
 
-  test = name => {
-    console.log(this.state.addValidation.name)
+  setPhotos = (name, file) => {
+    this.getBase64(file)
+      .then(uri => {
+        console.log(uri)
+        this.setState(prevState => ({
+          addValidation: {
+            ...prevState.addValidation,
+            [name]: "data:image/jpeg;base64," + uri
+          }
+        }))
+      })
   }
 
   finishForm = () => {
     const state = this.state
     const addValidation = state.addValidation
     const clientAdd = new FormData()
-
-    clientAdd.append("file", addValidation.selfiePhoto)
+    clientAdd.append(
+      "selfiePhoto",
+      addValidation.selfiePhoto
+    )
 
     const setClientAddRes = res => {
-      console.log(clientAdd)
-      this.props.actions.clientAddImage(res, {
+      this.props.actions.clientAddImage({
+        res,
         file: clientAdd
       })
     }
 
     this.props.actions.clientAdd({
-      legalFormId: addValidation.legalFormId,
+      legalFormId: 1,
       officeId: 1,
       flagTaxCodeValue: "Y",
       fullname: addValidation.fullname,
@@ -846,24 +856,27 @@ class MemberDataAdd extends Component {
       identityCountryCodeValue: "IDN",
       identityProvinceId: addValidation.identityProvinceId,
       identityCityId: addValidation.identityCityId,
-      identitySubDistrict: "novaren1",
-      identityVillage: "novaren1",
+      identitySubDistrict: "novarenu",
+      identityVillage: "novarenu",
       identityPostalCode: addValidation.identityPostalCode,
-      genderCodeValue: addValidation.gender,
       placeOfBirth: addValidation.placeOfBirth,
+      genderCodeValue: addValidation.gender,
       mobileNo: addValidation.mobileNo,
+      phoneNumber: "0310000000022",
       religion: addValidation.religion,
-      taxName: "novarena",
-      taxAddress: "novarena",
-      submittedOnDate: "10 Februari 2020",
-      dateOfBirth: "10 Februari 2020",
-
-      clientNonPersonDetails: { "locale": "id", "dateFormat": "dd MMMM yyyy" },
-      externalId: "",
+      taxName: "novarenu",
+      taxAddress: "novarenu",
+      submittedOnDate: state.today,
+      dateOfBirth: addValidation.birthdate,
+      
+      clientNonPersonDetails: {
+        locale: "id",
+        dateFormat: "dd MMMM yyyy"
+      },
       locale: "id",
       active: false,
-      dateFormat: "dd MMMM yyyy",
-      activationDate: "10 Februari 2020",
+      dateFormat: "dd MMMM yyyy",
+      activationDate: state.today,
       savingsProductId: null
     },
       setClientAddRes
@@ -1289,7 +1302,7 @@ class MemberDataAdd extends Component {
                     <fieldset>
                       <Container className="container-md">
                         <p className="lead text-center">Upload Foto</p>
-                        <DragDrop name="selfPhoto" setPhotos={this.setPhotos} />
+                        <DragDrop name="selfiePhoto" setPhotos={this.setPhotos} />
                       </Container>
 
                       <Container className="container-md mt-3">

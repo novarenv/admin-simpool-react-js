@@ -122,10 +122,11 @@ function* clientAdd(action) {
 
 function* clientAddImage(action) {
   const auth = yield select(authSelector)
+  console.log(action.payload.file)
 
   try {
     const clientAddImage = yield axios
-      .post(clientImageUrl(action.payload.clientId), action.payload, {
+      .post(clientImageUrl(action.payload.res.clientId), {file: action.payload.file}, {
         headers: {
           ...headers,
           'Authorization': 'Basic ' + auth
