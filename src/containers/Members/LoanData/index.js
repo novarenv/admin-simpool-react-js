@@ -4,6 +4,13 @@ import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 import { createUltimatePagination } from 'react-ultimate-pagination';
 
+
+import FlatButton from 'material-ui/FlatButton';
+import NavigationFirstPage from 'material-ui/svg-icons/navigation/first-page';
+import NavigationLastPage from 'material-ui/svg-icons/navigation/last-page';
+import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
+import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Swal from '../../../components/Common/Swal';
 
@@ -47,24 +54,61 @@ const SearchBar = () => {
   )
 }
 
-const ButtonPage = ({ value, isActive, disabled, onClick }) => (
-  <button
-    style={isActive ? { fontWeight: "bold" } : null}
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {value}
-  </button>
-);
+const flatButtonStyle = {
+  minWidth: 36
+};
 
 const PaginatedPage = createUltimatePagination({
   itemTypeToComponent: {
-    PAGE: ButtonPage,
-    ELLIPSIS: () => <ButtonPage value="..." />,
-    FIRST_PAGE_LINK: () => <ButtonPage value="First" />,
-    PREVIOUS_PAGE_LINK: () => <ButtonPage value="Prev" />,
-    NEXT_PAGE_LINK: () => <ButtonPage value="Next" />,
-    LAST_PAGE_LINK: () => <ButtonPage value="Last" />
+    PAGE: ({ value, isActive, onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        label={value.toString()}
+        primary={isActive}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    ELLIPSIS: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        label="..."
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    FIRST_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationFirstPage />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    PREVIOUS_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationChevronLeft />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    NEXT_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationChevronRight />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    LAST_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationLastPage />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    )
   }
 });
 
@@ -244,19 +288,20 @@ class LoanData extends Component {
               <AddBar />
               <SearchBar />
 
-              <Container fluid>
+              <Container fluid className="center-parent">
                 <ReactDataGrid
                   onGridSort={this.handleGridSort}
                   columns={this._columns}
                   rowGetter={this.rowGetter}
                   rowsCount={25}
-                  minHeight={700}
+                  minHeight={25 * 35 + 50}
                   getCellActions={this.getCellActions.bind(this)}
                   onCellSelected={this.onCellSelected.bind(this)}
                   onGridRowsUpdated={this.onGridRowsUpdated}
                 />
 
                 <PaginatedPage
+                className="mt-3"
                   totalPages={10}
                   currentPage={this.state.page}
                   onChange={page => this.setState({ page })}

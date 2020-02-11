@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // App Routes
 import Routes from './Routes';
@@ -16,9 +17,11 @@ function App() {
   const basename = '/';
 
   return (
-    <BrowserRouter basename={basename}>
+    <MuiThemeProvider>
+      <BrowserRouter basename={basename}>
         <Routes />
-    </BrowserRouter>
+      </BrowserRouter>
+    </MuiThemeProvider>
   );
 }
 

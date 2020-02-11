@@ -35,6 +35,7 @@
     "jquery.flot": "^0.8.3",
     "js-cookie": "^2.2.1",
     "jszip": "^3.2.2",
+    "material-ui": "^0.20.2",
     "moment": "^2.24.0",
     "nestable": "github:themicon/nestable",
     "node-sass": "^4.13.1",

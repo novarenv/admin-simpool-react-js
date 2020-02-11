@@ -261,7 +261,7 @@ class MemberData extends Component {
                         columns={this._columns}
                         rowGetter={this.rowGetter}
                         rowsCount={this.state.rows.length}
-                        minHeight={700}
+                        minHeight={25*35 + 50}
                         getCellActions={this.getCellActions.bind(this)}
                         onCellSelected={this.onCellSelected.bind(this)}
                         onGridRowsUpdated={this.onGridRowsUpdated}
