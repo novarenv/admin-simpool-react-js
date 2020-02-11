@@ -98,7 +98,7 @@ const DragDrop = props => {
       )
     } else {
       return (
-        <div key={"File " + file.path}>
+        <div key={"File " + file.path} className="center-parent">
           <h4>File is being uploaded..</h4>
           <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
         </div>
@@ -151,7 +151,7 @@ const DragDropMultiple = props => {
       )
     } else {
       return (
-        <div key={"File " + file.path}>
+        <div key={"File " + file.path} className="center-parent">
           <h4>File is being uploaded..</h4>
           <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
         </div>

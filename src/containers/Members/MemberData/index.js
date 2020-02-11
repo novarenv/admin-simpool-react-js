@@ -252,7 +252,7 @@ class MemberData extends Component {
               <AddBar />
               <SearchBar props={this.props} searchRows={this.searchRows} />
 
-              <Container fluid>
+              <Container fluid className="center-parent">
                 {
                   this.state.rows.length > 0
                     ? (
@@ -268,11 +268,7 @@ class MemberData extends Component {
                       />
                     )
                     : (
-                      <div className="ball-pulse-sync">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                      </div>
+                      <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
                     )
                 }
               </Container>
