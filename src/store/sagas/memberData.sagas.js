@@ -13,9 +13,7 @@ import {
   clientUrl,
   checkDuplicateUrl,
   clientTemplateUrl,
-  clientImageUrl,
-
-  setClientId
+  clientImageUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
 
@@ -37,7 +35,7 @@ function* clientIndex(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
-    action.createRows(clientIndex.pageItems)
+    action.createRows(clientIndex)
 
   } catch (error) {
     console.log(error)

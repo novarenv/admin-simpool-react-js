@@ -1,9 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 import PropTypes from 'prop-types';
+import { createUltimatePagination } from 'react-ultimate-pagination';
+
+import FlatButton from 'material-ui/FlatButton';
+import NavigationFirstPage from 'material-ui/svg-icons/navigation/first-page';
+import NavigationLastPage from 'material-ui/svg-icons/navigation/last-page';
+import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
+import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Swal from '../../../components/Common/Swal';
@@ -29,7 +36,7 @@ const AddBar = () => {
 }
 
 const SearchBar = props => {
-  let searchInput
+  const [searchInput, setSearchInput] = useState("")
 
   const search = () => {
     props.props.actions.search(
@@ -45,7 +52,7 @@ const SearchBar = props => {
   }
 
   const handleChange = e => {
-    searchInput = e.target.value
+    setSearchInput(e.target.value)
   }
 
   return (
@@ -60,6 +67,65 @@ const SearchBar = props => {
     </div>
   )
 }
+
+const flatButtonStyle = {
+  minWidth: 48
+};
+
+const PaginatedPage = createUltimatePagination({
+  itemTypeToComponent: {
+    PAGE: ({ value, isActive, onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        label={value.toString()}
+        primary={isActive}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    ELLIPSIS: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        label="..."
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    FIRST_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationFirstPage />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    PREVIOUS_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationChevronLeft />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    NEXT_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationChevronRight />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    ),
+    LAST_PAGE_LINK: ({ onClick, isDisabled }) => (
+      <FlatButton
+        style={flatButtonStyle}
+        icon={<NavigationLastPage />}
+        onClick={onClick}
+        disabled={isDisabled}
+      />
+    )
+  }
+});
+
 
 class MemberData extends Component {
   constructor(props, context) {
@@ -103,6 +169,13 @@ class MemberData extends Component {
       }
     ];
 
+    this.state = {
+      page: 1,
+      totalPages: 0,
+      rows: [],
+      rowIdx: '',
+    };
+
     this.props.actions.clientIndex(
       {
         limit: 25,
@@ -110,16 +183,14 @@ class MemberData extends Component {
       },
       this.createRows
     )
-
-    this.state = {
-      rows: [],
-      rowIdx: ''
-    };
   }
 
-  createRows = rows => {
+  createRows = res => {
+    this.setState({
+      totalPages: Math.ceil(res.totalFilteredRecords/25)
+    })
     let rowsTemp = [];
-    rows.map(row => {
+    res.pageItems.map(row => {
       rowsTemp.push({
         ACTION: '',
         ID_MEMBER: row.accountNo,
@@ -240,6 +311,23 @@ class MemberData extends Component {
     });
   };
 
+  changePage = page => {
+    console.log(page)
+    this.setState({ page: page })
+
+    const offset = parseInt((page-1)*25)
+
+    console.log(offset)
+
+    this.props.actions.clientIndex(
+      {
+        limit: 25,
+        offset: offset
+      },
+      this.createRows
+    )
+  }
+
   render() {
     return (
       <ContentWrapper>
@@ -256,16 +344,25 @@ class MemberData extends Component {
                 {
                   this.state.rows.length > 0
                     ? (
-                      <ReactDataGrid
-                        onGridSort={this.handleGridSort}
-                        columns={this._columns}
-                        rowGetter={this.rowGetter}
-                        rowsCount={this.state.rows.length}
-                        minHeight={25*35 + 50}
-                        getCellActions={this.getCellActions.bind(this)}
-                        onCellSelected={this.onCellSelected.bind(this)}
-                        onGridRowsUpdated={this.onGridRowsUpdated}
-                      />
+                      <div>
+                        <ReactDataGrid
+                          onGridSort={this.handleGridSort}
+                          columns={this._columns}
+                          rowGetter={this.rowGetter}
+                          rowsCount={this.state.rows.length}
+                          minHeight={25 * 35 + 50}
+                          getCellActions={this.getCellActions.bind(this)}
+                          onCellSelected={this.onCellSelected.bind(this)}
+                          onGridRowsUpdated={this.onGridRowsUpdated}
+                        />
+
+                        <PaginatedPage
+                          className="mt-3"
+                          totalPages={this.state.totalPages}
+                          currentPage={this.state.page}
+                          onChange={page => this.changePage(page)}
+                        />
+                      </div>
                     )
                     : (
                       <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />

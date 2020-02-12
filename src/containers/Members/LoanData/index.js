@@ -4,7 +4,6 @@ import { Link, withRouter } from 'react-router-dom';
 import ReactDataGrid from 'react-data-grid';
 import { createUltimatePagination } from 'react-ultimate-pagination';
 
-
 import FlatButton from 'material-ui/FlatButton';
 import NavigationFirstPage from 'material-ui/svg-icons/navigation/first-page';
 import NavigationLastPage from 'material-ui/svg-icons/navigation/last-page';
@@ -55,7 +54,7 @@ const SearchBar = () => {
 }
 
 const flatButtonStyle = {
-  minWidth: 36
+  minWidth: 48
 };
 
 const PaginatedPage = createUltimatePagination({
@@ -301,7 +300,7 @@ class LoanData extends Component {
                 />
 
                 <PaginatedPage
-                className="mt-3"
+                  className="mt-3"
                   totalPages={10}
                   currentPage={this.state.page}
                   onChange={page => this.setState({ page })}
