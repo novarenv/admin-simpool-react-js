@@ -3,6 +3,7 @@ export const CHECK_DUPLICATE = 'CHECK_DUPLICATE';
 export const CLIENT_TEMPLATE = 'CLIENT_TEMPLATE';
 export const CLIENT_ADD = 'CLIENT_ADD';
 export const CLIENT_ADD_IMAGE = 'CLIENT_ADD_IMAGE';
+export const CLIENT_ADD_DOCUMENT = 'CLIENT_ADD_DOCUMENT';
 
 export function clientIndex(payload, createRows) {
   return { type: CLIENT_INDEX, payload, createRows };
@@ -20,6 +21,10 @@ export function clientAdd(payload, setClientAddRes) {
   return { type: CLIENT_ADD, payload, setClientAddRes };
 }
 
-export function clientAddImage(payload) {
-  return { type: CLIENT_ADD_IMAGE, payload };
+export function clientAddImage(payload, res) {
+  return { type: CLIENT_ADD_IMAGE, payload, res };
+}
+
+export function clientAddDocument(payload, res) {
+  return { type: CLIENT_ADD_DOCUMENT, payload, res };
 }

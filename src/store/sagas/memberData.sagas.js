@@ -6,14 +6,16 @@ import {
   CHECK_DUPLICATE,
   CLIENT_TEMPLATE,
   CLIENT_ADD,
-  CLIENT_ADD_IMAGE
+  CLIENT_ADD_IMAGE,
+  CLIENT_ADD_DOCUMENT
 } from '../actions/actions';
 import {
   headers,
   clientUrl,
   checkDuplicateUrl,
   clientTemplateUrl,
-  clientImageUrl
+  clientImageUrl,
+  clientDocumentUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
 
@@ -121,18 +123,12 @@ function* clientAdd(action) {
 function* clientAddImage(action) {
   const auth = yield select(authSelector)
 
-  console.log(action.payload)
-
-  for (let pair of action.payload.entries()) {
-    console.log(pair[1]); 
-  }
-
   try {
     const clientAddImage = yield axios
-      .post(clientImageUrl(
-        // action.payload.res.clientId
-        2291
-      ), action.payload, {
+      .post(
+        clientImageUrl(
+          action.res.clientId
+        ), action.payload, {
         headers: {
           ...headers,
           'Authorization': 'Basic ' + auth,
@@ -149,10 +145,38 @@ function* clientAddImage(action) {
   }
 }
 
+function* clientAddDocument(action) {
+  const auth = yield select(authSelector)
+
+  console.log(action.payload)
+  
+  try {
+    const clientAddDocument = yield axios
+      .post(
+        clientDocumentUrl(
+          action.res.clientId
+        ), action.payload, {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    console.log(clientAddDocument)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default function* root() {
   yield takeEvery(CLIENT_INDEX, clientIndex);
   yield takeEvery(CHECK_DUPLICATE, checkDuplicate);
   yield takeEvery(CLIENT_TEMPLATE, clientTemplate);
   yield takeEvery(CLIENT_ADD, clientAdd);
   yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
+  yield takeEvery(CLIENT_ADD_DOCUMENT, clientAddDocument);
 }

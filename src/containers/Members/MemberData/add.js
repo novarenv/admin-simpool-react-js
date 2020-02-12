@@ -74,7 +74,6 @@ const DragDrop = props => {
       multiple: false,
       onDrop: acceptedFiles => {
         props.setPhotos(props.name, acceptedFiles[0])
-        console.log(acceptedFiles)
         acceptedFiles.map(file => Object.assign(file, {
           preview: URL.createObjectURL(file)
         }));
@@ -89,7 +88,7 @@ const DragDrop = props => {
   const files = acceptedFiles.map(file => {
     if (file.preview != null) {
       return (
-        <div key={"File " + file.path}>
+        <div key={"File " + file.path} className="center-parent">
           <h5>
             {file.path} - {file.size} bytes
           </h5>
@@ -142,7 +141,7 @@ const DragDropMultiple = props => {
   const files = acceptedFiles.map(file => {
     if (file.preview != null) {
       return (
-        <div key={"File " + file.path}>
+        <div key={"File " + file.path} className="center-parent">
           <h5>
             {file.path} - {file.size} bytes
           </h5>
@@ -263,7 +262,7 @@ class MemberDataAdd extends Component {
 
 
         selfiePhoto: {},
-        ktpPhoto: {},
+        idCardPhoto: {},
         npwpPhoto: {},
         otherDocuments: []
       }
@@ -815,7 +814,6 @@ class MemberDataAdd extends Component {
 
   setPhotos = (name, file) => {
     console.log(file)
-
     this.setState(prevState => ({
       addValidation: {
         ...prevState.addValidation,
@@ -827,60 +825,114 @@ class MemberDataAdd extends Component {
   finishForm = () => {
     const state = this.state
     const addValidation = state.addValidation
-    const clientAdd = new FormData()
-    clientAdd.append(
+
+    console.log(addValidation.idCardPhoto)
+
+    const clientImage = new FormData()
+    clientImage.append(
       "file",
       addValidation.selfiePhoto
     )
 
+    const clientIdCard = new FormData()
+    clientIdCard.append(
+      "name",
+      "idCard"
+    )
+    clientIdCard.append(
+      "description",
+      "ID Card"
+    )
+    clientIdCard.append(
+      "file",
+      addValidation.idCardPhoto
+    )
+
+    const clientNpwp = new FormData()
+    clientNpwp.append(
+      "name",
+      "npwp"
+    )
+    clientNpwp.append(
+      "description",
+      "NPWP"
+    )
+    clientNpwp.append(
+      "file",
+      addValidation.npwpPhoto
+    )
+
+    const clientOtherDocs = []
+    
+    this.state.addValidation.otherDocuments.map((doc, i) => {
+      const formdata = new FormData()
+      formdata.append(
+        "name",
+        "otherDocuments"
+      )
+      formdata.append(
+        "description",
+        "Other Documents"
+      )
+      formdata.append(
+        "file",
+        addValidation.otherDocuments[i]
+      )
+      
+      clientOtherDocs.push(formdata)
+    })
+
     const setClientAddRes = res => {
-      this.props.actions.clientAddImage({
-        file: clientAdd,
-        // res
+      this.props.actions.clientAddImage(clientImage, res)
+
+      this.props.actions.clientAddDocument(clientIdCard, res)
+
+      this.props.actions.clientAddDocument(clientNpwp, res)
+
+      clientOtherDocs.map(doc => {
+        this.props.actions.clientAddDocument(doc, res)
       })
     }
 
-    this.props.actions.clientAddImage(clientAdd)
+    this.props.actions.clientAdd({
+      legalFormId: 1,
+      officeId: 1,
+      flagTaxCodeValue: "Y",
+      fullname: addValidation.fullname,
+      typeOfIdentityId: addValidation.typeOfIdentityId,
+      motherName: addValidation.motherName,
+      addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+      taxNumber: addValidation.NPWP,
+      identityNumber: addValidation.identityNumber,
+      sectorId: 1000,
+      identityCountryCodeValue: "IDN",
+      identityProvinceId: addValidation.identityProvinceId,
+      identityCityId: addValidation.identityCityId,
+      identitySubDistrict: "novarenu",
+      identityVillage: "novarenu",
+      identityPostalCode: addValidation.identityPostalCode,
+      placeOfBirth: addValidation.placeOfBirth,
+      genderCodeValue: addValidation.gender,
+      mobileNo: addValidation.mobileNo,
+      phoneNumber: "0310000000022",
+      religion: addValidation.religion,
+      taxName: "novarenu",
+      taxAddress: "novarenu",
+      submittedOnDate: state.today,
+      dateOfBirth: addValidation.birthdate,
 
-    // this.props.actions.clientAdd({
-    //   legalFormId: 1,
-    //   officeId: 1,
-    //   flagTaxCodeValue: "Y",
-    //   fullname: addValidation.fullname,
-    //   typeOfIdentityId: addValidation.typeOfIdentityId,
-    //   motherName: addValidation.motherName,
-    //   addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
-    //   taxNumber: addValidation.NPWP,
-    //   identityNumber: addValidation.identityNumber,
-    //   sectorId: 1000,
-    //   identityCountryCodeValue: "IDN",
-    //   identityProvinceId: addValidation.identityProvinceId,
-    //   identityCityId: addValidation.identityCityId,
-    //   identitySubDistrict: "novarenu",
-    //   identityVillage: "novarenu",
-    //   identityPostalCode: addValidation.identityPostalCode,
-    //   placeOfBirth: addValidation.placeOfBirth,
-    //   genderCodeValue: addValidation.gender,
-    //   mobileNo: addValidation.mobileNo,
-    //   phoneNumber: "0310000000022",
-    //   religion: addValidation.religion,
-    //   taxName: "novarenu",
-    //   taxAddress: "novarenu",
-    //   submittedOnDate: state.today,
-    //   dateOfBirth: addValidation.birthdate,
-      
-    //   clientNonPersonDetails: {
-    //     locale: "id",
-    //     dateFormat: "dd MMMM yyyy"
-    //   },
-    //   locale: "id",
-    //   active: false,
-    //   dateFormat: "dd MMMM yyyy",
-    //   activationDate: state.today,
-    //   savingsProductId: null
-    // },
-    //   setClientAddRes
-    // )
+      clientNonPersonDetails: {
+        locale: "id",
+        dateFormat: "dd MMMM yyyy"
+      },
+      locale: "id",
+      active: false,
+      dateFormat: "dd MMMM yyyy",
+      activationDate: state.today,
+      savingsProductId: null
+    },
+      setClientAddRes
+    )
   }
 
   render() {
@@ -1307,7 +1359,7 @@ class MemberDataAdd extends Component {
 
                       <Container className="container-md mt-3">
                         <p className="lead text-center">Upload KTP</p>
-                        <DragDrop name="ktpPhoto" setPhotos={this.setPhotos} />
+                        <DragDrop name="idCardPhoto" setPhotos={this.setPhotos} />
                       </Container>
 
                       <Container className="container-md mt-3">
