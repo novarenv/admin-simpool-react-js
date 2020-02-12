@@ -171,6 +171,7 @@ class MemberData extends Component {
 
     this.state = {
       page: 1,
+      res: '',
       totalPages: 0,
       rows: [],
       rowIdx: '',
@@ -186,7 +187,9 @@ class MemberData extends Component {
   }
 
   createRows = res => {
+    console.log(res)
     this.setState({
+      res: res,
       totalPages: Math.ceil(res.totalFilteredRecords/25)
     })
     let rowsTemp = [];
@@ -233,7 +236,7 @@ class MemberData extends Component {
       }
     };
 
-    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
+    const rows = sortDirection === 'NONE' ? this.state.rows.slice(0) : this.state.rows.sort(comparer);
 
     this.setState({ rows });
   };
@@ -296,7 +299,16 @@ class MemberData extends Component {
 
   onCellSelected = ({ rowIdx, idx }) => {
     if (idx !== 0) {
-      this.props.history.push('/simpool/member/data-detail')
+      let clientId
+
+      this.state.res.pageItems.map(item => {
+        console.log(item)
+        if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+          clientId = item.id
+        }
+      })
+      
+      this.props.history.push('/simpool/member/data-detail/'+clientId)
     }
     this.state.rowIdx = rowIdx
   };
@@ -379,13 +391,11 @@ class MemberData extends Component {
 
 MemberData.propTypes = {
   actions: PropTypes.object,
-  auth: PropTypes.object,
   memberData: PropTypes.object,
   search: PropTypes.object
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth,
   memberData: state.memberData,
   search: state.search
 })

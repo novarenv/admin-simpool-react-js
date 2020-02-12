@@ -19,6 +19,7 @@ export const clientUrl = `${apiEntrySimpool}/clients`;
 export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`;
 export const clientImageUrl = clientId => `${apiEntrySimpool}/clients/${clientId}/images`;
 export const clientDocumentUrl = clientId => `${apiEntrySimpool}/clients/${clientId}/documents`;
+export const clientDetailUrl = clientId => `${apiEntrySimpool}/clients/detail/${clientId}`;
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`;

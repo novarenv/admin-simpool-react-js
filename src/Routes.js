@@ -127,7 +127,8 @@ const Routes = ({ location, ...props }) => {
                     {/* Members */}
                     <Route exact path="/simpool/member/data" component={waitFor(MemberData)} />
                     <Route exact path="/simpool/member/data-add" component={waitFor(MemberDataAdd)} />
-                    <Route exact path="/simpool/member/data-detail" component={waitFor(MemberDataDetail)} />
+                    <Route exact path="/simpool/member/data-detail/" component={waitFor(MemberDataDetail)} />
+                    <Route exact path="/simpool/member/data-detail/:id" component={waitFor(MemberDataDetail)} />
                     <Route exact path="/simpool/member/data-edit" component={waitFor(MemberDataEdit)} />
                     <Route exact path="/simpool/member/saving-data" component={waitFor(SavingData)} />
                     <Route exact path="/simpool/member/saving-data-add" component={waitFor(SavingDataAdd)} />

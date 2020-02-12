@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -10,66 +10,41 @@ import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import ReactDataGrid from 'react-data-grid';
+import PropTypes from 'prop-types';
+import { withTranslation, Trans } from 'react-i18next';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
-export default class MemberDataDetail extends Component {
+import * as actions from '../../../store/actions/actions';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
+
+class MemberDataDetail extends Component {
   constructor(props) {
     super(props);
 
-    let originalRows = this.createRows(1000);
-    let rows = originalRows.slice(0);
-    
-    this.state = {
-      isPaneOpen: false,
-      rows,
-      selectedMember: ''
-    };
-    
-    this._columns = [
-      {
-        key: 'ANGGOTA',
-        name: 'Anggota',
-        width: 1000
-      }
-    ];
-  }
+    const clientId = this.props.match.params.id
 
-  createRows = () => {
-    let rows = [];
-    for (let i = 1; i < 100; i++) {
-      rows.push({
-        ANGGOTA: i
-      });
+    const setClientDetail = res => {
+      console.log(res)
+      this.setState({
+        clientDetail: res
+      })
+    }
+    const setClientImage = res => {
+      this.setState({
+        clientImage: res
+      })
     }
 
-    return rows;
-  };
-
-  rowGetter = (i) => this.state.rows[i]
-
-  onCellSelected = ({ rowIdx, idx }) => {
-    this.setState({
-      isPaneOpen: false,
-      rowIdx: rowIdx,
-      selectedMember: this.state.rows[rowIdx].ANGGOTA
-    })
-    this.handleChange.bind(this)
-    console.log(this.state.rows[rowIdx].ANGGOTA)
-  };
-
-  componentDidMount() {
-    Modal.setAppElement(this.el);
-  }
-
-  handleChange = e => {
-    this.setState({selectedMember: e.target.value});
-    console.log(this.state.selectedMember)
-  }
-
-  onSubmit = e => {
-    console.log('Form submitted..');
-    e.preventDefault();
+    this.props.actions.getClientDetail(clientId, setClientDetail)
+    this.props.actions.getClientImage(clientId, setClientImage)
+    
+    this.state = {
+      clientId: clientId,
+      clientDetail: '',
+      clientImage: null
+    };
   }
 
   openPane = () => {
@@ -84,43 +59,13 @@ export default class MemberDataDetail extends Component {
 
     const today = dd + '/' + mm + '/' + yyyy
 
+    const img = {
+      width: "10%",
+      height: "10%"
+    }
+
     return (
-      <ContentWrapper ref={ref => this.el = ref}>
-        <SlidingPane
-          className='pos-absolute slide-pane'
-          closeIcon={<i className="fas fa-angle-right" />}
-          isOpen={this.state.isPaneOpen}
-          title='Hasil Pencarian Anggota'
-          subtitle='Pilih salah satu'
-          onRequestClose={() => {
-            this.setState({ isPaneOpen: false });
-          }}
-        >
-          <div className="row mr-1">
-            <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2} onChange={this.handleChange}/>
-            </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
-              <i className="fas fa-search mr-2" />
-              Cari Anggota
-            </Button>
-
-            <Card>
-              <CardBody>
-                <ReactDataGrid
-                  onGridSort={this.handleGridSort}
-                  columns={this._columns}
-                  rowGetter={this.rowGetter}
-                  rowsCount={this.state.rows.length}
-                  minHeight={700}
-                  minWidth={1000}
-                  onCellSelected={this.onCellSelected}
-                />
-              </CardBody>
-            </Card>
-          </div>
-        </SlidingPane>
-
+      <ContentWrapper>
         <div className="content-heading">
           <div>Detail Member</div>
         </div>
@@ -133,7 +78,7 @@ export default class MemberDataDetail extends Component {
                   <Button outline className="col-12" color="primary" type="submit" tabIndex={7}>Kembali</Button>
                 </Link>
               </div>
-              <div className="ml-auto col-md-8 col-lg-10">
+              <div className="col-md-8 col-lg-10">
                 <Link to="/simpool/member/saving-data-add">
                   <Button className="col-md-5 offset-md-1 col-lg-3 offset-lg-5" color="primary" type="button">
                     Simpanan
@@ -147,7 +92,12 @@ export default class MemberDataDetail extends Component {
               </div>
             </div>
 
-            <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
+            <div className="center-parent mt-5">
+              <h1>{this.state.clientDetail.fullname}</h1>
+              <img className="mt-2" src={this.state.clientImage} style={img} />
+            </div>
+
+            <form className="form-font-size mt-3">
               <label htmlFor="savingType">Jenis Simpanan</label>
               <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1} disabled>
                 <option>Jenis Simpanan</option>
@@ -158,7 +108,7 @@ export default class MemberDataDetail extends Component {
 
               <label className="mt-3" htmlFor="member">Anggota</label>
               <Input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
-                  value={this.state.selectedMember} onChange={this.handleChange} tabIndex={2} readOnly/>
+                  value={this.state.selectedMember} tabIndex={2} readOnly/>
 
               <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
               <Input
@@ -196,7 +146,7 @@ export default class MemberDataDetail extends Component {
               />
 
               <Link to="/simpool/member/data-edit">
-                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Anggota</Button>
+                <Button outline className="mt-3 col-12" color="warning" tabIndex={7}>Edit Anggota</Button>
               </Link>
             </form>
           </CardBody>
@@ -205,3 +155,18 @@ export default class MemberDataDetail extends Component {
     )
   }
 }
+
+
+MemberDataDetail.propTypes = {
+  actions: PropTypes.object,
+  memberData: PropTypes.object,
+  search: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+  memberData: state.memberData,
+  search: state.search
+})
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(MemberDataDetail));
