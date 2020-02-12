@@ -120,14 +120,23 @@ function* clientAdd(action) {
 
 function* clientAddImage(action) {
   const auth = yield select(authSelector)
-  console.log(action.payload.file)
+
+  console.log(action.payload)
+
+  for (let pair of action.payload.entries()) {
+    console.log(pair[1]); 
+  }
 
   try {
     const clientAddImage = yield axios
-      .post(clientImageUrl(action.payload.res.clientId), {file: action.payload.file}, {
+      .post(clientImageUrl(
+        // action.payload.res.clientId
+        2291
+      ), action.payload, {
         headers: {
           ...headers,
-          'Authorization': 'Basic ' + auth
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
         }
       })
       .then(response => response.data)

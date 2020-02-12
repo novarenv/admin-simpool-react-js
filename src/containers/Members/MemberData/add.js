@@ -814,16 +814,14 @@ class MemberDataAdd extends Component {
   }
 
   setPhotos = (name, file) => {
-    this.getBase64(file)
-      .then(uri => {
-        console.log(uri)
-        this.setState(prevState => ({
-          addValidation: {
-            ...prevState.addValidation,
-            [name]: "data:image/jpeg;base64," + uri
-          }
-        }))
-      })
+    console.log(file)
+
+    this.setState(prevState => ({
+      addValidation: {
+        ...prevState.addValidation,
+        [name]: file
+      }
+    }))
   }
 
   finishForm = () => {
@@ -831,56 +829,58 @@ class MemberDataAdd extends Component {
     const addValidation = state.addValidation
     const clientAdd = new FormData()
     clientAdd.append(
-      "selfiePhoto",
+      "file",
       addValidation.selfiePhoto
     )
 
     const setClientAddRes = res => {
       this.props.actions.clientAddImage({
-        res,
-        file: clientAdd
+        file: clientAdd,
+        // res
       })
     }
 
-    this.props.actions.clientAdd({
-      legalFormId: 1,
-      officeId: 1,
-      flagTaxCodeValue: "Y",
-      fullname: addValidation.fullname,
-      typeOfIdentityId: addValidation.typeOfIdentityId,
-      motherName: addValidation.motherName,
-      addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
-      taxNumber: addValidation.NPWP,
-      identityNumber: addValidation.identityNumber,
-      sectorId: 1000,
-      identityCountryCodeValue: "IDN",
-      identityProvinceId: addValidation.identityProvinceId,
-      identityCityId: addValidation.identityCityId,
-      identitySubDistrict: "novarenu",
-      identityVillage: "novarenu",
-      identityPostalCode: addValidation.identityPostalCode,
-      placeOfBirth: addValidation.placeOfBirth,
-      genderCodeValue: addValidation.gender,
-      mobileNo: addValidation.mobileNo,
-      phoneNumber: "0310000000022",
-      religion: addValidation.religion,
-      taxName: "novarenu",
-      taxAddress: "novarenu",
-      submittedOnDate: state.today,
-      dateOfBirth: addValidation.birthdate,
+    this.props.actions.clientAddImage(clientAdd)
+
+    // this.props.actions.clientAdd({
+    //   legalFormId: 1,
+    //   officeId: 1,
+    //   flagTaxCodeValue: "Y",
+    //   fullname: addValidation.fullname,
+    //   typeOfIdentityId: addValidation.typeOfIdentityId,
+    //   motherName: addValidation.motherName,
+    //   addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+    //   taxNumber: addValidation.NPWP,
+    //   identityNumber: addValidation.identityNumber,
+    //   sectorId: 1000,
+    //   identityCountryCodeValue: "IDN",
+    //   identityProvinceId: addValidation.identityProvinceId,
+    //   identityCityId: addValidation.identityCityId,
+    //   identitySubDistrict: "novarenu",
+    //   identityVillage: "novarenu",
+    //   identityPostalCode: addValidation.identityPostalCode,
+    //   placeOfBirth: addValidation.placeOfBirth,
+    //   genderCodeValue: addValidation.gender,
+    //   mobileNo: addValidation.mobileNo,
+    //   phoneNumber: "0310000000022",
+    //   religion: addValidation.religion,
+    //   taxName: "novarenu",
+    //   taxAddress: "novarenu",
+    //   submittedOnDate: state.today,
+    //   dateOfBirth: addValidation.birthdate,
       
-      clientNonPersonDetails: {
-        locale: "id",
-        dateFormat: "dd MMMM yyyy"
-      },
-      locale: "id",
-      active: false,
-      dateFormat: "dd MMMM yyyy",
-      activationDate: state.today,
-      savingsProductId: null
-    },
-      setClientAddRes
-    )
+    //   clientNonPersonDetails: {
+    //     locale: "id",
+    //     dateFormat: "dd MMMM yyyy"
+    //   },
+    //   locale: "id",
+    //   active: false,
+    //   dateFormat: "dd MMMM yyyy",
+    //   activationDate: state.today,
+    //   savingsProductId: null
+    // },
+    //   setClientAddRes
+    // )
   }
 
   render() {
