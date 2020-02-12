@@ -123,6 +123,34 @@ class SavingData extends Component {
 
   createRows = () => {
     let rows = [];
+    rows.push({
+      ACTION: '',
+      ACCOUNT: () => {
+        return (
+          <span>Account</span>
+        )
+      },
+      MEMBER_ID: () => {
+        return (
+          <span>Member Id</span>
+        )
+      },
+      MEMBER: () => {
+        return (
+          <span>Member</span>
+        )
+      },
+      BALANCE: () => {
+        return (
+          <span>Balance</span>
+        )
+      },
+      OFFICE: () => {
+        return (
+          <span>Office</span>
+        )
+      }
+    })
     for (let i = 1; i < 100; i++) {
       rows.push({
         ACTION: '',
@@ -267,7 +295,9 @@ class SavingData extends Component {
                   getCellActions={this.getCellActions.bind(this)}
                   onCellSelected={this.onCellSelected.bind(this)}
                   onGridRowsUpdated={this.onGridRowsUpdated}
-                  toolbar={<Toolbar enableFilter={true} />}
+                  toolbar={
+                    <Toolbar enableFilter={true} />
+                  }
                   onAddFilter={filter => this.onAddFilter(filter)}
                   onClearFilters={() => this.setFilters({})}
                   rowVisibleStartIdx={10}
