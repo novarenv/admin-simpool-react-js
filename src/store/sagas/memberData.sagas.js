@@ -8,20 +8,27 @@ import {
   CLIENT_ADD,
   CLIENT_ADD_IMAGE,
   CLIENT_ADD_DOCUMENT,
+  GET_CLIENT_ACCOUNT,
   GET_CLIENT_DETAIL,
-  GET_CLIENT_IMAGE
+  GET_CLIENT_IMAGE,
+  GET_CLIENT_ID,
+  GET_CLIENT_SUMMARY
 } from '../actions/actions';
 import {
   headers,
   clientUrl,
   checkDuplicateUrl,
   clientTemplateUrl,
+  clientAccountUrl,
   clientDetailUrl,
+  clientDocumentUrl,
   clientImageUrl,
-  clientDocumentUrl
+  clientIdUrl,
+  clientSummaryUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
 
+// Index
 function* clientIndex(action) {
   const auth = yield select(authSelector)
   try {
@@ -47,6 +54,8 @@ function* clientIndex(action) {
   }
 }
 
+
+// Add
 function* checkDuplicate(action) {
   const auth = yield select(authSelector)
 
@@ -117,6 +126,33 @@ function* clientAdd(action) {
       .catch(error => console.log(error.response.data, action))
 
     action.setClientAddRes(clientAdd)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+// Detail
+function* getClientAccount(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const getClientAccount = yield axios
+      .get(
+        clientAccountUrl(
+          action.payload
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    action.setClientAccount(getClientAccount)
 
   } catch (error) {
     console.log(error)
@@ -223,6 +259,58 @@ function* getClientImage(action) {
   }
 }
 
+function* getClientId(action) {
+  const auth = yield select(authSelector)
+  
+  try {
+    const getClientId = yield axios
+      .get(
+        clientIdUrl(
+          action.payload
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    action.setClientId(getClientId)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* getClientSummary(action) {
+  const auth = yield select(authSelector)
+  
+  try {
+    const getClientSummary = yield axios
+      .get(
+        clientSummaryUrl, {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        },
+        params: {
+          R_clientId: action.payload,
+          genericResultSet: false
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    action.setClientSummary(getClientSummary)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default function* root() {
   yield takeEvery(CLIENT_INDEX, clientIndex);
   yield takeEvery(CHECK_DUPLICATE, checkDuplicate);
@@ -230,6 +318,9 @@ export default function* root() {
   yield takeEvery(CLIENT_ADD, clientAdd);
   yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
   yield takeEvery(CLIENT_ADD_DOCUMENT, clientAddDocument);
+  yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);
+  yield takeEvery(GET_CLIENT_ID, getClientId);
+  yield takeEvery(GET_CLIENT_SUMMARY, getClientSummary);
 }

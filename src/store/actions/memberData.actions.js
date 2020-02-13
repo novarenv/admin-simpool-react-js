@@ -4,9 +4,13 @@ export const CLIENT_TEMPLATE = 'CLIENT_TEMPLATE';
 export const CLIENT_ADD = 'CLIENT_ADD';
 export const CLIENT_ADD_IMAGE = 'CLIENT_ADD_IMAGE';
 export const CLIENT_ADD_DOCUMENT = 'CLIENT_ADD_DOCUMENT';
+export const GET_CLIENT_ACCOUNT = 'GET_CLIENT_ACCOUNT';
 export const GET_CLIENT_DETAIL = 'GET_CLIENT_DETAIL';
+export const GET_CLIENT_ID = 'GET_CLIENT_ID';
 export const GET_CLIENT_IMAGE = 'GET_CLIENT_IMAGE';
+export const GET_CLIENT_SUMMARY = 'GET_CLIENT_SUMMARY';
 
+// Index
 export function clientIndex(payload, createRows) {
   return { type: CLIENT_INDEX, payload, createRows };
 }
@@ -35,10 +39,22 @@ export function clientAddDocument(payload, res) {
 
 
 // Detail
+export function getClientId(payload, setClientId) {
+  return { type: GET_CLIENT_ID, payload, setClientId };
+}
+
+export function getClientAccount(payload, setClientAccount) {
+  return { type: GET_CLIENT_ACCOUNT, payload, setClientAccount };
+}
+
 export function getClientDetail(payload, setClientDetail) {
   return { type: GET_CLIENT_DETAIL, payload, setClientDetail };
 }
 
 export function getClientImage(payload, setClientImage) {
   return { type: GET_CLIENT_IMAGE, payload, setClientImage };
+}
+
+export function getClientSummary(payload, setClientSummary) {
+  return { type: GET_CLIENT_SUMMARY, payload, setClientSummary };
 }

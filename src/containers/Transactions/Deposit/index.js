@@ -11,7 +11,7 @@ import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import ReactDataGrid from 'react-data-grid';
 import PropTypes from 'prop-types';
-import { withTranslation, Trans } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';

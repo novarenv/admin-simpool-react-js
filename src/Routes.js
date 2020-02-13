@@ -7,7 +7,7 @@ import { withTranslation } from 'react-i18next';
 
 import * as actions from './store/actions/actions';
 import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import { bindActionCreators } from 'redux';
 
 /* loader component for Suspense*/
 import PageLoader from './components/Common/PageLoader';

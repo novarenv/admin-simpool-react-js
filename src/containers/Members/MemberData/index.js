@@ -19,7 +19,7 @@ import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 
-const COLUMN_WIDTH = 250;
+const COLUMN_WIDTH = 314;
 
 const AddBar = () => {
   return (
@@ -171,7 +171,8 @@ class MemberData extends Component {
 
     this.state = {
       page: 1,
-      res: '',
+      res: {},
+      searchRes: null,
       totalPages: 0,
       rows: [],
       rowIdx: '',
@@ -187,10 +188,9 @@ class MemberData extends Component {
   }
 
   createRows = res => {
-    console.log(res)
     this.setState({
       res: res,
-      totalPages: Math.ceil(res.totalFilteredRecords/25)
+      totalPages: Math.ceil(res.totalFilteredRecords / 25)
     })
     let rowsTemp = [];
     res.pageItems.map(row => {
@@ -221,7 +221,8 @@ class MemberData extends Component {
       })
     })
     this.setState({
-      rows: rowsTemp
+      rows: rowsTemp,
+      searchRes: rows
     })
   };
 
@@ -301,14 +302,21 @@ class MemberData extends Component {
     if (idx !== 0) {
       let clientId
 
-      this.state.res.pageItems.map(item => {
-        console.log(item)
-        if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-          clientId = item.id
-        }
-      })
-      
-      this.props.history.push('/simpool/member/data-detail/'+clientId)
+      if (this.state.searchRes != null) {
+        this.state.searchRes.map(item => {
+          if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
+            clientId = item.entityId
+          }
+        })
+      } else {
+        this.state.res.pageItems.map(item => {
+          if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+            clientId = item.id
+          }
+        })
+      }
+
+      this.props.history.push('/simpool/member/data-detail/' + clientId)
     }
     this.state.rowIdx = rowIdx
   };
@@ -327,7 +335,7 @@ class MemberData extends Component {
     console.log(page)
     this.setState({ page: page })
 
-    const offset = parseInt((page-1)*25)
+    const offset = parseInt((page - 1) * 25)
 
     console.log(offset)
 
