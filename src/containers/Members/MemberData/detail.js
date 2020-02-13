@@ -4,7 +4,12 @@ import {
   Button,
   Card,
   CardBody,
-  Input
+  Input,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane
 } from 'reactstrap';
 import Modal from 'react-modal';
 import SlidingPane from 'react-sliding-pane';
@@ -41,10 +46,19 @@ class MemberDataDetail extends Component {
     this.props.actions.getClientImage(clientId, setClientImage)
     
     this.state = {
+      activeTab: 'detail',
       clientId: clientId,
       clientDetail: '',
       clientImage: null
     };
+  }
+  
+  toggleTab = tab => {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
   }
 
   openPane = () => {
@@ -97,58 +111,96 @@ class MemberDataDetail extends Component {
               <img className="mt-2" src={this.state.clientImage} style={img} />
             </div>
 
-            <form className="form-font-size mt-3">
-              <label htmlFor="savingType">Jenis Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1} disabled>
-                <option>Jenis Simpanan</option>
-                <option defaultValue="pokok">Pokok</option>
-                <option defaultValue="wajib">Wajib</option>
-                <option defaultValue="sukarela">Sukarela</option>
-              </select>
+            <div role="tabpanel row">
+                <Nav tabs justified>
+                  <NavItem className="nav-tab">
+                    <NavLink className={this.state.activeTab === 'detail' ? 'active' : ''}
+                      onClick={() => { this.toggleTab('detail'); }}
+                    >
+                      Detail
+                    </NavLink>
+                  </NavItem>
+                  <NavItem className="nav-tab">
+                    <NavLink className={this.state.activeTab === 'saving' ? 'active' : ''}
+                      onClick={() => { this.toggleTab('saving'); }}
+                    >
+                      Simpanan
+                    </NavLink>
+                  </NavItem>
+                  <NavItem className="nav-tab">
+                    <NavLink className={this.state.activeTab === 'loan' ? 'active' : ''}
+                      onClick={() => { this.toggleTab('loan'); }}
+                    >
+                      Pinjaman
+                    </NavLink>
+                  </NavItem>
+                </Nav>
 
-              <label className="mt-3" htmlFor="member">Anggota</label>
-              <Input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
-                  value={this.state.selectedMember} tabIndex={2} readOnly/>
+                <TabContent activeTab={this.state.activeTab}>
+                  <TabPane tabId="detail" role="tabpanel">            
+                    <form className="form-font-size mt-3">
+                      <label htmlFor="savingType">Jenis Simpanan</label>
+                      <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1} disabled>
+                        <option>Jenis Simpanan</option>
+                        <option defaultValue="pokok">Pokok</option>
+                        <option defaultValue="wajib">Wajib</option>
+                        <option defaultValue="sukarela">Sukarela</option>
+                      </select>
 
-              <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
-              <Input
-                type="text"
-                id="openDate"
-                name="openDate"
-                className="input-font-size"
-                placeholder="dd-mm-yyyy"
-                value={today}
-                tabIndex={4}
-                readOnly
-              />
+                      <label className="mt-3" htmlFor="member">Anggota</label>
+                      <Input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
+                          value={this.state.selectedMember} tabIndex={2} readOnly/>
 
-              <label className="mt-3" htmlFor="initDepositValue">// Nanti Ambil dari API</label><br />
-              <label className="mt-3" htmlFor="initDepositValue">Nilai Setoran Awal</label>
-              <Input
-                type="number"
-                id="initDepositValue"
-                name="initDepositValue"
-                className="input-font-size"
-                placeholder="minimal 3.000.000"
-                tabIndex={5}
-                readOnly
-              />
+                      <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
+                      <Input
+                        type="text"
+                        id="openDate"
+                        name="openDate"
+                        className="input-font-size"
+                        placeholder="dd-mm-yyyy"
+                        value={today}
+                        tabIndex={4}
+                        readOnly
+                      />
 
-              <label className="mt-3" htmlFor="initDepositValue">// Nomor Rekening Ambil dari Anggota</label><br />
-              <label className="mt-3" htmlFor="depositNumber">Nomor Rekening Simpanan</label>
-              <Input
-                type="text"
-                id="depositNumber"
-                name="depositNumber"
-                className="input-font-size"
-                tabIndex={6}
-                readOnly
-              />
+                      <label className="mt-3" htmlFor="initDepositValue">// Nanti Ambil dari API</label><br />
+                      <label className="mt-3" htmlFor="initDepositValue">Nilai Setoran Awal</label>
+                      <Input
+                        type="number"
+                        id="initDepositValue"
+                        name="initDepositValue"
+                        className="input-font-size"
+                        placeholder="minimal 3.000.000"
+                        tabIndex={5}
+                        readOnly
+                      />
 
-              <Link to="/simpool/member/data-edit">
-                <Button outline className="mt-3 col-12" color="warning" tabIndex={7}>Edit Anggota</Button>
-              </Link>
-            </form>
+                      <label className="mt-3" htmlFor="initDepositValue">// Nomor Rekening Ambil dari Anggota</label><br />
+                      <label className="mt-3" htmlFor="depositNumber">Nomor Rekening Simpanan</label>
+                      <Input
+                        type="text"
+                        id="depositNumber"
+                        name="depositNumber"
+                        className="input-font-size"
+                        tabIndex={6}
+                        readOnly
+                      />
+
+                      <Link to="/simpool/member/data-edit">
+                        <Button outline className="mt-3 col-12" color="warning" tabIndex={7}>Edit Anggota</Button>
+                      </Link>
+                    </form>             
+                  </TabPane>
+
+                  <TabPane tabId="saving" role="tabpanel">
+                    
+                  </TabPane>
+
+                  <TabPane tabId="loan" role="tabpanel">
+                    
+                  </TabPane>
+                </TabContent>
+              </div>
           </CardBody>
         </Card>
       </ContentWrapper>

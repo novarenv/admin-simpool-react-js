@@ -252,19 +252,22 @@ class MemberData extends Component {
                     <NavLink className={this.state.activeTab === 'neraca' ? 'active' : ''}
                       onClick={() => { this.toggleTab('neraca'); }}
                     >
-                      Neraca</NavLink>
+                      Neraca
+                    </NavLink>
                   </NavItem>
                   <NavItem className="nav-tab">
                     <NavLink className={this.state.activeTab === 'laba' ? 'active' : ''}
                       onClick={() => { this.toggleTab('laba'); }}
                     >
-                      Laba</NavLink>
+                      Laba
+                    </NavLink>
                   </NavItem>
                   <NavItem className="nav-tab">
                     <NavLink className={this.state.activeTab === 'administrasi' ? 'active' : ''}
                       onClick={() => { this.toggleTab('administrasi'); }}
                     >
-                      Administrasi</NavLink>
+                      Administrasi
+                    </NavLink>
                   </NavItem>
                 </Nav>
 

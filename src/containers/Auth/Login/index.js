@@ -90,7 +90,7 @@ class Login extends Component {
         username: state.formLogin.username,
         password: state.formLogin.password,
         transactionReference: state.transactionReference,
-        rememberMe: false,
+        rememberMe: state.rememberMe,
         otpCode: otp,
       },
       this.onLoginOtpSuccess
@@ -103,7 +103,7 @@ class Login extends Component {
 
   onLoginOtpSuccess = () => {
     const time = new Date()
-    time.setTime(time.getTime() + (10000 * 60 * 1000))
+    time.setTime(time.getTime() + (30 * 60 * 1000))
 
     Cookies.set("loginToken", "Token", { expires: time })
     this.setState({
@@ -175,6 +175,18 @@ class Login extends Component {
                     className="otp col-lg-4 offset-lg-4"
                     data-validate='["required"]'
                   />
+                  
+                  <div className="clearfix">
+                    <CustomInput
+                      type="checkbox"
+                      id="remember-me"
+                      className="float-left mt-0"
+                      name="remember-me"
+                      checked={this.state.rememberMe}
+                      label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>}
+                      onChange={() => rememberMe()}
+                    />
+                  </div>
 
                   <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Submit OTP</button>
                 </form>
