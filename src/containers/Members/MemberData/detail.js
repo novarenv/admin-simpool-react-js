@@ -13,6 +13,9 @@ import {
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
+import Modal from 'react-modal';
+import Camera from 'react-html5-camera-photo';
+import 'react-html5-camera-photo/build/css/index.css';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 
@@ -153,6 +156,7 @@ class MemberDataDetail extends Component {
     this.props.actions.getClientImage(clientIdNo, setClientImage)
     this.props.actions.getClientId(clientIdNo, setClientId)
     this.props.actions.getClientSummary(clientIdNo, setClientSummary)
+    Modal.setAppElement('body')
 
     this.state = {
       activeTab: 'detail',
@@ -163,8 +167,16 @@ class MemberDataDetail extends Component {
       },
       clientDetail: null,
       clientImage: null,
-      clientSummary: null
+      clientSummary: null,
+      modalCamera: false,
+      modalUpload: true,
+      selfieUri: null
     };
+  }
+
+  handleModalCamera() {
+    this.setState({ modalCamera: !this.state.modalCamera });
+    console.log(this.state.modalCamera)
   }
 
   toggleTab = tab => {
@@ -183,12 +195,12 @@ class MemberDataDetail extends Component {
 
   render() {
     const img = {
-      maxWidth: "250px",
-      maxHeight: "250px"
+      maxWidth: "100%",
+      maxHeight: "100%"
     }
 
     const imgOpt = {
-      width: "250px"
+      width: "100%"
     }
 
     const clientDetail = this.state.clientDetail
@@ -234,18 +246,75 @@ class MemberDataDetail extends Component {
       return code + " - " + desc
     }
 
+    const uploadSelfieRes = () => {
+      this.setState({
+        clientImage: this.state.selfieUri
+      })
+      
+      this.handleModalCamera()
+    }
+
+    const uploadSelfie = () => {
+      this.props.actions.clientAddImage(this.state.selfieUri, { clientId: this.state.clientIdNo }, uploadSelfieRes)
+    }
+
     return (
       <ContentWrapper>
         <div className="content-heading">
           <div>Detail Member</div>
         </div>
 
+        <Modal
+          isOpen={this.state.modalCamera}
+          onRequestClose={() => this.handleModalCamera()}
+        >
+          <div className="container-fluid">
+            <div className="row">
+              <Button outline className="col-4 col-lg-2" color="primary"
+                onClick={() => this.handleModalCamera()}
+              >
+                Tutup Kamera
+              </Button>
+            </div>
+
+            <div className="row justify-content-center mt-3">
+              <Camera
+                isMaxResolution="true"
+                onTakePhoto={(dataUri) => { this.setState({ selfieUri: dataUri }); }}
+              />
+            </div>
+
+            <div className="center-parent mt-3">
+              {
+                this.state.selfieUri != null
+                  ? (
+                    <div>
+                      <div className="mb-3">
+                        <h1>Preview Image</h1>
+                      </div>
+                      <div className="row justify-content-center">
+                        <img className="col-md-6" src={this.state.selfieUri} />
+                      </div>
+                    </div>
+                  )
+                  : null
+              }
+            </div>
+
+            <div className="row">
+              <Button outline id="screenshot-button" className="col-12 mt-3" color="primary"
+                onClick={() => uploadSelfie()}
+              >
+                Upload Gambar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+
         <Card className="card-default">
           <CardBody>
             <Link to="/simpool/member/data">
-              <Button outline className="col-4 col-lg-2" color="primary"
-                type="submit" tabIndex={7}
-              >
+              <Button outline className="col-4 col-lg-2" color="primary" >
                 Kembali
               </Button>
             </Link>
@@ -264,7 +333,7 @@ class MemberDataDetail extends Component {
 
             <div className="row mt-5 mb-2">
               <div className="mt-2 col-lg-2 mb-3 center-parent">
-                <div style={imgOpt}>
+                <div className="center-parent" style={imgOpt}>
                   {
                     this.state.clientImage != null
                       ? (<img src={this.state.clientImage} style={img} />)
@@ -275,7 +344,7 @@ class MemberDataDetail extends Component {
                   <button className="btn btn-sm btn-secondary mr-1" type="button">
                     <em className="fa fa-upload"></em>
                   </button>
-                  <button className="btn btn-sm btn-secondary mr-1" type="button">
+                  <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => this.handleModalCamera()}>
                     <em className="fa fa-camera"></em>
                   </button>
                   <button className="btn btn-sm btn-secondary" type="button">
@@ -284,72 +353,70 @@ class MemberDataDetail extends Component {
                 </div>
               </div>
               <div className="mt-2 col-lg-5 ft-detail mb-3">
-                <div className="ml-2">
-                  <div className="center-parent">
-                    <h3>Profile</h3>
-                  </div>
-                  <div className="row mt-3">
-                    <span className="col-md-4">Activation Date</span>
-                    <strong className="col-md-8">
-                      {
-                        clientId != null
-                          ? Array.isArray(clientId.activationDate) && clientId.activationDate.length > 0
-                            ? clientId.activationDate[2] + " " + MONTHS_ID[clientId.activationDate[1] - 1] + " " + clientId.activationDate[0]
-                            : "-"
+                <div className="center-parent">
+                  <h3>Profile</h3>
+                </div>
+                <div className="row mt-3">
+                  <span className="col-md-4">Activation Date</span>
+                  <strong className="col-md-8">
+                    {
+                      clientId != null
+                        ? Array.isArray(clientId.activationDate) && clientId.activationDate.length > 0
+                          ? clientId.activationDate[2] + " " + MONTHS_ID[clientId.activationDate[1] - 1] + " " + clientId.activationDate[0]
                           : "-"
-                      }
-                    </strong>
-                  </div>
-                  <div className="row mt-3">
-                    <span className="col-md-4">Member of</span>
-                    <strong className="col-md-8">
-                      {
-                        clientId != null
-                          ? clientId.member != null
-                            ? clientId.member == false
-                              ? "Unassigned"
-                              : clientId.member
-                            : "-"
+                        : "-"
+                    }
+                  </strong>
+                </div>
+                <div className="row mt-3">
+                  <span className="col-md-4">Member of</span>
+                  <strong className="col-md-8">
+                    {
+                      clientId != null
+                        ? clientId.member != null
+                          ? clientId.member == false
+                            ? "Unassigned"
+                            : clientId.member
                           : "-"
-                      }
-                    </strong>
-                  </div>
-                  <div className="row mt-3">
-                    <span className="col-md-4">Mobile Number</span>
-                    <strong className="col-md-8">
-                      {
-                        clientId != null
-                          ? clientId.mobileNo != null
-                            ? clientId.mobileNo
-                            : "-"
+                        : "-"
+                    }
+                  </strong>
+                </div>
+                <div className="row mt-3">
+                  <span className="col-md-4">Mobile Number</span>
+                  <strong className="col-md-8">
+                    {
+                      clientId != null
+                        ? clientId.mobileNo != null
+                          ? clientId.mobileNo
                           : "-"
-                      }
-                    </strong>
-                  </div>
-                  <div className="row mt-3">
-                    <span className="col-md-4">Gender</span>
-                    <strong className="col-md-8">
-                      {
-                        clientId != null
-                          ? clientId.gender.description != null
-                            ? clientId.gender.description
-                            : "-"
+                        : "-"
+                    }
+                  </strong>
+                </div>
+                <div className="row mt-3">
+                  <span className="col-md-4">Gender</span>
+                  <strong className="col-md-8">
+                    {
+                      clientId != null
+                        ? clientId.gender.description != null
+                          ? clientId.gender.description
                           : "-"
-                      }
-                    </strong>
-                  </div>
-                  <div className="row mt-3">
-                    <span className="col-md-4">Date of Birth</span>
-                    <strong className="col-md-8">
-                      {
-                        clientId != null
-                          ? clientId.dateOfBirth != null
-                            ? clientId.dateOfBirth[2] + " " + MONTHS_ID[clientId.dateOfBirth[1] - 1] + " " + clientId.dateOfBirth[0]
-                            : "-"
+                        : "-"
+                    }
+                  </strong>
+                </div>
+                <div className="row mt-3">
+                  <span className="col-md-4">Date of Birth</span>
+                  <strong className="col-md-8">
+                    {
+                      clientId != null
+                        ? clientId.dateOfBirth != null
+                          ? clientId.dateOfBirth[2] + " " + MONTHS_ID[clientId.dateOfBirth[1] - 1] + " " + clientId.dateOfBirth[0]
                           : "-"
-                      }
-                    </strong>
-                  </div>
+                        : "-"
+                    }
+                  </strong>
                 </div>
               </div>
               <div className="mt-2 col-lg-5 ft-detail mb-5">
@@ -421,12 +488,12 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientDetail != null
-                      ? clientDetail.isTaxActive != null
-                        ? clientDetail.isTaxActive === true
-                          ? "Active"
+                        ? clientDetail.isTaxActive != null
+                          ? clientDetail.isTaxActive === true
+                            ? "Active"
+                            : "Inactive"
                           : "Inactive"
-                        : "Inactive"
-                      : "-"
+                        : "-"
                     }
                   </strong>
                 </div>
@@ -435,7 +502,7 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientDetail != null
-                        ? Array.isArray(clientDetail.lastTaxActive) && clientDetail.lastTaxActive.length > 0 
+                        ? Array.isArray(clientDetail.lastTaxActive) && clientDetail.lastTaxActive.length > 0
                           ? clientDetail.lastTaxActive[2] + " " + MONTHS_ID[clientDetail.lastTaxActive[1] - 1] + " " + clientDetail.lastTaxActive[0]
                           : "-"
                         : "-"
@@ -787,7 +854,7 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.dateOfBirth != null 
+                              ? clientDetail.dateOfBirth != null
                                 ? clientDetail.dateOfBirth[2] + " " + MONTHS_ID[clientDetail.dateOfBirth[1] - 1] + " " + clientDetail.dateOfBirth[0]
                                 : "-"
                               : "-"
@@ -895,7 +962,7 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.biInformation.typeOfIdentity != null 
+                              ? clientDetail.biInformation.typeOfIdentity != null
                                 ? clientDetail.typeOfIdentityBiOptions[clientDetail.biInformation.typeOfIdentity - 1].description
                                 : "-"
                               : "-"

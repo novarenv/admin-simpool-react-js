@@ -19,10 +19,8 @@ class Login extends Component {
       isOtpShown: false,
       rememberMe: false,
       formLogin: {
-        username: 'coba',
-        password: '123456',
-        checkUsername: 'coba',
-        checkPassword: '123456'
+        username: '',
+        password: ''
       }
     }
   }
@@ -234,6 +232,7 @@ class Login extends Component {
                           name="username"
                           className="form-control border-right-0 input-font-size"
                           placeholder="contoh: simpool"
+                          autoComplete="on"
                           invalid={this.hasError('formLogin', 'username', 'required')}
                           onChange={this.validateOnChange}
                           data-validate='["required"]'

@@ -17,7 +17,7 @@ import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
-import { withTranslation, Trans } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import ReactDataGrid from 'react-data-grid';
 import { Formik } from 'formik';
 
@@ -35,21 +35,6 @@ import 'react-datetime/css/react-datetime.css';
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
 };
-
-const SHORT_MONTHS_ID = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'Mei',
-  'Jun',
-  'Jul',
-  'Agu',
-  'Sep',
-  'Okt',
-  'Nov',
-  'Des',
-];
 
 const MONTHS_ID = [
   'Januari',
@@ -813,7 +798,6 @@ class MemberDataAdd extends Component {
   }
 
   setPhotos = (name, file) => {
-    console.log(file)
     this.setState(prevState => ({
       addValidation: {
         ...prevState.addValidation,

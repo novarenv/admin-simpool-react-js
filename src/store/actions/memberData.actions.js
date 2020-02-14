@@ -29,8 +29,9 @@ export function clientAdd(payload, setClientAddRes) {
   return { type: CLIENT_ADD, payload, setClientAddRes };
 }
 
-export function clientAddImage(payload, res) {
-  return { type: CLIENT_ADD_IMAGE, payload, res };
+export function clientAddImage(payload, res, uploadSelfieRes) {
+  console.log(payload)
+  return { type: CLIENT_ADD_IMAGE, payload, res, uploadSelfieRes };
 }
 
 export function clientAddDocument(payload, res) {

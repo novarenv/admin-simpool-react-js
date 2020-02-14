@@ -177,7 +177,7 @@ function* clientAddImage(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
-    console.log(clientAddImage)
+    action.uploadSelfieRes(clientAddImage)
 
   } catch (error) {
     console.log(error)
