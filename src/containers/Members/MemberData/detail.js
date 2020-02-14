@@ -12,12 +12,15 @@ import {
 } from 'reactstrap';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
 import PropTypes from 'prop-types';
-import { withTranslation, Trans } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import Modal from 'react-modal';
+import { useDropzone } from 'react-dropzone';
+
 import Camera from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import Swal from '../../../components/Common/Swal';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
@@ -119,6 +122,61 @@ const Savings = props => {
   )
 }
 
+const DragDrop = props => {
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      multiple: false,
+      onDrop: acceptedFiles => {
+        props.setPhotos(acceptedFiles[0])
+        acceptedFiles.map(file => Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        }));
+      }
+    })
+
+  const img = {
+    width: "50%",
+    height: "50%"
+  }
+
+  const files = acceptedFiles.map(file => {
+    if (file.preview != null) {
+      return (
+        <div key={"File " + file.path} className="center-parent">
+          <h5>
+            {file.path} - {file.size} bytes
+          </h5>
+          <img src={file.preview} style={img} />
+        </div>
+      )
+    } else {
+      return (
+        <div key={"File " + file.path} className="center-parent">
+          <h4>File is being uploaded..</h4>
+          <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+        </div>
+      )
+    }
+  });
+
+  return (
+    <div className="container--md mt-3">
+      <section>
+        <div {...getRootProps({ className: 'dropzone' })}>
+          <input name={props.name} {...getInputProps()} />
+          <p className="text-center box-placeholder-upload m-0 ft-detail">
+            {!isDragActive && "Drag 'n' drop some files here, or click to select files"}
+            {isDragActive && "Drop Here!"}
+          </p>
+        </div>
+        <aside>
+          {files}
+        </aside>
+      </section>
+    </div>
+  );
+}
+
 class MemberDataDetail extends Component {
   constructor(props) {
     super(props);
@@ -169,14 +227,17 @@ class MemberDataDetail extends Component {
       clientImage: null,
       clientSummary: null,
       modalCamera: false,
-      modalUpload: true,
+      modalUpload: false,
       selfieUri: null
     };
   }
 
   handleModalCamera() {
-    this.setState({ modalCamera: !this.state.modalCamera });
-    console.log(this.state.modalCamera)
+    this.setState({ modalCamera: !this.state.modalCamera })
+  }
+
+  handleModalUpload() {
+    this.setState({ modalUpload: !this.state.modalUpload })
   }
 
   toggleTab = tab => {
@@ -193,10 +254,46 @@ class MemberDataDetail extends Component {
     return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
+  swalOption = {
+    title: 'Are you sure?',
+    text: 'Do you want to delete this photo?',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, I\'d like to save it!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  deleteImage = () => {
+    this.props.actions.deleteClientImage(this.state.clientIdNo)
+    this.setState({clientImage: null})
+  }
+
+  swalCallback = (isConfirm, swal, deleteImage) => {
+    if (isConfirm) {
+      swal("Deleted!", "Your image has been deleted.", "success")
+      deleteImage()
+    } else {
+      swal("Cancelled", "Your image is safe :)", "error");
+    }
+  }
+
   render() {
     const img = {
       maxWidth: "100%",
-      maxHeight: "100%"
+      maxHeight: "200px"
     }
 
     const imgOpt = {
@@ -246,16 +343,41 @@ class MemberDataDetail extends Component {
       return code + " - " + desc
     }
 
-    const uploadSelfieRes = () => {
+    const uploadSelfieCamRes = () => {
       this.setState({
         clientImage: this.state.selfieUri
       })
-      
+
       this.handleModalCamera()
     }
 
-    const uploadSelfie = () => {
-      this.props.actions.clientAddImage(this.state.selfieUri, { clientId: this.state.clientIdNo }, uploadSelfieRes)
+    const uploadSelfieImageRes = () => {
+      this.setState({
+        clientImage: this.state.selfieUri
+      })
+
+      this.handleModalUpload()
+    }
+
+    const uploadSelfieCam = () => {
+      this.props.actions.clientAddImage(this.state.selfieUri, { clientId: this.state.clientIdNo }, uploadSelfieCamRes)
+    }
+
+    const uploadSelfieImage = () => {
+      const selfieImage = new FormData()
+
+      selfieImage.append(
+        "file",
+        this.state.selfieUri
+      )
+
+      this.props.actions.clientAddImage(selfieImage, { clientId: this.state.clientIdNo }, uploadSelfieImageRes)
+    }
+
+    const setPhoto = photo => {
+      this.setState({
+        selfieUri: photo
+      })
     }
 
     return (
@@ -302,8 +424,33 @@ class MemberDataDetail extends Component {
             </div>
 
             <div className="row">
-              <Button outline id="screenshot-button" className="col-12 mt-3" color="primary"
-                onClick={() => uploadSelfie()}
+              <Button outline className="col-12 mt-3" color="primary"
+                onClick={() => uploadSelfieCam()}
+              >
+                Upload Gambar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.modalUpload}
+          onRequestClose={() => this.handleModalUpload()}
+        >
+          <div className="container-fluid">
+            <div className="row">
+              <Button outline className="col-4 col-lg-2" color="primary"
+                onClick={() => this.handleModalUpload()}
+              >
+                Batalkan
+              </Button>
+            </div>
+
+            <DragDrop setPhotos={setPhoto} />
+
+            <div className="row">
+              <Button outline className="col-12 mt-3" color="primary"
+                onClick={() => uploadSelfieImage()}
               >
                 Upload Gambar
               </Button>
@@ -340,16 +487,18 @@ class MemberDataDetail extends Component {
                       : (<img src={"/img/user.png"} style={img} />)
                   }
                 </div>
-                <div className="mt-1" style={imgOpt}>
-                  <button className="btn btn-sm btn-secondary mr-1" type="button">
-                    <em className="fa fa-upload"></em>
+                <div className="mt-1 d-flex justify-content-center" style={imgOpt}>
+                  <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => this.handleModalUpload()}>
+                    <em className="fa fa-upload" />
                   </button>
                   <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => this.handleModalCamera()}>
-                    <em className="fa fa-camera"></em>
+                    <em className="fa fa-camera" />
                   </button>
-                  <button className="btn btn-sm btn-secondary" type="button">
-                    <em className="fa fa-trash"></em>
-                  </button>
+                  <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteImage}>
+                    <button className="btn btn-sm btn-secondary" type="button">
+                      <em className="fa fa-trash" />
+                    </button>
+                  </Swal>
                 </div>
               </div>
               <div className="mt-2 col-lg-5 ft-detail mb-3">

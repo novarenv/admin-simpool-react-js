@@ -8,6 +8,7 @@ import {
   CLIENT_ADD,
   CLIENT_ADD_IMAGE,
   CLIENT_ADD_DOCUMENT,
+  DELETE_CLIENT_IMAGE,
   GET_CLIENT_ACCOUNT,
   GET_CLIENT_DETAIL,
   GET_CLIENT_IMAGE,
@@ -202,7 +203,32 @@ function* clientAddDocument(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
-    // console.log(clientAddDocument)
+    console.log(clientAddDocument)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* deleteClientImage(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const clientAddImage = yield axios
+      .delete(
+        clientImageUrl(
+          action.payload
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    console.log(clientAddImage)
 
   } catch (error) {
     console.log(error)
@@ -252,7 +278,7 @@ function* getClientImage(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
-    action.setClientImage(getClientImage)
+    action.getClientImage(getClientImage)
 
   } catch (error) {
     console.log(error)
@@ -318,6 +344,7 @@ export default function* root() {
   yield takeEvery(CLIENT_ADD, clientAdd);
   yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
   yield takeEvery(CLIENT_ADD_DOCUMENT, clientAddDocument);
+  yield takeEvery(DELETE_CLIENT_IMAGE, deleteClientImage);  
   yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);

@@ -810,8 +810,6 @@ class MemberDataAdd extends Component {
     const state = this.state
     const addValidation = state.addValidation
 
-    console.log(addValidation.idCardPhoto)
-
     const clientImage = new FormData()
     clientImage.append(
       "file",

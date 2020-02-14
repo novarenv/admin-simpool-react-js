@@ -16,11 +16,23 @@ $placeholder-color : #444;
 
 $placeholder-large-padding-vertical : 80px;
 
+$placeholder-padding-upload : 300px;
+$placeholder-padding-upload-horizontal : 40%;
 
 // Placeholder container
 .box-placeholder {
     margin-bottom: $placeholder-margin-vertical;
     padding: $placeholder-padding;
+    border: 1px dashed $placeholder-border;
+    background: $placeholder-background;
+    color: $placeholder-color;
+}
+
+.box-placeholder-upload {
+    margin-bottom: $placeholder-margin-vertical;
+    padding: $placeholder-padding-upload;
+    padding-left: $placeholder-padding-upload-horizontal;
+    padding-right: $placeholder-padding-upload-horizontal;
     border: 1px dashed $placeholder-border;
     background: $placeholder-background;
     color: $placeholder-color;
