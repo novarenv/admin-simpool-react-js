@@ -187,6 +187,10 @@ class MemberDataDetail extends Component {
       maxHeight: "250px"
     }
 
+    const imgOpt = {
+      width: "250px"
+    }
+
     const clientDetail = this.state.clientDetail
     const clientId = this.state.clientId
     const clientSummary = this.state.clientSummary
@@ -212,7 +216,7 @@ class MemberDataDetail extends Component {
       clientDetail.merchantInformationCodeOption.map(merchant => {
         if (merchant.code === code) {
           desc = merchant.description
-        } 
+        }
       })
 
       return code + " - " + desc
@@ -250,22 +254,24 @@ class MemberDataDetail extends Component {
               <h1>
                 {
                   clientDetail != null
-                    ? clientDetail.fullname
-                    : null
+                    ? clientDetail.fullname != null
+                      ? clientDetail.fullname
+                      : "'"
+                    : "-"
                 }
               </h1>
             </div>
 
             <div className="row mt-5 mb-2">
-              <div className="mt-2 col-lg-2 center-parent mb-3">
-                <div>
+              <div className="mt-2 col-lg-2 mb-3 center-parent">
+                <div style={imgOpt}>
                   {
                     this.state.clientImage != null
                       ? (<img src={this.state.clientImage} style={img} />)
                       : (<img src={"/img/user.png"} style={img} />)
                   }
                 </div>
-                <div className="mt-1">
+                <div className="mt-1" style={imgOpt}>
                   <button className="btn btn-sm btn-secondary mr-1" type="button">
                     <em className="fa fa-upload"></em>
                   </button>
@@ -278,63 +284,75 @@ class MemberDataDetail extends Component {
                 </div>
               </div>
               <div className="mt-2 col-lg-5 ft-detail mb-3">
-                <div className="center-parent">
-                  <h3>Profile</h3>
-                </div>
-                <div className="row mt-3">
-                  <span className="col-md-4">Activation Date</span>
-                  <strong className="col-md-8">
-                    {
-                      clientId != null
-                        ? clientId.activationDate[2] + " " + MONTHS_ID[clientId.activationDate[1] - 1] + " " + clientId.activationDate[0]
-                        : "-"
-                    }
-                  </strong>
-                </div>
-                <div className="row mt-3">
-                  <span className="col-md-4">Member of</span>
-                  <strong className="col-md-8">
-                    {
-                      clientId != null
-                        ? clientId.member == false
-                          ? "Unassigned"
-                          : clientId.member
-                        : "-"
-                    }
-                  </strong>
-                </div>
-                <div className="row mt-3">
-                  <span className="col-md-4">Mobile Number</span>
-                  <strong className="col-md-8">
-                    {
-                      clientId != null
-                        ? clientId.mobileNo
-                        : "-"
-                    }
-                  </strong>
-                </div>
-                <div className="row mt-3">
-                  <span className="col-md-4">Gender</span>
-                  <strong className="col-md-8">
-                    {
-                      clientId != null
-                        ? clientId.gender.description
-                        : "-"
-                    }
-                  </strong>
-                </div>
-                <div className="row mt-3">
-                  <span className="col-md-4">Date of Birth</span>
-                  <strong className="col-md-8">
-                    {
-                      clientId != null
-                        ? clientId.dateOfBirth[2] + " " + MONTHS_ID[clientId.dateOfBirth[1] - 1] + " " + clientId.dateOfBirth[0]
-                        : "-"
-                    }
-                  </strong>
+                <div className="ml-2">
+                  <div className="center-parent">
+                    <h3>Profile</h3>
+                  </div>
+                  <div className="row mt-3">
+                    <span className="col-md-4">Activation Date</span>
+                    <strong className="col-md-8">
+                      {
+                        clientId != null
+                          ? Array.isArray(clientId.activationDate) && clientId.activationDate.length > 0
+                            ? clientId.activationDate[2] + " " + MONTHS_ID[clientId.activationDate[1] - 1] + " " + clientId.activationDate[0]
+                            : "-"
+                          : "-"
+                      }
+                    </strong>
+                  </div>
+                  <div className="row mt-3">
+                    <span className="col-md-4">Member of</span>
+                    <strong className="col-md-8">
+                      {
+                        clientId != null
+                          ? clientId.member != null
+                            ? clientId.member == false
+                              ? "Unassigned"
+                              : clientId.member
+                            : "-"
+                          : "-"
+                      }
+                    </strong>
+                  </div>
+                  <div className="row mt-3">
+                    <span className="col-md-4">Mobile Number</span>
+                    <strong className="col-md-8">
+                      {
+                        clientId != null
+                          ? clientId.mobileNo != null
+                            ? clientId.mobileNo
+                            : "-"
+                          : "-"
+                      }
+                    </strong>
+                  </div>
+                  <div className="row mt-3">
+                    <span className="col-md-4">Gender</span>
+                    <strong className="col-md-8">
+                      {
+                        clientId != null
+                          ? clientId.gender.description != null
+                            ? clientId.gender.description
+                            : "-"
+                          : "-"
+                      }
+                    </strong>
+                  </div>
+                  <div className="row mt-3">
+                    <span className="col-md-4">Date of Birth</span>
+                    <strong className="col-md-8">
+                      {
+                        clientId != null
+                          ? clientId.dateOfBirth != null
+                            ? clientId.dateOfBirth[2] + " " + MONTHS_ID[clientId.dateOfBirth[1] - 1] + " " + clientId.dateOfBirth[0]
+                            : "-"
+                          : "-"
+                      }
+                    </strong>
+                  </div>
                 </div>
               </div>
-              <div className="mt-2 col-lg-5 ft-detail mb-3">
+              <div className="mt-2 col-lg-5 ft-detail mb-5">
                 <div className="center-parent">
                   <h3>Performance History</h3>
                 </div>
@@ -343,7 +361,9 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientSummary != null
-                        ? clientSummary.loancycle
+                        ? clientSummary.loancycle != null
+                          ? clientSummary.loancycle
+                          : "-"
                         : "-"
                     }
                   </strong>
@@ -365,7 +385,9 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientSummary != null
-                        ? clientSummary.activeloans
+                        ? clientSummary.activeloans != null
+                          ? clientSummary.activeloans
+                          : "-"
                         : "-"
                     }
                   </strong>
@@ -375,7 +397,9 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientSummary != null
-                        ? this.NumberFormatted(clientSummary.totalsavings)
+                        ? clientSummary.totalsavings != null
+                          ? this.NumberFormatted(clientSummary.totalsavings)
+                          : "-"
                         : "-"
                     }
                   </strong>
@@ -385,18 +409,38 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientSummary != null
-                        ? clientSummary.activesavings
+                        ? clientSummary.activesavings != null
+                          ? clientSummary.activesavings
+                          : "-"
                         : "-"
                     }
                   </strong>
                 </div>
                 <div className="row mt-3">
                   <span className="col-md-4">Tax Status</span>
-                  <strong className="col-md-8">-</strong>
+                  <strong className="col-md-8">
+                    {
+                      clientDetail != null
+                      ? clientDetail.isTaxActive != null
+                        ? clientDetail.isTaxActive === true
+                          ? "Active"
+                          : "Inactive"
+                        : "Inactive"
+                      : "-"
+                    }
+                  </strong>
                 </div>
                 <div className="row mt-3">
                   <span className="col-md-4">Last Tax Active</span>
-                  <strong className="col-md-8">-</strong>
+                  <strong className="col-md-8">
+                    {
+                      clientDetail != null
+                        ? Array.isArray(clientDetail.lastTaxActive) && clientDetail.lastTaxActive.length > 0 
+                          ? clientDetail.lastTaxActive[2] + " " + MONTHS_ID[clientDetail.lastTaxActive[1] - 1] + " " + clientDetail.lastTaxActive[0]
+                          : "-"
+                        : "-"
+                    }
+                  </strong>
                 </div>
               </div>
             </div>
@@ -439,7 +483,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.officeName
+                              ? clientId.officeName != null
+                                ? clientId.officeName
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -449,7 +495,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.staffName
+                              ? clientId.staffName != null
+                                ? clientId.staffName
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -459,7 +507,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.legalForm.value
+                              ? clientId.legalForm.value != null
+                                ? clientId.legalForm.value
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -469,7 +519,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.sector.name
+                              ? clientId.sector.name != null
+                                ? clientId.sector.name
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -479,7 +531,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.accountNo
+                              ? clientId.accountNo != null
+                                ? clientId.accountNo
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -489,7 +543,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.externalId
+                              ? clientId.externalId != null
+                                ? clientId.externalId
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -499,7 +555,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientId != null
-                              ? clientId.nip
+                              ? clientId.nip != null
+                                ? clientId.nip
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -509,7 +567,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.prefixDescription.description
+                              ? clientDetail.prefixDescription.description != null
+                                ? clientDetail.prefixDescription.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -519,7 +579,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.fullname
+                              ? clientDetail.fullname != null
+                                ? clientDetail.fullname
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -529,7 +591,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.fullnameNonIdentity
+                              ? clientDetail.fullnameNonIdentity != null
+                                ? clientDetail.fullnameNonIdentity
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -539,7 +603,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.nickname
+                              ? clientDetail.nickname != null
+                                ? clientDetail.nickname
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -549,7 +615,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.suffixDescription.description
+                              ? clientDetail.suffixDescription.description != null
+                                ? clientDetail.suffixDescription.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -559,7 +627,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.typeOfIdentity.description
+                              ? clientDetail.typeOfIdentity.description != null
+                                ? clientDetail.typeOfIdentity.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -569,7 +639,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityNumber
+                              ? clientDetail.identityNumber != null
+                                ? clientDetail.identityNumber
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -579,7 +651,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityValidDate[2] + " " + MONTHS_ID[clientDetail.identityValidDate[1] - 1] + " " + clientDetail.identityValidDate[0]
+                              ? clientDetail.identityValidDate != null
+                                ? clientDetail.identityValidDate[2] + " " + MONTHS_ID[clientDetail.identityValidDate[1] - 1] + " " + clientDetail.identityValidDate[0]
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -589,7 +663,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.addressBasedOnIdentity
+                              ? clientDetail.addressBasedOnIdentity != null
+                                ? clientDetail.addressBasedOnIdentity
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -599,7 +675,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityCountry.description
+                              ? clientDetail.identityCountry.description != null
+                                ? clientDetail.identityCountry.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -609,7 +687,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityProvince.description
+                              ? clientDetail.identityProvince.description != null
+                                ? clientDetail.identityProvince.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -619,7 +699,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityCity.description
+                              ? clientDetail.identityCity.description != null
+                                ? clientDetail.identityCity.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -629,7 +711,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identitySubDistrict
+                              ? clientDetail.identitySubDistrict != null
+                                ? clientDetail.identitySubDistrict
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -639,7 +723,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityVillage
+                              ? clientDetail.identityVillage != null
+                                ? clientDetail.identityVillage
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -652,7 +738,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityPostalCode
+                              ? clientDetail.identityPostalCode != null
+                                ? clientDetail.identityPostalCode
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -662,7 +750,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityRt
+                              ? clientDetail.identityRt != null
+                                ? clientDetail.identityRt
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -672,7 +762,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.identityRw
+                              ? clientDetail.identityRw != null
+                                ? clientDetail.identityRw
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -683,7 +775,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.gender.description
+                              ? clientDetail.gender.description != null
+                                ? clientDetail.gender.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -693,7 +787,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.dateOfBirth[2] + " " + MONTHS_ID[clientDetail.dateOfBirth[1] - 1] + " " + clientDetail.dateOfBirth[0]
+                              ? clientDetail.dateOfBirth != null 
+                                ? clientDetail.dateOfBirth[2] + " " + MONTHS_ID[clientDetail.dateOfBirth[1] - 1] + " " + clientDetail.dateOfBirth[0]
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -703,7 +799,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.motherName
+                              ? clientDetail.motherName != null
+                                ? clientDetail.motherName
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -713,7 +811,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.placeOfBirth
+                              ? clientDetail.placeOfBirth != null
+                                ? clientDetail.placeOfBirth
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -723,7 +823,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.mobileNo
+                              ? clientDetail.mobileNo != null
+                                ? clientDetail.mobileNo
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -733,7 +835,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.phoneNumber
+                              ? clientDetail.phoneNumber != null
+                                ? clientDetail.phoneNumber
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -743,7 +847,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.faxNumber
+                              ? clientDetail.faxNumber != null
+                                ? clientDetail.faxNumber
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -753,7 +859,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.religion.description
+                              ? clientDetail.religion.description != null
+                                ? clientDetail.religion.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -763,7 +871,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.email
+                              ? clientDetail.email != null
+                                ? clientDetail.email
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -773,7 +883,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.maritalStatusCode.description
+                              ? clientDetail.maritalStatusCode.description != null
+                                ? clientDetail.maritalStatusCode.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -783,7 +895,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.typeOfIdentityBiOptions[clientDetail.biInformation.typeOfIdentity - 1].description
+                              ? clientDetail.biInformation.typeOfIdentity != null 
+                                ? clientDetail.typeOfIdentityBiOptions[clientDetail.biInformation.typeOfIdentity - 1].description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -793,7 +907,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.biInformation.spouseIdentityNumber
+                              ? clientDetail.biInformation.spouseIdentityNumber != null
+                                ? clientDetail.biInformation.spouseIdentityNumber
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -803,7 +919,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.biInformation.spouseName
+                              ? clientDetail.biInformation.spouseName != null
+                                ? clientDetail.biInformation.spouseName
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -813,7 +931,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.biInformation.prePostNuptialAggreement
+                              ? clientDetail.biInformation.prePostNuptialAggreement != null
+                                ? clientDetail.biInformation.prePostNuptialAggreement
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -823,7 +943,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? dateOfBirthSpouse(clientDetail.biInformation.dateOfBirthSpouse)
+                              ? clientDetail.biInformation.dateOfBirthSpouse != null
+                                ? dateOfBirthSpouse(clientDetail.biInformation.dateOfBirthSpouse)
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -833,7 +955,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.lastEducationLevelCode.description
+                              ? clientDetail.lastEducationLevelCode.description != null
+                                ? clientDetail.lastEducationLevelCode.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -843,7 +967,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.lastEducationLevelDescription
+                              ? clientDetail.lastEducationLevelDescription != null
+                                ? clientDetail.lastEducationLevelDescription
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -853,9 +979,11 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.isCitizen
-                                ? "true"
-                                : "false"
+                              ? clientDetail.isCitizen != null
+                                ? clientDetail.isCitizen
+                                  ? "true"
+                                  : "false"
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -874,7 +1002,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.address
+                              ? clientDetail.address != null
+                                ? clientDetail.address
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -884,7 +1014,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.country.description
+                              ? clientDetail.country.description != null
+                                ? clientDetail.country.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -894,7 +1026,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.province.description
+                              ? clientDetail.province.description != null
+                                ? clientDetail.province.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -904,7 +1038,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.city.description
+                              ? clientDetail.city.description != null
+                                ? clientDetail.city.description
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -914,7 +1050,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.subDistrict
+                              ? clientDetail.subDistrict != null
+                                ? clientDetail.subDistrict
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -926,7 +1064,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.village
+                              ? clientDetail.village != null
+                                ? clientDetail.village
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -936,7 +1076,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.postalCode
+                              ? clientDetail.postalCode != null
+                                ? clientDetail.postalCode
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -946,7 +1088,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.rt
+                              ? clientDetail.rt != null
+                                ? clientDetail.rt
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -956,7 +1100,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.rw
+                              ? clientDetail.rw != null
+                                ? clientDetail.rw
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -966,7 +1112,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.otherHomeOwnershipStatus
+                              ? clientDetail.otherHomeOwnershipStatus != null
+                                ? clientDetail.otherHomeOwnershipStatus
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -985,7 +1133,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.taxNumber
+                              ? clientDetail.taxNumber != null
+                                ? clientDetail.taxNumber
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -995,7 +1145,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.taxName
+                              ? clientDetail.taxName != null
+                                ? clientDetail.taxName
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1005,7 +1157,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.taxAddress
+                              ? clientDetail.taxAddress != null
+                                ? clientDetail.taxAddress
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1017,9 +1171,11 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.isTaxActive
-                                ? "Yes"
-                                : "No"
+                              ? clientDetail.isTaxActive != null
+                                ? clientDetail.isTaxActive
+                                  ? "Yes"
+                                  : "No"
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1029,7 +1185,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? merchantInformationCode(clientDetail.merchantInformationCode)
+                              ? clientDetail.merchantInformationCode != null
+                                ? merchantInformationCode(clientDetail.merchantInformationCode)
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1039,7 +1197,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? merchantCategoryCode(clientDetail.merchantCategoryCode)
+                              ? clientDetail.merchantCategoryCode != null
+                                ? merchantCategoryCode(clientDetail.merchantCategoryCode)
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1054,7 +1214,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.mobileUser
+                              ? clientDetail.mobileUser != null
+                                ? clientDetail.mobileUser
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1064,7 +1226,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.timeline.activatedOnDate[2] + " " + MONTHS_ID[clientDetail.timeline.activatedOnDate[1] - 1] + " " + clientDetail.timeline.activatedOnDate[0]
+                              ? Array.isArray(clientDetail.timeline.activatedOnDate) && clientDetail.timeline.activatedOnDate.length > 0
+                                ? clientDetail.timeline.activatedOnDate[2] + " " + MONTHS_ID[clientDetail.timeline.activatedOnDate[1] - 1] + " " + clientDetail.timeline.activatedOnDate[0]
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1076,7 +1240,9 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.timeline.submittedOnDate[2] + " " + MONTHS_ID[clientDetail.timeline.submittedOnDate[1] - 1] + " " + clientDetail.timeline.submittedOnDate[0]
+                              ? Array.isArray(clientDetail.timeline.submittedOnDate) && clientDetail.timeline.submittedOnDate.length > 0
+                                ? clientDetail.timeline.submittedOnDate[2] + " " + MONTHS_ID[clientDetail.timeline.submittedOnDate[1] - 1] + " " + clientDetail.timeline.submittedOnDate[0]
+                                : "-"
                               : "-"
                           }
                         </strong>
@@ -1085,10 +1251,13 @@ class MemberDataDetail extends Component {
                         <span className="col-md-4">Resignation Date</span>
                         <strong className="col-md-8">
                           {
+                            "-"
                             // clientId != null
-                            //   ? clientId.officeName
+                            //   ? clientId.officeName != null
+                            //     ? clientId.officeName
+                            //     : "-"
                             //   : 
-                              "-"
+                            // "-"
                           }
                         </strong>
                       </div>
