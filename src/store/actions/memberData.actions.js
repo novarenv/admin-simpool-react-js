@@ -7,6 +7,7 @@ export const CLIENT_ADD_DOCUMENT = 'CLIENT_ADD_DOCUMENT';
 export const DELETE_CLIENT_IMAGE = 'DELETE_CLIENT_IMAGE';
 export const GET_CLIENT_ACCOUNT = 'GET_CLIENT_ACCOUNT';
 export const GET_CLIENT_DETAIL = 'GET_CLIENT_DETAIL';
+export const GET_CLIENT_DETAIL_PARAMS = 'GET_CLIENT_DETAIL_PARAMS';
 export const GET_CLIENT_ID = 'GET_CLIENT_ID';
 export const GET_CLIENT_IMAGE = 'GET_CLIENT_IMAGE';
 export const GET_CLIENT_SUMMARY = 'GET_CLIENT_SUMMARY';
@@ -54,6 +55,10 @@ export function getClientAccount(payload, setClientAccount) {
 
 export function getClientDetail(payload, setClientDetail) {
   return { type: GET_CLIENT_DETAIL, payload, setClientDetail };
+}
+
+export function getClientDetailParams(payload, setClientDetail) {
+  return { type: GET_CLIENT_DETAIL_PARAMS, payload, setClientDetail };
 }
 
 export function getClientImage(payload, getClientImage) {

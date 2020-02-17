@@ -205,7 +205,7 @@ class MemberDataAdd extends Component {
       totalFilteredRecords: false,
       pageItems: [],
       today: '',
-      activeStep: '3',
+      activeStep: '1',
       files: [],
 
       rows: [],

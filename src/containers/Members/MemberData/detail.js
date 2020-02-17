@@ -278,7 +278,7 @@ class MemberDataDetail extends Component {
 
   deleteImage = () => {
     this.props.actions.deleteClientImage(this.state.clientIdNo)
-    this.setState({clientImage: null})
+    this.setState({ clientImage: null })
   }
 
   swalCallback = (isConfirm, swal, deleteImage) => {
@@ -784,7 +784,7 @@ class MemberDataDetail extends Component {
                           {
                             clientDetail != null
                               ? clientDetail.prefixDescription.description != null
-                                ? clientDetail.prefixDescription.description
+                                ? clientDetail.prefixDescription.code + " - " + clientDetail.prefixDescription.description
                                 : "-"
                               : "-"
                           }
@@ -832,7 +832,7 @@ class MemberDataDetail extends Component {
                           {
                             clientDetail != null
                               ? clientDetail.suffixDescription.description != null
-                                ? clientDetail.suffixDescription.description
+                                ? clientDetail.suffixDescription.code + " - " + clientDetail.suffixDescription.description
                                 : "-"
                               : "-"
                           }
@@ -1480,7 +1480,7 @@ class MemberDataDetail extends Component {
                     </div>
                   </div>
 
-                  <Link to="/simpool/member/data-edit">
+                  <Link to={"/simpool/member/data-edit/" + this.state.clientIdNo}>
                     <Button outline className="mt-4 mb-2 col-12" color="warning" tabIndex={7}>Edit Member</Button>
                   </Link>
                 </TabPane>

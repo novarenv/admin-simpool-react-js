@@ -126,7 +126,6 @@ const PaginatedPage = createUltimatePagination({
   }
 });
 
-
 class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
@@ -279,122 +278,145 @@ class MemberData extends Component {
     }
   }
 
+  editMember = () => {
+    console.log("Edit")
+  }
+
   actionCell = [
     {
       icon: <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteRow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
-      icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />,
-      callback: () => {
-        this.props.history.push('/simpool/member/data-edit')
-      }
+      icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />
     }
   ];
-  getCellActions = (column, row) => {
-    const cellActions = {
-      ACTION: this.actionCell
-    };
+getCellActions = (column, row) => {
+  const cellActions = {
+    ACTION: this.actionCell
+  };
 
-    return cellActions[column.key];
-  }
+  return cellActions[column.key];
+}
 
-  onCellSelected = ({ rowIdx, idx }) => {
-    if (idx !== 0) {
-      let clientId
+onCellSelected = ({ rowIdx, idx }) => {
+  console.log(rowIdx)
+  console.log(idx)
+  if (idx !== 0) {
+    let clientId
 
-      if (this.state.searchRes != null) {
-        this.state.searchRes.map(item => {
-          if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
-            clientId = item.entityId
-          }
-        })
-      } else {
-        this.state.res.pageItems.map(item => {
-          if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-            clientId = item.id
-          }
-        })
-      }
-
-      this.props.history.push('/simpool/member/data-detail/' + clientId)
+    if (this.state.searchRes != null) {
+      this.state.searchRes.map(item => {
+        if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
+          clientId = item.entityId
+        }
+      })
+    } else {
+      this.state.res.pageItems.map(item => {
+        if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+          clientId = item.id
+        }
+      })
     }
-    this.state.rowIdx = rowIdx
-  };
 
-  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
-    this.setState(state => {
-      const rows = state.rows.slice();
-      for (let i = fromRow; i <= toRow; i++) {
-        rows[i] = { ...rows[i], ...updated };
-      }
-      return { rows };
-    });
-  };
-
-  changePage = page => {
-    console.log(page)
-    this.setState({ page: page })
-
-    const offset = parseInt((page - 1) * 25)
-
-    console.log(offset)
-
-    this.props.actions.clientIndex(
-      {
-        limit: 25,
-        offset: offset
-      },
-      this.createRows
-    )
+    this.props.history.push('/simpool/member/data-detail/' + clientId)
   }
 
-  render() {
-    return (
-      <ContentWrapper>
-        <div className="content-heading">
-          <span><Trans i18nKey='member.data.MEMBER_DATA'>Member Data</Trans></span>
-        </div>
-        <Container fluid>
-          <Card>
-            <CardBody>
-              <AddBar />
-              <SearchBar props={this.props} searchRows={this.searchRows} />
+  // if (idx === 0) {
+  //   let clientId
 
-              <Container fluid className="center-parent">
-                {
-                  this.state.rows.length > 0
-                    ? (
-                      <div>
-                        <ReactDataGrid
-                          onGridSort={this.handleGridSort}
-                          columns={this._columns}
-                          rowGetter={this.rowGetter}
-                          rowsCount={this.state.rows.length}
-                          minHeight={25 * 35 + 50}
-                          getCellActions={this.getCellActions.bind(this)}
-                          onCellSelected={this.onCellSelected.bind(this)}
-                          onGridRowsUpdated={this.onGridRowsUpdated}
-                        />
+  //   if (this.state.searchRes != null) {
+  //     this.state.searchRes.map(item => {
+  //       if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
+  //         clientId = item.entityId
+  //       }
+  //     })
+  //   } else {
+  //     this.state.res.pageItems.map(item => {
+  //       if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+  //         clientId = item.id
+  //       }
+  //     })
+  //   }
 
-                        <PaginatedPage
-                          className="mt-3"
-                          totalPages={this.state.totalPages}
-                          currentPage={this.state.page}
-                          onChange={page => this.changePage(page)}
-                        />
-                      </div>
-                    )
-                    : (
-                      <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
-                    )
-                }
-              </Container>
-            </CardBody>
-          </Card>
-        </Container>
-      </ContentWrapper>
-    );
-  }
+  //   this.props.history.push('/simpool/member/data-edit/' + clientId)
+  // }
+  this.setState({ rowIdx })
+};
+
+onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+  this.setState(state => {
+    const rows = state.rows.slice();
+    for (let i = fromRow; i <= toRow; i++) {
+      rows[i] = { ...rows[i], ...updated };
+    }
+    return { rows };
+  });
+};
+
+changePage = page => {
+  console.log(page)
+  this.setState({ page: page })
+
+  const offset = parseInt((page - 1) * 25)
+
+  console.log(offset)
+
+  this.props.actions.clientIndex(
+    {
+      limit: 25,
+      offset: offset
+    },
+    this.createRows
+  )
+}
+
+render() {
+  return (
+    <ContentWrapper>
+      <div className="content-heading">
+        <span><Trans i18nKey='member.data.MEMBER_DATA'>Member Data</Trans></span>
+      </div>
+      <Container fluid>
+        <Card>
+          <CardBody>
+            <AddBar />
+            <SearchBar props={this.props} searchRows={this.searchRows} />
+
+            <Container fluid className="center-parent">
+              {
+                this.state.rows.length > 0
+                  ? (
+                    <div>
+                      <ReactDataGrid
+                        onGridSort={this.handleGridSort}
+                        columns={this._columns}
+                        rowGetter={this.rowGetter}
+                        rowsCount={this.state.rows.length}
+                        minHeight={25 * 35 + 50}
+                        getCellActions={this.getCellActions.bind(this)}
+                        onCellSelected={this.onCellSelected.bind(this)}
+                        onGridRowsUpdated={this.onGridRowsUpdated}
+                      />
+
+                      <PaginatedPage
+                        className="mt-3"
+                        totalPages={this.state.totalPages}
+                        currentPage={this.state.page}
+                        onChange={page => this.changePage(page)}
+                      />
+                    </div>
+                  )
+                  : (
+                    <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+                  )
+              }
+            </Container>
+          </CardBody>
+        </Card>
+      </Container>
+    </ContentWrapper>
+  );
+}
 }
 
 MemberData.propTypes = {
