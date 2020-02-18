@@ -90,7 +90,7 @@ const Savings = props => {
       {
         props.savings.map((acc, key) => {
           return (
-            <div key={"Saving " + key}>
+            <div key={"Savings " + key}>
               <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
                 <div className="col-2">
                   <span>{acc.accountNo}</span>
@@ -124,13 +124,6 @@ const Savings = props => {
 }
 
 const Loans = props => {
-  const NumberFormatted = amount => {
-    const amountInt = parseInt(amount)
-
-    return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
-
   const rowClicked = () => {
     console.log("Clicked!")
   }
@@ -165,7 +158,7 @@ const Loans = props => {
       {
         props.loans.map((acc, key) => {
           return (
-            <div key={"Saving " + key}>
+            <div key={"Loans " + key}>
               <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
                 <div className="col-2">
                   <span>{acc.accountNo}</span>
@@ -188,6 +181,66 @@ const Loans = props => {
                   </div>
                   <div className="col-6">
                     <span>{acc.status.value}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="row d-flex justify-content-center">
+                <hr className="col-11 hr-margin-0" />
+              </div>
+            </div>
+          )
+        })
+      }
+    </div>
+  )
+}
+
+const Documents = props => {
+  const rowClicked = () => {
+    console.log("Clicked!")
+  }
+
+  return (
+    <div id="documents">
+      <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+        <div className="col-3">
+          <span>Name</span>
+        </div>
+        <div className="col-3">
+          <span>Description</span>
+        </div>
+        <div className="col-3">
+          <span>File Name</span>
+        </div>
+        <div className="col-3">
+          <span>Actions</span>
+        </div>
+      </div>
+      {
+        props.documents.map((acc, key) => {
+          return (
+            <div key={"Documents " + key}>
+              <div className="row ft-detail list-docs d-flex justify-content-center list-hover">
+                <div className="col-3">
+                  <span>{acc.name}</span>
+                </div>
+                <div className="col-3">
+                  <span>{acc.description}</span>
+                </div>
+                <div className="col-3">
+                  <span>{acc.fileName}</span>
+                </div>
+                <div className="col-3 row d-flex justify-content-center center-parent">
+                  <div className="col-6">
+                    <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => console.log("Preview")}>
+                      <em className="fa fa-eye" />
+                    </button>
+                    <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => console.log("Download")}>
+                      <em className="fa fa-download" />
+                    </button>
+                    <button className="btn btn-sm btn-secondary" type="button" onClick={() => console.log("Delete")}>
+                      <em className="fa fa-times" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -273,14 +326,20 @@ class MemberDataDetail extends Component {
         clientDetail: res
       })
     }
-    const setClientImage = res => {
+    const setClientDocuments = res => {
+      console.log(res)
       this.setState({
-        clientImage: res
+        clientDocuments: res
       })
     }
     const setClientId = res => {
       this.setState({
         clientId: res
+      })
+    }
+    const setClientImage = res => {
+      this.setState({
+        clientImage: res
       })
     }
     const setClientSummary = res => {
@@ -291,21 +350,24 @@ class MemberDataDetail extends Component {
 
     this.props.actions.getClientAccount(clientIdNo, setClientAccount)
     this.props.actions.getClientDetail(clientIdNo, setClientDetail)
-    this.props.actions.getClientImage(clientIdNo, setClientImage)
+    this.props.actions.getClientDocuments(clientIdNo, setClientDocuments)
     this.props.actions.getClientId(clientIdNo, setClientId)
+    this.props.actions.getClientImage(clientIdNo, setClientImage)
     this.props.actions.getClientSummary(clientIdNo, setClientSummary)
     Modal.setAppElement('body')
 
     this.state = {
       activeTab: 'detail',
-      clientId: null,
-      clientIdNo: clientIdNo,
       clientAccount: {
         savingsAccounts: []
       },
+      clientId: null,
+      clientIdNo: clientIdNo,
       clientDetail: null,
+      clientDocuments: null,
       clientImage: null,
       clientSummary: null,
+      documentsActive: false,
       modalCamera: false,
       modalUpload: false,
       selfieUri: null
@@ -574,12 +636,15 @@ class MemberDataDetail extends Component {
                   <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => this.handleModalCamera()}>
                     <em className="fa fa-camera" />
                   </button>
-                  <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteImage}>
+                  <Swal options={this.swalOption} callback={this.swalCallback} deleterow={this.deleteImage}>
                     <button className="btn btn-sm btn-secondary" type="button">
                       <em className="fa fa-trash" />
                     </button>
                   </Swal>
                 </div>
+                <button className="btn btn-secondary mt-2 col-12" onClick={() => this.setState({ documentsActive: !this.state.documentsActive })}>
+                  Documents
+                </button>
               </div>
               <div className="mt-2 col-lg-5 ft-detail mb-3">
                 <div className="center-parent">
@@ -741,7 +806,15 @@ class MemberDataDetail extends Component {
               </div>
             </div>
 
-            <div role="tabpanel row">
+            {
+              this.state.documentsActive
+                ? (
+                  <Documents documents={this.state.clientDocuments} />
+                )
+                : null
+            }
+
+            <div role="tabpanel row" className="mt-5">
               <Nav tabs justified>
                 <NavItem className="nav-tab">
                   <NavLink className={this.state.activeTab === 'detail' ? 'active' : ''}

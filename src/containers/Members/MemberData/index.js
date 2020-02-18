@@ -241,7 +241,7 @@ class MemberData extends Component {
     this.setState({ rows });
   };
 
-  deleteRow = () => {
+  deleterow = () => {
     const rows = [...this.state.rows];
     rows.splice(this.state.rowIdx, 1);
     this.setState({ rows: rows });
@@ -269,10 +269,10 @@ class MemberData extends Component {
     }
   }
 
-  swalCallback(isConfirm, swal, deleteRow) {
+  swalCallback(isConfirm, swal, deleterow) {
     if (isConfirm) {
       swal("Deleted!", "Your savings has been deleted.", "success")
-      deleteRow()
+      deleterow()
     } else {
       swal("Cancelled", "Your savings is safe :)", "error");
     }
@@ -284,7 +284,7 @@ class MemberData extends Component {
 
   actionCell = [
     {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleteRow={this.deleteRow}> <span className="fas fa-times swal-del" /> </Swal>
+      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleterow={this.deleterow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
       icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />

@@ -12,6 +12,7 @@ import {
   GET_CLIENT_ACCOUNT,
   GET_CLIENT_DETAIL,
   GET_CLIENT_DETAIL_PARAMS,
+  GET_CLIENT_DOCUMENTS,
   GET_CLIENT_IMAGE,
   GET_CLIENT_ID,
   GET_CLIENT_SUMMARY,
@@ -291,6 +292,31 @@ function* getClientDetailParams(action) {
   }
 }
 
+function* getClientDocuments(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const getClientDocuments = yield axios
+      .get(
+        clientDocumentUrl(
+          action.payload
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    action.setClientDocuments(getClientDocuments)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 function* getClientImage(action) {
   const auth = yield select(authSelector)
 
@@ -407,6 +433,7 @@ export default function* root() {
   yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
   yield takeEvery(GET_CLIENT_DETAIL_PARAMS, getClientDetailParams);
+  yield takeEvery(GET_CLIENT_DOCUMENTS, getClientDocuments);  
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);
   yield takeEvery(GET_CLIENT_ID, getClientId);
   yield takeEvery(GET_CLIENT_SUMMARY, getClientSummary);
