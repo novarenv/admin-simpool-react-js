@@ -14,7 +14,8 @@ import {
   GET_CLIENT_DETAIL_PARAMS,
   GET_CLIENT_IMAGE,
   GET_CLIENT_ID,
-  GET_CLIENT_SUMMARY
+  GET_CLIENT_SUMMARY,
+  PUT_CLIENT_ID
 } from '../actions/actions';
 import {
   headers,
@@ -188,7 +189,7 @@ function* clientAddImage(action) {
 
 function* clientAddDocument(action) {
   const auth = yield select(authSelector)
-  
+
   try {
     const clientAddDocument = yield axios
       .post(
@@ -292,7 +293,7 @@ function* getClientDetailParams(action) {
 
 function* getClientImage(action) {
   const auth = yield select(authSelector)
-  
+
   try {
     const getClientImage = yield axios
       .get(
@@ -317,7 +318,7 @@ function* getClientImage(action) {
 
 function* getClientId(action) {
   const auth = yield select(authSelector)
-  
+
   try {
     const getClientId = yield axios
       .get(
@@ -342,7 +343,7 @@ function* getClientId(action) {
 
 function* getClientSummary(action) {
   const auth = yield select(authSelector)
-  
+
   try {
     const getClientSummary = yield axios
       .get(
@@ -367,6 +368,121 @@ function* getClientSummary(action) {
   }
 }
 
+function* putClientId(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const getClientId = yield axios
+      .put(
+        clientIdUrl(
+          action.payload.clientId
+        ),
+        {
+          "officeId": 1,
+          "legalForm": "PERSON",
+          "firstname": "Angga",
+          "lastname": "Identity",
+          "active": true,
+          "accountNo": "1201200002",
+          "staffId": 1,
+          "externalId": "081324872280",
+          "mobileNo": "081324872280",
+          "genderCodeValue": "M",
+          "address": "Alamat Domisili",
+          "typeOfIdentityId": "IC",
+          "provinceId": "1200",
+          "provinceName": "Jawa Timur",
+          "cityId": "1291",
+          "cityName": "Kota Surabaya",
+          "countryCodeValue": "IDN",
+          "flagTaxCodeValue": "Y",
+          "placeOfBirth": "Kota Surabaya",
+          "motherName": "mama",
+          "sectorId": 1000,
+          "mobileUser": "angga01",
+          "nip": "081324872281",
+          "identityNumber": "3213123133213123",
+          "postalCode": "32132",
+          "fullname": "Angga Identity",
+          "member": false,
+          "directorateCode": "N/A",
+          "companyCode": "N/A",
+          "addressBasedOnIdentity": "alamat",
+          "phoneNumber": "031324872280",
+          "religion": "Islam",
+          "email": "anggaa.pradipta@gmail.com",
+          "merchantCategoryCode": "8931",
+          "merchantInformationCode": "02",
+          "spouseIdentityNumber": "3213123133213123",
+          "spouseName": "Angga's Spouse",
+          "prePostNuptialAggreement": "Y",
+          "typeOfIdentitySpouse": "1",
+          "clientNonPersonDetails": {
+            "businessType": "",
+            "corporateId": "",
+            "isLjk": false,
+            "ljkCode": null,
+            "bankFlag": null,
+            "incorporationDate": "",
+            "incorpValidityTillDate": "",
+            "publicationDate": "",
+            "legalityEndDate": ""
+          },
+          "prefixCode": "H.",
+          "suffixCode": "S.T.",
+          "nickname": "Angga Alias",
+          "identityValidDate": "12 Maret 2020",
+          "maritalStatusCode": "Kawin",
+          "lastEducationLevelCode": "0199",
+          "lastEducationLevelDescription": "D4",
+          "isCitizen": true,
+          "taxNumber": "324232131231231",
+          "taxName": "Angga Tax",
+          "taxAddress": "Alamat Tax",
+          "rt": "1",
+          "rw": "1",
+          "village": "Village Domisili",
+          "subDistrict": "Distric Domisili",
+          "faxNumber": "081324872280",
+          "identitySubDistrict": "distric",
+          "identityVillage": "village",
+          "identityPostalCode": "32132",
+          "identityProvinceId": "1200",
+          "identityProvinceName": "Jawa Timur",
+          "identityCityId": "1291",
+          "identityCityName": "Kota Surabaya",
+          "identityCountryCodeValue": "IDN",
+          "identityRt": "1",
+          "identityRw": "1",
+          "fullnameNonIdentity": "Angga Full",
+          "otherHomeOwnershipStatus": "Angga Status",
+          "homeOwnershipStatus": "99",
+          "legalFormId": 1,
+          "locale": "id",
+          "dateFormat": "dd MMMM yyyy",
+          "activationDate": "20 Januari 2020",
+          "dateOfBirth": "01 Januari 2020",
+          "submittedOnDate": "20 Januari 2020",
+          "dateOfBirthSpouse": "29 Januari 2020"
+        },
+        {
+          headers: {
+            ...headers,
+            'Authorization': 'Basic ' + auth,
+            'Access-Control-Allow-Origin': '*'
+          }
+        }
+      )
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    console.log(getClientId)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default function* root() {
   yield takeEvery(CLIENT_INDEX, clientIndex);
   yield takeEvery(CHECK_DUPLICATE, checkDuplicate);
@@ -374,11 +490,12 @@ export default function* root() {
   yield takeEvery(CLIENT_ADD, clientAdd);
   yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
   yield takeEvery(CLIENT_ADD_DOCUMENT, clientAddDocument);
-  yield takeEvery(DELETE_CLIENT_IMAGE, deleteClientImage);  
+  yield takeEvery(DELETE_CLIENT_IMAGE, deleteClientImage);
   yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
   yield takeEvery(GET_CLIENT_DETAIL_PARAMS, getClientDetailParams);
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);
   yield takeEvery(GET_CLIENT_ID, getClientId);
   yield takeEvery(GET_CLIENT_SUMMARY, getClientSummary);
+  yield takeEvery(PUT_CLIENT_ID, putClientId);
 }

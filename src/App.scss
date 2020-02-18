@@ -98,7 +98,7 @@ label {
 }
 
 
-/* Avatar */
+// Avatar
 .btn-logout {
   font-size: 12px;
   margin-bottom: 0;
@@ -159,6 +159,11 @@ input:focus {
 
 .fa-angle-right {
   font-size: 30px;
+}
+
+.dt-bg:read-only {
+  background-color: #ffffff;
+  cursor: pointer;
 }
 
 

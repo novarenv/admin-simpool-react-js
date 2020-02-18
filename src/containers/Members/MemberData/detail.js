@@ -1328,8 +1328,12 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             clientDetail != null
-                              ? clientDetail.otherHomeOwnershipStatus != null
-                                ? clientDetail.otherHomeOwnershipStatus
+                              ? clientDetail.homeOwnershipStatus != null
+                                ? clientDetail.homeOwnershipStatus.id === 100
+                                  ? clientDetail.homeOwnershipStatus.description
+                                  : clientDetail.homeOwnershipStatus.id === 99
+                                    ? clientDetail.otherHomeOwnershipStatus
+                                    : "-"
                                 : "-"
                               : "-"
                           }

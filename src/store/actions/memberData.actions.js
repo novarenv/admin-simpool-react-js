@@ -11,6 +11,7 @@ export const GET_CLIENT_DETAIL_PARAMS = 'GET_CLIENT_DETAIL_PARAMS';
 export const GET_CLIENT_ID = 'GET_CLIENT_ID';
 export const GET_CLIENT_IMAGE = 'GET_CLIENT_IMAGE';
 export const GET_CLIENT_SUMMARY = 'GET_CLIENT_SUMMARY';
+export const PUT_CLIENT_ID = 'PUT_CLIENT_ID';
 
 // Index
 export function clientIndex(payload, createRows) {
@@ -67,4 +68,9 @@ export function getClientImage(payload, getClientImage) {
 
 export function getClientSummary(payload, setClientSummary) {
   return { type: GET_CLIENT_SUMMARY, payload, setClientSummary };
+}
+
+// Edit
+export function putClientId(payload, setClientId) {
+  return { type: PUT_CLIENT_ID, payload, setClientId };
 }
