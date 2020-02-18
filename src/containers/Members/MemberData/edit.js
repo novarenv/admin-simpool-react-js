@@ -117,6 +117,8 @@ class MemberDataEdit extends Component {
         email: res.email,
         externalId: res.externalId,
         faxNumber: res.faxNumber,
+        flagTax: res.flagTax.description,
+        flagTaxOptions: res.flagTaxOptions,
         fullname: res.fullnameNonIdentity,
         gender: res.gender.description,
         genderOptions: res.genderOptions,
@@ -141,7 +143,12 @@ class MemberDataEdit extends Component {
         lastEducationLevelDescription: res.lastEducationLevelDescription,
         maritalStatus: res.maritalStatusCode.description,
         maritalStatusOption: res.maritalStatusCodeOption,
+        merchantCategoryCode: res.merchantCategoryCode,
+        merchantCategoryOption: res.merchantCategoryOption,
+        merchantInformationCode: res.merchantInformationCode,
+        merchantInformationCodeOption: res.merchantInformationCodeOption,
         mobileNo: res.mobileNo,
+        mobileUser: res.mobileUser,
         motherName: res.motherName,
         nip: res.nip,
         office: res.officeName,
@@ -165,9 +172,13 @@ class MemberDataEdit extends Component {
         spouseName: res.biInformation.spouseName,
         staff: res.staffName,
         staffOptions: res.staffOptions,
+        submittedOnDate: res.timeline.submittedOnDate,
         subDistrict: res.subDistrict,
         suffix: res.suffixDescription.code,
         suffixNameCodeOption: res.suffixNameCodeOption,
+        taxAddress: res.taxAddress,
+        taxName: res.taxName,
+        taxNumber: res.taxNumber,
         typeOfIdentity: res.typeOfIdentity.description,
         typeOfIdentityBi: res.biInformation.typeOfIdentity,
         typeOfIdentityOptions: res.typeOfIdentityOptions,
@@ -181,7 +192,7 @@ class MemberDataEdit extends Component {
     this.state = {
       address: '',
       addressBasedOnIdentity: '',
-      activeTab: "address",
+      activeTab: "others",
       city: '',
       cityOptions: [],
       cityOptionsFilter: [],
@@ -197,6 +208,8 @@ class MemberDataEdit extends Component {
       email: '',
       externalId: '',
       faxNumber: '',
+      flagTax: '',
+      flagTaxOptions: [],
       fullname: '',
       gender: '',
       genderOptions: [],
@@ -220,7 +233,12 @@ class MemberDataEdit extends Component {
       lasEducationOtherIsActive: false,
       maritalStatus: '',
       maritalStatusOption: [],
+      merchantCategoryCode: '',
+      merchantCategoryOption: [],
+      merchantInformationCode: '',
+      merchantInformationCodeOption: [],
       mobileNo: '',
+      mobileUser: '',
       motherName: '',
       nickname: '',
       nip: '',
@@ -245,9 +263,13 @@ class MemberDataEdit extends Component {
       spouseName: '',
       staff: "default",
       staffOptions: [],
+      submittedOnDate: [],
       subDistrict: '',
       suffix: "default",
       suffixNameCodeOption: [],
+      taxAddress: '',
+      taxName: '',
+      taxNumber: '',
       typeOfIdentity: "default",
       typeOfIdentityBi: "default",
       typeOfIdentityOptions: [],
@@ -351,7 +373,7 @@ class MemberDataEdit extends Component {
         <Card className="card-default">
           <CardBody>
             <Link to="/simpool/member/data">
-              <Button outline className="col-4 col-md-2 mb-4" color="primary" type="submit" tabIndex={7}>Kembali</Button>
+              <Button outline className="col-4 col-md-2 mb-4" color="primary" type="submit">Kembali</Button>
             </Link>
 
             <div role="tabpanel row">
@@ -1062,6 +1084,133 @@ class MemberDataEdit extends Component {
                           )
                           : null
                       }
+                    </div>
+                  </form>
+                </TabPane>
+
+                <TabPane className="ft-detail" tabId="others" role="tabpanel">
+                  <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
+                    <div className="row">
+                      <div className="col-lg-6">
+                        <FormGroup>
+                          <label htmlFor="taxNumber">Tax Number</label>
+                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter Tax Number"
+                            value={this.state.taxNumber} onChange={e => this.changeState("taxNumber", e.target.value)}
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <label htmlFor="taxName">Name Based on Tax</label>
+                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter Tax Number"
+                            value={this.state.taxName} onChange={e => this.changeState("taxName", e.target.value)}
+                          />
+                        </FormGroup>
+                      </div>
+
+                      <div className="col-lg-6">
+                        <FormGroup>
+                          <label htmlFor="taxAddress">Address Based on Tax</label>
+                          <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter Tax Address"
+                            value={this.state.taxAddress} onChange={e => this.changeState("taxAddress", e.target.value)}
+                          />
+                        </FormGroup>
+                      </div>
+                    </div>
+
+                    <hr className="col-6" />
+
+                    <div className="row">
+                      <div className="col-lg-6">
+                        <FormGroup>
+                          <label htmlFor="flagTax">Flag Tax</label>
+                          <select value={this.state.flagTax}
+                            className="custom-select custom-select-sm input-font-size" name="flagTax"
+                            onChange={e => this.changeState("flagTax", e.target.value)}
+                          >
+                            <option value="default">Select Flag Tax</option>
+                            {
+                              Array.isArray(this.state.flagTaxOptions) && this.state.flagTaxOptions.length > 0
+                                ? this.state.flagTaxOptions.map((option, i) => {
+                                  return (
+                                    <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  )
+                                })
+                                : null
+                            }
+                          </select>
+                        </FormGroup>
+
+                        <FormGroup>
+                          <label htmlFor="merchantInformationCode">Merchant Account Information Code</label>
+                          <select value={this.state.merchantInformationCode}
+                            className="custom-select custom-select-sm input-font-size" name="merchantInformationCode"
+                            onChange={e => this.changeState("merchantInformationCode", e.target.value)}
+                          >
+                            <option value="default">Select Merchant Account Information Code</option>
+                            {
+                              Array.isArray(this.state.merchantInformationCodeOption) && this.state.merchantInformationCodeOption.length > 0
+                                ? this.state.merchantInformationCodeOption.map((option, i) => {
+                                  return (
+                                    <option value={option.code} key={"Staff option " + i} >{option.code + " - " + option.description}</option>
+                                  )
+                                })
+                                : null
+                            }
+                          </select>
+                        </FormGroup>
+
+                        <FormGroup>
+                          <label htmlFor="merchantCategoryCode">Merchant Category</label>
+                          <select value={this.state.merchantCategoryCode}
+                            className="custom-select custom-select-sm input-font-size" name="merchantCategoryCode"
+                            onChange={e => this.changeState("merchantCategoryCode", e.target.value)}
+                          >
+                            <option value="default">Select Merchant Category</option>
+                            {
+                              Array.isArray(this.state.merchantCategoryOption) && this.state.merchantCategoryOption.length > 0
+                                ? this.state.merchantCategoryOption.map((option, i) => {
+                                  return (
+                                    <option value={option.code} key={"Staff option " + i} >{option.code + " - " + option.description}</option>
+                                  )
+                                })
+                                : null
+                            }
+                          </select>
+                        </FormGroup>
+                      </div>
+
+                      <div className="col-lg-6">
+                        <FormGroup>
+                          <label htmlFor="mobileUser">Mobile Username</label>
+                          <input className="form-control mr-3 form-font-size" type="text" placeholder="Enter Mobile Username"
+                            value={this.state.mobileUser} onChange={e => this.changeState("mobileUser", e.target.value)}
+                            readOnly disabled
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <label htmlFor="submittedOnDate">Submitted on</label>
+                          <Datetime
+                            inputProps={{
+                              name: "submittedOnDate",
+                              className: "form-control input-font-size dt-bg",
+                              id: "submittedOnDate",
+                              placeholder: "dd mmmm yyyy",
+                              autoComplete: "off",
+                              readOnly: true
+                            }}
+                            value={
+                              Array.isArray(this.state.submittedOnDate) && this.state.submittedOnDate.length > 0
+                                ? this.state.submittedOnDate[2] + " " + MONTHS_ID[this.state.submittedOnDate[1] - 1] + " " + this.state.submittedOnDate[0]
+                                : ''
+                            }
+                            dateFormat="DD MMMM YYYY"
+                            timeFormat={false}
+                            closeOnSelect={true}
+                            onChange={e => this.changeDateState("submittedOnDate", e)}
+                          />
+                        </FormGroup>
+                      </div>
                     </div>
                   </form>
                 </TabPane>
