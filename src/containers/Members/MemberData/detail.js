@@ -63,6 +63,11 @@ const Savings = props => {
     return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
+
+  const rowClicked = () => {
+    console.log("Clicked!")
+  }
+
   return (
     <div>
       <div className="row ft-detail list-header d-flex justify-content-center center-parent">
@@ -84,10 +89,6 @@ const Savings = props => {
       </div>
       {
         props.savings.map((acc, key) => {
-          const rowClicked = () => {
-            console.log("Clicked!")
-          }
-
           return (
             <div key={"Saving " + key}>
               <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
@@ -113,6 +114,85 @@ const Savings = props => {
               </div>
               <div className="row d-flex justify-content-center">
                 <hr className="col-10 hr-margin-0" />
+              </div>
+            </div>
+          )
+        })
+      }
+    </div>
+  )
+}
+
+const Loans = props => {
+  const NumberFormatted = amount => {
+    const amountInt = parseInt(amount)
+
+    return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+
+  const rowClicked = () => {
+    console.log("Clicked!")
+  }
+
+  return (
+    <div>
+      <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+        <div className="col-2">
+          <span>Account ID</span>
+        </div>
+        <div className="col-2">
+          <span>Loan Account</span>
+        </div>
+        <div className="col-2">
+          <span>Original Loan</span>
+        </div>
+        <div className="col-2">
+          <span>Loan Balance</span>
+        </div>
+        <div className="col-2">
+          <span>Ammount Paid</span>
+        </div>
+        <div className="col-2 row d-flex justify-content-center">
+          <div className="col-6">
+            <span>Type</span>
+          </div>
+          <div className="col-6">
+            <span>Actions</span>
+          </div>
+        </div>
+      </div>
+      {
+        props.loans.map((acc, key) => {
+          return (
+            <div key={"Saving " + key}>
+              <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
+                <div className="col-2">
+                  <span>{acc.accountNo}</span>
+                </div>
+                <div className="col-2">
+                  <span>{acc.productName}</span>
+                </div>
+                <div className="col-2">
+                  <span></span>
+                </div>
+                <div className="col-2">
+                  <span></span>
+                </div>
+                <div className="col-2">
+                  <span></span>
+                </div>
+                <div className="col-2 row d-flex justify-content-center">
+                  <div className="col-6">
+                    <span>{acc.loanType.value}</span>
+                  </div>
+                  <div className="col-6">
+                    <span>{acc.status.value}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="row d-flex justify-content-center">
+                <hr className="col-11 hr-margin-0" />
               </div>
             </div>
           )
@@ -1507,9 +1587,18 @@ class MemberDataDetail extends Component {
                 </TabPane>
 
                 <TabPane tabId="loan" role="tabpanel">
+                  {
+                    Array.isArray(this.state.clientAccount.loanAccounts) && this.state.clientAccount.loanAccounts.length > 0
+                      ? (<Loans loans={this.state.clientAccount.loanAccounts} />)
+                      : (
+                        <div className="center-parent mt-3 ft-detail">
+                          <span>Pengguna tidak punya pinjaman</span>
+                        </div>
+                      )
+                  }
                   <Link to="/simpool/member/loan-data-add">
                     <Button outline className="col-12 mt-4 mb-2" color="primary" type="button">
-                      Pinjaman
+                      Tambah Pinjaman
                     </Button>
                   </Link>
                 </TabPane>
@@ -1535,4 +1624,4 @@ const mapStateToProps = state => ({
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
-export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(MemberDataDetail));
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(MemberDataDetail))
