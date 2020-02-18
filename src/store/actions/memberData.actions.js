@@ -71,6 +71,6 @@ export function getClientSummary(payload, setClientSummary) {
 }
 
 // Edit
-export function putClientId(payload, setClientId) {
-  return { type: PUT_CLIENT_ID, payload, setClientId };
+export function putClientId(payload, setClientPutRes, clientId) {
+  return { type: PUT_CLIENT_ID, payload, setClientPutRes, clientId };
 }

@@ -99,59 +99,84 @@ class MemberDataEdit extends Component {
       const dateOfBirthSpouse = dateOfBirthSpouseConv(res.biInformation.dateOfBirthSpouse)
 
       this.setState({
+        accountNo: res.accountNo,
+        activationDate: res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1]-1] + " " + res.activationDate[0],
+        active: res.active,
         address: res.address,
         addressBasedOnIdentity: res.addressBasedOnIdentity,
         nickname: res.nickname,
-        city: res.city.description,
+        cityId: res.city.code,
+        cityName: res.city.description,
         cityOptions: res.cityOptions,
         cityOptionsFilter: cityOptions,
         clientIdNo: clientIdNo,
+        clientNonPersonDetails: {
+          ...this.state.clientNonPersonDetails,
+          businessType: res.clientNonPersonDetails.businessType,
+          corporateId: res.clientNonPersonDetails.corporateId,
+          isLjk: res.clientNonPersonDetails.isLjk,
+          ljkCode: res.clientNonPersonDetails.ljkCode,
+          bankFlag: res.clientNonPersonDetails.bankFlag,
+          incorporationDate: res.clientNonPersonDetails.incorporationDate,
+          incorpValidityTillDate: res.clientNonPersonDetails.incorpValidityTillDate,
+          publicationDate: res.clientNonPersonDetails.publicationDate,
+          legalityEndDate: res.clientNonPersonDetails.legalityEndDate
+        },
         clientType: res.legalForm.value,
         clientTypeIsActive: res.clientType.isActive,
         clientTypeOptions: res.clientTypeOptions,
-        country: res.country.description,
+        company: res.company.name,
+        country: res.country.name,
         countryOptions: res.countryOptions,
         countryIsActive: res.country.isActive,
-        dateOfBirth: res.dateOfBirth,
+        dateOfBirth: res.dateOfBirth[2] + " " + MONTHS_ID[res.dateOfBirth[1] - 1] + " " + res.dateOfBirth[0],
         dateOfBirthSpouse: dateOfBirthSpouse,
+        directorate: res.directorate.name,
         email: res.email,
         externalId: res.externalId,
         faxNumber: res.faxNumber,
-        flagTax: res.flagTax.description,
+        firstname: res.firstname,
+        flagTax: res.flagTax.name,
         flagTaxOptions: res.flagTaxOptions,
         fullname: res.fullnameNonIdentity,
-        gender: res.gender.description,
+        gender: res.gender.name,
         genderOptions: res.genderOptions,
         homeOwnershipStatus: res.homeOwnershipStatus.id,
         homeOwnershipStatusOption: res.homeOwnershipStatusOption,
-        identityCity: res.identityCity.description,
+        identityCityId: res.identityCity.code,
+        identityCityName: res.identityCity.description,
         identityCityOptionsFilter: identityCityOptions,
         identityName: res.fullname,
         identityNumber: res.identityNumber,
-        identityCountry: res.identityCountry.description,
+        identityCountry: res.identityCountry.name,
         identityCountryIsActive: res.identityCountry.isActive,
         identityPostalCode: res.identityPostalCode,
-        identityProvince: res.identityProvince.description,
+        identityProvinceId: res.identityProvince.code,
+        identityProvinceName: res.identityProvince.description,
         identityRt: res.identityRt,
         identityRw: res.identityRw,
         identitySubDistrict: res.identitySubDistrict,
         identityValidDate: res.identityValidDate,
         identityVillage: res.identityVillage,
         isCitizen: res.isCitizen,
-        lastEducationLevelCode: res.lastEducationLevelCode.description,
+        lastname: res.lastname,
+        lastEducationLevelCode: res.lastEducationLevelCode.name,
         lastEducationLevelCodeOption: res.lastEducationLevelCodeOption,
         lastEducationLevelDescription: res.lastEducationLevelDescription,
-        maritalStatus: res.maritalStatusCode.description,
+        legalFormId: res.legalForm.id,
+        maritalStatus: res.maritalStatusCode.name,
         maritalStatusOption: res.maritalStatusCodeOption,
+        member: res.member,
         merchantCategoryCode: res.merchantCategoryCode,
         merchantCategoryOption: res.merchantCategoryOption,
         merchantInformationCode: res.merchantInformationCode,
         merchantInformationCodeOption: res.merchantInformationCodeOption,
+        middlename: res.middlename,
         mobileNo: res.mobileNo,
         mobileUser: res.mobileUser,
         motherName: res.motherName,
         nip: res.nip,
-        office: res.officeName,
+        office: res.officeId,
         officeOptions: res.officeOptions,
         otherHomeOwnershipStatus: res.otherHomeOwnershipStatus,
         phoneNumber: res.phoneNumber,
@@ -160,28 +185,29 @@ class MemberDataEdit extends Component {
         prefix: res.prefixDescription.code,
         prefixNameCodeOption: res.prefixNameCodeOption,
         prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement,
-        province: res.province.description,
+        provinceId: res.province.code,
+        provinceName: res.province.description,
         provinceOptions: res.provinceOptions,
         religion: res.religion.description,
         religionOptions: res.religionOption,
         rt: res.rt,
         rw: res.rw,
-        sector: res.sector.name,
+        sector: res.sector.code,
         sectorOptions: res.sectorOptions,
         spouseIdentityNumber: res.biInformation.spouseIdentityNumber,
         spouseName: res.biInformation.spouseName,
-        staff: res.staffName,
+        staff: res.staffId,
         staffOptions: res.staffOptions,
-        submittedOnDate: res.timeline.submittedOnDate,
+        submittedOnDate: res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0],
         subDistrict: res.subDistrict,
         suffix: res.suffixDescription.code,
         suffixNameCodeOption: res.suffixNameCodeOption,
         taxAddress: res.taxAddress,
         taxName: res.taxName,
         taxNumber: res.taxNumber,
-        typeOfIdentity: res.typeOfIdentity.description,
-        typeOfIdentityBi: res.biInformation.typeOfIdentity,
+        typeOfIdentity: res.typeOfIdentity.name,
         typeOfIdentityOptions: res.typeOfIdentityOptions,
+        typeOfIdentityBi: res.biInformation.typeOfIdentity,
         typeOfIdentityBiOptions: res.typeOfIdentityBiOptions,
         village: res.village
       })
@@ -190,24 +216,32 @@ class MemberDataEdit extends Component {
     this.props.actions.getClientDetailParams(clientIdNo, setClientDetail)
 
     this.state = {
+      accountNo: '',
+      activationDate: "",
+      active: false,
+      activeTab: "identity",
       address: '',
       addressBasedOnIdentity: '',
-      activeTab: "others",
-      city: '',
+      cityId: '',
+      cityName: '',
       cityOptions: [],
       cityOptionsFilter: [],
       clientIdNo: '',
-      clientType: "default",
+      clientNonPersonDetails: {},
+      clientType: "",
       clientTypeIsActive: false,
       clientTypeOptions: [],
+      company: '',
       country: '',
       countryOptions: [],
       countryIsActive: false,
-      dateOfBirth: [],
+      dateOfBirth: "",
       dateOfBirthSpouse: [],
+      directorate: '',
       email: '',
       externalId: '',
       faxNumber: '',
+      firstname: '',
       flagTax: '',
       flagTaxOptions: [],
       fullname: '',
@@ -215,34 +249,42 @@ class MemberDataEdit extends Component {
       genderOptions: [],
       homeOwnershipStatus: '',
       homeOwnershipStatusOption: [],
+      identityCityId: '',
+      identityCityName: '',
+      identityCityOptionsFilter: [],
       identityCountry: '',
       identityCountryIsActive: false,
       identityName: '',
       identityNumber: '',
       identityPostalCode: '',
-      identityProvince: '',
+      identityProvinceId: '',
+      identityProvinceName: '',
       identityRt: '',
       identityRw: '',
       identitySubDistrict: '',
-      identityValidDate: [],
+      identityValidDate: "",
       identityVillage: '',
       isCitizen: false,
-      lastEducationLevelCode: "default",
+      lastname: '',
+      lastEducationLevelCode: "",
       lastEducationLevelCodeOption: [],
       lastEducationLevelDescription: '',
       lasEducationOtherIsActive: false,
+      legalFormId: '',
       maritalStatus: '',
       maritalStatusOption: [],
+      member: false,
       merchantCategoryCode: '',
       merchantCategoryOption: [],
       merchantInformationCode: '',
       merchantInformationCodeOption: [],
+      middlename: '',
       mobileNo: '',
       mobileUser: '',
       motherName: '',
       nickname: '',
       nip: '',
-      office: "default",
+      office: "",
       officeOptions: [],
       otherHomeOwnershipStatus: '',
       phoneNumber: '',
@@ -250,28 +292,29 @@ class MemberDataEdit extends Component {
       postalCode: '',
       prefix: '',
       prefixNameCodeOption: [],
-      prePostNuptialAggreement: "default",
-      province: '',
+      prePostNuptialAggreement: "",
+      provinceId: '',
+      provinceName: '',
       provinceOptions: [],
       religion: '',
       religionOption: [],
       rt: '',
       rw: '',
-      sector: "default",
+      sector: "",
       sectorOptions: [],
       spouseIdentityNumber: '',
       spouseName: '',
-      staff: "default",
+      staff: "",
       staffOptions: [],
-      submittedOnDate: [],
+      submittedOnDate: "",
       subDistrict: '',
-      suffix: "default",
+      suffix: "",
       suffixNameCodeOption: [],
       taxAddress: '',
       taxName: '',
       taxNumber: '',
-      typeOfIdentity: "default",
-      typeOfIdentityBi: "default",
+      typeOfIdentity: "",
+      typeOfIdentityBi: "",
       typeOfIdentityOptions: [],
       typeOfIdentityBiOptions: [],
       village: '',
@@ -293,8 +336,6 @@ class MemberDataEdit extends Component {
 
     let date = dd + " " + mm + " " + yyyy
 
-    console.log(date)
-
     this.setState({
       [name]: date
     })
@@ -305,34 +346,40 @@ class MemberDataEdit extends Component {
       [name]: val
     })
 
-    if (name === "identityProvince" || name === "province") {
+    if (name === "identityProvinceId" || name === "provinceId") {
       let cityOptions = []
-      let provinceId
-
-      this.state.provinceOptions.map(province => {
-        if (province.description === val) {
-          provinceId = province.code
-        }
-      })
 
       this.state.cityOptions.map(city => {
-        if (city.provinceId === provinceId) {
+        if (city.provinceId === val) {
           cityOptions.push(city)
         }
       })
 
-      if (name === "province") {
+      if (name === "provinceId") {
         this.setState({
           cityOptionsFilter: cityOptions
         })
+        this.state.provinceOptions.map(province => {
+          if (province.code === val) {
+            this.setState({
+              provinceName: province.description
+            })
+          }
+        })
       }
-      else if (name === "identityProvince") {
+      else if (name === "identityProvinceId") {
         this.setState({
           identityCityOptionsFilter: cityOptions
         })
+        this.state.provinceOptions.map(province => {
+          if (province.code === val) {
+            this.setState({
+              identityProvinceName: province.description
+            })
+          }
+        })
       }
     }
-
 
     if (name === "lastEducationLevelCode") {
       if (val === "Other") {
@@ -347,9 +394,39 @@ class MemberDataEdit extends Component {
       }
     }
 
+    if (name === "cityId") {
+      this.state.cityOptionsFilter.map(city => {
+        if (city.code === val){
+          this.setState({
+            cityName: city.description
+          })
+        }
+      })
+    }
+
+    if (name === "identityCityId") {
+      this.state.cityOptionsFilter.map(city => {
+        if (city.code === val){
+          console.log(city.description)
+          this.setState({
+            identityCityName: city.description
+          })
+        }
+      })
+    }
+
     if (name === "isCitizen") {
       this.setState({
         isCitizen: !this.state.isCitizen
+      })
+    }
+    
+    if (name === "identityName") {
+      const fullnameSplit = val.split(" ", 3)
+      this.setState({
+        firstname: fullnameSplit[0],
+        middlename: fullnameSplit[1],
+        lastname: fullnameSplit[2]
       })
     }
   }
@@ -360,8 +437,106 @@ class MemberDataEdit extends Component {
   }
 
   render() {
+    const state = this.state
+
+    const setClientPutRes = res => {
+      this.props.history.push("/simpool/member/data-detail/" + this.state.clientIdNo)
+    }
+
     const editMember = () => {
-      this.props.actions.putClientId({ clientId: this.state.clientIdNo })
+      this.props.actions.putClientId(
+        {
+          "officeId": state.office,
+          "legalForm": state.clientType,
+          "firstname": state.firstname,
+          "middlename": state.middlename,
+          "lastname": state.lastname,
+          "active": state.active,
+          "accountNo": state.accountNo,
+          "staffId": state.staff,
+          "externalId": state.externalId,
+          "mobileNo": state.mobileNo,
+          "genderCodeValue": state.gender,
+          "address": state.address,
+          "typeOfIdentityId": state.typeOfIdentity,
+          "provinceId": state.provinceId,
+          "provinceName": state.provinceName,
+          "cityId": state.cityId,
+          "cityName": state.cityName,
+          "countryCodeValue": state.country,
+          "flagTaxCodeValue": state.flagTax,
+          "placeOfBirth": state.placeOfBirth,
+          "motherName": state.motherName,
+          "sectorId": state.sector,
+          "mobileUser": state.mobileUser,
+          "nip": state.nip,
+          "identityNumber": state.identityNumber,
+          "postalCode": state.postalCode,
+          "fullname": state.identityName,
+          "member": state.member,
+          "directorateCode": state.directorate,
+          "companyCode": state.company,
+          "addressBasedOnIdentity": state.addressBasedOnIdentity,
+          "phoneNumber": state.phoneNumber,
+          "religion": state.religion,
+          "email": state.email,
+          "merchantCategoryCode": state.merchantCategoryCode,
+          "merchantInformationCode": state.merchantInformationCode,
+          "spouseIdentityNumber": state.spouseIdentityNumber,
+          "spouseName": state.spouseName,
+          "prePostNuptialAggreement": state.prePostNuptialAggreement,
+          "typeOfIdentitySpouse": state.typeOfIdentityBi,
+          "clientNonPersonDetails": {
+            "businessType": state.clientNonPersonDetails.businessType,
+            "corporateId": state.clientNonPersonDetails.corporateId,
+            "isLjk": state.clientNonPersonDetails.isLjk,
+            "ljkCode": state.clientNonPersonDetails.ljkCode,
+            "bankFlag": state.clientNonPersonDetails.bankFlag,
+            "incorporationDate": state.clientNonPersonDetails.incorporationDate,
+            "incorpValidityTillDate": state.clientNonPersonDetails.incorpValidityTillDate,
+            "publicationDate": state.clientNonPersonDetails.publicationDate,
+            "legalityEndDate": state.clientNonPersonDetails.legalityEndDate
+          },
+          "prefixCode": state.prefix,
+          "suffixCode": state.suffix,
+          "nickname": state.nickname,
+          "identityValidDate": state.identityValidDate,
+          "maritalStatusCode": state.maritalStatus,
+          "lastEducationLevelCode": state.lastEducationLevelCode,
+          "lastEducationLevelDescription": state.lastEducationLevelDescription,
+          "isCitizen": state.isCitizen,
+          "taxNumber": state.taxNumber,
+          "taxName": state.taxName,
+          "taxAddress": state.taxAddress,
+          "rt": state.rt,
+          "rw": state.rw,
+          "village": state.village,
+          "subDistrict": state.subDistrict,
+          "faxNumber": state.faxNumber,
+          "identitySubDistrict": state.identitySubDistrict,
+          "identityVillage": state.identityVillage,
+          "identityPostalCode": state.identityPostalCode,
+          "identityProvinceId": state.identityProvinceId,
+          "identityProvinceName": state.identityProvinceName,
+          "identityCityId": state.identityCityId,
+          "identityCityName": state.identityCityName,
+          "identityCountryCodeValue": state.identityCountry,
+          "identityRt": state.identityRt,
+          "identityRw": state.identityRw,
+          "fullnameNonIdentity": state.fullname,
+          "otherHomeOwnershipStatus": state.otherHomeOwnershipStatus,
+          "homeOwnershipStatus": state.homeOwnershipStatus,
+          "legalFormId": state.legalFormId,
+          "locale": "id",
+          "dateFormat": "dd MMMM yyyy",
+          "activationDate": state.activationDate,
+          "dateOfBirth": state.dateOfBirth,
+          "submittedOnDate": state.submittedOnDate,
+          "dateOfBirthSpouse": state.dateOfBirthSpouse
+        },
+        setClientPutRes,
+        this.state.clientIdNo
+      )
     }
 
     return (
@@ -373,7 +548,7 @@ class MemberDataEdit extends Component {
         <Card className="card-default">
           <CardBody>
             <Link to="/simpool/member/data">
-              <Button outline className="col-4 col-md-2 mb-4" color="primary" type="submit">Kembali</Button>
+              <Button outline className="col-4 col-md-2 mb-4" color="primary">Kembali</Button>
             </Link>
 
             <div role="tabpanel row">
@@ -410,13 +585,14 @@ class MemberDataEdit extends Component {
                         <select value={this.state.office}
                           className="custom-select custom-select-sm input-font-size" name="office"
                           onChange={e => this.changeState("office", e.target.value)}
+                          disabled readOnly
                         >
-                          <option value="default">Select office</option>
+                          <option value="">Select office</option>
                           {
                             Array.isArray(this.state.officeOptions) && this.state.officeOptions.length > 0
                               ? this.state.officeOptions.map((option, i) => {
                                 return (
-                                  <option value={option.name} key={"Office option " + i} >{option.name}</option>
+                                  <option value={option.id} key={"Office option " + i} >{option.name}</option>
                                 )
                               })
                               : null
@@ -430,12 +606,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="staff"
                           onChange={e => this.changeState("staff", e.target.value)}
                         >
-                          <option value="default">Select staff</option>
+                          <option value="">Select staff</option>
                           {
                             Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
                               ? this.state.staffOptions.map((option, i) => {
                                 return (
-                                  <option value={option.displayName} key={"Staff option " + i} >{option.displayName}</option>
+                                  <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
                                 )
                               })
                               : null
@@ -449,13 +625,13 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="clientType"
                           onChange={e => this.changeState("clientType", e.target.value)} disabled={!this.state.clientTypeIsActive}
                         >
-                          <option value="default">Select client type</option>
+                          <option value="">Select client type</option>
                           <option value={this.state.clientType}>{this.state.clientType}</option>
                           {
                             Array.isArray(this.state.clientTypeOptions) && this.state.clientTypeOptions.length > 0
                               ? this.state.clientTypeOptions.map((option, i) => {
                                 return (
-                                  <option value={option.displayName} key={"Staff option " + i} >{option.displayName}</option>
+                                  <option value={option.displayName} key={"Client type option " + i} >{option.displayName}</option>
                                 )
                               })
                               : null
@@ -469,12 +645,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="sector"
                           onChange={e => this.changeState("sector", e.target.value)}
                         >
-                          <option value="default">Select sector</option>
+                          <option value="">Select sector</option>
                           {
                             Array.isArray(this.state.sectorOptions) && this.state.sectorOptions.length > 0
                               ? this.state.sectorOptions.map((option, i) => {
                                 return (
-                                  <option value={option.name} key={"Staff option " + i} >{option.name}</option>
+                                  <option value={option.code} key={"Sector option " + i} >{option.name}</option>
                                 )
                               })
                               : null
@@ -502,12 +678,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="prefix"
                           onChange={e => this.changeState("prefix", e.target.value)}
                         >
-                          <option value="default">Select prefix title name</option>
+                          <option value="">Select prefix title name</option>
                           {
                             Array.isArray(this.state.prefixNameCodeOption) && this.state.prefixNameCodeOption.length > 0
                               ? this.state.prefixNameCodeOption.map((option, i) => {
                                 return (
-                                  <option value={option.code} key={"Staff option " + i} >{option.code}</option>
+                                  <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
                                 )
                               })
                               : null
@@ -542,7 +718,7 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="suffix"
                           onChange={e => this.changeState("suffix", e.target.value)}
                         >
-                          <option value="default">Select suffix title name</option>
+                          <option value="">Select suffix title name</option>
                           {
                             Array.isArray(this.state.suffixNameCodeOption) && this.state.suffixNameCodeOption.length > 0
                               ? this.state.suffixNameCodeOption.map((option, i) => {
@@ -561,12 +737,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="typeOfIdentity"
                           onChange={e => this.changeState("typeOfIdentity", e.target.value)}
                         >
-                          <option value="default">Select type of identity</option>
+                          <option value="">Select type of identity</option>
                           {
                             Array.isArray(this.state.typeOfIdentityOptions) && this.state.typeOfIdentityOptions.length > 0
                               ? this.state.typeOfIdentityOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Type of identity option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -618,12 +794,12 @@ class MemberDataEdit extends Component {
                           onChange={e => this.changeState("identityCountry", e.target.value)}
                           disabled={!this.state.identityCountryIsActive}
                         >
-                          <option value="default">Select country</option>
+                          <option value="">Select country</option>
                           {
                             Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
                               ? this.state.countryOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Country identity option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -632,17 +808,17 @@ class MemberDataEdit extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <label htmlFor="identityProvince">Province</label>
-                        <select value={this.state.identityProvince}
-                          className="custom-select custom-select-sm input-font-size" name="identityProvince"
-                          onChange={e => this.changeState("identityProvince", e.target.value)}
+                        <label htmlFor="identityProvinceId">Province</label>
+                        <select value={this.state.identityProvinceId}
+                          className="custom-select custom-select-sm input-font-size" name="identityProvinceId"
+                          onChange={e => this.changeState("identityProvinceId", e.target.value)}
                         >
-                          <option value="default">Select province</option>
+                          <option value="">Select province</option>
                           {
                             Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
                               ? this.state.provinceOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.code} key={"Province identity option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -651,17 +827,17 @@ class MemberDataEdit extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <label htmlFor="identityCity">District / City</label>
-                        <select value={this.state.identityCity}
-                          className="custom-select custom-select-sm input-font-size" name="identityCity"
-                          onChange={e => this.changeState("identityCity", e.target.value)}
+                        <label htmlFor="identityCityId">District / City</label>
+                        <select value={this.state.identityCityId}
+                          className="custom-select custom-select-sm input-font-size" name="identityCityId"
+                          onChange={e => this.changeState("identityCityId", e.target.value)}
                         >
-                          <option value="default">Select city</option>
+                          <option value="">Select city</option>
                           {
                             Array.isArray(this.state.identityCityOptionsFilter) && this.state.identityCityOptionsFilter.length > 0
                               ? this.state.identityCityOptionsFilter.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.code} key={"City identity option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -716,12 +892,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="gender"
                           onChange={e => this.changeState("gender", e.target.value)}
                         >
-                          <option value="default">Select gender</option>
+                          <option value="">Select gender</option>
                           {
                             Array.isArray(this.state.genderOptions) && this.state.genderOptions.length > 0
                               ? this.state.genderOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Gender option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -740,11 +916,7 @@ class MemberDataEdit extends Component {
                             autoComplete: "off",
                             readOnly: true
                           }}
-                          value={
-                            Array.isArray(this.state.dateOfBirth) && this.state.dateOfBirth.length > 0
-                              ? this.state.dateOfBirth[2] + " " + MONTHS_ID[this.state.dateOfBirth[1] - 1] + " " + this.state.dateOfBirth[0]
-                              : ''
-                          }
+                          value={this.state.dateOfBirth}
                           dateFormat="DD MMMM YYYY"
                           timeFormat={false}
                           closeOnSelect={true}
@@ -793,12 +965,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="religion"
                           onChange={e => this.changeState("religion", e.target.value)}
                         >
-                          <option value="default">Select religion</option>
+                          <option value="">Select religion</option>
                           {
                             Array.isArray(this.state.religionOptions) && this.state.religionOptions.length > 0
                               ? this.state.religionOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.description} key={"Religion option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -819,12 +991,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="maritalStatus"
                           onChange={e => this.changeState("maritalStatus", e.target.value)}
                         >
-                          <option value="default">Select marital status</option>
+                          <option value="">Select marital status</option>
                           {
                             Array.isArray(this.state.maritalStatusOption) && this.state.maritalStatusOption.length > 0
                               ? this.state.maritalStatusOption.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Marital option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -838,12 +1010,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="typeOfIdentityBi"
                           onChange={e => this.changeState("typeOfIdentityBi", e.target.value)}
                         >
-                          <option value="default">Select type of identity</option>
+                          <option value="">Select type of identity</option>
                           {
                             Array.isArray(this.state.typeOfIdentityBiOptions) && this.state.typeOfIdentityBiOptions.length > 0
                               ? this.state.typeOfIdentityBiOptions.map((option, i) => {
                                 return (
-                                  <option value={option.name} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Type of identity bi option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -871,7 +1043,7 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="prePostNuptialAggreement"
                           onChange={e => this.changeState("prePostNuptialAggreement", e.target.value)}
                         >
-                          <option value="default">Select type of identity</option>
+                          <option value="">Select type of identity</option>
                           <option value="Y">Yes</option>
                           <option value="N">No</option>
                         </select>
@@ -906,13 +1078,13 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="lastEducationLevelCode"
                           onChange={e => this.changeState("lastEducationLevelCode", e.target.value)}
                         >
-                          <option value="default">Select type of identity</option>
+                          <option value="">Select type of identity</option>
                           {
                             Array.isArray(this.state.lastEducationLevelCodeOption)
                               && this.state.lastEducationLevelCodeOption.length > 0
                               ? this.state.lastEducationLevelCodeOption.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Last edu lvl option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -961,12 +1133,12 @@ class MemberDataEdit extends Component {
                           onChange={e => this.changeState("country", e.target.value)}
                           disabled={!this.state.countryIsActive}
                         >
-                          <option value="default">Select country</option>
+                          <option value="">Select country</option>
                           {
                             Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
                               ? this.state.countryOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.name} key={"Country option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -975,17 +1147,17 @@ class MemberDataEdit extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <label htmlFor="province">Province</label>
-                        <select value={this.state.province}
-                          className="custom-select custom-select-sm input-font-size" name="province"
-                          onChange={e => this.changeState("province", e.target.value)}
+                        <label htmlFor="provinceId">Province</label>
+                        <select value={this.state.provinceId}
+                          className="custom-select custom-select-sm input-font-size" name="provinceId"
+                          onChange={e => this.changeState("provinceId", e.target.value)}
                         >
-                          <option value="default">Select province</option>
+                          <option value="">Select province</option>
                           {
                             Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
                               ? this.state.provinceOptions.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.code} key={"Province option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -994,17 +1166,17 @@ class MemberDataEdit extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <label htmlFor="city">District / City</label>
-                        <select value={this.state.city}
-                          className="custom-select custom-select-sm input-font-size" name="city"
-                          onChange={e => this.changeState("city", e.target.value)}
+                        <label htmlFor="cityId">District / City</label>
+                        <select value={this.state.cityId}
+                          className="custom-select custom-select-sm input-font-size" name="cityId"
+                          onChange={e => this.changeState("cityId", e.target.value)}
                         >
-                          <option value="default">Select city</option>
+                          <option value="">Select city</option>
                           {
                             Array.isArray(this.state.cityOptionsFilter) && this.state.cityOptionsFilter.length > 0
                               ? this.state.cityOptionsFilter.map((option, i) => {
                                 return (
-                                  <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.code} key={"City option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -1057,12 +1229,12 @@ class MemberDataEdit extends Component {
                           className="custom-select custom-select-sm input-font-size" name="homeOwnershipStatus"
                           onChange={e => this.changeState("homeOwnershipStatus", e.target.value)}
                         >
-                          <option value="default">Select Home Ownership Status</option>
+                          <option value="">Select Home Ownership Status</option>
                           {
                             Array.isArray(this.state.homeOwnershipStatusOption) && this.state.homeOwnershipStatusOption.length > 0
                               ? this.state.homeOwnershipStatusOption.map((option, i) => {
                                 return (
-                                  <option value={option.id} key={"Staff option " + i} >{option.description}</option>
+                                  <option value={option.id} key={"Home Ownership option " + i} >{option.description}</option>
                                 )
                               })
                               : null
@@ -1127,12 +1299,12 @@ class MemberDataEdit extends Component {
                             className="custom-select custom-select-sm input-font-size" name="flagTax"
                             onChange={e => this.changeState("flagTax", e.target.value)}
                           >
-                            <option value="default">Select Flag Tax</option>
+                            <option value="">Select Flag Tax</option>
                             {
                               Array.isArray(this.state.flagTaxOptions) && this.state.flagTaxOptions.length > 0
                                 ? this.state.flagTaxOptions.map((option, i) => {
                                   return (
-                                    <option value={option.description} key={"Staff option " + i} >{option.description}</option>
+                                    <option value={option.name} key={"Flag Tax option " + i} >{option.description}</option>
                                   )
                                 })
                                 : null
@@ -1146,12 +1318,12 @@ class MemberDataEdit extends Component {
                             className="custom-select custom-select-sm input-font-size" name="merchantInformationCode"
                             onChange={e => this.changeState("merchantInformationCode", e.target.value)}
                           >
-                            <option value="default">Select Merchant Account Information Code</option>
+                            <option value="">Select Merchant Account Information Code</option>
                             {
                               Array.isArray(this.state.merchantInformationCodeOption) && this.state.merchantInformationCodeOption.length > 0
                                 ? this.state.merchantInformationCodeOption.map((option, i) => {
                                   return (
-                                    <option value={option.code} key={"Staff option " + i} >{option.code + " - " + option.description}</option>
+                                    <option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</option>
                                   )
                                 })
                                 : null
@@ -1165,12 +1337,12 @@ class MemberDataEdit extends Component {
                             className="custom-select custom-select-sm input-font-size" name="merchantCategoryCode"
                             onChange={e => this.changeState("merchantCategoryCode", e.target.value)}
                           >
-                            <option value="default">Select Merchant Category</option>
+                            <option value="">Select Merchant Category</option>
                             {
                               Array.isArray(this.state.merchantCategoryOption) && this.state.merchantCategoryOption.length > 0
                                 ? this.state.merchantCategoryOption.map((option, i) => {
                                   return (
-                                    <option value={option.code} key={"Staff option " + i} >{option.code + " - " + option.description}</option>
+                                    <option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</option>
                                   )
                                 })
                                 : null
@@ -1199,11 +1371,7 @@ class MemberDataEdit extends Component {
                               autoComplete: "off",
                               readOnly: true
                             }}
-                            value={
-                              Array.isArray(this.state.submittedOnDate) && this.state.submittedOnDate.length > 0
-                                ? this.state.submittedOnDate[2] + " " + MONTHS_ID[this.state.submittedOnDate[1] - 1] + " " + this.state.submittedOnDate[0]
-                                : ''
-                            }
+                            value={this.state.submittedOnDate}
                             dateFormat="DD MMMM YYYY"
                             timeFormat={false}
                             closeOnSelect={true}
