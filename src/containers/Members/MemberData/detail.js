@@ -220,7 +220,7 @@ const Documents = props => {
         props.documents.map((acc, key) => {
           return (
             <div key={"Documents " + key}>
-              <div className="row ft-detail list-docs d-flex justify-content-center list-hover">
+              <div className="row ft-detail list-docs d-flex justify-content-center">
                 <div className="col-3">
                   <span>{acc.name}</span>
                 </div>

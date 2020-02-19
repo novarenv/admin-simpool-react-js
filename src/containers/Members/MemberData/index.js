@@ -55,12 +55,20 @@ const SearchBar = props => {
     setSearchInput(e.target.value)
   }
 
+  const clickButton = e => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      
+      document.getElementById("searchButton").click()
+    }
+  }
+
   return (
     <div className="row mr-1">
       <div className="col-md-10 mb-3">
-        <input className="form-control mr-3" type="text" placeholder="Search member data" onChange={handleChange} />
+        <input className="form-control mr-3" type="text" placeholder="Search member data" onChange={handleChange} onKeyUp={e => clickButton(e)} />
       </div>
-      <Button outline className="col-md-2 mb-3 btn-search" color="primary" type="button" onClick={search}>
+      <Button outline id="searchButton" className="col-md-2 mb-3 btn-search" color="primary" onClick={search}>
         <i className="fas fa-search mr-2" />
         Search
       </Button>
