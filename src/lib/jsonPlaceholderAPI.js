@@ -20,10 +20,11 @@ export const checkDuplicateUrl = `${apiEntrySimpool}/clients/checkduplicate`;
 export const clientIdUrl = clientId => `${apiEntrySimpool}/clients/${clientId}`;
 export const clientImageUrl = clientId => `${apiEntrySimpool}/clients/${clientId}/images`;
 export const clientDocumentUrl = clientId => `${apiEntrySimpool}/clients/${clientId}/documents`;
+export const clientDocumentIdUrl = (clientId, documentId) => `${apiEntrySimpool}/clients/${clientId}/documents/${documentId}`;
 export const clientDetailUrl = clientId => `${apiEntrySimpool}/clients/detail/${clientId}`;
 export const clientSummaryUrl = `${apiEntrySimpool}/runreports/ClientSummary`;
 export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`;
-export const documentAttachmentUrl = (clientId, documentId) => `${apiEntrySimpool}/clients/${clientId}/documents/${documentId}/attachment`;
+export const docAttachUrl = (clientId, documentId) => `${apiEntrySimpool}/clients/${clientId}/documents/${documentId}/attachment`;
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`;

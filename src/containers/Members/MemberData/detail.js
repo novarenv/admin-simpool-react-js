@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import {
   Button,
   Card,
   CardBody,
+  FormGroup,
   Nav,
   NavItem,
   NavLink,
@@ -62,7 +63,6 @@ const Savings = props => {
 
     return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
-
 
   const rowClicked = () => {
     console.log("Clicked!")
@@ -196,12 +196,121 @@ const Loans = props => {
 }
 
 const Documents = props => {
-  const rowClicked = () => {
-    console.log("Clicked!")
+  const [modalPreview, setModalPreview] = useState(false)
+  const [docImage, setDocImage] = useState(null)
+  const [isImage, setIsImage] = useState(null)
+
+  const setClientDocRes = res => {
+    setDocImage(res)
+  }
+
+  const setClientDocDlRes = (res, fileName) => {
+    const link = document.createElement('a');
+    link.href = res;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+  }
+
+  const handleModalPreview = doc => {
+    setModalPreview(true)
+
+    if (doc.type === "image/jpeg" || doc.type === "image/png") {
+      setIsImage(true)
+
+      props.actions.getDocAttach(
+        {
+          clientId: doc.parentEntityId,
+          documentId: doc.id
+        },
+        setClientDocRes
+      )
+    } else {
+      setIsImage(false)
+    }
+  }
+
+  const handleDownload = doc => {
+    props.actions.getDocAttach(
+      {
+        clientId: doc.parentEntityId,
+        documentId: doc.id,
+        fileName: doc.fileName
+      },
+      setClientDocDlRes
+    )
+  }
+
+  const swalOption = {
+    title: 'Are you sure?',
+    text: 'Do you want to delete this document?',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, I\'d like to save it!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, delete it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+
+  const swalCallback = (isConfirm, swal, deleteDocument, id) => {
+    if (isConfirm) {
+      swal("Deleted!", "Your document has been deleted.", "success")
+      deleteDocument(id)
+    } else {
+      swal("Cancelled", "Your document is safe :)", "error");
+    }
   }
 
   return (
-    <div id="documents">
+    <div>
+      <Modal
+        isOpen={modalPreview}
+        onRequestClose={() => setModalPreview(false)}
+      >
+        <div className="container-fluid">
+          <div className="row">
+            <Button outline className="col-4 col-lg-2" color="primary"
+              onClick={() => setModalPreview(false)}
+            >
+              Kembali
+            </Button>
+          </div>
+
+          <div className="mb-3 center-parent">
+            <h1>Preview Image</h1>
+          </div>
+
+          <div className="center-parent mt-3">
+            {
+              isImage != null
+                ? isImage
+                  ? docImage != null
+                    ? (
+                      <div>
+                        <div className="row justify-content-center">
+                          <img className="col-md-6" src={docImage} />
+                        </div>
+                      </div>
+                    )
+                    : null
+                  : (<div>Dokumen bukanlah gambar PNG atau JPEG</div>)
+                : null
+            }
+          </div>
+        </div>
+      </Modal>
+
       <div className="row ft-detail list-header d-flex justify-content-center center-parent">
         <div className="col-3">
           <span>Name</span>
@@ -217,39 +326,51 @@ const Documents = props => {
         </div>
       </div>
       {
-        props.documents.map((acc, key) => {
-          return (
-            <div key={"Documents " + key}>
-              <div className="row ft-detail list-docs d-flex justify-content-center">
-                <div className="col-3">
-                  <span>{acc.name}</span>
-                </div>
-                <div className="col-3">
-                  <span>{acc.description}</span>
-                </div>
-                <div className="col-3">
-                  <span>{acc.fileName}</span>
-                </div>
-                <div className="col-3 row d-flex justify-content-center center-parent">
-                  <div className="col-6">
-                    <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => console.log("Preview")}>
-                      <em className="fa fa-eye" />
-                    </button>
-                    <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => console.log("Download")}>
-                      <em className="fa fa-download" />
-                    </button>
-                    <button className="btn btn-sm btn-secondary" type="button" onClick={() => console.log("Delete")}>
-                      <em className="fa fa-times" />
-                    </button>
+        Array.isArray(props.documents) && props.documents.length > 0
+          ? props.documents.map((doc, key) => {
+            return (
+              <div key={"Documents " + key}>
+                <div className="row ft-detail list-docs d-flex justify-content-center">
+                  <div className="col-3">
+                    <span>{doc.name}</span>
+                  </div>
+                  <div className="col-3">
+                    <span>{doc.description}</span>
+                  </div>
+                  <div className="col-3">
+                    <span>{doc.fileName}</span>
+                  </div>
+                  <div className="col-3 row d-flex justify-content-center center-parent">
+                    <div>
+                      <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => handleModalPreview(doc)}>
+                        <em className="fa fa-eye" />
+                      </button>
+                    </div>
+                    <div>
+                      <button className="btn btn-sm btn-secondary mr-1" type="button" onClick={() => handleDownload(doc)}
+                        download={
+                          docImage != null
+                            ? docImage
+                            : null
+                        }
+                      >
+                        <em className="fa fa-download" />
+                      </button>
+                    </div>
+                    <Swal options={swalOption} callback={swalCallback} deleterow={props.deleteClientDoc} id={doc.id}>
+                      <button className="btn btn-sm btn-secondary" type="button">
+                        <em className="fa fa-times" />
+                      </button>
+                    </Swal>
                   </div>
                 </div>
+                <div className="row d-flex justify-content-center">
+                  <hr className="col-11 hr-margin-0" />
+                </div>
               </div>
-              <div className="row d-flex justify-content-center">
-                <hr className="col-11 hr-margin-0" />
-              </div>
-            </div>
-          )
-        })
+            )
+          })
+          : null
       }
     </div>
   )
@@ -285,7 +406,7 @@ const DragDrop = props => {
     } else {
       return (
         <div key={"File " + file.path} className="center-parent">
-          <h4>File is being uploaded..</h4>
+          <h4>File's preview is being uploaded..</h4>
           <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
         </div>
       )
@@ -327,7 +448,6 @@ class MemberDataDetail extends Component {
       })
     }
     const setClientDocuments = res => {
-      console.log(res)
       this.setState({
         clientDocuments: res
       })
@@ -368,18 +488,26 @@ class MemberDataDetail extends Component {
       clientImage: null,
       clientSummary: null,
       documentsActive: false,
+      docName: null,
+      docDesc: null,
+      docUpload: null,
       modalCamera: false,
       modalUpload: false,
+      modalUploadDoc: false,
       selfieUri: null
     };
   }
 
-  handleModalCamera() {
+  handleModalCamera = () => {
     this.setState({ modalCamera: !this.state.modalCamera })
   }
 
-  handleModalUpload() {
+  handleModalUpload = () => {
     this.setState({ modalUpload: !this.state.modalUpload })
+  }
+
+  handleModalUploadDoc = () => {
+    this.setState({ modalUploadDoc: !this.state.modalUploadDoc })
   }
 
   toggleTab = tab => {
@@ -430,6 +558,32 @@ class MemberDataDetail extends Component {
     } else {
       swal("Cancelled", "Your image is safe :)", "error");
     }
+  }
+
+  changeState = (name, val) => {
+    this.setState({
+      [name]: val
+    })
+  }
+
+  deleteClientDocRes = () => {
+    const setClientDocuments = res => {
+      this.setState({
+        clientDocuments: res
+      })
+    }
+
+    this.props.actions.getClientDocuments(this.state.clientIdNo, setClientDocuments)
+  }
+
+  deleteClientDoc = docId => {
+    this.props.actions.deleteClientDoc(
+      {
+        clientId: this.state.clientIdNo,
+        documentId: docId
+      },
+      this.deleteClientDocRes
+    )
   }
 
   render() {
@@ -487,16 +641,32 @@ class MemberDataDetail extends Component {
 
     const uploadSelfieCamRes = () => {
       this.setState({
-        clientImage: this.state.selfieUri
+        clientImage: null
       })
+
+      const setClientImage = res => {
+        this.setState({
+          clientImage: res
+        })
+      }
+
+      this.props.actions.getClientImage(this.state.clientIdNo, setClientImage)
 
       this.handleModalCamera()
     }
 
     const uploadSelfieImageRes = () => {
       this.setState({
-        clientImage: this.state.selfieUri
+        clientImage: null
       })
+
+      const setClientImage = res => {
+        this.setState({
+          clientImage: res
+        })
+      }
+
+      this.props.actions.getClientImage(this.state.clientIdNo, setClientImage)
 
       this.handleModalUpload()
     }
@@ -516,9 +686,52 @@ class MemberDataDetail extends Component {
       this.props.actions.clientAddImage(selfieImage, { clientId: this.state.clientIdNo }, uploadSelfieImageRes)
     }
 
-    const setPhoto = photo => {
+    const uploadDocRes = () => {
+      this.handleModalUploadDoc()
+
+      const setClientDocuments = res => {
+        this.setState({
+          clientDocuments: res
+        })
+      }
+
+      this.props.actions.getClientDocuments(this.state.clientIdNo, setClientDocuments)
+    }
+
+    const uploadDoc = () => {
+      if (this.state.docUpload != null && this.state.docName != null) {
+        const docUpload = new FormData()
+
+        docUpload.append(
+          "name",
+          this.state.docName
+        )
+
+        if (this.state.docDesc != null) {
+          docUpload.append(
+            "description",
+            this.state.docDesc
+          )
+        }
+
+        docUpload.append(
+          "file",
+          this.state.docUpload
+        )
+
+        this.props.actions.clientAddDocument(docUpload, { clientId: this.state.clientIdNo }, uploadDocRes)
+      }
+    }
+
+    const setSelfieUri = photo => {
       this.setState({
         selfieUri: photo
+      })
+    }
+
+    const setDocUpload = photo => {
+      this.setState({
+        docUpload: photo
       })
     }
 
@@ -588,13 +801,59 @@ class MemberDataDetail extends Component {
               </Button>
             </div>
 
-            <DragDrop setPhotos={setPhoto} />
+            <DragDrop setPhotos={setSelfieUri} />
 
             <div className="row">
               <Button outline className="col-12 mt-3" color="primary"
                 onClick={() => uploadSelfieImage()}
               >
                 Upload Gambar
+              </Button>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={this.state.modalUploadDoc}
+          onRequestClose={() => this.handleModalUploadDoc()}
+        >
+          <div className="container-fluid">
+            <div className="row">
+              <Button outline className="col-4 col-lg-2" color="primary"
+                onClick={() => this.handleModalUploadDoc()}
+              >
+                Batalkan
+              </Button>
+            </div>
+
+            <div className="row d-flex justify-content-center">
+              <div className="col-md-6 center-parent form-font-size">
+                <FormGroup>
+                  <label htmlFor="docName">Name *</label>
+                  <input className="form-control mr-3" type="text" placeholder="Enter document's name"
+                    value={this.state.externalId} onChange={e => this.changeState("docName", e.target.value)}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <label htmlFor="docDesc">Description</label>
+                  <textarea rows="4" className="form-control mr-3" type="text" placeholder="Enter descriptions"
+                    value={this.state.externalId} onChange={e => this.changeState("docDesc", e.target.value)}
+                  />
+                </FormGroup>
+              </div>
+            </div>
+
+            <div className="row d-flex justify-content-center">
+              <h1>Upload File *</h1>
+            </div>
+
+            <DragDrop setPhotos={setDocUpload} />
+
+            <div className="row">
+              <Button outline className="col-12 mt-3" color="primary"
+                onClick={() => uploadDoc()}
+              >
+                Upload Dokumen
               </Button>
             </div>
           </div>
@@ -809,7 +1068,12 @@ class MemberDataDetail extends Component {
             {
               this.state.documentsActive
                 ? (
-                  <Documents documents={this.state.clientDocuments} />
+                  <div>
+                    <Button outline className="col-12 mb-4" color="primary" type="button" onClick={() => this.handleModalUploadDoc()}>
+                      Upload Dokumen
+                    </Button>
+                    <Documents documents={this.state.clientDocuments} actions={this.props.actions} deleteClientDoc={this.deleteClientDoc} />
+                  </div>
                 )
                 : null
             }

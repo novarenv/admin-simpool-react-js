@@ -5,6 +5,7 @@ export const CLIENT_ADD = 'CLIENT_ADD';
 export const CLIENT_ADD_IMAGE = 'CLIENT_ADD_IMAGE';
 export const CLIENT_ADD_DOCUMENT = 'CLIENT_ADD_DOCUMENT';
 export const DELETE_CLIENT_IMAGE = 'DELETE_CLIENT_IMAGE';
+export const DELETE_CLIENT_DOC = 'DELETE_CLIENT_DOC';
 export const GET_CLIENT_ACCOUNT = 'GET_CLIENT_ACCOUNT';
 export const GET_CLIENT_DETAIL = 'GET_CLIENT_DETAIL';
 export const GET_CLIENT_DETAIL_PARAMS = 'GET_CLIENT_DETAIL_PARAMS';
@@ -12,6 +13,7 @@ export const GET_CLIENT_DOCUMENTS = 'GET_CLIENT_DOCUMENTS';
 export const GET_CLIENT_ID = 'GET_CLIENT_ID';
 export const GET_CLIENT_IMAGE = 'GET_CLIENT_IMAGE';
 export const GET_CLIENT_SUMMARY = 'GET_CLIENT_SUMMARY';
+export const GET_DOC_ATTACH = "GET_DOC_ATTACH";
 export const PUT_CLIENT_ID = 'PUT_CLIENT_ID';
 
 // Index
@@ -37,14 +39,18 @@ export function clientAddImage(payload, res, uploadSelfieRes) {
   return { type: CLIENT_ADD_IMAGE, payload, res, uploadSelfieRes };
 }
 
-export function clientAddDocument(payload, res) {
-  return { type: CLIENT_ADD_DOCUMENT, payload, res };
+export function clientAddDocument(payload, res, setClientDocuments) {
+  return { type: CLIENT_ADD_DOCUMENT, payload, res, setClientDocuments };
 }
 
 
 // Detail
 export function deleteClientImage(payload, setClientImage) {
   return { type: DELETE_CLIENT_IMAGE, payload, setClientImage };
+}
+
+export function deleteClientDoc(payload, setClientDocId) {
+  return { type: DELETE_CLIENT_DOC, payload, setClientDocId };
 }
 
 export function getClientId(payload, setClientId) {
@@ -73,6 +79,10 @@ export function getClientImage(payload, getClientImage) {
 
 export function getClientSummary(payload, setClientSummary) {
   return { type: GET_CLIENT_SUMMARY, payload, setClientSummary };
+}
+
+export function getDocAttach(payload, setDocAttach) {
+  return { type: GET_DOC_ATTACH, payload, setDocAttach };
 }
 
 // Edit

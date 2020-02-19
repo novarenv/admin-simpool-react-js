@@ -9,6 +9,7 @@ import {
   CLIENT_ADD_IMAGE,
   CLIENT_ADD_DOCUMENT,
   DELETE_CLIENT_IMAGE,
+  DELETE_CLIENT_DOC,
   GET_CLIENT_ACCOUNT,
   GET_CLIENT_DETAIL,
   GET_CLIENT_DETAIL_PARAMS,
@@ -16,6 +17,7 @@ import {
   GET_CLIENT_IMAGE,
   GET_CLIENT_ID,
   GET_CLIENT_SUMMARY,
+  GET_DOC_ATTACH,
   PUT_CLIENT_ID
 } from '../actions/actions';
 import {
@@ -26,9 +28,11 @@ import {
   clientAccountUrl,
   clientDetailUrl,
   clientDocumentUrl,
+  clientDocumentIdUrl,
   clientImageUrl,
   clientIdUrl,
-  clientSummaryUrl
+  clientSummaryUrl,
+  docAttachUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
 
@@ -206,6 +210,9 @@ function* clientAddDocument(action) {
       .then(response => response.data)
       .catch(error => console.log(error.response.data, action))
 
+    if (typeof action.setClientDocuments == 'function') {
+      action.setClientDocuments()
+    }
     console.log(clientAddDocument)
 
   } catch (error) {
@@ -232,6 +239,32 @@ function* deleteClientImage(action) {
       .catch(error => console.log(error.response.data, action))
 
     console.log(clientAddImage)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+function* deleteClientDoc(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const deleteClientDoc = yield axios
+      .delete(
+        clientDocumentIdUrl(
+          action.payload.clientId,
+          action.payload.documentId
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data, action))
+
+    action.setClientDocId()
 
   } catch (error) {
     console.log(error)
@@ -394,6 +427,38 @@ function* getClientSummary(action) {
   }
 }
 
+function* getDocAttach(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const getDocAttach = yield axios
+      .get(
+        docAttachUrl(
+          action.payload.clientId,
+          action.payload.documentId
+        ), {
+        headers: {
+          ...headers,
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'image/jpeg'
+        },
+        params: {
+          R_clientId: action.payload,
+          genericResultSet: false
+        },
+        responseType: 'blob'
+      })
+      .then(response => window.URL.createObjectURL(new Blob([response.data])))
+      .catch(error => console.log(error.response.data, action))
+
+    action.setDocAttach(getDocAttach, action.payload.fileName)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 function* putClientId(action) {
   const auth = yield select(authSelector)
 
@@ -430,12 +495,14 @@ export default function* root() {
   yield takeEvery(CLIENT_ADD_IMAGE, clientAddImage);
   yield takeEvery(CLIENT_ADD_DOCUMENT, clientAddDocument);
   yield takeEvery(DELETE_CLIENT_IMAGE, deleteClientImage);
+  yield takeEvery(DELETE_CLIENT_DOC, deleteClientDoc);
   yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
   yield takeEvery(GET_CLIENT_DETAIL_PARAMS, getClientDetailParams);
-  yield takeEvery(GET_CLIENT_DOCUMENTS, getClientDocuments);  
+  yield takeEvery(GET_CLIENT_DOCUMENTS, getClientDocuments);
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);
   yield takeEvery(GET_CLIENT_ID, getClientId);
   yield takeEvery(GET_CLIENT_SUMMARY, getClientSummary);
+  yield takeEvery(GET_DOC_ATTACH, getDocAttach);
   yield takeEvery(PUT_CLIENT_ID, putClientId);
 }
