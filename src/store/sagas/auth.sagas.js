@@ -13,8 +13,11 @@ import {
 import axios from 'axios';
 
 const loginError = (data, action) => {
+  console.log(data)
   if (data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
     action.onLoginSuccess()
+  } else if (data.userMessageGlobalisationCode === "error.msg.not.authenticated") {
+    action.onLoginFailed()
   }
 }
 

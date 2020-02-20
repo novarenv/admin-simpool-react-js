@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
 import { Formik } from 'formik';
 
+import Swal from '../../../components/Common/Swal';
+
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
@@ -18,10 +20,9 @@ class Login extends Component {
       isOtpShown: false,
       isPwdShown: false,
       rememberMe: false,
-      formLogin: {
-        username: '',
-        password: ''
-      }
+
+      username: '',
+      password: ''
     }
   }
 
@@ -29,6 +30,7 @@ class Login extends Component {
     this.props.actions.loginUser(
       values,
       this.onLoginSuccess,
+      this.onLoginFailed,
       this.onLoginOtpSuccess
     )
   }
@@ -41,8 +43,8 @@ class Login extends Component {
 
     this.props.actions.loginOtpUser(
       {
-        username: state.formLogin.username,
-        password: state.formLogin.password,
+        username: state.username,
+        password: state.password,
         transactionReference: state.transactionReference,
         rememberMe: state.rememberMe,
         otpCode: otp,
@@ -53,6 +55,10 @@ class Login extends Component {
 
   onLoginSuccess = () => {
     this.setState({ loginSuccess: true })
+  };
+
+  onLoginFailed = () => {
+    document.getElementById("wrongField").click();
   };
 
   onLoginOtpSuccess = () => {
@@ -83,15 +89,17 @@ class Login extends Component {
     else if (this.props.dashboard.language === 'en')
       isEn = true
 
-    const OTP = () => {
-      const formLogin = this.state.formLogin
+    const wrongFieldOpt = {
+      title: this.props.i18n.t('login.NOT_USER_PWD')
+    }
 
+    const OTP = () => {
       const generateOtp = () => {
         this.setState({ isOtpShown: true })
         this.props.actions.otpFun(
           {
-            username: formLogin.username,
-            password: formLogin.password,
+            username: this.state.username,
+            password: this.state.password,
             rememberMe: this.state.rememberMe
           },
           onOtpSuccess
@@ -113,29 +121,66 @@ class Login extends Component {
           {
             this.state.isOtpShown
               ? (
-                <form className="mb-3" name="formOTP" onSubmit={this.onSubmitLoginOtp.bind(this)}>
-                  <Input
-                    type="text"
-                    name="otp"
-                    maxLength="6"
-                    className="otp col-lg-4 offset-lg-4"
-                    data-validate='["required"]'
-                  />
+                <Formik
+                  initialValues={{ otp: '' }}
+                  validate={values => {
+                    const errors = {};
 
-                  <div className="clearfix">
-                    <CustomInput
-                      type="checkbox"
-                      id="remember-me"
-                      className="float-left mt-0"
-                      name="remember-me"
-                      checked={this.state.rememberMe}
-                      label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>}
-                      onChange={() => rememberMe()}
-                    />
-                  </div>
+                    if (!values.otp) {
+                      errors.otp = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                    }
+                    return errors;
+                  }}
+                  onSubmit={values => {
+                    this.setState({
+                      username: values.username,
+                      password: values.password
+                    })
 
-                  <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Submit OTP</button>
-                </form>
+                    this.onSubmitLogin(values)
+                  }}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit
+                    /* and other goodies */
+                  }) => (
+                      <form className="mb-3" name="formOTP" onSubmit={this.onSubmitLoginOtp.bind(this)}>
+                        <Input
+                          type="text"
+                          name="otp"
+                          maxLength="6"
+                          className={
+                            errors.otp && touched.otp
+                              ? "otp col-lg-4 offset-lg-4 input-error"
+                              : "otp col-lg-4 offset-lg-4"
+                          }
+                          value={values.otp}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <div className="input-feedback">{touched.otp && errors.otp}</div>
+
+                        <div className="clearfix">
+                          <CustomInput
+                            type="checkbox"
+                            id="remember-me"
+                            className="float-left mt-0"
+                            name="remember-me"
+                            checked={this.state.rememberMe}
+                            label={<Trans i18nKey='login.REMEMBER_ME'>Remember Me</Trans>}
+                            onChange={() => rememberMe()}
+                          />
+                        </div>
+
+                        <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">Submit OTP</button>
+                      </form>
+                    )}
+                </Formik>
               )
               : (
                 <div>
@@ -172,9 +217,10 @@ class Login extends Component {
               : (
                 <div className="card-body">
                   <Formik
-                    initialValues={{ username: '', password: '' }}
+                    initialValues={{ username: this.state.username, password: this.state.password }}
                     validate={values => {
                       const errors = {};
+
                       if (!values.username) {
                         errors.username = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
@@ -184,7 +230,12 @@ class Login extends Component {
                       }
                       return errors;
                     }}
-                    onSubmit={async values => {
+                    onSubmit={values => {
+                      this.setState({
+                        username: values.username,
+                        password: values.password
+                      })
+
                       this.onSubmitLogin(values)
                     }}
                   >
@@ -194,8 +245,7 @@ class Login extends Component {
                       touched,
                       handleChange,
                       handleBlur,
-                      handleSubmit,
-                      isSubmitting,
+                      handleSubmit
                       /* and other goodies */
                     }) => (
                         <form className="mb-3" name="formLogin" onSubmit={handleSubmit}>
@@ -219,7 +269,7 @@ class Login extends Component {
                           <div className="form-group">
                             <label className="text-muted" htmlFor="resetInputEmail1"><Trans i18nKey='login.PASSWORD'>Password</Trans></label>
                             <div className="input-group with-focus">
-                              <input 
+                              <input
                                 type={
                                   this.state.isPwdShown
                                     ? "text"
@@ -261,7 +311,8 @@ class Login extends Component {
                               <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
                               <span className="fa fa-circle"></span>English</label>
                           </div>
-                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit" disabled={isSubmitting}><Trans i18nKey='login.LOGIN'>Login</Trans></button>
+                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit"><Trans i18nKey='login.LOGIN'>Login</Trans></button>
+                          <Swal options={wrongFieldOpt} id="wrongField" />
                         </form>
                       )}
                   </Formik>

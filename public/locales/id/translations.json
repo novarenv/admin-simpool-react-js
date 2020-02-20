@@ -1,11 +1,12 @@
 {
   "login": {
-    "USERNAME": "Nama Pengguna",
-    "USERNAME_PH": "contoh: simpool",
+    "LOGIN": "Masuk",
+    "NOT_USER_PWD": "Nama atau kata sandi anda salah!",
     "PASSWORD": "Kata Sandi",
     "PASSWORD_PH": "Masukkan kata sandi anda",
     "REMEMBER_ME": "Ingat Saya",
-    "LOGIN": "Masuk"
+    "USERNAME": "Nama Pengguna",
+    "USERNAME_PH": "contoh: simpool"
   },
   "dashboard": {
     "WELCOME": "Selamat Datang di Simpool!"

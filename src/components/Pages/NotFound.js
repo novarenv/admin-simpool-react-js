@@ -12,7 +12,7 @@ const NotFound = props => {
                 <p>The page you are looking for does not exists.</p>
             </div>
             <h1 className="text-center">
-                <Link to="/simpool/" className="text-muted">Go to Dashboard</Link>
+                <Link to="/simpool/dashboard/" className="text-muted">Go to Dashboard</Link>
             </h1>
             <div className="p-3 text-center">
                 <span>&copy; {year} - Simpool</span>
