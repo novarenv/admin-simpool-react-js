@@ -1,5 +1,6 @@
 {
   "login": {
+    "CTO": "Please check your connection",
     "LOGIN": "Login",
     "NOT_USER_PWD": "Your username or password is incorrect!",
     "PASSWORD": "Password",

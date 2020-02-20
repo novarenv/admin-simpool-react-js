@@ -17,16 +17,14 @@ import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
-import { withTranslation } from 'react-i18next';
-import ReactDataGrid from 'react-data-grid';
-import { Formik } from 'formik';
+import { withTranslation, Trans } from 'react-i18next';
+import { Field, Formik } from 'formik';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import FormValidator from '../../../components/Forms/FormValidator';
 
 // DateTimePicker
 import Datetime from 'react-datetime';
@@ -52,6 +50,32 @@ const MONTHS_ID = [
 ]
 
 const COLUMN_WIDTH = 250;
+
+const BirthDate = ({ field, form, locale, tabIndex }) => {
+  const onFieldChange = value => {
+    form.setFieldValue(field.name, value);
+  }
+
+  return (
+    <Datetime
+      inputProps={{
+        name: "birthdate",
+        className: "form-control input-font-size dt-bg",
+        id: "birthdate",
+        placeholder: "dd mmmm yyyy",
+        autoComplete: "off",
+        required: true,
+        readOnly: true,
+        tabIndex: tabIndex
+      }}
+      dateFormat="DD MMMM YYYY"
+      timeFormat={false}
+      closeOnSelect={true}
+      locale={locale}
+      onChange={onFieldChange}
+    />
+  );
+}
 
 const DragDrop = props => {
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
@@ -165,41 +189,8 @@ class MemberDataAdd extends Component {
   constructor(props) {
     super(props)
 
-    this._columns = [
-      {
-        key: 'ID_MEMBER',
-        name: 'Id',
-        width: 100,
-        frozen: true
-      },
-      {
-        key: 'EXTERNAL_ID',
-        name: 'External Id',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'FULL_NAME',
-        name: 'Full Name',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'OFFICE',
-        name: 'Office',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'STATUS',
-        name: 'Status',
-        sortable: true,
-        width: COLUMN_WIDTH
-      }
-    ];
-
     this.state = {
-      notDuplicate: false,
+      showNotDuplicate: false,
       privateIdentity: false,
       formValidateDuplicate: false,
       totalFilteredRecords: false,
@@ -216,6 +207,7 @@ class MemberDataAdd extends Component {
       addValidation: {
         registrationDate: '',
         legalFormId: '1',
+        membership: '',
         typeOfIdentityId: 'default',
         identityTypeOptions: [],
         fullname: '',
@@ -330,23 +322,8 @@ class MemberDataAdd extends Component {
   }
 
   checkDuplicate = () => {
-    const addValidation = this.state.addValidation
-
-    const createRows = rows => {
-      let rowsTemp = [];
-      rows.map(row => {
-        rowsTemp.push({
-          ID_MEMBER: row.accountNo,
-          EXTERNAL_ID: row.legalForm.value,
-          FULL_NAME: row.displayName,
-          OFFICE: row.officeName,
-          STATUS: row.status.value
-        })
-      })
-      this.setState({
-        rows: rowsTemp
-      })
-    };
+    const state = this.state
+    const addValidation = state.addValidation
 
     const checkTotalFilter = res => {
       if (res.totalFilteredRecords > 0) {
@@ -354,7 +331,6 @@ class MemberDataAdd extends Component {
           totalFilteredRecords: true,
           pageItems: res.pageItems
         })
-        createRows(res.pageItems)
       }
     }
 
@@ -371,47 +347,69 @@ class MemberDataAdd extends Component {
     )
 
     this.setState({
-      notDuplicate: true,
+      showNotDuplicate: true,
       privateIdentity: false
     });
   }
 
-  rowGetter = (i) => this.state.rows[i]
-
-  handleGridSort = (sortColumn, sortDirection) => {
-    const comparer = (a, b) => {
-      if (sortDirection === 'ASC') {
-        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
-      } else if (sortDirection === 'DESC') {
-        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
-      }
-    };
-
-    const rows = sortDirection === 'NONE' ? this.state.originalRows.slice(0) : this.state.rows.sort(comparer);
-
-    this.setState({ rows });
-  };
-
   ShowNotDuplicate = () => {
     const setNotDuplicate = () => {
       this.setState({
-        notDuplicate: false,
+        showNotDuplicate: false,
         privateIdentity: true
       });
     }
 
-    if (this.state.totalFilteredRecords) {
+    if (this.state.totalFilteredRecords > 0) {
       return (
         <div>
-          <ReactDataGrid
-            onGridSort={this.handleGridSort}
-            columns={this._columns}
-            rowGetter={this.rowGetter}
-            rowsCount={this.state.rows.length}
-            minHeight={700}
-            onCellSelected={this.onCellSelected}
-            onGridRowsUpdated={this.onGridRowsUpdated}
-          />
+          <div className="row row-mx-0 ft-detail list-header d-flex justify-content-center center-parent">
+            <div className="col-2">
+              <span>Id</span>
+            </div>
+            <div className="col-2">
+              <span>External ID</span>
+            </div>
+            <div className="col-2">
+              <span>Full Name</span>
+            </div>
+            <div className="col-2">
+              <span>Office</span>
+            </div>
+            <div className="col-2">
+              <span>Status</span>
+            </div>
+          </div>
+          {
+            this.state.pageItems.map((item, key) => {
+              return (
+                <div key={"Savings " + key}>
+                  <div className="row row-mx-0 ft-detail list-detail d-flex justify-content-center list-hover center-parent"
+                  // onClick={() => rowClicked()}
+                  >
+                    <div className="col-2">
+                      <span>{item.id}</span>
+                    </div>
+                    <div className="col-2">
+                      <span>{item.legalForm.value}</span>
+                    </div>
+                    <div className="col-2">
+                      <span>{item.fullname}</span>
+                    </div>
+                    <div className="col-2">
+                      <span>{item.officeName}</span>
+                    </div>
+                    <div className="col-2">
+                      <span>{item.status.value}</span>
+                    </div>
+                  </div>
+                  <div className="row d-flex justify-content-center">
+                    <hr className="col-10 hr-margin-0" />
+                  </div>
+                </div>
+              )
+            })
+          }
           <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
             onClick={() => setNotDuplicate()}>Create Member</Button>
         </div>
@@ -437,10 +435,6 @@ class MemberDataAdd extends Component {
           type="text"
           id="placeOfBirth"
           onChange={this.validateOnChange}
-          invalid={this.hasError(
-            'addValidation',
-            'placeOfBirth'
-          )}
           placeholder="contoh: Tangerang"
           value={this.state.addValidation.placeOfBirth}
         />
@@ -470,10 +464,6 @@ class MemberDataAdd extends Component {
           type="text"
           id="NPWP"
           onChange={this.validateOnChange}
-          invalid={this.hasError(
-            'addValidation',
-            'NPWP'
-          )}
           placeholder="101001002"
           value={this.state.addValidation.NPWP}
         />
@@ -485,10 +475,6 @@ class MemberDataAdd extends Component {
           type="text"
           id="oldMemberNumber"
           onChange={this.validateOnChange}
-          invalid={this.hasError(
-            'addValidation',
-            'oldMemberNumber'
-          )}
           placeholder="contoh: 123456789"
           value={this.state.addValidation.oldMemberNumber}
         />
@@ -521,10 +507,6 @@ class MemberDataAdd extends Component {
           type="text"
           id="mobileNo"
           onChange={this.validateOnChange}
-          invalid={this.hasError(
-            'addValidation',
-            'mobileNo'
-          )}
           placeholder="contoh: 123456789"
           value={this.state.addValidation.mobileNo}
         />
@@ -535,11 +517,9 @@ class MemberDataAdd extends Component {
           className="input-font-size"
           type="email"
           id="email"
-          invalid={this.hasError('addValidation', 'email', 'email')}
           onChange={this.validateOnChange}
           value={this.state.addValidation.email}
           placeholder="contoh: simpool@ikkat.com" />
-        {this.hasError('addValidation', 'email', 'email') && <span className="invalid-feedback">Field must be valid email</span>}
 
         <div>
           <div className="d-flex">
@@ -559,67 +539,11 @@ class MemberDataAdd extends Component {
   }
 
   toggleStep = activeStep => () => {
-    // For submit we can obtain the form from the event
-    // but for each step we need a global ref to the element
-    const form = this.formWizardRef;
-    // To validate only the inputs in the current steps, we use an id to query the tabPane
-    // and then find all form elements for the current step only.
-    const tabPane = document.getElementById('tabPane' + this.state.activeStep);
-    const inputs = [].slice.call(tabPane.querySelectorAll('input,select'));
-    // Run validation of inputs
-    const { errors, hasError } = FormValidator.bulkValidate(inputs);
-
-    // Update state so the validation message are shown/hidden
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        errors
-      }
-    });
-
-    // and prevent change the if form is not valid
-    if (!hasError) {
-      if (this.state.activeStep !== activeStep) {
-        this.setState({
-          activeStep
-        });
-      }
+    if (this.state.activeStep !== activeStep) {
+      this.setState({
+        activeStep
+      });
     }
-  };
-
-  /**
-   * Validate input using onChange event
-   * @param  {String} formName The name of the form in the state object
-   * @return {Function} a function used for the event
-   */
-  validateOnChange = event => {
-    const input = event.target;
-    const form = input.form
-    const value = input.type === 'checkbox' ? input.checked : input.value;
-
-    const result = FormValidator.validate(input);
-
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        [input.name]: value,
-        errors: {
-          ...this.state[form.name].errors,
-          [input.name]: result
-        }
-      }
-    });
-
-  }
-
-  /* Simplify error check */
-  hasError = (formName, inputName, method) => {
-    return (
-      this.state[formName] &&
-      this.state[formName].errors &&
-      this.state[formName].errors[inputName] &&
-      this.state[formName].errors[inputName][method]
-    );
   };
 
   handleInputChange = event => {
@@ -629,23 +553,6 @@ class MemberDataAdd extends Component {
     this.setState({
       [name]: value
     });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const form = e.target;
-    const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName));
-
-    const { errors, hasError } = FormValidator.bulkValidate(inputs);
-
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        errors
-      }
-    });
-
-    console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!');
   };
 
   handleDate = e => {
@@ -666,35 +573,6 @@ class MemberDataAdd extends Component {
   // Keep a reference to the form to access from the steps methods
   formRef = node => (this.formWizardRef = node);
 
-  fileReader = acceptedFiles => {
-    console.log(acceptedFiles)
-    const reader = new FileReader()
-
-    const files = acceptedFiles.map(file => (
-      <aside>
-        <ul>
-          <li key={file.path}>
-            {file.path} - {file.size} bytes
-          </li>
-        </ul>
-      </aside>
-    ));
-
-    reader.onabort = () => console.log('file reading was aborted')
-    reader.onerror = () => console.log('file reading has failed')
-    reader.onload = () => {
-      // Do whatever you want with the file contents
-      const binaryStr = reader.result
-      console.log(binaryStr)
-
-      return (
-        { files }
-      )
-    }
-
-    reader.readAsArrayBuffer(acceptedFiles[0])
-  }
-
   renderInputGroup = props => {
     return (
       <div className="input-group date">
@@ -706,23 +584,27 @@ class MemberDataAdd extends Component {
     )
   }
 
-  changeLegalFormId = val => {
-    this.setState(prevState =>
-      ({
-        addValidation: {
-          ...prevState.addValidation,
-          legalFormId: val
-        }
-      })
-    )
+  changeDateState = (name, e) => {
+    let dd = String(e.toDate().getDate()).padStart(2, '0')
+    let mm = MONTHS_ID[e.toDate().getMonth()]
+    let yyyy = e.toDate().getFullYear()
+
+    let date = dd + " " + mm + " " + yyyy
+
+    this.setState(prevState => ({
+      addValidation: {
+        ...prevState.addValidation,
+        [name]: date
+      }
+    }))
   }
 
-  changeTypeOfIdentityId = val => {
+  changeAddValidation = (name, val) => {
     this.setState(prevState =>
       ({
         addValidation: {
           ...prevState.addValidation,
-          typeOfIdentityId: val
+          [name]: val
         }
       })
     )
@@ -788,15 +670,6 @@ class MemberDataAdd extends Component {
     )
   }
 
-  getBase64 = file => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  }
-
   setPhotos = (name, file) => {
     this.setState(prevState => ({
       addValidation: {
@@ -845,7 +718,7 @@ class MemberDataAdd extends Component {
     )
 
     const clientOtherDocs = []
-    
+
     this.state.addValidation.otherDocuments.map((doc, i) => {
       const formdata = new FormData()
       formdata.append(
@@ -860,7 +733,7 @@ class MemberDataAdd extends Component {
         "file",
         addValidation.otherDocuments[i]
       )
-      
+
       clientOtherDocs.push(formdata)
     })
 
@@ -918,6 +791,9 @@ class MemberDataAdd extends Component {
   }
 
   render() {
+    const state = this.state
+    const addValidation = state.addValidation
+
     return (
       <ContentWrapper>
         <div className="content-heading">
@@ -927,447 +803,467 @@ class MemberDataAdd extends Component {
         <Card className="card-default">
           <CardHeader>
             <div>{this.state.today} | Kantor Pelayanan</div>
+          </CardHeader>
+
+          <CardBody>
             <div>
               <Link to="/simpool/member/data">
-                <Button className="btn col-4 col-lg-2 mt-4 justify-content-center" color="primary" outline>Kembali</Button>
+                <Button className="btn col-4 col-lg-2 mb-4 justify-content-center" color="primary" outline>Kembali</Button>
               </Link>
             </div>
-          </CardHeader>
-          <Formik>
-            <Form innerRef={this.formRef} name="addValidation" className="form-font-size" onSubmit={this.handleSubmit}
-              autoComplete="on"
-            >
-              <CardBody>
-                <Nav pills justified={true}>
-                  <NavItem style={stepNavitemStyle}>
-                    <NavLink
-                      tag="div"
-                      className={classnames({
-                        active: this.state.activeStep === '1'
-                      })}
-                      onClick={this.toggleStep('1')}
-                    >
-                      <h4 className="text-left my-4">
-                        1. Identitas Pribadi
+            <Nav pills justified={true}>
+              <NavItem style={stepNavitemStyle}>
+                <NavLink
+                  tag="div"
+                  className={classnames({
+                    active: this.state.activeStep === '1'
+                  })}
+                  onClick={this.toggleStep('1')}
+                >
+                  <h4 className="text-left my-4">
+                    1. Identitas Pribadi
                     <br />
-                        <small>Identitas Anggota yang ingin dimasukkan</small>
-                      </h4>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem style={stepNavitemStyle}>
-                    <NavLink
-                      tag="div"
-                      className={classnames({
-                        active: this.state.activeStep === '2'
-                      })}
-                      onClick={this.toggleStep('2')}
-                    >
-                      <h4 className="text-left my-4">
-                        2. Alamat
+                    <small>Identitas Anggota yang ingin dimasukkan</small>
+                  </h4>
+                </NavLink>
+              </NavItem>
+              <NavItem style={stepNavitemStyle}>
+                <NavLink
+                  tag="div"
+                  className={classnames({
+                    active: this.state.activeStep === '2'
+                  })}
+                  onClick={this.toggleStep('2')}
+                >
+                  <h4 className="text-left my-4">
+                    2. Alamat
                     <br />
-                        <small>Alamat sesuai KTP dan Domisili</small>
-                      </h4>
-                    </NavLink>
-                  </NavItem>
-                  <NavItem style={stepNavitemStyle}>
-                    <NavLink
-                      tag="div"
-                      className={classnames({
-                        active: this.state.activeStep === '3'
-                      })}
-                      onClick={this.toggleStep('3')}
-                    >
-                      <h4 className="text-left my-4">
-                        3. Dokumen
+                    <small>Alamat sesuai KTP dan Domisili</small>
+                  </h4>
+                </NavLink>
+              </NavItem>
+              <NavItem style={stepNavitemStyle}>
+                <NavLink
+                  tag="div"
+                  className={classnames({
+                    active: this.state.activeStep === '3'
+                  })}
+                  onClick={this.toggleStep('3')}
+                >
+                  <h4 className="text-left my-4">
+                    3. Dokumen
                     <br />
-                        <small>Berkas penunjuang pendaftaran</small>
-                      </h4>
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </CardBody>
+                    <small>Berkas penunjuang pendaftaran</small>
+                  </h4>
+                </NavLink>
+              </NavItem>
+            </Nav>
+            <TabContent activeTab={this.state.activeStep} className="form-font-size">
+              <TabPane id="tabPane1" tabId="1">
+                <Formik
+                  initialValues={
+                    {
+                      legalFormId: addValidation.legalFormId,
+                      membership: addValidation.membership,
+                      fullname: addValidation.fullname,
+                      birthdate: addValidation.birthdate,
+                      addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+                      motherName: addValidation.motherName,
+                      typeOfIdentityId: addValidation.typeOfIdentityId,
+                      identityNumber: addValidation.identityNumber
+                    }
+                  }
+                  validate={values => {
+                    const errors = {};
 
+                    if (!values.legalFormId) {
+                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                    }
+                    if (values.legalFormId) {
+                      this.changeAddValidation("legalFormId", values.legalFormId)
+                    }
 
-              <TabContent activeTab={this.state.activeStep}>
-                <TabPane id="tabPane1" tabId="1">
-                  <div className="pt-3 mb-3">
-                    <fieldset>
-                      <label className="mt-3" htmlFor="legalFormId">Jenis Anggota</label>
-                      <div className="py-2">
-                        <label className="c-radio">
-                          <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1" tabIndex="7"
-                            defaultChecked required onChange={e => this.changeLegalFormId(e.target.value)}
-                          />
-                          <span className="fa fa-circle"></span>Individu</label>
-                        <span className="span-disabled">
+                    if (!values.fullname) {
+                      errors.fullname = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                    }
+
+                    if (!values.motherName) {
+                      errors.motherName = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                    }
+
+                    if (values.typeOfIdentityId === "default") {
+                      errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                    }
+                    else if (values.typeOfIdentityId !== "default") {
+                      this.changeAddValidation("typeOfIdentityId", values.typeOfIdentityId)
+                    }
+
+                    if (!values.identityNumber) {
+                      errors.identityNumber = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                    }
+
+                    return errors;
+                  }}
+                  onSubmit={values => {
+                    this.setState(prevState => ({
+                      addValidation: {
+                        ...prevState.addValidation,
+                        legalFormId: values.legalFormId,
+                        membership: values.membership,
+                        fullname: values.fullname,
+                        birthdate: values.birthdate,
+                        addressaddressBasedOnIdentity: values.addressBasedOnIdentity,
+                        motherName: values.motherName,
+                        typeOfIdentityId: values.typeOfIdentityId,
+                        identityNumber: values.identityNumber
+                      }
+                    }))
+                    this.checkDuplicate()
+                  }}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit
+                  }) => (
+                      <form className="pt-3 mb-3" onSubmit={handleSubmit}>
+                        <label className="mt-3" htmlFor="legalFormId">Jenis Anggota</label>
+                        <div className="py-2">
                           <label className="c-radio">
-                            <Input id="badanUsaha" type="radio" name="legalFormId" className="input-font-size" value="2" disabled
-                              onChange={e => this.changeLegalFormId(e.target.value)}
+                            <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1" tabIndex="7"
+                              checked={values.legalFormId === "1"} required onChange={handleChange}
                             />
-                            <span className="fa fa-circle"></span>Badan Usaha</label>
-                        </span>
-                      </div>
-                      <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                      {
-                        this.state.addValidation.legalFormId === "1"
-                          ? (
-                            <div>
-                              <label htmlFor="membership">Keanggotaan</label>
-                              <div className="py-2">
-                                <label className="c-radio">
-                                  <Input id="anggota" type="radio" name="membership" value="anggota" />
-                                  <span className="fa fa-circle"></span>Anggota</label>
-                                <label className="c-radio">
-                                  <Input id="anggotaLuarBiasa" type="radio" name="membership" value="anggotaLuarBiasa" />
-                                  <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
-                                <label className="c-radio">
-                                  <Input id="calonAnggota" type="radio" name="membership" value="calonAnggota" />
-                                  <span className="fa fa-circle"></span>Calon Anggota</label>
-                              </div>
-                              <span className="invalid-feedback">Kolom harus diisi!</span>
-
-                              <label className="mt-3" htmlFor="fullname">Nama Lengkap</label>
-                              <Input
-                                name="fullname"
-                                className="input-font-size"
-                                type="text"
-                                id="fullname"
-                                onChange={this.validateOnChange}
-                                invalid={this.hasError(
-                                  'addValidation',
-                                  'fullname',
-                                  'required'
-                                )}
-                                tabIndex="1"
-                                placeholder="contoh: Ikkat Inovasi Teknologi"
-                                value={this.state.addValidation.fullname}
-                                required
-                                data-validate='["required"]'
+                            <span className="fa fa-circle"></span>Individu</label>
+                          <span className="span-disabled">
+                            <label className="c-radio">
+                              <Input id="badanUsaha" type="radio" name="legalFormId" className="input-font-size" value="2" disabled
+                                checked={values.legalFormId === "2"} onChange={handleChange}
                               />
-                              <span className="invalid-feedback">Tolong isi nama lengkap anda!</span>
+                              <span className="fa fa-circle"></span>Badan Usaha</label>
+                          </span>
+                        </div>
+                        <div className="input-feedback">{errors.legalFormId}</div>
 
-                              <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
-                              <Datetime
-                                inputProps={{
-                                  name: "birthdate",
-                                  className: "form-control input-font-size",
-                                  id: "birthdate",
-                                  placeholder: "dd mmmm yyyy",
-                                  tabIndex: "2",
-                                  required: true,
-                                  autoComplete: "off"
-                                }}
-                                value={this.state.addValidation.birthdate}
-                                dateFormat="DD MMMM YYYY"
-                                timeFormat={false}
-                                closeOnSelect={true}
-                                onChange={this.handleDate}
-                                locale={this.props.dashboard.language}
-                                data-validate='["required"]'
-                              />
-                              <span className="invalid-feedback">Tolong pilih tanggal lahir!</span>
+                        {
+                          this.state.addValidation.legalFormId === "1"
+                            ? (
+                              <div>
+                                <label htmlFor="membership">Keanggotaan</label>
+                                <div className="py-2">
+                                  <label className="c-radio">
+                                    <Input id="anggota" type="radio" name="membership" value="anggota" checked={values.membership === "anggota"} onChange={handleChange} />
+                                    <span className="fa fa-circle"></span>Anggota</label>
+                                  <label className="c-radio">
+                                    <Input id="anggotaLuarBiasa" type="radio" name="membership" value="anggotaLuarBiasa" checked={values.membership === "anggotaLuarBiasa"} onChange={handleChange} />
+                                    <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
+                                  <label className="c-radio">
+                                    <Input id="calonAnggota" type="radio" name="membership" value="calonAnggota" checked={values.membership === "calonAnggota"} onChange={handleChange} />
+                                    <span className="fa fa-circle"></span>Calon Anggota</label>
+                                </div>
 
-                              <label className="mt-3" htmlFor="addressaddressBasedOnIdentity">Alamat Sesuai Identitas</label>
-                              <Input
-                                name="addressBasedOnIdentity"
-                                className="input-font-size"
-                                type="text"
-                                id="addressBasedOnIdentity"
-                                onChange={this.validateOnChange}
-                                invalid={this.hasError(
-                                  'addValidation',
-                                  'addressBasedOnIdentity',
-                                  'required'
-                                )}
-                                tabIndex="3"
-                                placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                                value={this.state.addValidation.addressBasedOnIdentity}
-                                required
-                                data-validate='["required"]'
-                              />
-                              <span className="invalid-feedback">Tolong isi alamat!</span>
+                                <label className="mt-3" htmlFor="fullname">Nama Lengkap</label>
+                                <Input
+                                  name="fullname"
+                                  className={
+                                    touched.fullname && errors.fullname
+                                      ? "input-font-size input-error"
+                                      : "input-font-size"
+                                  }
+                                  type="text"
+                                  id="fullname"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  tabIndex="1"
+                                  placeholder="contoh: Ikkat Inovasi Teknologi"
+                                  value={values.fullname}
+                                />
+                                <div className="input-feedback">{touched.fullname && errors.fullname}</div>
 
-                              <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
-                              <Input
-                                name="motherName"
-                                className="input-font-size"
-                                type="text"
-                                id="motherName"
-                                onChange={this.validateOnChange}
-                                invalid={this.hasError(
-                                  'addValidation',
-                                  'motherName',
-                                  'required'
-                                )}
-                                tabIndex="5"
-                                placeholder="contoh: Ibu Pertiwi"
-                                value={this.state.addValidation.motherName}
-                                required
-                                data-validate='["required"]'
-                              />
-                              <span className="invalid-feedback">Tolong isi Nama Gadis Ibu Kandung anda!</span>
+                                <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
+                                <Field name="birthdate" onChange={handleChange} component={BirthDate} locale={this.props.dashboard.language} tabIndex="2" />
 
-                              <label className="mt-3" htmlFor="typeOfIdentityId">Tipe Identitas</label>
-                              <select value={this.state.addValidation.typeOfIdentityId}
-                                className="custom-select custom-select-sm input-font-size" name="typeOfIdentityId"
-                                onChange={e => this.changeTypeOfIdentityId(e.target.value)}>
-                                <option value="default">Pilih Kartu Identitas!</option>
+                                <label className="mt-3" htmlFor="addressaddressBasedOnIdentity">Alamat Sesuai Identitas</label>
+                                <Input
+                                  name="addressBasedOnIdentity"
+                                  className="input-font-size"
+                                  type="text"
+                                  id="addressBasedOnIdentity"
+                                  tabIndex="3"
+                                  placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  value={values.addressBasedOnIdentity}
+                                />
+
+                                <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
+                                <Input
+                                  name="motherName"
+                                  className={
+                                    touched.motherName && errors.motherName
+                                      ? "input-font-size input-error"
+                                      : "input-font-size"
+                                  }
+                                  type="text"
+                                  id="motherName"
+                                  tabIndex="4"
+                                  placeholder="contoh: Ibu Pertiwi"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  value={values.motherName}
+                                />
+                                <div className="input-feedback">{touched.motherName && errors.motherName}</div>
+
+                                <label className="mt-3" htmlFor="typeOfIdentityId">Tipe Identitas</label>
+                                <select
+                                  value={values.typeOfIdentityId}
+                                  className={
+                                    touched.typeOfIdentityId && errors.typeOfIdentityId
+                                      ? "custom-select custom-select-sm input-font-size input-error"
+                                      : "custom-select custom-select-sm input-font-size"
+                                  }
+                                  name="typeOfIdentityId"
+                                  onChange={handleChange}
+                                  tabIndex="5"
+                                >
+                                  <option value="default">Pilih Kartu Identitas!</option>
+                                  {
+                                    Array.isArray(addValidation.identityTypeOptions) && addValidation.identityTypeOptions.length > 0
+                                      ? addValidation.identityTypeOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.name} key={"identityType " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : null
+                                  }
+                                </select>
+                                <div className="input-feedback">{touched.typeOfIdentityId && errors.typeOfIdentityId}</div>
+
                                 {
-                                  this.state.addValidation.identityTypeOptions.map((option, i) => {
-                                    return (
-                                      <option value={option.name} key={"identityType " + i} >{option.description}</option>
-                                    )
-                                  })
-                                }
-                              </select>
-
-                              {
-                                this.state.addValidation.typeOfIdentityId !== "default"
-                                  ? (
-                                    <div>
-                                      <label className="mt-3" htmlFor="identityNumber">
-                                        No. {
-                                          this.state.addValidation.identityTypeOptions.map((identity, i) => {
-                                            if (identity.name === this.state.addValidation.typeOfIdentityId) {
-                                              return (<span key={"No. Identity " + i}>{identity.description}</span>)
-                                            }
-                                          })
-                                        }
-                                      </label>
-                                      <Input
-                                        name="identityNumber"
-                                        className="input-font-size"
-                                        type="number"
-                                        id="identityNumber"
-                                        onChange={this.validateOnChange}
-                                        invalid={this.hasError(
-                                          'addValidation',
-                                          'identityNumber',
-                                          'required'
-                                        )}
-                                        tabIndex="4"
-                                        placeholder="101001002"
-                                        value={this.state.addValidation.identityNumber}
-                                        required
-                                        data-validate='["required"]'
-                                      />
-                                      <span className="invalid-feedback">Tolong isi {
-                                        this.state.addValidation.identityTypeOptions.map((identity, i) => {
-                                          if (identity.name === this.state.addValidation.typeOfIdentityId) {
-                                            return (<span key={"No. Identity " + i}>{identity.description}</span>)
+                                  values.typeOfIdentityId !== "default"
+                                    ? (
+                                      <div>
+                                        <label className="mt-3" htmlFor="identityNumber">
+                                          No. {
+                                            Array.isArray(addValidation.identityTypeOptions) && addValidation.identityTypeOptions.length > 0
+                                              ? addValidation.identityTypeOptions.map((identity, i) => {
+                                                if (identity.name === values.typeOfIdentityId) {
+                                                  return (<span key={"No. Identity " + i}>{identity.description}</span>)
+                                                }
+                                              })
+                                              : null
                                           }
-                                        })
-                                      }!</span>
-                                    </div>
-                                  )
-                                  : null
-                              }
-                            </div>
-                          )
-                          : null
-                      }
+                                        </label>
+                                        <Input
+                                          name="identityNumber"
+                                          className={
+                                            touched.identityNumber && errors.identityNumber
+                                              ? "input-font-size input-error"
+                                              : "input-font-size"
+                                          }
+                                          type="text"
+                                          maxLength="16"
+                                          id="identityNumber"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          tabIndex="6"
+                                          placeholder="101001002"
+                                          value={values.identityNumber}
+                                        />
+                                        <div className="input-feedback">{touched.identityNumber && errors.identityNumber}</div>
+                                      </div>
+                                    )
+                                    : null
+                                }
+                              </div>
+                            )
+                            : null
+                        }
 
-                      <Button
-                        className="btn btn-block mt-4 mb-3 justify-content-center"
-                        type="submit"
-                        color="primary"
-                        onClick={this.checkDuplicate}
-                        onSubmit={this.handleSubmit}
-                        tabIndex="6"
-                        outlined="true"
-                      >
-                        Cek Duplikasi
-                      </Button>
+                        <Button
+                          className="btn btn-block mt-4 mb-3 justify-content-center"
+                          type="submit"
+                          color="primary"
+                          tabIndex="6"
+                          outlined="true"
+                        >
+                          Cek Duplikasi
+                        </Button>
+                      </form>
+                    )}
+                </Formik>
 
+                {
+                  this.state.showNotDuplicate
+                    ? (
+                      <this.ShowNotDuplicate />
+                    )
+                    : null
+                }
+                {
+                  this.state.privateIdentity
+                    ? (
+                      <this.PrivateIdentity />
+                    )
+                    : null
+                }
+              </TabPane>
+
+              <TabPane id="tabPane2" tabId="2">
+                <div className="pt-3 mb-3">
+                  <fieldset>
+                    <p className="lead text-center">Identitas</p>
+
+                    <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
+                    <Input
+                      name="address1"
+                      className="input-font-size"
+                      type="text"
+                      id="address1"
+                      onChange={this.validateOnChange}
+                      placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                      value={this.state.addValidation.addressBasedOnIdentity}
+                      readOnly
+                    />
+
+                    <label className="mt-3" htmlFor="province">Provinsi</label>
+                    <select value={this.state.addValidation.identityProvinceId} className="custom-select custom-select-sm input-font-size" name="province"
+                      onChange={e => this.changeProvince(e.target.value)}>
+                      <option value="default">Pilih provinsi anda!</option>
                       {
-                        this.state.notDuplicate
-                          ? (
-                            <this.ShowNotDuplicate />
-                          )
-                          : null
-                      }
-                      {
-                        this.state.privateIdentity
-                          ? (
-                            <this.PrivateIdentity />
-                          )
-                          : null
-                      }
-                    </fieldset>
-                  </div>
-                </TabPane>
-
-                <TabPane id="tabPane2" tabId="2">
-                  <div className="pt-3 mb-3">
-                    <fieldset>
-                      <p className="lead text-center">Identitas</p>
-
-                      <label className="mt-3" htmlFor="address1">Alamat Sesuai Identitas</label>
-                      <Input
-                        name="address1"
-                        className="input-font-size"
-                        type="text"
-                        id="address1"
-                        onChange={this.validateOnChange}
-                        invalid={this.hasError(
-                          'addValidation',
-                          'address1'
-                        )}
-                        placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                        value={this.state.addValidation.addressBasedOnIdentity}
-                        readOnly
-                      />
-
-                      <label className="mt-3" htmlFor="province">Provinsi</label>
-                      <select value={this.state.addValidation.identityProvinceId} className="custom-select custom-select-sm input-font-size" name="province"
-                        onChange={e => this.changeProvince(e.target.value)}>
-                        <option value="default">Pilih provinsi anda!</option>
-                        {
-                          this.state.addValidation.provinceOptions.map((option, i) => {
+                        Array.isArray(this.state.addValidation.provinceOptions) && this.state.addValidation.provinceOptions.length > 0
+                          ? this.state.addValidation.provinceOptions.map((option, i) => {
                             return (
                               <option value={option.code} key={"identityType " + i} >{option.description}</option>
                             )
                           })
-                        }
-                      </select>
+                          : null
+                      }
+                    </select>
 
-                      <label className="mt-3" htmlFor="city">Kabupaten / Kota</label>
-                      <select value={this.state.addValidation.identityCityId} className="custom-select custom-select-sm input-font-size" name="city"
-                        onChange={e => this.changeCity(e.target.value)}>
-                        <option value="default">Pilih kota anda!</option>
-                        {
-                          this.state.addValidation.cityOptionsFilter.map((option, i) => {
+                    <label className="mt-3" htmlFor="city">Kabupaten / Kota</label>
+                    <select value={this.state.addValidation.identityCityId} className="custom-select custom-select-sm input-font-size" name="city"
+                      onChange={e => this.changeCity(e.target.value)}>
+                      <option value="default">Pilih kota anda!</option>
+                      {
+                        Array.isArray(this.state.addValidation.cityOptionsFilter) && this.state.addValidation.cityOptionsFilter.length > 0
+                          ? this.state.addValidation.cityOptionsFilter.map((option, i) => {
                             return (
                               <option value={option.code} key={"identityType " + i} >{option.description}</option>
                             )
                           })
-                        }
-                      </select>
+                          : null
+                      }
+                    </select>
 
-                      <label className="mt-3" htmlFor="identityPostalCode">Kode Pos</label>
-                      <Input
-                        name="identityPostalCode"
-                        className="input-font-size"
-                        type="number"
-                        id="identityPostalCode"
-                        onChange={this.validateOnChange}
-                        invalid={this.hasError(
-                          'addValidation',
-                          'identityPostalCode'
-                        )}
-                        placeholder="101001002"
-                        value={this.state.addValidation.identityPostalCode}
-                      />
+                    <label className="mt-3" htmlFor="identityPostalCode">Kode Pos</label>
+                    <Input
+                      name="identityPostalCode"
+                      className="input-font-size"
+                      type="number"
+                      id="identityPostalCode"
+                      onChange={this.validateOnChange}
+                      placeholder="101001002"
+                      value={this.state.addValidation.identityPostalCode}
+                    />
 
 
-                      <p className="lead text-center mt-5">Domisili</p>
-                      <label className="mt-3" htmlFor="addressDomicile">Alamat Sesuai Domisili</label>
-                      <Input
-                        name="addressDomicile"
-                        className="input-font-size"
-                        type="text"
-                        id="addressDomicile"
-                        onChange={this.validateOnChange}
-                        invalid={this.hasError(
-                          'addValidation',
-                          'addressDomicile'
-                        )}
-                        placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                        value={this.state.addValidation.addressDomicile}
-                      />
+                    <p className="lead text-center mt-5">Domisili</p>
+                    <label className="mt-3" htmlFor="addressDomicile">Alamat Sesuai Domisili</label>
+                    <Input
+                      name="addressDomicile"
+                      className="input-font-size"
+                      type="text"
+                      id="addressDomicile"
+                      onChange={this.validateOnChange}
+                      placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                      value={this.state.addValidation.addressDomicile}
+                    />
 
-                      <label className="mt-3" htmlFor="provinceDomicile">Provinsi</label>
-                      <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="provinceDomicile">
-                        <option>List Provinsi</option>
-                        <option defaultValue="province1">Provinsi 1</option>
-                        <option defaultValue="province2">Provinsi 2</option>
-                        <option defaultValue="province3">Provinsi 3</option>
-                      </select>
+                    <label className="mt-3" htmlFor="provinceDomicile">Provinsi</label>
+                    <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="provinceDomicile">
+                      <option>List Provinsi</option>
+                      <option defaultValue="province1">Provinsi 1</option>
+                      <option defaultValue="province2">Provinsi 2</option>
+                      <option defaultValue="province3">Provinsi 3</option>
+                    </select>
 
-                      <label className="mt-3" htmlFor="cityDomicile">Kabupaten/Kota</label>
-                      <Input
-                        name="cityDomicile"
-                        className="input-font-size"
-                        type="text"
-                        id="cityDomicile"
-                        onChange={this.validateOnChange}
-                        invalid={this.hasError(
-                          'addValidation',
-                          'cityDomicile'
-                        )}
-                        placeholder="contoh: Tangerang"
-                        value={this.state.addValidation.cityDomicile}
-                      />
+                    <label className="mt-3" htmlFor="cityDomicile">Kabupaten/Kota</label>
+                    <Input
+                      name="cityDomicile"
+                      className="input-font-size"
+                      type="text"
+                      id="cityDomicile"
+                      onChange={this.validateOnChange}
+                      placeholder="contoh: Tangerang"
+                      value={this.state.addValidation.cityDomicile}
+                    />
 
-                      <label className="mt-3" htmlFor="zipCodeDomicile">Kode Pos</label>
-                      <Input
-                        name="zipCodeDomicile"
-                        className="input-font-size"
-                        type="number"
-                        id="zipCodeDomicile"
-                        onChange={this.validateOnChange}
-                        invalid={this.hasError(
-                          'addValidation',
-                          'zipCodeDomicile'
-                        )}
-                        placeholder="101001002"
-                        value={this.state.addValidation.zipCodeDomicile}
-                      />
-                    </fieldset>
-                  </div>
-                  <hr />
-                  <div className="d-flex">
-                    <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('1')}>
-                      Sebelumnya
+                    <label className="mt-3" htmlFor="zipCodeDomicile">Kode Pos</label>
+                    <Input
+                      name="zipCodeDomicile"
+                      className="input-font-size"
+                      type="number"
+                      id="zipCodeDomicile"
+                      onChange={this.validateOnChange}
+                      placeholder="101001002"
+                      value={this.state.addValidation.zipCodeDomicile}
+                    />
+                  </fieldset>
+                </div>
+                <hr />
+                <div className="d-flex">
+                  <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('1')}>
+                    Sebelumnya
                     </Button>
-                    <Button
-                      color="primary"
-                      onClick={this.toggleStep('3')}
-                    >
-                      Lanjutkan
+                  <Button
+                    color="primary"
+                    onClick={this.toggleStep('3')}
+                  >
+                    Lanjutkan
                     </Button>
-                  </div>
-                </TabPane>
+                </div>
+              </TabPane>
 
 
-                <TabPane id="tabPane3" tabId="3">
-                  <div className="pt-3 mb-3">
-                    <fieldset>
-                      <Container className="container-md">
-                        <p className="lead text-center">Upload Foto</p>
-                        <DragDrop name="selfiePhoto" setPhotos={this.setPhotos} />
-                      </Container>
+              <TabPane id="tabPane3" tabId="3">
+                <div className="pt-3 mb-3">
+                  <fieldset>
+                    <Container className="container-md">
+                      <p className="lead text-center">Upload Foto</p>
+                      <DragDrop name="selfiePhoto" setPhotos={this.setPhotos} />
+                    </Container>
 
-                      <Container className="container-md mt-3">
-                        <p className="lead text-center">Upload KTP</p>
-                        <DragDrop name="idCardPhoto" setPhotos={this.setPhotos} />
-                      </Container>
+                    <Container className="container-md mt-3">
+                      <p className="lead text-center">Upload KTP</p>
+                      <DragDrop name="idCardPhoto" setPhotos={this.setPhotos} />
+                    </Container>
 
-                      <Container className="container-md mt-3">
-                        <p className="lead text-center">Upload NPWP</p>
-                        <DragDrop name="npwpPhoto" setPhotos={this.setPhotos} />
-                      </Container>
+                    <Container className="container-md mt-3">
+                      <p className="lead text-center">Upload NPWP</p>
+                      <DragDrop name="npwpPhoto" setPhotos={this.setPhotos} />
+                    </Container>
 
-                      <Container className="container-md mt-3">
-                        <p className="lead text-center">Upload Dokumen Lain</p>
-                        <DragDropMultiple name="otherDocuments" setPhotos={this.setPhotos} />
-                      </Container>
-                    </fieldset>
-                  </div>
-                  <hr />
-                  <div className="d-flex">
-                    <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('2')}>
-                      Sebelumnya
+                    <Container className="container-md mt-3">
+                      <p className="lead text-center">Upload Dokumen Lain</p>
+                      <DragDropMultiple name="otherDocuments" setPhotos={this.setPhotos} />
+                    </Container>
+                  </fieldset>
+                </div>
+                <hr />
+                <div className="d-flex">
+                  <Button className="ml-auto mr-3" color="secondary" onClick={this.toggleStep('2')}>
+                    Sebelumnya
                     </Button>
-                    <Button color="primary" type="submit" onClick={() => this.finishForm()}>
-                      Finish
+                  <Button color="primary" type="submit" onClick={() => this.finishForm()}>
+                    Finish
                     </Button>
-                  </div>
-                </TabPane>
-              </TabContent>
-            </Form >
-          </Formik>
+                </div>
+              </TabPane>
+            </TabContent>
+          </CardBody>
         </Card>
       </ContentWrapper>
     );

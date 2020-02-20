@@ -11,6 +11,7 @@ import 'raf/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import Axios from 'axios';
 
 import './index.css';
 import App from './App';
@@ -24,6 +25,8 @@ import 'react-sliding-pane/dist/react-sliding-pane.css';
 
 import configureStore from './store/store';
 const store = configureStore();
+
+Axios.defaults.timeout = 15000
 
 ReactDOM.render(
   <Provider store={store}>

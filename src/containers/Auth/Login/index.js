@@ -17,6 +17,7 @@ class Login extends Component {
     this.state = {
       loginSuccess: false,
       transactionReference: '',
+      isLoadingLogin: false,
       isOtpShown: false,
       isPwdShown: false,
       rememberMe: false,
@@ -27,10 +28,15 @@ class Login extends Component {
   }
 
   onSubmitLogin = values => {
+    this.setState({
+      isLoadingLogin: true
+    })
+
     this.props.actions.loginUser(
       values,
       this.onLoginSuccess,
       this.onLoginFailed,
+      this.onCTO,
       this.onLoginOtpSuccess
     )
   }
@@ -54,12 +60,24 @@ class Login extends Component {
   }
 
   onLoginSuccess = () => {
-    this.setState({ loginSuccess: true })
-  };
+    this.setState({ loginSuccess: true, isLoadingLogin: false })
+  }
 
   onLoginFailed = () => {
-    document.getElementById("wrongField").click();
-  };
+    this.setState({
+      isLoadingLogin: false
+    })
+
+    document.getElementById("wrongField").click()
+  }
+
+  onCTO = () => {
+    this.setState({
+      isLoadingLogin: false
+    })
+
+    document.getElementById("CTO").click()
+  }
 
   onLoginOtpSuccess = () => {
     const time = new Date()
@@ -91,6 +109,10 @@ class Login extends Component {
 
     const wrongFieldOpt = {
       title: this.props.i18n.t('login.NOT_USER_PWD')
+    }
+
+    const CTO = {
+      title: this.props.i18n.t('login.CTO')
     }
 
     const OTP = () => {
@@ -147,7 +169,6 @@ class Login extends Component {
                     handleChange,
                     handleBlur,
                     handleSubmit
-                    /* and other goodies */
                   }) => (
                       <form className="mb-3" name="formOTP" onSubmit={this.onSubmitLoginOtp.bind(this)}>
                         <Input
@@ -246,7 +267,6 @@ class Login extends Component {
                       handleChange,
                       handleBlur,
                       handleSubmit
-                      /* and other goodies */
                     }) => (
                         <form className="mb-3" name="formLogin" onSubmit={handleSubmit}>
                           <div className="form-group">
@@ -262,7 +282,9 @@ class Login extends Component {
                               placeholder={this.props.i18n.t('login.USERNAME_PH')}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.username} />
+                              value={values.username}
+                              tabIndex="1" 
+                            />
                             <div className="input-feedback">{touched.username && errors.username}</div>
                           </div>
 
@@ -286,6 +308,7 @@ class Login extends Component {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.password}
+                                tabIndex="2"
                               />
                               <div className="input-group-append cursor-pointer" onClick={() => this.setState({ isPwdShown: !this.state.isPwdShown })}>
                                 <span className={
@@ -311,8 +334,18 @@ class Login extends Component {
                               <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
                               <span className="fa fa-circle"></span>English</label>
                           </div>
-                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit"><Trans i18nKey='login.LOGIN'>Login</Trans></button>
+                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">
+                            {
+                              this.state.isLoadingLogin === true
+                                ? (
+                                  <em className="fas fa-circle-notch fa-spin fa-2x fa-16" />
+                                )
+                                : (<Trans i18nKey='login.LOGIN'>Login</Trans>)
+                            }
+                          </button>
+
                           <Swal options={wrongFieldOpt} id="wrongField" />
+                          <Swal options={CTO} id="CTO" />
                         </form>
                       )}
                   </Formik>

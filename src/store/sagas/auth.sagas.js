@@ -12,12 +12,19 @@ import {
 } from '../../lib/jsonPlaceholderAPI';
 import axios from 'axios';
 
-const loginError = (data, action) => {
-  console.log(data)
-  if (data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
-    action.onLoginSuccess()
-  } else if (data.userMessageGlobalisationCode === "error.msg.not.authenticated") {
-    action.onLoginFailed()
+const loginError = (error, action) => {
+  if (!error.response) {
+    action.onCTO()
+  } else {
+    if (error.response.data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
+      action.onLoginSuccess()
+    } else if (error.response.data.userMessageGlobalisationCode === "error.msg.invalid.username.password") {
+      action.onLoginFailed()
+    }
+  }
+
+  if (error.code === "ECONNABORTED") {
+    action.onCTO()
   }
 }
 
@@ -28,7 +35,7 @@ function* loginUser(action) {
         headers: headers
       })
       .then(response => response.data)
-      .catch(error => loginError(error.response.data, action))
+      .catch(error => loginError(error, action))
 
     if (login.authenticated) {
       action.onLoginOtpSuccess()
@@ -64,7 +71,7 @@ function* loginOtpUser(action) {
       })
       .then(response => response.data)
       .catch(error => console.log(error.response.data))
-    
+
     action.onLoginOtpSuccess()
     yield put(loginOtpUserSuccess(loginOtp.base64EncodedAuthenticationKey))
 

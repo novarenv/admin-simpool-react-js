@@ -1056,7 +1056,7 @@ class MemberDataEdit extends Component {
                             name: "dateOfBirthSpouse",
                             className: "form-control input-font-size dt-bg",
                             id: "dateOfBirthSpouse",
-                            placeholder: "dd mmm yyyy",
+                            placeholder: "dd mmmm yyyy",
                             autoComplete: "off",
                             readOnly: true
                           }}

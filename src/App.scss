@@ -65,6 +65,14 @@ label {
   font-size: 16px;
 }
 
+.fa-16 {
+  font-size: 16px;
+}
+
+.card-body {
+  padding: 24px !important;
+}
+
 // List
 .list-hover:hover {
   cursor: pointer;
@@ -90,6 +98,11 @@ label {
 
 .hr-margin-0 {
   margin: 0;
+}
+
+.row-mx-0 {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 
