@@ -1,7 +1,9 @@
 {
   "login": {
     "USERNAME": "Username",
+    "USERNAME_PH": "example: simpool",
     "PASSWORD": "Password",
+    "PASSWORD_PH": "Input your password",
     "REMEMBER_ME": "Remember Me",
     "LOGIN": "Login"
   },
@@ -37,9 +39,9 @@
         "WEATHER_ICON": "Weather Icons"
       },
       "form": {
-        "FORM": "Forms",
-        "STANDARD": "Standard",
         "EXTENDED": "Extended",
+        "FORM": "Form",
+        "STANDARD": "Standard",
         "VALIDATION": "Validation"
       },
       "chart": {
@@ -139,6 +141,6 @@
     }
   },
   "forms": {
-    "REQUIRED": "Kolom harus diisi!"
+    "REQUIRED": "Field is required!"
   }
 }

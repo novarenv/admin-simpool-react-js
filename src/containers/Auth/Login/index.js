@@ -3,8 +3,7 @@ import { Input, CustomInput } from 'reactstrap';
 import Cookies from "js-cookie";
 import PropTypes from 'prop-types';
 import { withTranslation, Trans } from 'react-i18next';
-
-import FormValidator from '../../../components/Forms/FormValidator.js';
+import { Formik } from 'formik';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
@@ -17,6 +16,7 @@ class Login extends Component {
       loginSuccess: false,
       transactionReference: '',
       isOtpShown: false,
+      isPwdShown: false,
       rememberMe: false,
       formLogin: {
         username: '',
@@ -25,53 +25,9 @@ class Login extends Component {
     }
   }
 
-  /**
-   * Validate input using onChange event
-   * @param  {String} formName The name of the form in the state object
-   * @return {Function} a function used for the event
-   */
-  validateOnChange = event => {
-    const input = event.target;
-    const form = input.form;
-    const value = input.type === 'checkbox' ? input.checked : input.value;
-
-    const result = FormValidator.validate(input);
-
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        [input.name]: value,
-        errors: {
-          ...this.state[form.name].errors,
-          [input.name]: result
-        }
-      }
-    });
-  }
-
-  onSubmitLogin = e => {
-    e.preventDefault()
-
-    const form = e.target;
-    const inputs = [...form.elements].filter(i => ['INPUT', 'SELECT'].includes(i.nodeName))
-    const formLogin = this.state.formLogin
-
-    const { errors, hasError } = FormValidator.bulkValidate(inputs)
-
-    this.setState({
-      [form.name]: {
-        ...this.state[form.name],
-        errors
-      }
-    });
-
-    console.log(hasError ? 'Form has errors. Check!' : 'Form Submitted!')
-
+  onSubmitLogin = values => {
     this.props.actions.loginUser(
-      {
-        username: formLogin.username,
-        password: formLogin.password
-      },
+      values,
       this.onLoginSuccess,
       this.onLoginOtpSuccess
     )
@@ -107,15 +63,7 @@ class Login extends Component {
     this.setState({
       OTPStatus: true
     })
-    this.props.history.push("/simpool/")
-  }
-
-  /* Simplify error check */
-  hasError = (formName, inputName, method) => {
-    return this.state[formName] &&
-      this.state[formName].errors &&
-      this.state[formName].errors[inputName] &&
-      this.state[formName].errors[inputName][method]
+    this.props.history.push("/simpool/dashboard")
   }
 
   changeLanguage = lng => {
@@ -157,7 +105,7 @@ class Login extends Component {
       }
 
       const rememberMe = () => {
-        this.setState({rememberMe: !this.state.rememberMe})
+        this.setState({ rememberMe: !this.state.rememberMe })
       }
 
       return (
@@ -173,7 +121,7 @@ class Login extends Component {
                     className="otp col-lg-4 offset-lg-4"
                     data-validate='["required"]'
                   />
-                  
+
                   <div className="clearfix">
                     <CustomInput
                       type="checkbox"
@@ -223,59 +171,100 @@ class Login extends Component {
               ? (<OTP />)
               : (
                 <div className="card-body">
-                  <form className="mb-3" name="formLogin" onSubmit={this.onSubmitLogin.bind(this)}>
-                    <div className="form-group">
-                      <label className="text-muted" htmlFor="username"><Trans i18nKey='login.USERNAME'>Username</Trans></label>
-                      <div className="input-group with-focus">
-                        <input
-                          type="text"
-                          name="username"
-                          className="form-control border-right-0 input-font-size"
-                          placeholder="contoh: simpool"
-                          autoComplete="on"
-                          invalid={this.hasError('formLogin', 'username', 'required')}
-                          onChange={this.validateOnChange}
-                          data-validate='["required"]'
-                          value={this.state.formLogin.username} />
-                        <div className="input-group-append">
-                          <span className="input-group-text text-muted bg-transparent border-left-0">
-                            <em className="fa fa-envelope"></em>
-                          </span>
-                        </div>
-                        {this.hasError('formLogin', 'username', 'required') && <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>}
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="text-muted" htmlFor="resetInputEmail1"><Trans i18nKey='login.PASSWORD'>Password</Trans></label>
-                      <div className="input-group with-focus">
-                        <input type="password"
-                          id="id-password"
-                          name="password"
-                          className="form-control border-right-0 input-font-size"
-                          placeholder="Xxxx12345"
-                          invalid={this.hasError('formLogin', 'password', 'required')}
-                          onChange={this.validateOnChange}
-                          data-validate='["required"]'
-                          value={this.state.formLogin.password}
-                        />
-                        <div className="input-group-append">
-                          <span className="input-group-text text-muted bg-transparent border-left-0">
-                            <em className="fa fa-lock"></em>
-                          </span>
-                        </div>
-                        <span className="invalid-feedback"><Trans i18nKey='forms.REQUIRED'>Form is required!</Trans></span>
-                      </div>
-                    </div>
-                    <div className="text-center py-2">
-                      <label className="c-radio">
-                        <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')} />
-                        <span className="fa fa-circle"></span>Bahasa Indonesia</label>
-                      <label className="c-radio">
-                        <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
-                        <span className="fa fa-circle"></span>English</label>
-                    </div>
-                    <button className="btn btn-block btn-primary mt-3 btn-color" type="submit"><Trans i18nKey='login.LOGIN'>Login</Trans></button>
-                  </form>
+                  <Formik
+                    initialValues={{ username: '', password: '' }}
+                    validate={values => {
+                      const errors = {};
+                      if (!values.username) {
+                        errors.username = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
+
+                      if (!values.password) {
+                        errors.password = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
+                      return errors;
+                    }}
+                    onSubmit={async values => {
+                      this.onSubmitLogin(values)
+                    }}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      handleChange,
+                      handleBlur,
+                      handleSubmit,
+                      isSubmitting,
+                      /* and other goodies */
+                    }) => (
+                        <form className="mb-3" name="formLogin" onSubmit={handleSubmit}>
+                          <div className="form-group">
+                            <label className="text-muted" htmlFor="username"><Trans i18nKey='login.USERNAME'>Username</Trans></label>
+                            <input
+                              type="text"
+                              name="username"
+                              className={
+                                errors.username && touched.username
+                                  ? "form-control input-font-size input-error"
+                                  : "form-control input-font-size"
+                              }
+                              placeholder={this.props.i18n.t('login.USERNAME_PH')}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={values.username} />
+                            <div className="input-feedback">{touched.username && errors.username}</div>
+                          </div>
+
+                          <div className="form-group">
+                            <label className="text-muted" htmlFor="resetInputEmail1"><Trans i18nKey='login.PASSWORD'>Password</Trans></label>
+                            <div className="input-group with-focus">
+                              <input 
+                                type={
+                                  this.state.isPwdShown
+                                    ? "text"
+                                    : "password"
+                                }
+                                id="id-password"
+                                name="password"
+                                className={
+                                  errors.password && touched.password
+                                    ? "form-control input-font-size border-right-0 input-error"
+                                    : "form-control input-font-size border-right-0"
+                                }
+                                placeholder={this.props.i18n.t('login.PASSWORD_PH')}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.password}
+                              />
+                              <div className="input-group-append cursor-pointer" onClick={() => this.setState({ isPwdShown: !this.state.isPwdShown })}>
+                                <span className={
+                                  errors.password && touched.password
+                                    ? "input-group-text text-muted bg-transparent border-left-0 input-error"
+                                    : "input-group-text text-muted bg-transparent border-left-0"
+                                }>
+                                  {
+                                    this.state.isPwdShown
+                                      ? (<em className="fa fa-eye-slash" />)
+                                      : (<em className="fa fa-eye" />)
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                            <div className="input-feedback">{touched.password && errors.password}</div>
+                          </div>
+                          <div className="text-center py-2">
+                            <label className="c-radio">
+                              <Input id="id" type="radio" name="i-radio" defaultValue="id" defaultChecked={isId} onClick={() => this.changeLanguage('id')} />
+                              <span className="fa fa-circle"></span>Bahasa Indonesia</label>
+                            <label className="c-radio">
+                              <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
+                              <span className="fa fa-circle"></span>English</label>
+                          </div>
+                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit" disabled={isSubmitting}><Trans i18nKey='login.LOGIN'>Login</Trans></button>
+                        </form>
+                      )}
+                  </Formik>
                 </div>
               )
           }

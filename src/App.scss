@@ -171,6 +171,14 @@ input:focus {
   cursor: pointer;
 }
 
+.input-feedback {
+  color: red;
+}
+
+.input-error {
+  border-color: red;
+}
+
 
 /* Table */
 .tr-cursor {

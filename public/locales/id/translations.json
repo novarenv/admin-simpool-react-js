@@ -1,7 +1,9 @@
 {
   "login": {
     "USERNAME": "Nama Pengguna",
+    "USERNAME_PH": "contoh: simpool",
     "PASSWORD": "Kata Sandi",
+    "PASSWORD_PH": "Masukkan kata sandi anda",
     "REMEMBER_ME": "Ingat Saya",
     "LOGIN": "Masuk"
   },

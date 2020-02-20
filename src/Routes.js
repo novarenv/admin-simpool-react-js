@@ -24,7 +24,7 @@ const Login = lazy(() => import('./containers/Auth/Login'));
 
 // Members
 const MemberData = lazy(() => import('./containers/Members/MemberData'));
-const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
+const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/addV2'));
 const MemberDataDetail = lazy(() => import('./containers/Members/MemberData/detail'));
 const MemberDataEdit = lazy(() => import('./containers/Members/MemberData/edit'));
 const SavingData = lazy(() => import('./containers/Members/SavingData/index'));
@@ -116,12 +116,12 @@ const Routes = ({ location, ...props }) => {
               <div>
                 <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
-              <Route exact path="/simpool/lock" component={waitFor(Lock)} />
-              <Route exact path="/simpool/notfound" component={waitFor(NotFound)} />
-              <Route exact path="/simpool/error500" component={waitFor(Error500)} />
-              <Route exact path="/simpool/maintenance" component={waitFor(Maintenance)} />
+                    <Route exact path="/simpool/lock" component={waitFor(Lock)} />
+                    <Route exact path="/simpool/notfound" component={waitFor(NotFound)} />
+                    <Route exact path="/simpool/error500" component={waitFor(Error500)} />
+                    <Route exact path="/simpool/maintenance" component={waitFor(Maintenance)} />
+
                     {/* Dashboard */}
-                    <Route exact path="/simpool/" component={waitFor(Dashboard)} />
                     <Route exact path="/simpool/dashboard/" component={waitFor(Dashboard)} />
 
                     {/* Members */}
@@ -163,8 +163,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
                     <Route exact path="/simpool/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
-                    <Redirect from="/simpool/login" to="/simpool/" />
-                    <Redirect from="*" to="/simpool/" />
+                    <Redirect from="*" to="/simpool/notfound" />
                   </Switch>
                 </Suspense>
               </div>

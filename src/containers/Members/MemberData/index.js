@@ -23,10 +23,10 @@ const COLUMN_WIDTH = 314;
 
 const AddBar = () => {
   return (
-    <div className="row mb-3 mr-1">
-      <div className="ml-auto mr-0">
+    <div className="row mb-3 mr-1 justify-content-end">
+      <div className="col-8 col-md-6 col-lg-4">
         <Link to="/simpool/member/data-add" >
-          <Button outline color="primary" type="button">
+          <Button className="col-12" outline color="primary" type="button">
             <Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans>
           </Button>
         </Link>
@@ -58,17 +58,17 @@ const SearchBar = props => {
   const clickButton = e => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      
+
       document.getElementById("searchButton").click()
     }
   }
 
   return (
     <div className="row mr-1">
-      <div className="col-md-10 mb-3">
+      <div className="col-md-8 col-lg-10 mb-3">
         <input className="form-control mr-3" type="text" placeholder="Search member data" onChange={handleChange} onKeyUp={e => clickButton(e)} />
       </div>
-      <Button outline id="searchButton" className="col-md-2 mb-3 btn-search" color="primary" onClick={search}>
+      <Button outline id="searchButton" className="col-md-4 col-lg-2 mb-3 btn-search" color="primary" onClick={search}>
         <i className="fas fa-search mr-2" />
         Search
       </Button>
@@ -298,133 +298,133 @@ class MemberData extends Component {
       icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />
     }
   ];
-getCellActions = (column, row) => {
-  const cellActions = {
-    ACTION: this.actionCell
-  };
+  getCellActions = (column, row) => {
+    const cellActions = {
+      ACTION: this.actionCell
+    };
 
-  return cellActions[column.key];
-}
-
-onCellSelected = ({ rowIdx, idx }) => {
-  console.log(rowIdx)
-  console.log(idx)
-  if (idx !== 0) {
-    let clientId
-
-    if (this.state.searchRes != null) {
-      this.state.searchRes.map(item => {
-        if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
-          clientId = item.entityId
-        }
-      })
-    } else {
-      this.state.res.pageItems.map(item => {
-        if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-          clientId = item.id
-        }
-      })
-    }
-
-    this.props.history.push('/simpool/member/data-detail/' + clientId)
+    return cellActions[column.key];
   }
 
-  // if (idx === 0) {
-  //   let clientId
+  onCellSelected = ({ rowIdx, idx }) => {
+    console.log(rowIdx)
+    console.log(idx)
+    if (idx !== 0) {
+      let clientId
 
-  //   if (this.state.searchRes != null) {
-  //     this.state.searchRes.map(item => {
-  //       if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
-  //         clientId = item.entityId
-  //       }
-  //     })
-  //   } else {
-  //     this.state.res.pageItems.map(item => {
-  //       if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-  //         clientId = item.id
-  //       }
-  //     })
-  //   }
+      if (this.state.searchRes != null) {
+        this.state.searchRes.map(item => {
+          if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
+            clientId = item.entityId
+          }
+        })
+      } else {
+        this.state.res.pageItems.map(item => {
+          if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+            clientId = item.id
+          }
+        })
+      }
 
-  //   this.props.history.push('/simpool/member/data-edit/' + clientId)
-  // }
-  this.setState({ rowIdx })
-};
-
-onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
-  this.setState(state => {
-    const rows = state.rows.slice();
-    for (let i = fromRow; i <= toRow; i++) {
-      rows[i] = { ...rows[i], ...updated };
+      this.props.history.push('/simpool/member/data-detail/' + clientId)
     }
-    return { rows };
-  });
-};
 
-changePage = page => {
-  console.log(page)
-  this.setState({ page: page })
+    // if (idx === 0) {
+    //   let clientId
 
-  const offset = parseInt((page - 1) * 25)
+    //   if (this.state.searchRes != null) {
+    //     this.state.searchRes.map(item => {
+    //       if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
+    //         clientId = item.entityId
+    //       }
+    //     })
+    //   } else {
+    //     this.state.res.pageItems.map(item => {
+    //       if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
+    //         clientId = item.id
+    //       }
+    //     })
+    //   }
 
-  console.log(offset)
+    //   this.props.history.push('/simpool/member/data-edit/' + clientId)
+    // }
+    this.setState({ rowIdx })
+  };
 
-  this.props.actions.clientIndex(
-    {
-      limit: 25,
-      offset: offset
-    },
-    this.createRows
-  )
-}
+  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    this.setState(state => {
+      const rows = state.rows.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
+  };
 
-render() {
-  return (
-    <ContentWrapper>
-      <div className="content-heading">
-        <span><Trans i18nKey='member.data.MEMBER_DATA'>Member Data</Trans></span>
-      </div>
-      <Container fluid>
-        <Card>
-          <CardBody>
-            <AddBar />
-            <SearchBar props={this.props} searchRows={this.searchRows} />
+  changePage = page => {
+    console.log(page)
+    this.setState({ page: page })
 
-            <Container fluid className="center-parent">
-              {
-                this.state.rows.length > 0
-                  ? (
-                    <div>
-                      <ReactDataGrid
-                        onGridSort={this.handleGridSort}
-                        columns={this._columns}
-                        rowGetter={this.rowGetter}
-                        rowsCount={this.state.rows.length}
-                        minHeight={25 * 35 + 50}
-                        getCellActions={this.getCellActions.bind(this)}
-                        onCellSelected={this.onCellSelected.bind(this)}
-                        onGridRowsUpdated={this.onGridRowsUpdated}
-                      />
+    const offset = parseInt((page - 1) * 25)
 
-                      <PaginatedPage
-                        className="mt-3"
-                        totalPages={this.state.totalPages}
-                        currentPage={this.state.page}
-                        onChange={page => this.changePage(page)}
-                      />
-                    </div>
-                  )
-                  : (
-                    <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
-                  )
-              }
-            </Container>
-          </CardBody>
-        </Card>
-      </Container>
-    </ContentWrapper>
-  );
-}
+    console.log(offset)
+
+    this.props.actions.clientIndex(
+      {
+        limit: 25,
+        offset: offset
+      },
+      this.createRows
+    )
+  }
+
+  render() {
+    return (
+      <ContentWrapper>
+        <div className="content-heading">
+          <span><Trans i18nKey='member.data.MEMBER_DATA'>Member Data</Trans></span>
+        </div>
+        <Container fluid>
+          <Card>
+            <CardBody>
+              <AddBar />
+              <SearchBar props={this.props} searchRows={this.searchRows} />
+
+              <Container fluid className="center-parent">
+                {
+                  this.state.rows.length > 0
+                    ? (
+                      <div>
+                        <ReactDataGrid
+                          onGridSort={this.handleGridSort}
+                          columns={this._columns}
+                          rowGetter={this.rowGetter}
+                          rowsCount={this.state.rows.length}
+                          minHeight={25 * 35 + 50}
+                          getCellActions={this.getCellActions.bind(this)}
+                          onCellSelected={this.onCellSelected.bind(this)}
+                          onGridRowsUpdated={this.onGridRowsUpdated}
+                        />
+
+                        <PaginatedPage
+                          className="mt-3"
+                          totalPages={this.state.totalPages}
+                          currentPage={this.state.page}
+                          onChange={page => this.changePage(page)}
+                        />
+                      </div>
+                    )
+                    : (
+                      <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+                    )
+                }
+              </Container>
+            </CardBody>
+          </Card>
+        </Container>
+      </ContentWrapper>
+    );
+  }
 }
 
 MemberData.propTypes = {
