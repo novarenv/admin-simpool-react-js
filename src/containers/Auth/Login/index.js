@@ -37,15 +37,14 @@ class Login extends Component {
       this.onLoginSuccess,
       this.onLoginFailed,
       this.onCTO,
+      this.onServerDown,
       this.onLoginOtpSuccess
     )
   }
 
   onSubmitLoginOtp = e => {
-    e.preventDefault()
-
     const state = this.state
-    const otp = e.target.elements.otp.value
+    const otp = e
 
     this.props.actions.loginOtpUser(
       {
@@ -77,6 +76,14 @@ class Login extends Component {
     })
 
     document.getElementById("CTO").click()
+  }
+
+  onServerDown = () => {
+    this.setState({
+      isLoadingLogin: false
+    })
+
+    document.getElementById("serverDown").click()
   }
 
   onLoginOtpSuccess = () => {
@@ -113,6 +120,10 @@ class Login extends Component {
 
     const CTO = {
       title: this.props.i18n.t('login.CTO')
+    }
+
+    const serverDown = {
+      title: this.props.i18n.t('login.SERVER_DOWN')
     }
 
     const OTP = () => {
@@ -154,12 +165,7 @@ class Login extends Component {
                     return errors;
                   }}
                   onSubmit={values => {
-                    this.setState({
-                      username: values.username,
-                      password: values.password
-                    })
-
-                    this.onSubmitLogin(values)
+                    this.onSubmitLoginOtp(values.otp)
                   }}
                 >
                   {({
@@ -170,7 +176,7 @@ class Login extends Component {
                     handleBlur,
                     handleSubmit
                   }) => (
-                      <form className="mb-3" name="formOTP" onSubmit={this.onSubmitLoginOtp.bind(this)}>
+                      <form className="mb-3" name="formOTP" onSubmit={handleSubmit}>
                         <Input
                           type="text"
                           name="otp"
@@ -183,8 +189,9 @@ class Login extends Component {
                           value={values.otp}
                           onChange={handleChange}
                           onBlur={handleBlur}
+                          autoComplete="off"
                         />
-                        <div className="input-feedback">{touched.otp && errors.otp}</div>
+                        <div className="input-feedback center-parent">{touched.otp && errors.otp}</div>
 
                         <div className="clearfix">
                           <CustomInput
@@ -334,7 +341,7 @@ class Login extends Component {
                               <Input id="en" type="radio" name="i-radio" defaultValue="en" defaultChecked={isEn} onClick={() => this.changeLanguage('en')} />
                               <span className="fa fa-circle"></span>English</label>
                           </div>
-                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit">
+                          <button className="btn btn-block btn-primary mt-3 btn-color" type="submit" tabIndex="3">
                             {
                               this.state.isLoadingLogin === true
                                 ? (
@@ -346,6 +353,7 @@ class Login extends Component {
 
                           <Swal options={wrongFieldOpt} id="wrongField" />
                           <Swal options={CTO} id="CTO" />
+                          <Swal options={serverDown} id="serverDown" />
                         </form>
                       )}
                   </Formik>

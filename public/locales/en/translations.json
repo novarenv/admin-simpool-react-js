@@ -6,6 +6,7 @@
     "PASSWORD": "Password",
     "PASSWORD_PH": "Input your password",
     "REMEMBER_ME": "Remember Me",
+    "SERVER_DOWN": "Sorry, our server is down",
     "USERNAME": "Username",
     "USERNAME_PH": "example: simpool"
   },
@@ -132,6 +133,26 @@
       "OFFICE": "Office",
       "STATUS": "Status"
     },
+    "data-add": {
+      "ADDRESS": "Address",
+      "ADDRESS_SUB": "Address based on KTP and Domicile",
+      "BIRTHDATE": "Birth Date",
+      "CLIENT_TYPE": "Client Type",
+      "DOCUMENT": "Document",
+      "DOCUMENT_SUB": "Complimentary documents",
+      "DUPLICATE_CHECK": "Duplicate Check",
+      "FULLNAME": "Full Name",
+      "FULLNAME_PH": "example: Ikkat Inovasi Teknologi",
+      "IDENTITY_ADDRESS": "Address Based on Identity",
+      "IDENTITY_ADDRESS_PH": "example: One PM, Gading Serpong, Tangerang",
+      "IDENTITY_TYPE": "Identity Type",
+      "IDENTITY_TYPE_PH": "Choose type of identity!",
+      "MEMBERSHIP": "Membership",
+      "MOTHER_NAME": "Mother's Maiden Name",
+      "MOTHER_NAME_PH": "example: Ibu Pertiwi",
+      "PRIVATE_IDENTITY": "Private Identity",
+      "PRIVATE_IDENTITY_SUB": "Private Identity that you want to submit"
+    },
     "saving-data": {
       "SAVINGS": "Savings",
       "ADD_SAVINGS": "Add Savings",
@@ -139,10 +160,13 @@
       "MEMBER_ID": "Member Id",
       "MEMBER": "Member",
       "BALANCE": "Balance",
-      "OFFICE": "Office"
+      "OFFICE": "Office",
     }
   },
   "forms": {
     "REQUIRED": "Field is required!"
+  },
+  "common": {
+    "BACK": "Back"
   }
 }

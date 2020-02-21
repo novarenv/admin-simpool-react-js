@@ -24,13 +24,11 @@ const COLUMN_WIDTH = 314;
 const AddBar = () => {
   return (
     <div className="row mb-3 mr-1 justify-content-end">
-      <div className="col-8 col-md-6 col-lg-4">
-        <Link to="/simpool/member/data-add" >
-          <Button className="col-12" color="primary" type="button">
-            <Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans>
-          </Button>
-        </Link>
-      </div>
+      <Link to="/simpool/member/data-add" >
+        <Button color="primary" type="button">
+          <Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans>
+        </Button>
+      </Link>
     </div>
   )
 }

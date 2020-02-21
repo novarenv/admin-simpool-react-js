@@ -5,7 +5,7 @@ const Menu = [
     },
     {
         name: 'Dashboard',
-        path: '/simpool/dashboard/',
+        path: '/simpool/dashboard',
         icon: 'icon-home',
         translate: 'sidebar.nav.DASHBOARD'
     },

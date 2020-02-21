@@ -81,9 +81,9 @@ class Header extends Component {
           { /* START Right Navbar */}
           <ul className="navbar-nav flex-row">
             { /* Fullscreen (only desktops) */}
-            <li className="nav-item d-none d-md-block">
+            {/* <li className="nav-item d-none d-md-block">
               <ToggleFullscreen className="nav-link cursor-pointer" />
-            </li>
+            </li> */}
             { /* END Offsidebar menu */}
           </ul>
           { /* END Right Navbar */}

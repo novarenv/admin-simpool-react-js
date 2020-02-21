@@ -163,7 +163,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
                     <Route exact path="/simpool/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
-                    <Redirect from="*" to="/simpool/notfound" />
+                    <Redirect from="*" to="/simpool/dashboard" />
                   </Switch>
                 </Suspense>
               </div>

@@ -3,8 +3,8 @@ export const OTP = 'OTP';
 export const LOGIN_OTP = 'LOGIN_OTP';
 export const LOGIN_OTP_SUCCESS = 'LOGIN_OTP_SUCCESS';
 
-export function loginUser(payload, onLoginSuccess, onLoginFailed, onCTO, onLoginOtpSuccess, loginOtpUserSuccess) {
-  return { type: LOGIN, payload, onLoginSuccess, onLoginFailed, onCTO, onLoginOtpSuccess, loginOtpUserSuccess };
+export function loginUser(payload, onLoginSuccess, onLoginFailed, onCTO, onServerDown, onLoginOtpSuccess, loginOtpUserSuccess) {
+  return { type: LOGIN, payload, onLoginSuccess, onLoginFailed, onCTO, onServerDown, onLoginOtpSuccess, loginOtpUserSuccess };
 }
 
 export function otpFun(payload, onOtpSuccess) {

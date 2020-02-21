@@ -732,7 +732,7 @@ class MemberDataEdit extends Component {
                       </FormGroup>
 
                       <FormGroup>
-                        <label htmlFor="typeOfIdentity">TypeOfIdentity</label>
+                        <label htmlFor="typeOfIdentity">Type Of Identity</label>
                         <select value={this.state.typeOfIdentity}
                           className="custom-select custom-select-sm input-font-size" name="typeOfIdentity"
                           onChange={e => this.changeState("typeOfIdentity", e.target.value)}

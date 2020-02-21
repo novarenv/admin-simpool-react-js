@@ -6,6 +6,7 @@
     "PASSWORD": "Kata Sandi",
     "PASSWORD_PH": "Masukkan kata sandi anda",
     "REMEMBER_ME": "Ingat Saya",
+    "SERVER_DOWN": "Maaf, server kami sedang dalam perbaikan",
     "USERNAME": "Nama Pengguna",
     "USERNAME_PH": "contoh: simpool"
   },
@@ -132,6 +133,26 @@
       "OFFICE": "Kantor Pelayanan",
       "STATUS": "Status"
     },
+    "data-add": {
+      "ADDRESS": "Alamat",
+      "ADDRESS_SUB": "Alamat sesuai KTP dan Domisili",
+      "BIRTHDATE": "Tanggal Lahir",
+      "CLIENT_TYPE": "Jenis Anggota",
+      "DOCUMENT": "Dokumen",
+      "DOCUMENT_SUB": "Berkas penunjuang pendaftaran",
+      "DUPLICATE_CHECK": "Cek Duplikasi",
+      "FULLNAME": "Nama Lengkap",
+      "FULLNAME_PH": "contoh: Ikkat Inovasi Teknologi",
+      "IDENTITY_ADDRESS": "Alamat Sesuai Identitas",
+      "IDENTITY_ADDRESS_PH": "contoh: One PM, Gading Serpong, Tangerang",
+      "IDENTITY_TYPE": "Tipe Identitas",
+      "IDENTITY_TYPE_PH": "Pilih tipe identitas!",
+      "MEMBERSHIP": "Keanggotaan",
+      "MOTHER_NAME": "Nama Gadis Ibu Kandung",
+      "MOTHER_NAME_PH": "contoh: Ibu Pertiwi",
+      "PRIVATE_IDENTITY": "Identitas Pribadi",
+      "PRIVATE_IDENTITY_SUB": "Identitas Anggota yang ingin dimasukkan"
+    },
     "saving-data": {
       "SAVINGS": "Data Simpanan",
       "ADD_SAVINGS": "Tambah Simpanan",
@@ -144,5 +165,8 @@
   },
   "forms": {
     "REQUIRED": "Kolom harus diisi!"
+  },
+  "common": {
+    "BACK": "Kembali"
   }
 }

@@ -49,8 +49,6 @@ const MONTHS_ID = [
   'Desember'
 ]
 
-const COLUMN_WIDTH = 250;
-
 const BirthDate = ({ field, form, locale, tabIndex }) => {
   const onFieldChange = value => {
     form.setFieldValue(field.name, value);
@@ -220,6 +218,7 @@ class MemberDataAdd extends Component {
         birthdate: '',
         NPWP: '',
         oldMemberNumber: '',
+        marriageStatus: '',
         religion: '',
         religionOptions: [],
         gender: '',
@@ -384,8 +383,9 @@ class MemberDataAdd extends Component {
             this.state.pageItems.map((item, key) => {
               return (
                 <div key={"Savings " + key}>
-                  <div className="row row-mx-0 ft-detail list-detail d-flex justify-content-center list-hover center-parent"
-                  // onClick={() => rowClicked()}
+                  <div 
+                    className="row row-mx-0 ft-detail list-detail 
+                      d-flex justify-content-center list-hover center-parent"
                   >
                     <div className="col-2">
                       <span>{item.id}</span>
@@ -426,114 +426,169 @@ class MemberDataAdd extends Component {
   }
 
   PrivateIdentity = () => {
+    const state = this.state
+    const addValidation = state.addValidation
+
     return (
       <div>
-        <label className="mt-3" htmlFor="placeOfBirth">Tempat Lahir</label>
-        <Input
-          name="placeOfBirth"
-          className="input-font-size"
-          type="text"
-          id="placeOfBirth"
-          onChange={this.validateOnChange}
-          placeholder="contoh: Tangerang"
-          value={this.state.addValidation.placeOfBirth}
-        />
-
-        <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
-        <div className="py-2">
-          <label className="c-radio">
-            <Input id="man" type="radio" name="gender" className="input-font-size"
-              value="M" onChange={e => this.changeGender(e.target.value)}
-            />
-            <span className="fa fa-circle" />
-            Laki-laki
-          </label>
-          <label className="c-radio">
-            <Input id="woman" type="radio" name="gender" className="input-font-size"
-              value="F" onChange={e => this.changeGender(e.target.value)}
-            />
-            <span className="fa fa-circle" />
-            Perempuan
-            </label>
-        </div>
-
-        <label className="mt-3" htmlFor="NPWP">NPWP</label>
-        <Input
-          name="NPWP"
-          className="input-font-size"
-          type="text"
-          id="NPWP"
-          onChange={this.validateOnChange}
-          placeholder="101001002"
-          value={this.state.addValidation.NPWP}
-        />
-
-        <label className="mt-3" htmlFor="oldMemberNumber">No. Anggota Lama</label>
-        <Input
-          name="oldMemberNumber"
-          className="input-font-size"
-          type="text"
-          id="oldMemberNumber"
-          onChange={this.validateOnChange}
-          placeholder="contoh: 123456789"
-          value={this.state.addValidation.oldMemberNumber}
-        />
-
-        <label className="mt-3" htmlFor="marriageStatus">Status Pernikahan</label>
-        <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="marriageStatus" required>
-          <option>Status Pernikahan</option>
-          <option defaultValue="married">Menikah</option>
-          <option defaultValue="single">Lajang</option>
-        </select>
-
-        <label className="mt-3" htmlFor="religion">Agama</label>
-        <select value={this.state.addValidation.religion}
-          className="custom-select custom-select-sm input-font-size" name="religion"
-          onChange={e => this.changeReligion(e.target.value)}>
-          <option value="default">Pilih agama anda</option>
-          {
-            this.state.addValidation.religionOptions.map((option, i) => {
-              return (
-                <option value={option.name} key={"identityType " + i} >{option.description}</option>
-              )
-            })
+        <Formik
+          initialValues={
+            {
+              placeOfBirth: addValidation.placeOfBirth,
+              gender: addValidation.gender,
+              NPWP: addValidation.NPWP,
+              oldMemberNumber: addValidation.oldMemberNumber,
+              marriageStatus: addValidation.marriageStatus,
+              religion: addValidation.religion
+            }
           }
-        </select>
+          validate={values => {
+            const errors = {};
 
-        <label className="mt-3" htmlFor="mobileNo">Nomor Telpon</label>
-        <Input
-          name="mobileNo"
-          className="input-font-size"
-          type="text"
-          id="mobileNo"
-          onChange={this.validateOnChange}
-          placeholder="contoh: 123456789"
-          value={this.state.addValidation.mobileNo}
-        />
+            if (/^(0|[1-9]\d*)$/.test(values.NPWP) === false) {
+              errors.NPWP = "NPWP harus berisi angka 0 sampai 9"
+            } else if (values.NPWP.length > 16) {
+              errors.NPWP = "NPWP harus kurang dari 16 angka"
+            }
+            
+            return errors;
+          }}
+          onSubmit={values => {
+            console.log(values)
 
-        <label className="mt-3" htmlFor="email">Email</label>
-        <Input
-          name="email"
-          className="input-font-size"
-          type="email"
-          id="email"
-          onChange={this.validateOnChange}
-          value={this.state.addValidation.email}
-          placeholder="contoh: simpool@ikkat.com" />
+            this.toggleStep('2')
+          }}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <label className="mt-3" htmlFor="placeOfBirth">Tempat Lahir</label>
+              <Input
+                name="placeOfBirth"
+                className="input-font-size"
+                type="text"
+                id="placeOfBirth"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="contoh: Tangerang"
+                value={values.placeOfBirth}
+                tabIndex="1"
+              />
 
-        <div>
-          <div className="d-flex">
-            {/*<Button color="secondary">Previous</Button>*/}
-            <Button
-              className="ml-auto"
-              color="primary"
-              onClick={this.toggleStep('2')}
-              type="submit"
-            >
-              Lanjutkan
-            </Button>
-          </div>
-        </div>
+              <label className="mt-3" htmlFor="gender">Jenis Kelamin</label>
+              <div className="py-2">
+                <label className="c-radio">
+                  <Input id="man" type="radio" name="gender" className="input-font-size"
+                    value="M" checked={values.gender === "M"} onChange={handleChange} onBlur={handleBlur}
+                    tabIndex="2"
+                  />
+                  <span className="fa fa-circle" />
+                  Laki-laki
+                </label>
+                <label className="c-radio">
+                  <Input id="woman" type="radio" name="gender" className="input-font-size"
+                    value="F" checked={values.gender === "F"} onChange={handleChange} onBlur={handleBlur}
+                    tabIndex="2"
+                  />
+                  <span className="fa fa-circle" />
+                  Perempuan
+                  </label>
+              </div>
+
+              <label className="mt-3" htmlFor="NPWP">NPWP</label>
+              <Input
+                name="NPWP"
+                className={
+                  touched.NPWP && errors.NPWP
+                    ? "input-font-size input-error"
+                    : "input-font-size"
+                }
+                type="text"
+                id="NPWP"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="101001002"
+                value={values.NPWP}
+                tabIndex="3"
+              />
+              <div className="input-feedback">{touched.NPWP && errors.NPWP}</div>
+
+              <label className="mt-3" htmlFor="oldMemberNumber">No. Anggota Lama</label>
+              <Input
+                name="oldMemberNumber"
+                className="input-font-size"
+                type="text"
+                id="oldMemberNumber"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="contoh: 123456789"
+                value={values.oldMemberNumber}
+                tabIndex="4"
+              />
+
+              <label className="mt-3" htmlFor="marriageStatus">Status Pernikahan</label>
+              <select value={values.marriageStatus} className="custom-select custom-select-sm input-font-size"
+                name="marriageStatus" tabIndex="5" onChange={handleChange}
+              >
+                <option value="">Status Pernikahan</option>
+                <option value="married">Menikah</option>
+                <option value="single">Lajang</option>
+              </select>
+
+              <label className="mt-3" htmlFor="religion">Agama</label>
+              <select value={values.religion} className="custom-select custom-select-sm input-font-size"
+                name="religion" onChange={handleChange}
+              >
+                <option value="default">Pilih agama anda</option>
+                {
+                  addValidation.religionOptions.map((option, i) => {
+                    return (
+                      <option value={option.name} key={"identityType " + i} >{option.description}</option>
+                    )
+                  })
+                }
+              </select>
+
+              <label className="mt-3" htmlFor="mobileNo">Nomor Telpon</label>
+              <Input
+                name="mobileNo"
+                className="input-font-size"
+                type="text"
+                id="mobileNo"
+                onChange={this.validateOnChange}
+                placeholder="contoh: 123456789"
+                value={this.state.addValidation.mobileNo}
+              />
+
+              <label className="mt-3" htmlFor="email">Email</label>
+              <Input
+                name="email"
+                className="input-font-size"
+                type="email"
+                id="email"
+                onChange={this.validateOnChange}
+                value={this.state.addValidation.email}
+                placeholder="contoh: simpool@ikkat.com" />
+
+              <div className="d-flex justify-content-end">
+                <Button
+                  className="mt-4"
+                  color="primary"
+                  type="submit"
+                >
+                  Lanjutkan
+                </Button>
+              </div>
+            </form>
+          )
+        }
+        </Formik>
       </div>
     )
   }
@@ -808,7 +863,9 @@ class MemberDataAdd extends Component {
           <CardBody>
             <div>
               <Link to="/simpool/member/data">
-                <Button className="btn col-4 col-lg-2 mb-4 justify-content-center" color="primary" outline>Kembali</Button>
+                <Button className="btn col-4 col-lg-2 mb-4 justify-content-center" color="primary" outline>
+                  <Trans i18nKey='common.BACK' />
+                </Button>
               </Link>
             </div>
             <Nav pills justified={true}>
@@ -821,9 +878,9 @@ class MemberDataAdd extends Component {
                   onClick={this.toggleStep('1')}
                 >
                   <h4 className="text-left my-4">
-                    1. Identitas Pribadi
+                    1. <Trans i18nKey='member.data-add.PRIVATE_IDENTITY' />
                     <br />
-                    <small>Identitas Anggota yang ingin dimasukkan</small>
+                    <small><Trans i18nKey='member.data-add.PRIVATE_IDENTITY_SUB' /></small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -836,9 +893,9 @@ class MemberDataAdd extends Component {
                   onClick={this.toggleStep('2')}
                 >
                   <h4 className="text-left my-4">
-                    2. Alamat
+                    2. <Trans i18nKey='member.data-add.ADDRESS' />
                     <br />
-                    <small>Alamat sesuai KTP dan Domisili</small>
+                    <small><Trans i18nKey='member.data-add.ADDRESS_SUB' /></small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -851,9 +908,9 @@ class MemberDataAdd extends Component {
                   onClick={this.toggleStep('3')}
                 >
                   <h4 className="text-left my-4">
-                    3. Dokumen
+                    3. <Trans i18nKey='member.data-add.DOCUMENT' />
                     <br />
-                    <small>Berkas penunjuang pendaftaran</small>
+                    <small><Trans i18nKey='member.data-add.DOCUMENT_SUB' /></small>
                   </h4>
                 </NavLink>
               </NavItem>
@@ -877,29 +934,29 @@ class MemberDataAdd extends Component {
                     const errors = {};
 
                     if (!values.legalFormId) {
-                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'/>
                     }
                     if (values.legalFormId) {
                       this.changeAddValidation("legalFormId", values.legalFormId)
                     }
 
                     if (!values.fullname) {
-                      errors.fullname = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                      errors.fullname = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.motherName) {
-                      errors.motherName = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                      errors.motherName = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (values.typeOfIdentityId === "default") {
-                      errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                      errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED' />
                     }
                     else if (values.typeOfIdentityId !== "default") {
                       this.changeAddValidation("typeOfIdentityId", values.typeOfIdentityId)
                     }
 
                     if (!values.identityNumber) {
-                      errors.identityNumber = <Trans i18nKey='forms.REQUIRED'>Field is required!</Trans>
+                      errors.identityNumber = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     return errors;
@@ -930,7 +987,9 @@ class MemberDataAdd extends Component {
                     handleSubmit
                   }) => (
                       <form className="pt-3 mb-3" onSubmit={handleSubmit}>
-                        <label className="mt-3" htmlFor="legalFormId">Jenis Anggota</label>
+                        <label className="mt-3" htmlFor="legalFormId">
+                        <Trans i18nKey='member.data-add.CLIENT_TYPE' />
+                        </label>
                         <div className="py-2">
                           <label className="c-radio">
                             <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1" tabIndex="7"
@@ -951,20 +1010,31 @@ class MemberDataAdd extends Component {
                           this.state.addValidation.legalFormId === "1"
                             ? (
                               <div>
-                                <label htmlFor="membership">Keanggotaan</label>
+                                <label htmlFor="membership">
+                                  <Trans i18nKey='member.data-add.MEMBERSHIP' />
+                                </label>
                                 <div className="py-2">
                                   <label className="c-radio">
-                                    <Input id="anggota" type="radio" name="membership" value="anggota" checked={values.membership === "anggota"} onChange={handleChange} />
+                                    <Input id="anggota" type="radio" name="membership" value="anggota"
+                                      checked={values.membership === "anggota"} onChange={handleChange}
+                                    />
                                     <span className="fa fa-circle"></span>Anggota</label>
                                   <label className="c-radio">
-                                    <Input id="anggotaLuarBiasa" type="radio" name="membership" value="anggotaLuarBiasa" checked={values.membership === "anggotaLuarBiasa"} onChange={handleChange} />
+                                    <Input id="anggotaLuarBiasa" type="radio" name="membership"
+                                      value="anggotaLuarBiasa" checked={values.membership === "anggotaLuarBiasa"}
+                                      onChange={handleChange}
+                                    />
                                     <span className="fa fa-circle"></span>Anggota Luar Biasa</label>
                                   <label className="c-radio">
-                                    <Input id="calonAnggota" type="radio" name="membership" value="calonAnggota" checked={values.membership === "calonAnggota"} onChange={handleChange} />
+                                    <Input id="calonAnggota" type="radio" name="membership" value="calonAnggota"
+                                      checked={values.membership === "calonAnggota"} onChange={handleChange}
+                                    />
                                     <span className="fa fa-circle"></span>Calon Anggota</label>
                                 </div>
 
-                                <label className="mt-3" htmlFor="fullname">Nama Lengkap</label>
+                                <label className="mt-3" htmlFor="fullname">
+                                  <Trans i18nKey='member.data-add.FULLNAME' />
+                                </label>
                                 <Input
                                   name="fullname"
                                   className={
@@ -977,28 +1047,36 @@ class MemberDataAdd extends Component {
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   tabIndex="1"
-                                  placeholder="contoh: Ikkat Inovasi Teknologi"
+                                  placeholder={this.props.i18n.t("member.data-add.FULLNAME_PH")}
                                   value={values.fullname}
                                 />
                                 <div className="input-feedback">{touched.fullname && errors.fullname}</div>
 
-                                <label className="mt-3" htmlFor="birthdate">Tanggal Lahir</label>
-                                <Field name="birthdate" onChange={handleChange} component={BirthDate} locale={this.props.dashboard.language} tabIndex="2" />
+                                <label className="mt-3" htmlFor="birthdate">
+                                  <Trans i18nKey='member.data-add.BIRTHDATE' />
+                                </label>
+                                <Field name="birthdate" onChange={handleChange} component={BirthDate}
+                                  locale={this.props.dashboard.language} tabIndex="2"
+                                />
 
-                                <label className="mt-3" htmlFor="addressaddressBasedOnIdentity">Alamat Sesuai Identitas</label>
+                                <label className="mt-3" htmlFor="addressBasedOnIdentity">
+                                  <Trans i18nKey='member.data-add.IDENTITY_ADDRESS' />
+                                </label>
                                 <Input
                                   name="addressBasedOnIdentity"
                                   className="input-font-size"
                                   type="text"
                                   id="addressBasedOnIdentity"
                                   tabIndex="3"
-                                  placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                                  placeholder={this.props.i18n.t("member.data-add.IDENTITY_ADDRESS_PH")}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   value={values.addressBasedOnIdentity}
                                 />
 
-                                <label className="mt-3" htmlFor="motherName">Nama Gadis Ibu Kandung</label>
+                                <label className="mt-3" htmlFor="motherName">
+                                  <Trans i18nKey='member.data-add.MOTHER_NAME' />
+                                </label>
                                 <Input
                                   name="motherName"
                                   className={
@@ -1009,14 +1087,16 @@ class MemberDataAdd extends Component {
                                   type="text"
                                   id="motherName"
                                   tabIndex="4"
-                                  placeholder="contoh: Ibu Pertiwi"
+                                  placeholder={this.props.i18n.t("member.data-add.MOTHER_NAME_PH")}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   value={values.motherName}
                                 />
                                 <div className="input-feedback">{touched.motherName && errors.motherName}</div>
 
-                                <label className="mt-3" htmlFor="typeOfIdentityId">Tipe Identitas</label>
+                                <label className="mt-3" htmlFor="typeOfIdentityId">
+                                  <Trans i18nKey='member.data-add.IDENTITY_TYPE' />
+                                </label>
                                 <select
                                   value={values.typeOfIdentityId}
                                   className={
@@ -1028,7 +1108,9 @@ class MemberDataAdd extends Component {
                                   onChange={handleChange}
                                   tabIndex="5"
                                 >
-                                  <option value="default">Pilih Kartu Identitas!</option>
+                                  <option value="default">
+                                    {this.props.i18n.t("member.data-add.IDENTITY_TYPE_PH")}
+                                  </option>
                                   {
                                     Array.isArray(addValidation.identityTypeOptions) && addValidation.identityTypeOptions.length > 0
                                       ? addValidation.identityTypeOptions.map((option, i) => {
@@ -1089,7 +1171,7 @@ class MemberDataAdd extends Component {
                           tabIndex="6"
                           outlined="true"
                         >
-                          Cek Duplikasi
+                          <Trans i18nKey='member.data-add.DUPLICATE_CHECK' />
                         </Button>
                       </form>
                     )}

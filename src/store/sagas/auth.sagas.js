@@ -14,7 +14,7 @@ import axios from 'axios';
 
 const loginError = (error, action) => {
   if (!error.response) {
-    action.onCTO()
+    action.onServerDown()
   } else {
     if (error.response.data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
       action.onLoginSuccess()
@@ -65,15 +65,18 @@ function* otpFun(action) {
 
 function* loginOtpUser(action) {
   try {
-    const loginOtp = yield axios
+    const loginOtpUser = yield axios
       .post(loginUrl, action.payload, {
         headers: headers
       })
-      .then(response => response.data)
+      .then(response => {
+        action.onLoginOtpSuccess()
+
+        return response.data
+      })
       .catch(error => console.log(error.response.data))
 
-    action.onLoginOtpSuccess()
-    yield put(loginOtpUserSuccess(loginOtp.base64EncodedAuthenticationKey))
+    yield put(loginOtpUserSuccess(loginOtpUser.base64EncodedAuthenticationKey))
 
   } catch (error) {
     console.log(error)
