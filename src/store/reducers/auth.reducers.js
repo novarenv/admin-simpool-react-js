@@ -3,17 +3,17 @@ import {
 } from '../actions/actions';
 
 const initialState = {
-  base64EncodedAuthenticationKey: null
+  authRes: null
 };
 
-export const authSelector = state => state.auth.base64EncodedAuthenticationKey
+export const authSelector = state => state.auth.authRes.base64EncodedAuthenticationKey
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_OTP_SUCCESS:
       return {
         ...state,
-        base64EncodedAuthenticationKey: action.payload
+        authRes: action.payload
       }
     default:
       return state;

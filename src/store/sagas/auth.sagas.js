@@ -39,7 +39,9 @@ function* loginUser(action) {
 
     if (login.authenticated) {
       action.onLoginOtpSuccess()
-      yield put(loginOtpUserSuccess(login.base64EncodedAuthenticationKey))
+      console.log(login)
+      
+      yield put(loginOtpUserSuccess(login))
     }
 
   } catch (error) {
@@ -76,7 +78,7 @@ function* loginOtpUser(action) {
       })
       .catch(error => console.log(error.response.data))
 
-    yield put(loginOtpUserSuccess(loginOtpUser.base64EncodedAuthenticationKey))
+    yield put(loginOtpUserSuccess(loginOtpUser))
 
   } catch (error) {
     console.log(error)
