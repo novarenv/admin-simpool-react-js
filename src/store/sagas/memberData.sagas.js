@@ -35,6 +35,7 @@ import {
   docAttachUrl
 } from '../../lib/jsonPlaceholderAPI';
 import { authSelector } from '../reducers/auth.reducers'
+import { languageSelector } from '../reducers/dashboard.reducers';
 
 // Index
 function* clientIndex(action) {
@@ -66,6 +67,7 @@ function* clientIndex(action) {
 // Add
 function* checkDuplicate(action) {
   const auth = yield select(authSelector)
+  const language = yield select(languageSelector)
 
   try {
     const checkDuplicate = yield axios
@@ -81,8 +83,8 @@ function* checkDuplicate(action) {
           typeOfIdentityId: action.payload.typeOfIdentityId,
           identityNumber: action.payload.identityNumber,
           isDuplicate: "false",
-          legalForm: "1",
-          locale: "id",
+          legalForm: action.payload.legalFormId,
+          locale: language,
           limit: "1000"
         }
       })

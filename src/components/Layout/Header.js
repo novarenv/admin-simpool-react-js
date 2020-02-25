@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import * as actions from '../../store/actions/actions';
 
-import ToggleFullscreen from '../Common/ToggleFullscreen';
 import HeaderRun from './Header.run'
 
 class Header extends Component {

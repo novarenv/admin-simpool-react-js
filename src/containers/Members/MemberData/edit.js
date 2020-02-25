@@ -59,6 +59,111 @@ class MemberDataEdit extends Component {
     super(props);
 
     const clientIdNo = this.props.match.params.id
+    
+    this.state = {
+      accountNo: '',
+      activationDate: "",
+      active: false,
+      activeTab: "identity",
+      address: '',
+      addressBasedOnIdentity: '',
+      cityId: '',
+      cityName: '',
+      cityOptions: [],
+      cityOptionsFilter: [],
+      clientIdNo: clientIdNo,
+      clientNonPersonDetails: {},
+      clientType: "",
+      clientTypeIsActive: false,
+      clientTypeOptions: [],
+      company: '',
+      country: '',
+      countryOptions: [],
+      countryIsActive: false,
+      dateOfBirth: "",
+      dateOfBirthSpouse: [],
+      directorate: '',
+      email: '',
+      externalId: '',
+      faxNumber: '',
+      firstname: '',
+      flagTax: '',
+      flagTaxOptions: [],
+      fullname: '',
+      gender: '',
+      genderOptions: [],
+      homeOwnershipStatus: '',
+      homeOwnershipStatusOption: [],
+      identityCityId: '',
+      identityCityName: '',
+      identityCityOptionsFilter: [],
+      identityCountry: '',
+      identityCountryIsActive: false,
+      identityName: '',
+      identityNumber: '',
+      identityPostalCode: '',
+      identityProvinceId: '',
+      identityProvinceName: '',
+      identityRt: '',
+      identityRw: '',
+      identitySubDistrict: '',
+      identityValidDate: "",
+      identityVillage: '',
+      isCitizen: false,
+      lastname: '',
+      lastEducationLevelCode: "",
+      lastEducationLevelCodeOption: [],
+      lastEducationLevelDescription: '',
+      lasEducationOtherIsActive: false,
+      legalFormId: '',
+      maritalStatus: '',
+      maritalStatusOption: [],
+      member: false,
+      merchantCategoryCode: '',
+      merchantCategoryOption: [],
+      merchantInformationCode: '',
+      merchantInformationCodeOption: [],
+      middlename: '',
+      mobileNo: '',
+      mobileUser: '',
+      motherName: '',
+      nickname: '',
+      nip: '',
+      office: "",
+      officeOptions: [],
+      otherHomeOwnershipStatus: '',
+      phoneNumber: '',
+      placeOfBirth: '',
+      postalCode: '',
+      prefix: '',
+      prefixNameCodeOption: [],
+      prePostNuptialAggreement: "",
+      provinceId: '',
+      provinceName: '',
+      provinceOptions: [],
+      religion: '',
+      religionOption: [],
+      rt: '',
+      rw: '',
+      sector: "",
+      sectorOptions: [],
+      spouseIdentityNumber: '',
+      spouseName: '',
+      staff: "",
+      staffOptions: [],
+      submittedOnDate: "",
+      subDistrict: '',
+      suffix: "",
+      suffixNameCodeOption: [],
+      taxAddress: '',
+      taxName: '',
+      taxNumber: '',
+      typeOfIdentity: "",
+      typeOfIdentityBi: "",
+      typeOfIdentityOptions: [],
+      typeOfIdentityBiOptions: [],
+      village: '',
+    }
 
     const setClientDetail = res => {
       console.log(res)
@@ -109,7 +214,6 @@ class MemberDataEdit extends Component {
         cityName: res.city.description,
         cityOptions: res.cityOptions,
         cityOptionsFilter: cityOptions,
-        clientIdNo: clientIdNo,
         clientNonPersonDetails: {
           ...this.state.clientNonPersonDetails,
           businessType: res.clientNonPersonDetails.businessType,
@@ -214,111 +318,6 @@ class MemberDataEdit extends Component {
     }
 
     this.props.actions.getClientDetailParams(clientIdNo, setClientDetail)
-
-    this.state = {
-      accountNo: '',
-      activationDate: "",
-      active: false,
-      activeTab: "identity",
-      address: '',
-      addressBasedOnIdentity: '',
-      cityId: '',
-      cityName: '',
-      cityOptions: [],
-      cityOptionsFilter: [],
-      clientIdNo: '',
-      clientNonPersonDetails: {},
-      clientType: "",
-      clientTypeIsActive: false,
-      clientTypeOptions: [],
-      company: '',
-      country: '',
-      countryOptions: [],
-      countryIsActive: false,
-      dateOfBirth: "",
-      dateOfBirthSpouse: [],
-      directorate: '',
-      email: '',
-      externalId: '',
-      faxNumber: '',
-      firstname: '',
-      flagTax: '',
-      flagTaxOptions: [],
-      fullname: '',
-      gender: '',
-      genderOptions: [],
-      homeOwnershipStatus: '',
-      homeOwnershipStatusOption: [],
-      identityCityId: '',
-      identityCityName: '',
-      identityCityOptionsFilter: [],
-      identityCountry: '',
-      identityCountryIsActive: false,
-      identityName: '',
-      identityNumber: '',
-      identityPostalCode: '',
-      identityProvinceId: '',
-      identityProvinceName: '',
-      identityRt: '',
-      identityRw: '',
-      identitySubDistrict: '',
-      identityValidDate: "",
-      identityVillage: '',
-      isCitizen: false,
-      lastname: '',
-      lastEducationLevelCode: "",
-      lastEducationLevelCodeOption: [],
-      lastEducationLevelDescription: '',
-      lasEducationOtherIsActive: false,
-      legalFormId: '',
-      maritalStatus: '',
-      maritalStatusOption: [],
-      member: false,
-      merchantCategoryCode: '',
-      merchantCategoryOption: [],
-      merchantInformationCode: '',
-      merchantInformationCodeOption: [],
-      middlename: '',
-      mobileNo: '',
-      mobileUser: '',
-      motherName: '',
-      nickname: '',
-      nip: '',
-      office: "",
-      officeOptions: [],
-      otherHomeOwnershipStatus: '',
-      phoneNumber: '',
-      placeOfBirth: '',
-      postalCode: '',
-      prefix: '',
-      prefixNameCodeOption: [],
-      prePostNuptialAggreement: "",
-      provinceId: '',
-      provinceName: '',
-      provinceOptions: [],
-      religion: '',
-      religionOption: [],
-      rt: '',
-      rw: '',
-      sector: "",
-      sectorOptions: [],
-      spouseIdentityNumber: '',
-      spouseName: '',
-      staff: "",
-      staffOptions: [],
-      submittedOnDate: "",
-      subDistrict: '',
-      suffix: "",
-      suffixNameCodeOption: [],
-      taxAddress: '',
-      taxName: '',
-      taxNumber: '',
-      typeOfIdentity: "",
-      typeOfIdentityBi: "",
-      typeOfIdentityOptions: [],
-      typeOfIdentityBiOptions: [],
-      village: '',
-    };
   }
 
   toggleTab = tab => {
@@ -439,11 +438,12 @@ class MemberDataEdit extends Component {
   render() {
     const state = this.state
 
-    const setClientPutRes = res => {
-      this.props.history.push("/simpool/member/data-detail/" + this.state.clientIdNo)
+    const setClientPutRes = () => {
+      this.props.history.push("/simpool/member/data-detail/" + state.clientIdNo)
     }
 
     const editMember = () => {
+      console.log(state.clientIdNo)
       this.props.actions.putClientId(
         {
           "officeId": state.office,
@@ -547,7 +547,7 @@ class MemberDataEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/simpool/member/data">
+            <Link to={"/simpool/member/data-detail/" + this.state.clientIdNo}>
               <Button outline className="col-4 col-md-2 mb-4" color="primary">Kembali</Button>
             </Link>
 
@@ -782,7 +782,7 @@ class MemberDataEdit extends Component {
 
                       <FormGroup>
                         <label htmlFor="addressBasedOnIdentity">Address Based on Identity</label>
-                        <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter office's name"
+                        <textarea rows="4" className="form-control form-font-size" type="text" placeholder="Enter office's name"
                           value={this.state.addressBasedOnIdentity} onChange={e => this.changeState("addressBasedOnIdentity", e.target.value)}
                         />
                       </FormGroup>

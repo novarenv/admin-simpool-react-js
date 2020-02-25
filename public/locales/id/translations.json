@@ -2,7 +2,6 @@
   "login": {
     "CTO": "Periksa kembali koneksimu",
     "LOGIN": "Masuk",
-    "NOT_USER_PWD": "Nama atau kata sandi anda salah!",
     "PASSWORD": "Kata Sandi",
     "PASSWORD_PH": "Masukkan kata sandi anda",
     "REMEMBER_ME": "Ingat Saya",
@@ -129,7 +128,7 @@
       "ADD_MEMBER_DATA": "Tambah Data Anggota",
       "ID_MEMBER": "No. Anggota",
       "EXTERNAL_ID": "No. Anggota Lama",
-      "FULL_NAME": "Nama Lengkap",
+      "FULLNAME": "Nama Lengkap",
       "OFFICE": "Kantor Pelayanan",
       "STATUS": "Status"
     },
@@ -141,8 +140,8 @@
       "DOCUMENT": "Dokumen",
       "DOCUMENT_SUB": "Berkas penunjuang pendaftaran",
       "DUPLICATE_CHECK": "Cek Duplikasi",
-      "FULLNAME": "Nama Lengkap",
-      "FULLNAME_PH": "contoh: Ikkat Inovasi Teknologi",
+      "FULLNAME_ID": "Nama Lengkap Identitas",
+      "FULLNAME_ID_PH": "contoh: Ikkat Inovasi Teknologi",
       "IDENTITY_ADDRESS": "Alamat Sesuai Identitas",
       "IDENTITY_ADDRESS_PH": "contoh: One PM, Gading Serpong, Tangerang",
       "IDENTITY_TYPE": "Tipe Identitas",

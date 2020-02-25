@@ -73,6 +73,10 @@ label {
   padding: 24px !important;
 }
 
+.red {
+  color: red;
+}
+
 // List
 .list-hover:hover {
   cursor: pointer;
@@ -202,6 +206,7 @@ input:focus {
 
 .swal-del {
   height: 34px;
+  padding-top: 10px;
 }
 
 .fa-pen-square {

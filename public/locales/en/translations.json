@@ -2,7 +2,6 @@
   "login": {
     "CTO": "Please check your connection",
     "LOGIN": "Login",
-    "NOT_USER_PWD": "Your username or password is incorrect!",
     "PASSWORD": "Password",
     "PASSWORD_PH": "Input your password",
     "REMEMBER_ME": "Remember Me",
@@ -129,7 +128,7 @@
       "ADD_MEMBER_DATA": "Add Member Data",
       "ID_MEMBER": "ID",
       "EXTERNAL_ID": "External Id",
-      "FULL_NAME": "Full Name",
+      "FULLNAME": "Fullname",
       "OFFICE": "Office",
       "STATUS": "Status"
     },
@@ -141,8 +140,8 @@
       "DOCUMENT": "Document",
       "DOCUMENT_SUB": "Complimentary documents",
       "DUPLICATE_CHECK": "Duplicate Check",
-      "FULLNAME": "Full Name",
-      "FULLNAME_PH": "example: Ikkat Inovasi Teknologi",
+      "FULLNAME_ID": "Identity Fullname",
+      "FULLNAME_ID_PH": "example: Ikkat Inovasi Teknologi",
       "IDENTITY_ADDRESS": "Address Based on Identity",
       "IDENTITY_ADDRESS_PH": "example: One PM, Gading Serpong, Tangerang",
       "IDENTITY_TYPE": "Identity Type",
@@ -160,7 +159,7 @@
       "MEMBER_ID": "Member Id",
       "MEMBER": "Member",
       "BALANCE": "Balance",
-      "OFFICE": "Office",
+      "OFFICE": "Office"
     }
   },
   "forms": {

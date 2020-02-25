@@ -13,13 +13,18 @@ import {
 import axios from 'axios';
 
 const loginError = (error, action) => {
+  console.log(error.response)
   if (!error.response) {
     action.onServerDown()
   } else {
     if (error.response.data.userMessageGlobalisationCode === "error.msg.web.device.not.registered") {
       action.onLoginSuccess()
-    } else if (error.response.data.userMessageGlobalisationCode === "error.msg.invalid.username.password") {
-      action.onLoginFailed()
+    } else if (
+      error.response.data.userMessageGlobalisationCode === "error.msg.invalid.username.password"
+        || error.response.data.userMessageGlobalisationCode === "error.msg.invalid.username.login"
+        || error.response.data.userMessageGlobalisationCode === "error.msg.username.login"
+    ) {
+      action.onLoginFailed(error.response.data.defaultUserMessage)
     }
   }
 
@@ -38,10 +43,9 @@ function* loginUser(action) {
       .catch(error => loginError(error, action))
 
     if (login.authenticated) {
-      action.onLoginOtpSuccess()
-      console.log(login)
-      
       yield put(loginOtpUserSuccess(login))
+
+      action.onLoginOtpSuccess()
     }
 
   } catch (error) {

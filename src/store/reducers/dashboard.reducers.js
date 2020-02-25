@@ -2,10 +2,12 @@ import { CHANGE_DROPDOWN_LANGUAGE, CHANGE_LANGUAGE } from '../actions/actions';
 
 const initialDashboard = {
   // Change Dowpdown Language Button
-  dropdownLanguage: "English",
+  dropdownLanguage: "B. Indonesia",
   // Change Language i18n
-  language: "en"
+  language: "id"
 };
+
+export const languageSelector = state => state.dashboard.language
 
 const dashboardReducer = (state = initialDashboard, action) => {
   switch (action.type) {

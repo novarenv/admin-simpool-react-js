@@ -21,6 +21,7 @@ class Login extends Component {
       isOtpShown: false,
       isPwdShown: false,
       rememberMe: false,
+      wrongFieldMsg: '',
 
       username: '',
       password: ''
@@ -62,9 +63,10 @@ class Login extends Component {
     this.setState({ loginSuccess: true, isLoadingLogin: false })
   }
 
-  onLoginFailed = () => {
+  onLoginFailed = msg => {
     this.setState({
-      isLoadingLogin: false
+      isLoadingLogin: false,
+      wrongFieldMsg: msg
     })
 
     document.getElementById("wrongField").click()
@@ -115,7 +117,7 @@ class Login extends Component {
       isEn = true
 
     const wrongFieldOpt = {
-      title: this.props.i18n.t('login.NOT_USER_PWD')
+      title: this.state.wrongFieldMsg
     }
 
     const CTO = {

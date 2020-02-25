@@ -155,8 +155,8 @@ class MemberData extends Component {
         width: COLUMN_WIDTH
       },
       {
-        key: 'FULL_NAME',
-        name: 'Full Name',
+        key: 'FULLNAME',
+        name: 'Fullname',
         sortable: true,
         width: COLUMN_WIDTH
       },
@@ -203,7 +203,7 @@ class MemberData extends Component {
         ACTION: '',
         ID_MEMBER: row.accountNo,
         EXTERNAL_ID: row.legalForm.value,
-        FULL_NAME: row.displayName,
+        FULLNAME: row.displayName,
         OFFICE: row.officeName,
         STATUS: row.status.value
       })
@@ -220,7 +220,7 @@ class MemberData extends Component {
         ACTION: '',
         ID_MEMBER: row.entityAccountNo,
         EXTERNAL_ID: row.entityType,
-        FULL_NAME: row.entityName,
+        FULLNAME: row.entityName,
         OFFICE: row.parentName,
         STATUS: row.entityStatus.value
       })
@@ -293,7 +293,7 @@ class MemberData extends Component {
       icon: <Swal options={this.swalOption} callback={this.swalCallback} deleterow={this.deleterow}> <span className="fas fa-times swal-del" /> </Swal>
     },
     {
-      icon: <span className="fas fa-pen-square" style={{ alignSelf: 'center' }} />
+      icon: <span className="fas fa-pen-square" />
     }
   ];
   getCellActions = (column, row) => {
