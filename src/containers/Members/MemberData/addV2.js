@@ -238,7 +238,7 @@ class MemberDataAdd extends Component {
 
     this.state = {
       showNotDuplicate: false,
-      privateIdentity: true,
+      privateIdentity: false,
       formValidateDuplicate: false,
       totalFilteredRecords: false,
       pageItems: [],
@@ -578,7 +578,8 @@ class MemberDataAdd extends Component {
               errors.mobileNo = "Mobile No. harus berisi angka 0 sampai 9"
             } else if (values.mobileNo.length < 10 || values.mobileNo.length > 15) {
               errors.mobileNo = "Mobile No. harus terdiri dari 10-15 angka"
-            } else if (!values.mobileNo) {
+            } 
+            if (!values.mobileNo) {
               errors.mobileNo = <Trans i18nKey='forms.REQUIRED'/>
             }
 
