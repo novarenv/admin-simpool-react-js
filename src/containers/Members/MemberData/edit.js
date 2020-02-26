@@ -166,8 +166,6 @@ class MemberDataEdit extends Component {
     }
 
     const setClientDetail = res => {
-      console.log(res)
-
       let cityOptions = []
       let identityCityOptions = []
 
@@ -201,120 +199,133 @@ class MemberDataEdit extends Component {
         return day + " " + monthMMMM + " " + year
       }
 
-      const dateOfBirthSpouse = dateOfBirthSpouseConv(res.biInformation.dateOfBirthSpouse)
+      let dateOfBirthSpouse
 
-      this.setState({
-        accountNo: res.accountNo,
-        activationDate: res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1]-1] + " " + res.activationDate[0],
-        active: res.active,
-        address: res.address,
-        addressBasedOnIdentity: res.addressBasedOnIdentity,
-        nickname: res.nickname,
-        cityId: res.city.code,
-        cityName: res.city.description,
-        cityOptions: res.cityOptions,
-        cityOptionsFilter: cityOptions,
+      if (res.biInformation.dateOfBirthSpouse) {
+        dateOfBirthSpouse = dateOfBirthSpouseConv(res.biInformation.dateOfBirthSpouse)
+      }
+
+      this.setState(prevState => ({
+        accountNo: res.accountNo? res.accountNo: "",
+        activationDate: 
+          Array.isArray(res.activationDate) && res.activationDate.length > 0
+            ? res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1]-1] + " " + res.activationDate[0]
+            : "",
+        active: res.active? res.active: "",
+        address: res.address? res.address: "",
+        addressBasedOnIdentity: res.addressBasedOnIdentity? res.addressBasedOnIdentity: "",
+        nickname: res.nickname? res.nickname: "",
+        cityId: res.city.code? res.city.code: "",
+        cityName: res.city.description? res.city.description: "",
+        cityOptions: res.cityOptions? res.cityOptions: "",
+        cityOptionsFilter: cityOptions? cityOptions: "",
         clientNonPersonDetails: {
-          ...this.state.clientNonPersonDetails,
-          businessType: res.clientNonPersonDetails.businessType,
-          corporateId: res.clientNonPersonDetails.corporateId,
-          isLjk: res.clientNonPersonDetails.isLjk,
-          ljkCode: res.clientNonPersonDetails.ljkCode,
-          bankFlag: res.clientNonPersonDetails.bankFlag,
-          incorporationDate: res.clientNonPersonDetails.incorporationDate,
-          incorpValidityTillDate: res.clientNonPersonDetails.incorpValidityTillDate,
-          publicationDate: res.clientNonPersonDetails.publicationDate,
-          legalityEndDate: res.clientNonPersonDetails.legalityEndDate
+          ...prevState.clientNonPersonDetails,
+          businessType: res.clientNonPersonDetails.businessType? res.clientNonPersonDetails.businessType: "",
+          corporateId: res.clientNonPersonDetails.corporateId? res.clientNonPersonDetails.corporateId: "",
+          isLjk: res.clientNonPersonDetails.isLjk? res.clientNonPersonDetails.isLjk: "",
+          ljkCode: res.clientNonPersonDetails.ljkCode? res.clientNonPersonDetails.ljkCode: "",
+          bankFlag: res.clientNonPersonDetails.bankFlag? res.clientNonPersonDetails.bankFlag: "",
+          incorporationDate: res.clientNonPersonDetails.incorporationDate? res.clientNonPersonDetails.incorporationDate: "",
+          incorpValidityTillDate: res.clientNonPersonDetails.incorpValidityTillDate? res.clientNonPersonDetails.incorpValidityTillDate: "",
+          publicationDate: res.clientNonPersonDetails.publicationDate? res.clientNonPersonDetails.publicationDate: "",
+          legalityEndDate: res.clientNonPersonDetails.legalityEndDate? res.clientNonPersonDetails.legalityEndDate: ""
         },
-        clientType: res.legalForm.value,
-        clientTypeIsActive: res.clientType.isActive,
-        clientTypeOptions: res.clientTypeOptions,
-        company: res.company.name,
-        country: res.country.name,
-        countryOptions: res.countryOptions,
-        countryIsActive: res.country.isActive,
-        dateOfBirth: res.dateOfBirth[2] + " " + MONTHS_ID[res.dateOfBirth[1] - 1] + " " + res.dateOfBirth[0],
-        dateOfBirthSpouse: dateOfBirthSpouse,
-        directorate: res.directorate.name,
-        email: res.email,
-        externalId: res.externalId,
-        faxNumber: res.faxNumber,
-        firstname: res.firstname,
-        flagTax: res.flagTax.name,
-        flagTaxOptions: res.flagTaxOptions,
-        fullname: res.fullnameNonIdentity,
-        gender: res.gender.name,
-        genderOptions: res.genderOptions,
-        homeOwnershipStatus: res.homeOwnershipStatus.id,
-        homeOwnershipStatusOption: res.homeOwnershipStatusOption,
-        identityCityId: res.identityCity.code,
-        identityCityName: res.identityCity.description,
-        identityCityOptionsFilter: identityCityOptions,
-        identityName: res.fullname,
-        identityNumber: res.identityNumber,
-        identityCountry: res.identityCountry.name,
-        identityCountryIsActive: res.identityCountry.isActive,
-        identityPostalCode: res.identityPostalCode,
-        identityProvinceId: res.identityProvince.code,
-        identityProvinceName: res.identityProvince.description,
-        identityRt: res.identityRt,
-        identityRw: res.identityRw,
-        identitySubDistrict: res.identitySubDistrict,
-        identityValidDate: res.identityValidDate,
-        identityVillage: res.identityVillage,
-        isCitizen: res.isCitizen,
-        lastname: res.lastname,
-        lastEducationLevelCode: res.lastEducationLevelCode.name,
-        lastEducationLevelCodeOption: res.lastEducationLevelCodeOption,
-        lastEducationLevelDescription: res.lastEducationLevelDescription,
-        legalFormId: res.legalForm.id,
-        maritalStatus: res.maritalStatusCode.name,
-        maritalStatusOption: res.maritalStatusCodeOption,
-        member: res.member,
-        merchantCategoryCode: res.merchantCategoryCode,
-        merchantCategoryOption: res.merchantCategoryOption,
-        merchantInformationCode: res.merchantInformationCode,
-        merchantInformationCodeOption: res.merchantInformationCodeOption,
-        middlename: res.middlename,
-        mobileNo: res.mobileNo,
-        mobileUser: res.mobileUser,
-        motherName: res.motherName,
-        nip: res.nip,
-        office: res.officeId,
-        officeOptions: res.officeOptions,
-        otherHomeOwnershipStatus: res.otherHomeOwnershipStatus,
-        phoneNumber: res.phoneNumber,
-        placeOfBirth: res.placeOfBirth,
-        postalCode: res.postalCode,
-        prefix: res.prefixDescription.code,
-        prefixNameCodeOption: res.prefixNameCodeOption,
-        prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement,
-        provinceId: res.province.code,
-        provinceName: res.province.description,
-        provinceOptions: res.provinceOptions,
-        religion: res.religion.description,
-        religionOptions: res.religionOption,
-        rt: res.rt,
-        rw: res.rw,
-        sector: res.sector.code,
-        sectorOptions: res.sectorOptions,
-        spouseIdentityNumber: res.biInformation.spouseIdentityNumber,
-        spouseName: res.biInformation.spouseName,
-        staff: res.staffId,
-        staffOptions: res.staffOptions,
-        submittedOnDate: res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0],
-        subDistrict: res.subDistrict,
-        suffix: res.suffixDescription.code,
-        suffixNameCodeOption: res.suffixNameCodeOption,
-        taxAddress: res.taxAddress,
-        taxName: res.taxName,
-        taxNumber: res.taxNumber,
-        typeOfIdentity: res.typeOfIdentity.name,
-        typeOfIdentityOptions: res.typeOfIdentityOptions,
-        typeOfIdentityBi: res.biInformation.typeOfIdentity,
-        typeOfIdentityBiOptions: res.typeOfIdentityBiOptions,
-        village: res.village
-      })
+        clientType: res.legalForm.value? res.legalForm.value: "",
+        clientTypeIsActive: res.clientType.isActive? res.clientType.isActive: "",
+        clientTypeOptions: res.clientTypeOptions? res.clientTypeOptions: "",
+        company: res.company.name? res.company.name: "",
+        country: res.country.name? res.country.name: "",
+        countryOptions: res.countryOptions? res.countryOptions: "",
+        countryIsActive: res.country.isActive? res.country.isActive: "",
+        dateOfBirth: 
+          Array.isArray(res.activationDate) && res.activationDate.length > 0  
+            ? res.dateOfBirth[2] + " " + MONTHS_ID[res.dateOfBirth[1] - 1] + " " + res.dateOfBirth[0]
+            : "",
+        dateOfBirthSpouse: dateOfBirthSpouse? dateOfBirthSpouse: "",
+        directorate: res.directorate.name? res.directorate.name: "",
+        email: res.email? res.email: "",
+        externalId: res.externalId? res.externalId: "",
+        faxNumber: res.faxNumber? res.faxNumber: "",
+        firstname: res.firstname? res.firstname: "",
+        flagTax: res.flagTax.name? res.flagTax.name: "",
+        flagTaxOptions: res.flagTaxOptions? res.flagTaxOptions: "",
+        fullname: res.fullnameNonIdentity? res.fullnameNonIdentity: "",
+        gender: res.gender.name? res.gender.name: "",
+        genderOptions: res.genderOptions?  res.genderOptions: "",
+        homeOwnershipStatus: res.homeOwnershipStatus? res.homeOwnershipStatus.id: "",
+        homeOwnershipStatusOption: res.homeOwnershipStatusOption? res.homeOwnershipStatusOption: "",
+        identityCityId: res.identityCity.code? res.identityCity.code: "",
+        identityCityName: res.identityCity.description? res.identityCity.description: "",
+        identityCityOptionsFilter: identityCityOptions? identityCityOptions: "",
+        identityName: res.fullname?  res.fullname: "",
+        identityNumber: res.identityNumber? res.identityNumber: "",
+        identityCountry: res.identityCountry.name? res.identityCountry.name: "",
+        identityCountryIsActive: res.identityCountry.isActive? res.identityCountry.isActive: "",
+        identityPostalCode: res.identityPostalCode? res.identityPostalCode: "",
+        identityProvinceId: res.identityProvince.code? res.identityProvince.code: "",
+        identityProvinceName: res.identityProvince.description? res.identityProvince.description: "",
+        identityRt: res.identityRt? res.identityRt: "",
+        identityRw: res.identityRw? res.identityRw: "",
+        identitySubDistrict: res.identitySubDistrict? res.identitySubDistrict: "",
+        identityValidDate: res.identityValidDate? res.identityValidDate: "",
+        identityVillage: res.identityVillage? res.identityVillage: "",
+        isCitizen: res.isCitizen? res.isCitizen: "",
+        lastname: res.lastname? res.lastname: "",
+        lastEducationLevelCode: res.lastEducationLevelCode.name? res.lastEducationLevelCode.name: "",
+        lastEducationLevelCodeOption: res.lastEducationLevelCodeOption? res.lastEducationLevelCodeOption: "",
+        lastEducationLevelDescription: res.lastEducationLevelDescription? res.lastEducationLevelDescription: "",
+        legalFormId: res.legalForm.id? res.legalForm.id: "",
+        maritalStatus: res.maritalStatusCode.name? res.maritalStatusCode.name: "",
+        maritalStatusOption: res.maritalStatusCodeOption? res.maritalStatusCodeOption: "",
+        member: res.member? res.member: "",
+        merchantCategoryCode: res.merchantCategoryCode? res.merchantCategoryCode: "",
+        merchantCategoryOption: res.merchantCategoryOption? res.merchantCategoryOption: "",
+        merchantInformationCode: res.merchantInformationCode? res.merchantInformationCode: "",
+        merchantInformationCodeOption: res.merchantInformationCodeOption? res.merchantInformationCodeOption: "",
+        middlename: res.middlename? res.middlename: "",
+        mobileNo: res.mobileNo? res.mobileNo: "",
+        mobileUser: res.mobileUser? res.mobileUser: "",
+        motherName: res.motherName? res.motherName: "",
+        nip: res.nip? res.nip: "",
+        office: res.officeId? res.officeId: "",
+        officeOptions: res.officeOptions? res.officeOptions: "",
+        otherHomeOwnershipStatus: res.otherHomeOwnershipStatus? res.otherHomeOwnershipStatus: "",
+        phoneNumber: res.phoneNumber? res.phoneNumber: "",
+        placeOfBirth: res.placeOfBirth? res.placeOfBirth: "",
+        postalCode: res.postalCode? res.postalCode: "",
+        prefix: res.prefixDescription.code? res.prefixDescription.code: "",
+        prefixNameCodeOption: res.prefixNameCodeOption? res.prefixNameCodeOption: "",
+        prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement? res.biInformation.prePostNuptialAggreement: "",
+        provinceId: res.province.code? res.province.code: "",
+        provinceName: res.province.description? res.province.description: "",
+        provinceOptions: res.provinceOptions? res.provinceOptions: "",
+        religion: res.religion.description? res.religion.description: "",
+        religionOptions: res.religionOption? res.religionOption: "",
+        rt: res.rt? res.rt: "",
+        rw: res.rw? res.rw: "",
+        sector: res.sector.code? res.sector.code: "",
+        sectorOptions: res.sectorOptions? res.sectorOptions: "",
+        spouseIdentityNumber: res.biInformation.spouseIdentityNumber? res.biInformation.spouseIdentityNumber: "",
+        spouseName: res.biInformation.spouseName? res.biInformation.spouseName: "",
+        staff: res.staffId? res.staffId: "",
+        staffOptions: res.staffOptions? res.staffOptions: "",
+        submittedOnDate:
+          Array.isArray(res.timeline.submittedOnDate) && res.timeline.submittedOnDate.length > 0
+            ? res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0]
+            : "",
+        subDistrict: res.subDistrict? res.subDistrict: "",
+        suffix: res.suffixDescription.code? res.suffixDescription.code: "",
+        suffixNameCodeOption: res.suffixNameCodeOption? res.suffixNameCodeOption: "",
+        taxAddress: res.taxAddress? res.taxAddress: "",
+        taxName: res.taxName? res.taxName: "",
+        taxNumber: res.taxNumber? res.taxNumber: "",
+        typeOfIdentity: res.typeOfIdentity.name? res.typeOfIdentity.name: "",
+        typeOfIdentityOptions: res.typeOfIdentityOptions? res.typeOfIdentityOptions: "",
+        typeOfIdentityBi: res.biInformation.typeOfIdentity? res.biInformation.typeOfIdentity: "",
+        typeOfIdentityBiOptions: res.typeOfIdentityBiOptions? res.typeOfIdentityBiOptions: "",
+        village: res.village? res.village: ""
+      }))
     }
 
     this.props.actions.getClientDetailParams(clientIdNo, setClientDetail)
@@ -581,7 +592,7 @@ class MemberDataEdit extends Component {
                   <form className="form-font-size mt-3 row" onSubmit={this.onSubmit}>
                     <div className="col-lg-6">
                       <FormGroup>
-                        <label htmlFor="office">Office</label>
+                        <label htmlFor="office">Office</label> 
                         <select value={this.state.office}
                           className="custom-select custom-select-sm input-font-size" name="office"
                           onChange={e => this.changeState("office", e.target.value)}
@@ -595,7 +606,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.id} key={"Office option " + i} >{option.name}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -614,7 +625,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -634,7 +645,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.displayName} key={"Client type option " + i} >{option.displayName}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -653,7 +664,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"Sector option " + i} >{option.name}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -686,7 +697,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -726,7 +737,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"Staff option " + i} >{option.code}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -745,7 +756,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Type of identity option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -802,7 +813,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Country identity option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -821,7 +832,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"Province identity option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -840,7 +851,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"City identity option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -900,7 +911,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Gender option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -973,7 +984,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.description} key={"Religion option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -999,7 +1010,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Marital option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1018,7 +1029,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Type of identity bi option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1061,7 +1072,7 @@ class MemberDataEdit extends Component {
                             readOnly: true
                           }}
                           value={
-                            this.state.dateOfBirthSpouse != null
+                            this.state.dateOfBirthSpouse != ""
                               ? this.state.dateOfBirthSpouse
                               : ''
                           }
@@ -1087,7 +1098,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Last edu lvl option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1105,7 +1116,7 @@ class MemberDataEdit extends Component {
                         <label htmlFor="isCitizen">
                           Is Citizen ? &emsp;
                             <label className="c-checkbox">
-                            <input type="checkbox" value="option1" checked={this.state.isCitizen} onClick={e => this.changeState("isCitizen")} />
+                            <input type="checkbox" value="option1" checked={this.state.isCitizen} onChange={e => this.changeState("isCitizen")} />
                             <span className="fa fa-check" />
                           </label>
                         </label>
@@ -1141,7 +1152,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.name} key={"Country option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1160,7 +1171,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"Province option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1179,7 +1190,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.code} key={"City option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1237,7 +1248,7 @@ class MemberDataEdit extends Component {
                                   <option value={option.id} key={"Home Ownership option " + i} >{option.description}</option>
                                 )
                               })
-                              : null
+                              : ""
                           }
                         </select>
                       </FormGroup>
@@ -1254,7 +1265,7 @@ class MemberDataEdit extends Component {
                               />
                             </FormGroup>
                           )
-                          : null
+                          : ""
                       }
                     </div>
                   </form>
@@ -1307,7 +1318,7 @@ class MemberDataEdit extends Component {
                                     <option value={option.name} key={"Flag Tax option " + i} >{option.description}</option>
                                   )
                                 })
-                                : null
+                                : ""
                             }
                           </select>
                         </FormGroup>
@@ -1326,7 +1337,7 @@ class MemberDataEdit extends Component {
                                     <option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</option>
                                   )
                                 })
-                                : null
+                                : ""
                             }
                           </select>
                         </FormGroup>
@@ -1345,7 +1356,7 @@ class MemberDataEdit extends Component {
                                     <option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</option>
                                   )
                                 })
-                                : null
+                                : ""
                             }
                           </select>
                         </FormGroup>

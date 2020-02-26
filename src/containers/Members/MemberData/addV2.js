@@ -142,7 +142,7 @@ const DragDrop = props => {
           <h5>
             {file.path} - {file.size} bytes
           </h5>
-          <img src={file.preview} style={img} />
+          <img src={file.preview} style={img} alt="File Preview" />
         </div>
       )
     } else {
