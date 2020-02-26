@@ -86,6 +86,6 @@ export function getDocAttach(payload, setDocAttach) {
 }
 
 // Edit
-export function putClientId(payload, setClientPutRes, clientId) {
-  return { type: PUT_CLIENT_ID, payload, setClientPutRes, clientId };
+export function putClientId(payload, setClientPutRes, showErrorExist, clientId) {
+  return { type: PUT_CLIENT_ID, payload, setClientPutRes, showErrorExist, clientId };
 }

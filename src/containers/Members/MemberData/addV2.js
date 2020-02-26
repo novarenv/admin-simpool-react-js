@@ -1618,7 +1618,7 @@ class MemberDataAdd extends Component {
                               <span className="fa fa-circle" />Badan Usaha</label>
                           </span>
                         </div>
-                        <div className="input-feedback">{errors.legalFormId}</div>
+                        <div className="input-feedback">{touched.legalFormId && errors.legalFormId}</div>
 
                         {
                           this.state.addValidation.legalFormId === "1"

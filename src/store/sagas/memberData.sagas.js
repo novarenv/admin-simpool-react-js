@@ -465,7 +465,7 @@ function* putClientId(action) {
   const auth = yield select(authSelector)
 
   try {
-    const getClientId = yield axios
+    const putClientId = yield axios
       .put(
         clientIdUrl(
           action.clientId
@@ -479,10 +479,11 @@ function* putClientId(action) {
           }
         }
       )
-      .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
-
-    action.setClientPutRes(getClientId)
+      .then(response => {   
+        action.setClientPutRes(response.data)
+        return(response.data)
+      })
+      .catch(error => action.showErrorExist(error.response.data))
 
   } catch (error) {
     console.log(error)

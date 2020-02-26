@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React, { Component } from 'react'
+import { Link, withRouter } from 'react-router-dom'
 import {
   Button,
   Card,
@@ -10,19 +10,21 @@ import {
   TabContent,
   TabPane,
   FormGroup
-} from 'reactstrap';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+} from 'reactstrap'
+import PropTypes from 'prop-types'
+import { withTranslation, Trans } from 'react-i18next'
+import { Formik } from 'formik'
 
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import Swal from '../../../components/Common/Swal';
 
 // DateTimePicker
-import Datetime from 'react-datetime';
-import 'react-datetime/css/react-datetime.css';
+import Datetime from 'react-datetime'
+import 'react-datetime/css/react-datetime.css'
 
-import * as actions from '../../../store/actions/actions';
-import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import * as actions from '../../../store/actions/actions'
+import { connect } from 'react-redux'
+import { bindActionCreators, compose } from 'redux'
 
 const SHORT_MONTHS_ID = [
   'Jan',
@@ -59,7 +61,7 @@ class MemberDataEdit extends Component {
     super(props);
 
     const clientIdNo = this.props.match.params.id
-    
+
     this.state = {
       accountNo: '',
       activationDate: "",
@@ -163,6 +165,10 @@ class MemberDataEdit extends Component {
       typeOfIdentityOptions: [],
       typeOfIdentityBiOptions: [],
       village: '',
+
+      formIdentityErrors: {},
+      formAddressErrors: {},
+      formOthersErrors: {}
     }
 
     const setClientDetail = res => {
@@ -206,125 +212,125 @@ class MemberDataEdit extends Component {
       }
 
       this.setState(prevState => ({
-        accountNo: res.accountNo? res.accountNo: "",
-        activationDate: 
+        accountNo: res.accountNo ? res.accountNo : "",
+        activationDate:
           Array.isArray(res.activationDate) && res.activationDate.length > 0
-            ? res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1]-1] + " " + res.activationDate[0]
+            ? res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1] - 1] + " " + res.activationDate[0]
             : "",
-        active: res.active? res.active: "",
-        address: res.address? res.address: "",
-        addressBasedOnIdentity: res.addressBasedOnIdentity? res.addressBasedOnIdentity: "",
-        nickname: res.nickname? res.nickname: "",
-        cityId: res.city.code? res.city.code: "",
-        cityName: res.city.description? res.city.description: "",
-        cityOptions: res.cityOptions? res.cityOptions: "",
-        cityOptionsFilter: cityOptions? cityOptions: "",
+        active: res.active ? res.active : "",
+        address: res.address ? res.address : "",
+        addressBasedOnIdentity: res.addressBasedOnIdentity ? res.addressBasedOnIdentity : "",
+        nickname: res.nickname ? res.nickname : "",
+        cityId: res.city.code ? res.city.code : "",
+        cityName: res.city.description ? res.city.description : "",
+        cityOptions: res.cityOptions ? res.cityOptions : "",
+        cityOptionsFilter: cityOptions ? cityOptions : "",
         clientNonPersonDetails: {
           ...prevState.clientNonPersonDetails,
-          businessType: res.clientNonPersonDetails.businessType? res.clientNonPersonDetails.businessType: "",
-          corporateId: res.clientNonPersonDetails.corporateId? res.clientNonPersonDetails.corporateId: "",
-          isLjk: res.clientNonPersonDetails.isLjk? res.clientNonPersonDetails.isLjk: "",
-          ljkCode: res.clientNonPersonDetails.ljkCode? res.clientNonPersonDetails.ljkCode: "",
-          bankFlag: res.clientNonPersonDetails.bankFlag? res.clientNonPersonDetails.bankFlag: "",
-          incorporationDate: res.clientNonPersonDetails.incorporationDate? res.clientNonPersonDetails.incorporationDate: "",
-          incorpValidityTillDate: res.clientNonPersonDetails.incorpValidityTillDate? res.clientNonPersonDetails.incorpValidityTillDate: "",
-          publicationDate: res.clientNonPersonDetails.publicationDate? res.clientNonPersonDetails.publicationDate: "",
-          legalityEndDate: res.clientNonPersonDetails.legalityEndDate? res.clientNonPersonDetails.legalityEndDate: ""
+          businessType: res.clientNonPersonDetails.businessType ? res.clientNonPersonDetails.businessType : "",
+          corporateId: res.clientNonPersonDetails.corporateId ? res.clientNonPersonDetails.corporateId : "",
+          isLjk: res.clientNonPersonDetails.isLjk ? res.clientNonPersonDetails.isLjk : "",
+          ljkCode: res.clientNonPersonDetails.ljkCode ? res.clientNonPersonDetails.ljkCode : "",
+          bankFlag: res.clientNonPersonDetails.bankFlag ? res.clientNonPersonDetails.bankFlag : "",
+          incorporationDate: res.clientNonPersonDetails.incorporationDate ? res.clientNonPersonDetails.incorporationDate : "",
+          incorpValidityTillDate: res.clientNonPersonDetails.incorpValidityTillDate ? res.clientNonPersonDetails.incorpValidityTillDate : "",
+          publicationDate: res.clientNonPersonDetails.publicationDate ? res.clientNonPersonDetails.publicationDate : "",
+          legalityEndDate: res.clientNonPersonDetails.legalityEndDate ? res.clientNonPersonDetails.legalityEndDate : ""
         },
-        clientType: res.legalForm.value? res.legalForm.value: "",
-        clientTypeIsActive: res.clientType.isActive? res.clientType.isActive: "",
-        clientTypeOptions: res.clientTypeOptions? res.clientTypeOptions: "",
-        company: res.company.name? res.company.name: "",
-        country: res.country.name? res.country.name: "",
-        countryOptions: res.countryOptions? res.countryOptions: "",
-        countryIsActive: res.country.isActive? res.country.isActive: "",
-        dateOfBirth: 
-          Array.isArray(res.activationDate) && res.activationDate.length > 0  
+        clientType: res.legalForm.value ? res.legalForm.value : "",
+        clientTypeIsActive: res.clientType.isActive ? res.clientType.isActive : "",
+        clientTypeOptions: res.clientTypeOptions ? res.clientTypeOptions : "",
+        company: res.company.name ? res.company.name : "",
+        country: res.country.name ? res.country.name : "",
+        countryOptions: res.countryOptions ? res.countryOptions : "",
+        countryIsActive: res.country.isActive ? res.country.isActive : "",
+        dateOfBirth:
+          Array.isArray(res.activationDate) && res.activationDate.length > 0
             ? res.dateOfBirth[2] + " " + MONTHS_ID[res.dateOfBirth[1] - 1] + " " + res.dateOfBirth[0]
             : "",
-        dateOfBirthSpouse: dateOfBirthSpouse? dateOfBirthSpouse: "",
-        directorate: res.directorate.name? res.directorate.name: "",
-        email: res.email? res.email: "",
-        externalId: res.externalId? res.externalId: "",
-        faxNumber: res.faxNumber? res.faxNumber: "",
-        firstname: res.firstname? res.firstname: "",
-        flagTax: res.flagTax.name? res.flagTax.name: "",
-        flagTaxOptions: res.flagTaxOptions? res.flagTaxOptions: "",
-        fullname: res.fullnameNonIdentity? res.fullnameNonIdentity: "",
-        gender: res.gender.name? res.gender.name: "",
-        genderOptions: res.genderOptions?  res.genderOptions: "",
-        homeOwnershipStatus: res.homeOwnershipStatus? res.homeOwnershipStatus.id: "",
-        homeOwnershipStatusOption: res.homeOwnershipStatusOption? res.homeOwnershipStatusOption: "",
-        identityCityId: res.identityCity.code? res.identityCity.code: "",
-        identityCityName: res.identityCity.description? res.identityCity.description: "",
-        identityCityOptionsFilter: identityCityOptions? identityCityOptions: "",
-        identityName: res.fullname?  res.fullname: "",
-        identityNumber: res.identityNumber? res.identityNumber: "",
-        identityCountry: res.identityCountry.name? res.identityCountry.name: "",
-        identityCountryIsActive: res.identityCountry.isActive? res.identityCountry.isActive: "",
-        identityPostalCode: res.identityPostalCode? res.identityPostalCode: "",
-        identityProvinceId: res.identityProvince.code? res.identityProvince.code: "",
-        identityProvinceName: res.identityProvince.description? res.identityProvince.description: "",
-        identityRt: res.identityRt? res.identityRt: "",
-        identityRw: res.identityRw? res.identityRw: "",
-        identitySubDistrict: res.identitySubDistrict? res.identitySubDistrict: "",
-        identityValidDate: res.identityValidDate? res.identityValidDate: "",
-        identityVillage: res.identityVillage? res.identityVillage: "",
-        isCitizen: res.isCitizen? res.isCitizen: "",
-        lastname: res.lastname? res.lastname: "",
-        lastEducationLevelCode: res.lastEducationLevelCode.name? res.lastEducationLevelCode.name: "",
-        lastEducationLevelCodeOption: res.lastEducationLevelCodeOption? res.lastEducationLevelCodeOption: "",
-        lastEducationLevelDescription: res.lastEducationLevelDescription? res.lastEducationLevelDescription: "",
-        legalFormId: res.legalForm.id? res.legalForm.id: "",
-        maritalStatus: res.maritalStatusCode.name? res.maritalStatusCode.name: "",
-        maritalStatusOption: res.maritalStatusCodeOption? res.maritalStatusCodeOption: "",
-        member: res.member? res.member: "",
-        merchantCategoryCode: res.merchantCategoryCode? res.merchantCategoryCode: "",
-        merchantCategoryOption: res.merchantCategoryOption? res.merchantCategoryOption: "",
-        merchantInformationCode: res.merchantInformationCode? res.merchantInformationCode: "",
-        merchantInformationCodeOption: res.merchantInformationCodeOption? res.merchantInformationCodeOption: "",
-        middlename: res.middlename? res.middlename: "",
-        mobileNo: res.mobileNo? res.mobileNo: "",
-        mobileUser: res.mobileUser? res.mobileUser: "",
-        motherName: res.motherName? res.motherName: "",
-        nip: res.nip? res.nip: "",
-        office: res.officeId? res.officeId: "",
-        officeOptions: res.officeOptions? res.officeOptions: "",
-        otherHomeOwnershipStatus: res.otherHomeOwnershipStatus? res.otherHomeOwnershipStatus: "",
-        phoneNumber: res.phoneNumber? res.phoneNumber: "",
-        placeOfBirth: res.placeOfBirth? res.placeOfBirth: "",
-        postalCode: res.postalCode? res.postalCode: "",
-        prefix: res.prefixDescription.code? res.prefixDescription.code: "",
-        prefixNameCodeOption: res.prefixNameCodeOption? res.prefixNameCodeOption: "",
-        prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement? res.biInformation.prePostNuptialAggreement: "",
-        provinceId: res.province.code? res.province.code: "",
-        provinceName: res.province.description? res.province.description: "",
-        provinceOptions: res.provinceOptions? res.provinceOptions: "",
-        religion: res.religion.description? res.religion.description: "",
-        religionOptions: res.religionOption? res.religionOption: "",
-        rt: res.rt? res.rt: "",
-        rw: res.rw? res.rw: "",
-        sector: res.sector.code? res.sector.code: "",
-        sectorOptions: res.sectorOptions? res.sectorOptions: "",
-        spouseIdentityNumber: res.biInformation.spouseIdentityNumber? res.biInformation.spouseIdentityNumber: "",
-        spouseName: res.biInformation.spouseName? res.biInformation.spouseName: "",
-        staff: res.staffId? res.staffId: "",
-        staffOptions: res.staffOptions? res.staffOptions: "",
+        dateOfBirthSpouse: dateOfBirthSpouse ? dateOfBirthSpouse : "",
+        directorate: res.directorate.name ? res.directorate.name : "",
+        email: res.email ? res.email : "",
+        externalId: res.externalId ? res.externalId : "",
+        faxNumber: res.faxNumber ? res.faxNumber : "",
+        firstname: res.firstname ? res.firstname : "",
+        flagTax: res.flagTax.name ? res.flagTax.name : "",
+        flagTaxOptions: res.flagTaxOptions ? res.flagTaxOptions : "",
+        fullname: res.fullnameNonIdentity ? res.fullnameNonIdentity : "",
+        gender: res.gender.name ? res.gender.name : "",
+        genderOptions: res.genderOptions ? res.genderOptions : "",
+        homeOwnershipStatus: res.homeOwnershipStatus ? res.homeOwnershipStatus.id : "",
+        homeOwnershipStatusOption: res.homeOwnershipStatusOption ? res.homeOwnershipStatusOption : "",
+        identityCityId: res.identityCity.code ? res.identityCity.code : "",
+        identityCityName: res.identityCity.description ? res.identityCity.description : "",
+        identityCityOptionsFilter: identityCityOptions ? identityCityOptions : "",
+        identityName: res.fullname ? res.fullname : "",
+        identityNumber: res.identityNumber ? res.identityNumber : "",
+        identityCountry: res.identityCountry.name ? res.identityCountry.name : "",
+        identityCountryIsActive: res.identityCountry.isActive ? res.identityCountry.isActive : "",
+        identityPostalCode: res.identityPostalCode ? res.identityPostalCode : "",
+        identityProvinceId: res.identityProvince.code ? res.identityProvince.code : "",
+        identityProvinceName: res.identityProvince.description ? res.identityProvince.description : "",
+        identityRt: res.identityRt ? res.identityRt : "",
+        identityRw: res.identityRw ? res.identityRw : "",
+        identitySubDistrict: res.identitySubDistrict ? res.identitySubDistrict : "",
+        identityValidDate: res.identityValidDate ? res.identityValidDate : "",
+        identityVillage: res.identityVillage ? res.identityVillage : "",
+        isCitizen: res.isCitizen ? res.isCitizen : "",
+        lastname: res.lastname ? res.lastname : "",
+        lastEducationLevelCode: res.lastEducationLevelCode.name ? res.lastEducationLevelCode.name : "",
+        lastEducationLevelCodeOption: res.lastEducationLevelCodeOption ? res.lastEducationLevelCodeOption : "",
+        lastEducationLevelDescription: res.lastEducationLevelDescription ? res.lastEducationLevelDescription : "",
+        legalFormId: res.legalForm.id ? res.legalForm.id : "",
+        maritalStatus: res.maritalStatusCode.name ? res.maritalStatusCode.name : "",
+        maritalStatusOption: res.maritalStatusCodeOption ? res.maritalStatusCodeOption : "",
+        member: res.member ? res.member : "",
+        merchantCategoryCode: res.merchantCategoryCode ? res.merchantCategoryCode : "",
+        merchantCategoryOption: res.merchantCategoryOption ? res.merchantCategoryOption : "",
+        merchantInformationCode: res.merchantInformationCode ? res.merchantInformationCode : "",
+        merchantInformationCodeOption: res.merchantInformationCodeOption ? res.merchantInformationCodeOption : "",
+        middlename: res.middlename ? res.middlename : "",
+        mobileNo: res.mobileNo ? res.mobileNo : "",
+        mobileUser: res.mobileUser ? res.mobileUser : "",
+        motherName: res.motherName ? res.motherName : "",
+        nip: res.nip ? res.nip : "",
+        office: res.officeId ? res.officeId : "",
+        officeOptions: res.officeOptions ? res.officeOptions : "",
+        otherHomeOwnershipStatus: res.otherHomeOwnershipStatus ? res.otherHomeOwnershipStatus : "",
+        phoneNumber: res.phoneNumber ? res.phoneNumber : "",
+        placeOfBirth: res.placeOfBirth ? res.placeOfBirth : "",
+        postalCode: res.postalCode ? res.postalCode : "",
+        prefix: res.prefixDescription.code ? res.prefixDescription.code : "",
+        prefixNameCodeOption: res.prefixNameCodeOption ? res.prefixNameCodeOption : "",
+        prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement ? res.biInformation.prePostNuptialAggreement : "",
+        provinceId: res.province.code ? res.province.code : "",
+        provinceName: res.province.description ? res.province.description : "",
+        provinceOptions: res.provinceOptions ? res.provinceOptions : "",
+        religion: res.religion.description ? res.religion.description : "",
+        religionOptions: res.religionOption ? res.religionOption : "",
+        rt: res.rt ? res.rt : "",
+        rw: res.rw ? res.rw : "",
+        sector: res.sector.code ? res.sector.code : "",
+        sectorOptions: res.sectorOptions ? res.sectorOptions : "",
+        spouseIdentityNumber: res.biInformation.spouseIdentityNumber ? res.biInformation.spouseIdentityNumber : "",
+        spouseName: res.biInformation.spouseName ? res.biInformation.spouseName : "",
+        staff: res.staffId ? res.staffId : "",
+        staffOptions: res.staffOptions ? res.staffOptions : "",
         submittedOnDate:
           Array.isArray(res.timeline.submittedOnDate) && res.timeline.submittedOnDate.length > 0
             ? res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0]
             : "",
-        subDistrict: res.subDistrict? res.subDistrict: "",
-        suffix: res.suffixDescription.code? res.suffixDescription.code: "",
-        suffixNameCodeOption: res.suffixNameCodeOption? res.suffixNameCodeOption: "",
-        taxAddress: res.taxAddress? res.taxAddress: "",
-        taxName: res.taxName? res.taxName: "",
-        taxNumber: res.taxNumber? res.taxNumber: "",
-        typeOfIdentity: res.typeOfIdentity.name? res.typeOfIdentity.name: "",
-        typeOfIdentityOptions: res.typeOfIdentityOptions? res.typeOfIdentityOptions: "",
-        typeOfIdentityBi: res.biInformation.typeOfIdentity? res.biInformation.typeOfIdentity: "",
-        typeOfIdentityBiOptions: res.typeOfIdentityBiOptions? res.typeOfIdentityBiOptions: "",
-        village: res.village? res.village: ""
+        subDistrict: res.subDistrict ? res.subDistrict : "",
+        suffix: res.suffixDescription.code ? res.suffixDescription.code : "",
+        suffixNameCodeOption: res.suffixNameCodeOption ? res.suffixNameCodeOption : "",
+        taxAddress: res.taxAddress ? res.taxAddress : "",
+        taxName: res.taxName ? res.taxName : "",
+        taxNumber: res.taxNumber ? res.taxNumber : "",
+        typeOfIdentity: res.typeOfIdentity.name ? res.typeOfIdentity.name : "",
+        typeOfIdentityOptions: res.typeOfIdentityOptions ? res.typeOfIdentityOptions : "",
+        typeOfIdentityBi: res.biInformation.typeOfIdentity ? res.biInformation.typeOfIdentity : "",
+        typeOfIdentityBiOptions: res.typeOfIdentityBiOptions ? res.typeOfIdentityBiOptions : "",
+        village: res.village ? res.village : ""
       }))
     }
 
@@ -406,7 +412,7 @@ class MemberDataEdit extends Component {
 
     if (name === "cityId") {
       this.state.cityOptionsFilter.map(city => {
-        if (city.code === val){
+        if (city.code === val) {
           this.setState({
             cityName: city.description
           })
@@ -416,7 +422,7 @@ class MemberDataEdit extends Component {
 
     if (name === "identityCityId") {
       this.state.cityOptionsFilter.map(city => {
-        if (city.code === val){
+        if (city.code === val) {
           console.log(city.description)
           this.setState({
             identityCityName: city.description
@@ -430,7 +436,7 @@ class MemberDataEdit extends Component {
         isCitizen: !this.state.isCitizen
       })
     }
-    
+
     if (name === "identityName") {
       const fullnameSplit = val.split(" ", 3)
       this.setState({
@@ -449,12 +455,29 @@ class MemberDataEdit extends Component {
   render() {
     const state = this.state
 
-    const setClientPutRes = () => {
+    const setClientPutRes = res => {
       this.props.history.push("/simpool/member/data-detail/" + state.clientIdNo)
     }
 
+    const errorExist = {
+      title: "Terdapat eror pada forms"
+    }
+    const errorIdentity = {
+      title: "Terdapat eror pada identity"
+    }
+    const errorAddress = {
+      title: "Terdapat eror pada address"
+    }
+    const errorOthers = {
+      title: "Terdapat eror pada others"
+    }
+
+    const showErrorExist = error => {
+      console.log(error)
+      document.getElementById("errorExist").click()
+    }
+
     const editMember = () => {
-      console.log(state.clientIdNo)
       this.props.actions.putClientId(
         {
           "officeId": state.office,
@@ -536,7 +559,7 @@ class MemberDataEdit extends Component {
           "identityRw": state.identityRw,
           "fullnameNonIdentity": state.fullname,
           "otherHomeOwnershipStatus": state.otherHomeOwnershipStatus,
-          "homeOwnershipStatus": state.homeOwnershipStatus,
+          "homeOwnnershipStatus": state.homeOwnershipStatus,
           "legalFormId": state.legalFormId,
           "locale": "id",
           "dateFormat": "dd MMMM yyyy",
@@ -546,12 +569,53 @@ class MemberDataEdit extends Component {
           "dateOfBirthSpouse": state.dateOfBirthSpouse
         },
         setClientPutRes,
-        this.state.clientIdNo
+        showErrorExist,
+        state.clientIdNo
       )
+    }
+
+    let submitFormIdentity = null
+    let submitFormAddress = null
+    let submitFormOthers = null
+
+    const handleSubmitForm = e => {
+      if (submitFormIdentity) {
+        if (Object.getOwnPropertyNames(state.formIdentityErrors).length > 0) {
+          document.getElementById("errorIdentity").click()
+        }
+        submitFormIdentity(e)
+      }
+      if (submitFormAddress) {
+        if (Object.getOwnPropertyNames(state.formAddressErrors).length > 0) {
+          document.getElementById("errorAddress").click()
+        }
+        submitFormAddress(e)
+      }
+      if (submitFormOthers) {
+        if (Object.getOwnPropertyNames(state.formOthersErrors).length > 0) {
+          document.getElementById("errorOthers").click()
+        }
+        submitFormOthers(e)
+      }
+    }
+
+    const bindFormIdentity = submitForm => {
+      submitFormIdentity = submitForm;
+    }
+    const bindFormAddress = submitForm => {
+      submitFormAddress = submitForm;
+    }
+    const bindFormOthers = submitForm => {
+      submitFormOthers = submitForm;
     }
 
     return (
       <ContentWrapper>
+        <Swal options={errorExist} id="errorExist" />
+        <Swal options={errorIdentity} id="errorIdentity" />
+        <Swal options={errorAddress} id="errorAddress" />
+        <Swal options={errorOthers} id="errorOthers" />
+
         <div className="content-heading">
           <div>Edit Member Data</div>
         </div>
@@ -589,815 +653,1062 @@ class MemberDataEdit extends Component {
 
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane className="ft-detail" tabId="identity" role="tabpanel">
-                  <form className="form-font-size mt-3 row" onSubmit={this.onSubmit}>
-                    <div className="col-lg-6">
-                      <FormGroup>
-                        <label htmlFor="office">Office</label> 
-                        <select value={this.state.office}
-                          className="custom-select custom-select-sm input-font-size" name="office"
-                          onChange={e => this.changeState("office", e.target.value)}
-                          disabled readOnly
-                        >
-                          <option value="">Select office</option>
-                          {
-                            Array.isArray(this.state.officeOptions) && this.state.officeOptions.length > 0
-                              ? this.state.officeOptions.map((option, i) => {
-                                return (
-                                  <option value={option.id} key={"Office option " + i} >{option.name}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                  <Formik
+                    initialValues={
+                      {
+                        officeId: state.office,
+                        staffId: state.staff,
+                        sectorId: state.sector,
+                        legalFormId: state.clientType,
+                        externalID: state.externalId,
+                        nip: state.nip,
+                        prefix: state.prefix,
+                        fullname: state.identityName,
+                        fullNameNonIdentity: state.fullname,
+                        nickname: state.nickname,
+                        suffix: state.suffix,
+                        typeOfIdentityId: state.typeOfIdentity,
+                        identityNumber: state.identityNumber,
+                        identityValidDate: state.identityValidDate,
+                        genderCodeValue: state.genderCodeValue,
+                        dateOfBirth: state.dateOfBirth,
+                        motherName: state.motherName,
+                        placeOfBirth: state.placeOfBirth,
+                        mobileNo: state.mobileNo,
+                        phoneNumber: state.phoneNumber,
+                        faxNumber: state.faxNumber,
+                        religion: state.religion,
+                        email: state.email,
+                        maritalStatusCode: state.maritalStatus,
+                        typeOfIdentitySpouse: state.typeOfIdentityBi,
+                        spouseIdentityNumber: state.spouseIdentityNumber,
+                        spouseName: state.spouseName,
+                        prePostNuptialAggreement: state.prePostNuptialAggreement,
+                        dateOfBirthSpouse: state.dateOfBirthSpouse,
+                        lastEducationLevelCode: state.lastEducationLevelCode,
+                        lastEducationLevelDescription: state.lastEducationLevelDescription,
+                        isCitizen: state.isCitizen
+                      }
+                    }
+                    validate={values => {
+                      const errors = {};
 
-                      <FormGroup>
-                        <label htmlFor="staff">Staff</label>
-                        <select value={this.state.staff}
-                          className="custom-select custom-select-sm input-font-size" name="staff"
-                          onChange={e => this.changeState("staff", e.target.value)}
-                        >
-                          <option value="">Select staff</option>
-                          {
-                            Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
-                              ? this.state.staffOptions.map((option, i) => {
-                                return (
-                                  <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                      if (!values.legalFormId) {
+                        errors.legalFormId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
 
-                      <FormGroup>
-                        <label htmlFor="clientType">Client Type</label>
-                        <select value={this.state.clientType}
-                          className="custom-select custom-select-sm input-font-size" name="clientType"
-                          onChange={e => this.changeState("clientType", e.target.value)} disabled={!this.state.clientTypeIsActive}
-                        >
-                          <option value="">Select client type</option>
-                          <option value={this.state.clientType}>{this.state.clientType}</option>
-                          {
-                            Array.isArray(this.state.clientTypeOptions) && this.state.clientTypeOptions.length > 0
-                              ? this.state.clientTypeOptions.map((option, i) => {
-                                return (
-                                  <option value={option.displayName} key={"Client type option " + i} >{option.displayName}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                      if (!values.fullname) {
+                        errors.fullname = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
 
-                      <FormGroup>
-                        <label htmlFor="sector">Sector</label>
-                        <select value={this.state.sector}
-                          className="custom-select custom-select-sm input-font-size" name="sector"
-                          onChange={e => this.changeState("sector", e.target.value)}
-                        >
-                          <option value="">Select sector</option>
-                          {
-                            Array.isArray(this.state.sectorOptions) && this.state.sectorOptions.length > 0
-                              ? this.state.sectorOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"Sector option " + i} >{option.name}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                      this.setState({ formIdentityErrors: errors })
 
-                      <FormGroup>
-                        <label htmlFor="externalId">External Id</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter external ID"
-                          value={this.state.externalId} onChange={e => this.changeState("externalId", e.target.value)}
-                        />
-                      </FormGroup>
+                      return errors;
+                    }}
+                    enableReinitialize="true"
+                    onSubmit={(val, { setSubmitting }) => {
+                      console.log("yay Submit Identity")
+                      if (Object.getOwnPropertyNames(state.formIdentityErrors).length == 0) {
+                        if (Object.getOwnPropertyNames(state.formAddressErrors).length == 0
+                          && Object.getOwnPropertyNames(state.formOthersErrors).length == 0) {
+                          editMember()
+                        }
+                      }
 
-                      <FormGroup>
-                        <label htmlFor="nip">Working ID Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter working ID number"
-                          value={this.state.nip} onChange={e => this.changeState("nip", e.target.value)}
-                        />
-                      </FormGroup>
+                      setSubmitting(false)
+                    }}
+                  >
+                    {formikProps => {
+                      const {
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        submitForm
+                      } = formikProps
 
-                      <FormGroup>
-                        <label htmlFor="prefix">Prefix Title Name</label>
-                        <select value={this.state.prefix}
-                          className="custom-select custom-select-sm input-font-size" name="prefix"
-                          onChange={e => this.changeState("prefix", e.target.value)}
-                        >
-                          <option value="">Select prefix title name</option>
-                          {
-                            Array.isArray(this.state.prefixNameCodeOption) && this.state.prefixNameCodeOption.length > 0
-                              ? this.state.prefixNameCodeOption.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                      bindFormIdentity(submitForm)
 
-                      <FormGroup>
-                        <label htmlFor="identityName">Identity Name</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter identity's name"
-                          value={this.state.identityName} onChange={e => this.changeState("identityName", e.target.value)}
-                        />
-                      </FormGroup>
+                      return (
+                        <form id="formIdentity" className="form-font-size mt-3 row" onSubmit={handleSubmit}>
+                          <div className="col-lg-6">
+                            <FormGroup>
+                              <label htmlFor="office">Office</label>
+                              <select value={this.state.office}
+                                className="custom-select custom-select-sm input-font-size" name="office"
+                                onChange={e => this.changeState("office", e.target.value)}
+                                disabled readOnly
+                              >
+                                <option value="">Select office</option>
+                                {
+                                  Array.isArray(this.state.officeOptions) && this.state.officeOptions.length > 0
+                                    ? this.state.officeOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.id} key={"Office option " + i} >{option.name}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="fullname">Full Name</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter office's name"
-                          value={this.state.fullname} onChange={e => this.changeState("fullname", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="staff">Staff</label>
+                              <select value={this.state.staff}
+                                className="custom-select custom-select-sm input-font-size" name="staff"
+                                onChange={e => this.changeState("staff", e.target.value)}
+                              >
+                                <option value="">Select staff</option>
+                                {
+                                  Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
+                                    ? this.state.staffOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="nickname">Alias</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter nickname"
-                          value={this.state.nickname} onChange={e => this.changeState("nickname", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="legalFormId">Client Type</label>
+                              <select
+                                value={values.legalFormId}
+                                className={
+                                  touched.legalFormId && errors.legalFormId
+                                    ? "custom-select custom-select-sm input-font-size input-error"
+                                    : "custom-select custom-select-sm input-font-size"
+                                }
+                                name="legalFormId"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                disabled={!this.state.clientTypeIsActive}
+                              >
+                                <option value="">Select client type</option>
+                                <option value={this.state.clientType}>{this.state.clientType}</option>
+                                {
+                                  Array.isArray(this.state.clientTypeOptions) && this.state.clientTypeOptions.length > 0
+                                    ? this.state.clientTypeOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.displayName} key={"Client type option " + i} >{option.displayName}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                              <div className="input-feedback">{touched.legalFormId && errors.legalFormId}</div>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="suffix">Suffix Title Name</label>
-                        <select value={this.state.suffix}
-                          className="custom-select custom-select-sm input-font-size" name="suffix"
-                          onChange={e => this.changeState("suffix", e.target.value)}
-                        >
-                          <option value="">Select suffix title name</option>
-                          {
-                            Array.isArray(this.state.suffixNameCodeOption) && this.state.suffixNameCodeOption.length > 0
-                              ? this.state.suffixNameCodeOption.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"Staff option " + i} >{option.code}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="sector">Sector</label>
+                              <select value={this.state.sector}
+                                className="custom-select custom-select-sm input-font-size" name="sector"
+                                onChange={e => this.changeState("sector", e.target.value)}
+                              >
+                                <option value="">Select sector</option>
+                                {
+                                  Array.isArray(this.state.sectorOptions) && this.state.sectorOptions.length > 0
+                                    ? this.state.sectorOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.code} key={"Sector option " + i} >{option.name}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="typeOfIdentity">Type Of Identity</label>
-                        <select value={this.state.typeOfIdentity}
-                          className="custom-select custom-select-sm input-font-size" name="typeOfIdentity"
-                          onChange={e => this.changeState("typeOfIdentity", e.target.value)}
-                        >
-                          <option value="">Select type of identity</option>
-                          {
-                            Array.isArray(this.state.typeOfIdentityOptions) && this.state.typeOfIdentityOptions.length > 0
-                              ? this.state.typeOfIdentityOptions.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Type of identity option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="externalId">External Id</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter external ID"
+                                value={this.state.externalId} onChange={e => this.changeState("externalId", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityNumber">Identity Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter identity number"
-                          value={this.state.identityNumber} onChange={e => this.changeState("identityNumber", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="nip">Working ID Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter working ID number"
+                                value={this.state.nip} onChange={e => this.changeState("nip", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityValidDate">Identity Valid Date</label>
-                        <Datetime
-                          inputProps={{
-                            name: "identityValidDate",
-                            className: "form-control input-font-size dt-bg",
-                            id: "identityValidDate",
-                            placeholder: "dd mmm yyyy",
-                            autoComplete: "off",
-                            readOnly: true
-                          }}
-                          value={
-                            Array.isArray(this.state.identityValidDate) && this.state.identityValidDate.length > 0
-                              ? this.state.identityValidDate[2] + " " + MONTHS_ID[this.state.identityValidDate[1] - 1] + " " + this.state.identityValidDate[0]
-                              : ''
-                          }
-                          dateFormat="DD MMMM YYYY"
-                          timeFormat={false}
-                          closeOnSelect={true}
-                          onChange={e => this.changeDateState("identityValidDate", e)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="prefix">Prefix Title Name</label>
+                              <select value={this.state.prefix}
+                                className="custom-select custom-select-sm input-font-size" name="prefix"
+                                onChange={e => this.changeState("prefix", e.target.value)}
+                              >
+                                <option value="">Select prefix title name</option>
+                                {
+                                  Array.isArray(this.state.prefixNameCodeOption) && this.state.prefixNameCodeOption.length > 0
+                                    ? this.state.prefixNameCodeOption.map((option, i) => {
+                                      return (
+                                        <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="addressBasedOnIdentity">Address Based on Identity</label>
-                        <textarea rows="4" className="form-control form-font-size" type="text" placeholder="Enter office's name"
-                          value={this.state.addressBasedOnIdentity} onChange={e => this.changeState("addressBasedOnIdentity", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="fullname">
+                                Identity Name <span className="red"> *</span>
+                              </label>
+                              <input
+                                name="fullname"
+                                className={
+                                  touched.fullname && errors.fullname
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
+                                type="text"
+                                placeholder="Enter identity's name"
+                                value={values.fullname}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              <div className="input-feedback">{touched.fullname && errors.fullname}</div>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityCountry">Country</label>
-                        <select value={this.state.identityCountry}
-                          className="custom-select custom-select-sm input-font-size" name="identityCountry"
-                          onChange={e => this.changeState("identityCountry", e.target.value)}
-                          disabled={!this.state.identityCountryIsActive}
-                        >
-                          <option value="">Select country</option>
-                          {
-                            Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
-                              ? this.state.countryOptions.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Country identity option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="fullnameNonIdentity">Full Name</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter office's name"
+                                value={this.state.fullname} onChange={e => this.changeState("fullname", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityProvinceId">Province</label>
-                        <select value={this.state.identityProvinceId}
-                          className="custom-select custom-select-sm input-font-size" name="identityProvinceId"
-                          onChange={e => this.changeState("identityProvinceId", e.target.value)}
-                        >
-                          <option value="">Select province</option>
-                          {
-                            Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
-                              ? this.state.provinceOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"Province identity option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="nickname">Alias</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter nickname"
+                                value={this.state.nickname} onChange={e => this.changeState("nickname", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityCityId">District / City</label>
-                        <select value={this.state.identityCityId}
-                          className="custom-select custom-select-sm input-font-size" name="identityCityId"
-                          onChange={e => this.changeState("identityCityId", e.target.value)}
-                        >
-                          <option value="">Select city</option>
-                          {
-                            Array.isArray(this.state.identityCityOptionsFilter) && this.state.identityCityOptionsFilter.length > 0
-                              ? this.state.identityCityOptionsFilter.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"City identity option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="suffix">Suffix Title Name</label>
+                              <select value={this.state.suffix}
+                                className="custom-select custom-select-sm input-font-size" name="suffix"
+                                onChange={e => this.changeState("suffix", e.target.value)}
+                              >
+                                <option value="">Select suffix title name</option>
+                                {
+                                  Array.isArray(this.state.suffixNameCodeOption) && this.state.suffixNameCodeOption.length > 0
+                                    ? this.state.suffixNameCodeOption.map((option, i) => {
+                                      return (
+                                        <option value={option.code} key={"Staff option " + i} >{option.code}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identitySubDistrict">Sub District</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter sub district"
-                          value={this.state.identitySubDistrict} onChange={e => this.changeState("identitySubDistrict", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="typeOfIdentity">Type Of Identity</label>
+                              <select value={this.state.typeOfIdentity}
+                                className="custom-select custom-select-sm input-font-size" name="typeOfIdentity"
+                                onChange={e => this.changeState("typeOfIdentity", e.target.value)}
+                              >
+                                <option value="">Select type of identity</option>
+                                {
+                                  Array.isArray(this.state.typeOfIdentityOptions) && this.state.typeOfIdentityOptions.length > 0
+                                    ? this.state.typeOfIdentityOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.name} key={"Type of identity option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityVillage">Village</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter village"
-                          value={this.state.identityVillage} onChange={e => this.changeState("identityVillage", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="identityNumber">Identity Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter identity number"
+                                value={this.state.identityNumber} onChange={e => this.changeState("identityNumber", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="identityPostalCode">Postal Code</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter postal code"
-                          value={this.state.identityPostalCode} onChange={e => this.changeState("identityPostalCode", e.target.value)}
-                        />
-                      </FormGroup>
-                    </div>
+                            <FormGroup>
+                              <label htmlFor="identityValidDate">Identity Valid Date</label>
+                              <Datetime
+                                inputProps={{
+                                  name: "identityValidDate",
+                                  className: "form-control input-font-size dt-bg",
+                                  id: "identityValidDate",
+                                  placeholder: "dd mmm yyyy",
+                                  autoComplete: "off",
+                                  readOnly: true
+                                }}
+                                value={
+                                  Array.isArray(this.state.identityValidDate) && this.state.identityValidDate.length > 0
+                                    ? this.state.identityValidDate[2] + " " + MONTHS_ID[this.state.identityValidDate[1] - 1] + " " + this.state.identityValidDate[0]
+                                    : ''
+                                }
+                                dateFormat="DD MMMM YYYY"
+                                timeFormat={false}
+                                closeOnSelect={true}
+                                onChange={e => this.changeDateState("identityValidDate", e)}
+                              />
+                            </FormGroup>
+                          </div>
 
-                    <div className="col-lg-6">
-                      <div className="row">
-                        <FormGroup className="col-6">
-                          <label htmlFor="identityRt">RT</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RT"
-                            value={this.state.identityRt} onChange={e => this.changeState("identityRt", e.target.value)}
-                          />
-                        </FormGroup>
+                          <div className="col-lg-6">
+                            <FormGroup>
+                              <label htmlFor="gender">Gender</label>
+                              <select value={this.state.gender}
+                                className="custom-select custom-select-sm input-font-size" name="gender"
+                                onChange={e => this.changeState("gender", e.target.value)}
+                              >
+                                <option value="">Select gender</option>
+                                {
+                                  Array.isArray(this.state.genderOptions) && this.state.genderOptions.length > 0
+                                    ? this.state.genderOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.name} key={"Gender option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                        <FormGroup className="col-6">
-                          <label htmlFor="identityRw">RW</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RW"
-                            value={this.state.identityRw} onChange={e => this.changeState("identityRw", e.target.value)}
-                          />
-                        </FormGroup>
-                      </div>
+                            <FormGroup>
+                              <label htmlFor="dateOfBirth">Date of Birth</label>
+                              <Datetime
+                                inputProps={{
+                                  name: "dateOfBirth",
+                                  className: "form-control input-font-size dt-bg",
+                                  id: "dateOfBirth",
+                                  placeholder: "dd mmm yyyy",
+                                  autoComplete: "off",
+                                  readOnly: true
+                                }}
+                                value={this.state.dateOfBirth}
+                                dateFormat="DD MMMM YYYY"
+                                timeFormat={false}
+                                closeOnSelect={true}
+                                onChange={e => this.changeDateState("dateOfBirth", e)}
+                              />
+                            </FormGroup>
 
-                      <hr className="col-6" />
+                            <FormGroup>
+                              <label htmlFor="motherName">Mother's Maiden Name</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter mother's maiden name"
+                                value={this.state.motherName} onChange={e => this.changeState("motherName", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="gender">Gender</label>
-                        <select value={this.state.gender}
-                          className="custom-select custom-select-sm input-font-size" name="gender"
-                          onChange={e => this.changeState("gender", e.target.value)}
-                        >
-                          <option value="">Select gender</option>
-                          {
-                            Array.isArray(this.state.genderOptions) && this.state.genderOptions.length > 0
-                              ? this.state.genderOptions.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Gender option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="placeOfBirth">Place of Birth</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter place of birth"
+                                value={this.state.placeOfBirth} onChange={e => this.changeState("placeOfBirth", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="dateOfBirth">Date of Birth</label>
-                        <Datetime
-                          inputProps={{
-                            name: "dateOfBirth",
-                            className: "form-control input-font-size dt-bg",
-                            id: "dateOfBirth",
-                            placeholder: "dd mmm yyyy",
-                            autoComplete: "off",
-                            readOnly: true
-                          }}
-                          value={this.state.dateOfBirth}
-                          dateFormat="DD MMMM YYYY"
-                          timeFormat={false}
-                          closeOnSelect={true}
-                          onChange={e => this.changeDateState("dateOfBirth", e)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="mobileNo">Mobile Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter mobile number"
+                                value={this.state.mobileNo} onChange={e => this.changeState("mobileNo", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="motherName">Mother's Maiden Name</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter mother's maiden name"
-                          value={this.state.motherName} onChange={e => this.changeState("motherName", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="phoneNumber">Phone Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter phone number"
+                                value={this.state.phoneNumber} onChange={e => this.changeState("phoneNumber", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="placeOfBirth">Place of Birth</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter place of birth"
-                          value={this.state.placeOfBirth} onChange={e => this.changeState("placeOfBirth", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="faxNumber">Fax Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter fax number"
+                                value={this.state.faxNumber} onChange={e => this.changeState("faxNumber", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="mobileNo">Mobile Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter mobile number"
-                          value={this.state.mobileNo} onChange={e => this.changeState("mobileNo", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="religion">Religion</label>
+                              <select value={this.state.religion}
+                                className="custom-select custom-select-sm input-font-size" name="religion"
+                                onChange={e => this.changeState("religion", e.target.value)}
+                              >
+                                <option value="">Select religion</option>
+                                {
+                                  Array.isArray(this.state.religionOptions) && this.state.religionOptions.length > 0
+                                    ? this.state.religionOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.description} key={"Religion option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="phoneNumber">Phone Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter phone number"
-                          value={this.state.phoneNumber} onChange={e => this.changeState("phoneNumber", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="email">Email</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter email"
+                                value={this.state.email} onChange={e => this.changeState("email", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="faxNumber">Fax Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter fax number"
-                          value={this.state.faxNumber} onChange={e => this.changeState("faxNumber", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="maritalStatus">Marital Status</label>
+                              <select value={this.state.maritalStatus}
+                                className="custom-select custom-select-sm input-font-size" name="maritalStatus"
+                                onChange={e => this.changeState("maritalStatus", e.target.value)}
+                              >
+                                <option value="">Select marital status</option>
+                                {
+                                  Array.isArray(this.state.maritalStatusOption) && this.state.maritalStatusOption.length > 0
+                                    ? this.state.maritalStatusOption.map((option, i) => {
+                                      return (
+                                        <option value={option.name} key={"Marital option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="religion">Religion</label>
-                        <select value={this.state.religion}
-                          className="custom-select custom-select-sm input-font-size" name="religion"
-                          onChange={e => this.changeState("religion", e.target.value)}
-                        >
-                          <option value="">Select religion</option>
-                          {
-                            Array.isArray(this.state.religionOptions) && this.state.religionOptions.length > 0
-                              ? this.state.religionOptions.map((option, i) => {
-                                return (
-                                  <option value={option.description} key={"Religion option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="typeOfIdentityBi">Type Of Identity</label>
+                              <select value={this.state.typeOfIdentityBi}
+                                className="custom-select custom-select-sm input-font-size" name="typeOfIdentityBi"
+                                onChange={e => this.changeState("typeOfIdentityBi", e.target.value)}
+                              >
+                                <option value="">Select type of identity</option>
+                                {
+                                  Array.isArray(this.state.typeOfIdentityBiOptions) && this.state.typeOfIdentityBiOptions.length > 0
+                                    ? this.state.typeOfIdentityBiOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.name} key={"Type of identity bi option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="email">Email</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter email"
-                          value={this.state.email} onChange={e => this.changeState("email", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="spouseIdentityNumber">Spouse Identity Number</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter spouse identity number"
+                                value={this.state.spouseIdentityNumber} onChange={e => this.changeState("spouseIdentityNumber", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="maritalStatus">Marital Status</label>
-                        <select value={this.state.maritalStatus}
-                          className="custom-select custom-select-sm input-font-size" name="maritalStatus"
-                          onChange={e => this.changeState("maritalStatus", e.target.value)}
-                        >
-                          <option value="">Select marital status</option>
-                          {
-                            Array.isArray(this.state.maritalStatusOption) && this.state.maritalStatusOption.length > 0
-                              ? this.state.maritalStatusOption.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Marital option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="spouseName">Spouse Name</label>
+                              <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter spouse name"
+                                value={this.state.spouseName} onChange={e => this.changeState("spouseName", e.target.value)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="typeOfIdentityBi">Type Of Identity</label>
-                        <select value={this.state.typeOfIdentityBi}
-                          className="custom-select custom-select-sm input-font-size" name="typeOfIdentityBi"
-                          onChange={e => this.changeState("typeOfIdentityBi", e.target.value)}
-                        >
-                          <option value="">Select type of identity</option>
-                          {
-                            Array.isArray(this.state.typeOfIdentityBiOptions) && this.state.typeOfIdentityBiOptions.length > 0
-                              ? this.state.typeOfIdentityBiOptions.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Type of identity bi option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="prePostNuptialAggreement">Pre-post Nuptial Agreement</label>
+                              <select value={this.state.prePostNuptialAggreement}
+                                className="custom-select custom-select-sm input-font-size" name="prePostNuptialAggreement"
+                                onChange={e => this.changeState("prePostNuptialAggreement", e.target.value)}
+                              >
+                                <option value="">Select type of identity</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="spouseIdentityNumber">Spouse Identity Number</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter spouse identity number"
-                          value={this.state.spouseIdentityNumber} onChange={e => this.changeState("spouseIdentityNumber", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="dateOfBirthSpouse">Date of Birth of Spouse</label>
+                              <Datetime
+                                inputProps={{
+                                  name: "dateOfBirthSpouse",
+                                  className: "form-control input-font-size dt-bg",
+                                  id: "dateOfBirthSpouse",
+                                  placeholder: "dd mmmm yyyy",
+                                  autoComplete: "off",
+                                  readOnly: true
+                                }}
+                                value={
+                                  this.state.dateOfBirthSpouse != ""
+                                    ? this.state.dateOfBirthSpouse
+                                    : ''
+                                }
+                                dateFormat="DD MMMM YYYY"
+                                timeFormat={false}
+                                closeOnSelect={true}
+                                onChange={e => this.changeDateState("dateOfBirthSpouse", e)}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="spouseName">Spouse Name</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter spouse name"
-                          value={this.state.spouseName} onChange={e => this.changeState("spouseName", e.target.value)}
-                        />
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="lastEducationLevelCode">Last Education Level</label>
+                              <select value={this.state.lastEducationLevelCode}
+                                className="custom-select custom-select-sm input-font-size" name="lastEducationLevelCode"
+                                onChange={e => this.changeState("lastEducationLevelCode", e.target.value)}
+                              >
+                                <option value="">Select type of identity</option>
+                                {
+                                  Array.isArray(this.state.lastEducationLevelCodeOption)
+                                    && this.state.lastEducationLevelCodeOption.length > 0
+                                    ? this.state.lastEducationLevelCodeOption.map((option, i) => {
+                                      return (
+                                        <option value={option.name} key={"Last edu lvl option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="prePostNuptialAggreement">Pre-post Nuptial Agreement</label>
-                        <select value={this.state.prePostNuptialAggreement}
-                          className="custom-select custom-select-sm input-font-size" name="prePostNuptialAggreement"
-                          onChange={e => this.changeState("prePostNuptialAggreement", e.target.value)}
-                        >
-                          <option value="">Select type of identity</option>
-                          <option value="Y">Yes</option>
-                          <option value="N">No</option>
-                        </select>
-                      </FormGroup>
+                            <FormGroup>
+                              <label htmlFor="lastEducationLevelDescription">Last Education Level Other</label>
+                              <input className="form-control mr-3 input-font-size" type="text"
+                                value={this.state.lastEducationLevelDescription}
+                                onChange={e => this.changeState("lastEducationLevelDescription", e.target.value)}
+                                disabled={!this.state.lasEducationOtherIsActive}
+                              />
+                            </FormGroup>
 
-                      <FormGroup>
-                        <label htmlFor="dateOfBirthSpouse">Date of Birth of Spouse</label>
-                        <Datetime
-                          inputProps={{
-                            name: "dateOfBirthSpouse",
-                            className: "form-control input-font-size dt-bg",
-                            id: "dateOfBirthSpouse",
-                            placeholder: "dd mmmm yyyy",
-                            autoComplete: "off",
-                            readOnly: true
-                          }}
-                          value={
-                            this.state.dateOfBirthSpouse != ""
-                              ? this.state.dateOfBirthSpouse
-                              : ''
-                          }
-                          dateFormat="DD MMMM YYYY"
-                          timeFormat={false}
-                          closeOnSelect={true}
-                          onChange={e => this.changeDateState("dateOfBirthSpouse", e)}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="lastEducationLevelCode">Last Education Level</label>
-                        <select value={this.state.lastEducationLevelCode}
-                          className="custom-select custom-select-sm input-font-size" name="lastEducationLevelCode"
-                          onChange={e => this.changeState("lastEducationLevelCode", e.target.value)}
-                        >
-                          <option value="">Select type of identity</option>
-                          {
-                            Array.isArray(this.state.lastEducationLevelCodeOption)
-                              && this.state.lastEducationLevelCodeOption.length > 0
-                              ? this.state.lastEducationLevelCodeOption.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Last edu lvl option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="lastEducationLevelDescription">Last Education Level Other</label>
-                        <input className="form-control mr-3 input-font-size" type="text"
-                          value={this.state.lastEducationLevelDescription}
-                          onChange={e => this.changeState("lastEducationLevelDescription", e.target.value)}
-                          disabled={!this.state.lasEducationOtherIsActive}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="isCitizen">
-                          Is Citizen ? &emsp;
+                            <FormGroup>
+                              <label htmlFor="isCitizen">
+                                Is Citizen ? &emsp;
                             <label className="c-checkbox">
-                            <input type="checkbox" value="option1" checked={this.state.isCitizen} onChange={e => this.changeState("isCitizen")} />
-                            <span className="fa fa-check" />
-                          </label>
-                        </label>
-                      </FormGroup>
-                    </div>
-                  </form>
+                                  <input type="checkbox" value="option1" checked={this.state.isCitizen} onChange={e => this.changeState("isCitizen")} />
+                                  <span className="fa fa-check" />
+                                </label>
+                              </label>
+                            </FormGroup>
+                          </div>
+                        </form>
+                      )
+                    }}
+                  </Formik>
                 </TabPane>
 
                 <TabPane className="ft-detail" tabId="address" role="tabpanel">
-                  <form className="form-font-size mt-3 row" onSubmit={this.onSubmit}>
-                    <div className="col-lg-6">
-                      <FormGroup>
-                        <div>
-                          <label htmlFor="address">Domicile Address</label>
-                        </div>
-                        <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter address"
-                          value={this.state.address} onChange={e => this.changeState("address", e.target.value)}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="country">Country</label>
-                        <select value={this.state.country}
-                          className="custom-select custom-select-sm input-font-size" name="country"
-                          onChange={e => this.changeState("country", e.target.value)}
-                          disabled={!this.state.countryIsActive}
-                        >
-                          <option value="">Select country</option>
-                          {
-                            Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
-                              ? this.state.countryOptions.map((option, i) => {
-                                return (
-                                  <option value={option.name} key={"Country option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="provinceId">Province</label>
-                        <select value={this.state.provinceId}
-                          className="custom-select custom-select-sm input-font-size" name="provinceId"
-                          onChange={e => this.changeState("provinceId", e.target.value)}
-                        >
-                          <option value="">Select province</option>
-                          {
-                            Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
-                              ? this.state.provinceOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"Province option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="cityId">District / City</label>
-                        <select value={this.state.cityId}
-                          className="custom-select custom-select-sm input-font-size" name="cityId"
-                          onChange={e => this.changeState("cityId", e.target.value)}
-                        >
-                          <option value="">Select city</option>
-                          {
-                            Array.isArray(this.state.cityOptionsFilter) && this.state.cityOptionsFilter.length > 0
-                              ? this.state.cityOptionsFilter.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"City option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="subDistrict">Sub District</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter sub district"
-                          value={this.state.subDistrict} onChange={e => this.changeState("subDistrict", e.target.value)}
-                        />
-                      </FormGroup>
-                    </div>
-
-                    <div className="col-lg-6">
-                      <FormGroup>
-                        <label htmlFor="village">Village</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter village"
-                          value={this.state.village} onChange={e => this.changeState("village", e.target.value)}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <label htmlFor="postalCode">Postal Code</label>
-                        <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter postal code"
-                          value={this.state.postalCode} onChange={e => this.changeState("postalCode", e.target.value)}
-                        />
-                      </FormGroup>
-
-                      <div className="row">
-                        <FormGroup className="col-6">
-                          <label htmlFor="rt">RT</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RT"
-                            value={this.state.rt} onChange={e => this.changeState("rt", e.target.value)}
-                          />
-                        </FormGroup>
-
-                        <FormGroup className="col-6">
-                          <label htmlFor="rw">RW</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RW"
-                            value={this.state.rw} onChange={e => this.changeState("rw", e.target.value)}
-                          />
-                        </FormGroup>
-                      </div>
-
-                      <FormGroup>
-                        <label htmlFor="homeOwnershipStatus">Home Ownership Status</label>
-                        <select value={this.state.homeOwnershipStatus}
-                          className="custom-select custom-select-sm input-font-size" name="homeOwnershipStatus"
-                          onChange={e => this.changeState("homeOwnershipStatus", e.target.value)}
-                        >
-                          <option value="">Select Home Ownership Status</option>
-                          {
-                            Array.isArray(this.state.homeOwnershipStatusOption) && this.state.homeOwnershipStatusOption.length > 0
-                              ? this.state.homeOwnershipStatusOption.map((option, i) => {
-                                return (
-                                  <option value={option.id} key={"Home Ownership option " + i} >{option.description}</option>
-                                )
-                              })
-                              : ""
-                          }
-                        </select>
-                      </FormGroup>
-
+                  <Formik
+                    initialValues={
                       {
-                        this.state.homeOwnershipStatus === 99
-                          ? (
-                            <FormGroup>
-                              <label htmlFor="otherHomeOwnershipStatus">Other Home Ownership Status</label>
-                              <input className="form-control mr-3 input-font-size"
-                                type="text" placeholder="Enter RW"
-                                value={this.state.otherHomeOwnershipStatus}
-                                onChange={e => this.changeState("otherHomeOwnershipStatus", e.target.value)}
-                              />
-                            </FormGroup>
-                          )
-                          : ""
+                        addressBasedOnIdentity: state.addressBasedOnIdentity,
+                        identityCountryCodeValue: state.identityCountry,
+                        identityProvinceId: state.identityProvinceId,
+                        identityCityId: state.identityCityId,
+                        identitySubDistrict: state.identitySubDistrict,
+                        identityVillage: state.identityVillage,
+                        identityPostalCode: state.identityPostalCode,
+                        identityRt: state.identityRt,
+                        identityRw: state.identityRw,
+
+                        address: state.address,
+                        countryCodeValue: state.country,
+                        provinceId: state.provinceId,
+                        cityId: state.cityId,
+                        subDistrict: state.subDistrict,
+                        village: state.village,
+                        postalCode: state.postalCode,
+                        rt: state.rt,
+                        rw: state.rw,
+
+                        homeOwnnershipStatus: state.homeOwnershipStatus,
+                        otherHomeOwnershipStatus: state.otherHomeOwnershipStatus
                       }
-                    </div>
-                  </form>
+                    }
+                    validate={values => {
+                      const errors = {};
+
+                      if (!values.addressBasedOnIdentity) {
+                        errors.addressBasedOnIdentity = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
+
+                      this.setState({ formAddressErrors: errors })
+
+                      return errors;
+                    }}
+                    enableReinitialize="true"
+                    onSubmit={(val, { setSubmitting }) => {
+                      console.log("yay Submit Address")
+
+                      setSubmitting(false)
+                    }}
+                  >
+                    {formikProps => {
+                      const {
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        submitForm
+                      } = formikProps
+
+                      bindFormAddress(submitForm)
+
+                      return (
+                        <form id="formAddress" className="form-font-size mt-3" onSubmit={handleSubmit}>
+                          <div className="row">
+                            <div className="col-lg-6">
+                              <p className="lead text-center">Identitas</p>
+                              <FormGroup>
+                                <label htmlFor="addressBasedOnIdentity">
+                                  Address Based on Identity <span className="red"> *</span>
+                                </label>
+                                <textarea
+                                  name="addressBasedOnIdentity"
+                                  rows="4"
+                                  className={
+                                    touched.addressBasedOnIdentity && errors.addressBasedOnIdentity
+                                      ? "form-control form-font-size input-error"
+                                      : "form-control form-font-size"
+                                  }
+                                  type="text"
+                                  placeholder="Enter office's name"
+                                  value={values.addressBasedOnIdentity}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                />
+                                <div className="input-feedback">{touched.addressBasedOnIdentity && errors.addressBasedOnIdentity}</div>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identityCountry">Country</label>
+                                <select value={this.state.identityCountry}
+                                  className="custom-select custom-select-sm input-font-size" name="identityCountry"
+                                  onChange={e => this.changeState("identityCountry", e.target.value)}
+                                  disabled={!this.state.identityCountryIsActive}
+                                >
+                                  <option value="">Select country</option>
+                                  {
+                                    Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
+                                      ? this.state.countryOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.name} key={"Country identity option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identityProvinceId">Province</label>
+                                <select value={this.state.identityProvinceId}
+                                  className="custom-select custom-select-sm input-font-size" name="identityProvinceId"
+                                  onChange={e => this.changeState("identityProvinceId", e.target.value)}
+                                >
+                                  <option value="">Select province</option>
+                                  {
+                                    Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
+                                      ? this.state.provinceOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"Province identity option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identityCityId">District / City</label>
+                                <select value={this.state.identityCityId}
+                                  className="custom-select custom-select-sm input-font-size" name="identityCityId"
+                                  onChange={e => this.changeState("identityCityId", e.target.value)}
+                                >
+                                  <option value="">Select city</option>
+                                  {
+                                    Array.isArray(this.state.identityCityOptionsFilter) && this.state.identityCityOptionsFilter.length > 0
+                                      ? this.state.identityCityOptionsFilter.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"City identity option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identitySubDistrict">Sub District</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter sub district"
+                                  value={this.state.identitySubDistrict} onChange={e => this.changeState("identitySubDistrict", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identityVillage">Village</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter village"
+                                  value={this.state.identityVillage} onChange={e => this.changeState("identityVillage", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="identityPostalCode">Postal Code</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter postal code"
+                                  value={this.state.identityPostalCode} onChange={e => this.changeState("identityPostalCode", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <div className="row">
+                                <FormGroup className="col-6">
+                                  <label htmlFor="identityRt">RT</label>
+                                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RT"
+                                    value={this.state.identityRt} onChange={e => this.changeState("identityRt", e.target.value)}
+                                  />
+                                </FormGroup>
+
+                                <FormGroup className="col-6">
+                                  <label htmlFor="identityRw">RW</label>
+                                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RW"
+                                    value={this.state.identityRw} onChange={e => this.changeState("identityRw", e.target.value)}
+                                  />
+                                </FormGroup>
+                              </div>
+                            </div>
+
+                            <div className="col-lg-6">
+                              <p className="lead text-center">Domisili</p>
+                              <FormGroup>
+                                <div>
+                                  <label htmlFor="address">Domicile Address</label>
+                                </div>
+                                <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter address"
+                                  value={this.state.address} onChange={e => this.changeState("address", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="country">Country</label>
+                                <select value={this.state.country}
+                                  className="custom-select custom-select-sm input-font-size" name="country"
+                                  onChange={e => this.changeState("country", e.target.value)}
+                                  disabled={!this.state.countryIsActive}
+                                >
+                                  <option value="">Select country</option>
+                                  {
+                                    Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
+                                      ? this.state.countryOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.name} key={"Country option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="provinceId">Province</label>
+                                <select value={this.state.provinceId}
+                                  className="custom-select custom-select-sm input-font-size" name="provinceId"
+                                  onChange={e => this.changeState("provinceId", e.target.value)}
+                                >
+                                  <option value="">Select province</option>
+                                  {
+                                    Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
+                                      ? this.state.provinceOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"Province option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="cityId">District / City</label>
+                                <select value={this.state.cityId}
+                                  className="custom-select custom-select-sm input-font-size" name="cityId"
+                                  onChange={e => this.changeState("cityId", e.target.value)}
+                                >
+                                  <option value="">Select city</option>
+                                  {
+                                    Array.isArray(this.state.cityOptionsFilter) && this.state.cityOptionsFilter.length > 0
+                                      ? this.state.cityOptionsFilter.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"City option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="subDistrict">Sub District</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter sub district"
+                                  value={this.state.subDistrict} onChange={e => this.changeState("subDistrict", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="village">Village</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter village"
+                                  value={this.state.village} onChange={e => this.changeState("village", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="postalCode">Postal Code</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter postal code"
+                                  value={this.state.postalCode} onChange={e => this.changeState("postalCode", e.target.value)}
+                                />
+                              </FormGroup>
+
+                              <div className="row">
+                                <FormGroup className="col-6">
+                                  <label htmlFor="rt">RT</label>
+                                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RT"
+                                    value={this.state.rt} onChange={e => this.changeState("rt", e.target.value)}
+                                  />
+                                </FormGroup>
+
+                                <FormGroup className="col-6">
+                                  <label htmlFor="rw">RW</label>
+                                  <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter RW"
+                                    value={this.state.rw} onChange={e => this.changeState("rw", e.target.value)}
+                                  />
+                                </FormGroup>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <FormGroup>
+                              <label htmlFor="homeOwnershipStatus">Home Ownership Status</label>
+                              <select value={this.state.homeOwnershipStatus}
+                                className="custom-select custom-select-sm input-font-size" name="homeOwnershipStatus"
+                                onChange={e => this.changeState("homeOwnershipStatus", e.target.value)}
+                              >
+                                <option value="">Select Home Ownership Status</option>
+                                {
+                                  Array.isArray(this.state.homeOwnershipStatusOption) && this.state.homeOwnershipStatusOption.length > 0
+                                    ? this.state.homeOwnershipStatusOption.map((option, i) => {
+                                      return (
+                                        <option value={option.id} key={"Home Ownership option " + i} >{option.description}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
+                            {
+                              this.state.homeOwnershipStatus === "99"
+                                ? (
+                                  <FormGroup>
+                                    <label htmlFor="otherHomeOwnershipStatus">Other Home Ownership Status</label>
+                                    <input className="form-control mr-3 input-font-size"
+                                      type="text" placeholder="Enter RW"
+                                      value={this.state.otherHomeOwnershipStatus}
+                                      onChange={e => this.changeState("otherHomeOwnershipStatus", e.target.value)}
+                                    />
+                                  </FormGroup>
+                                )
+                                : ""
+                            }
+                          </div>
+                        </form>
+                      )
+                    }}
+                  </Formik>
                 </TabPane>
 
                 <TabPane className="ft-detail" tabId="others" role="tabpanel">
-                  <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <FormGroup>
-                          <label htmlFor="taxNumber">Tax Number</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter Tax Number"
-                            value={this.state.taxNumber} onChange={e => this.changeState("taxNumber", e.target.value)}
-                          />
-                        </FormGroup>
+                  <Formik
+                    initialValues={
+                      {
+                        taxNumber: state.taxNumber,
+                        taxName: state.taxName,
+                        taxAddress: state.taxAddress,
 
-                        <FormGroup>
-                          <label htmlFor="taxName">Name Based on Tax</label>
-                          <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter Tax Number"
-                            value={this.state.taxName} onChange={e => this.changeState("taxName", e.target.value)}
-                          />
-                        </FormGroup>
-                      </div>
+                        flagTaxCodeValue: state.flagTax,
+                        merchantInformationCode: state.merchantInformationCode,
+                        merchantCategoryCode: state.merchantCategoryCode,
+                        mobileUser: state.mobileUser,
+                        submittedOnDate: state.submittedOnDate
+                      }
+                    }
+                    validate={values => {
+                      const errors = {};
 
-                      <div className="col-lg-6">
-                        <FormGroup>
-                          <label htmlFor="taxAddress">Address Based on Tax</label>
-                          <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter Tax Address"
-                            value={this.state.taxAddress} onChange={e => this.changeState("taxAddress", e.target.value)}
-                          />
-                        </FormGroup>
-                      </div>
-                    </div>
+                      if (!values.taxname) {
+                        errors.taxName = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      }
 
-                    <hr className="col-6" />
+                      this.setState({ formOthersErrors: errors })
 
-                    <div className="row">
-                      <div className="col-lg-6">
-                        <FormGroup>
-                          <label htmlFor="flagTax">Flag Tax</label>
-                          <select value={this.state.flagTax}
-                            className="custom-select custom-select-sm input-font-size" name="flagTax"
-                            onChange={e => this.changeState("flagTax", e.target.value)}
-                          >
-                            <option value="">Select Flag Tax</option>
-                            {
-                              Array.isArray(this.state.flagTaxOptions) && this.state.flagTaxOptions.length > 0
-                                ? this.state.flagTaxOptions.map((option, i) => {
-                                  return (
-                                    <option value={option.name} key={"Flag Tax option " + i} >{option.description}</option>
-                                  )
-                                })
-                                : ""
-                            }
-                          </select>
-                        </FormGroup>
+                      return errors;
+                    }}
+                    enableReinitialize="true"
+                    onSubmit={(val, { setSubmitting }) => {
+                      console.log("yay Submit Others")
 
-                        <FormGroup>
-                          <label htmlFor="merchantInformationCode">Merchant Account Information Code</label>
-                          <select value={this.state.merchantInformationCode}
-                            className="custom-select custom-select-sm input-font-size" name="merchantInformationCode"
-                            onChange={e => this.changeState("merchantInformationCode", e.target.value)}
-                          >
-                            <option value="">Select Merchant Account Information Code</option>
-                            {
-                              Array.isArray(this.state.merchantInformationCodeOption) && this.state.merchantInformationCodeOption.length > 0
-                                ? this.state.merchantInformationCodeOption.map((option, i) => {
-                                  return (
-                                    <option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</option>
-                                  )
-                                })
-                                : ""
-                            }
-                          </select>
-                        </FormGroup>
+                      setSubmitting(false)
+                    }}
+                  >
+                    {formikProps => {
+                      const {
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        submitForm
+                      } = formikProps
 
-                        <FormGroup>
-                          <label htmlFor="merchantCategoryCode">Merchant Category</label>
-                          <select value={this.state.merchantCategoryCode}
-                            className="custom-select custom-select-sm input-font-size" name="merchantCategoryCode"
-                            onChange={e => this.changeState("merchantCategoryCode", e.target.value)}
-                          >
-                            <option value="">Select Merchant Category</option>
-                            {
-                              Array.isArray(this.state.merchantCategoryOption) && this.state.merchantCategoryOption.length > 0
-                                ? this.state.merchantCategoryOption.map((option, i) => {
-                                  return (
-                                    <option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</option>
-                                  )
-                                })
-                                : ""
-                            }
-                          </select>
-                        </FormGroup>
-                      </div>
+                      bindFormOthers(submitForm)
 
-                      <div className="col-lg-6">
-                        <FormGroup>
-                          <label htmlFor="mobileUser">Mobile Username</label>
-                          <input className="form-control mr-3 form-font-size" type="text" placeholder="Enter Mobile Username"
-                            value={this.state.mobileUser} onChange={e => this.changeState("mobileUser", e.target.value)}
-                            readOnly disabled
-                          />
-                        </FormGroup>
+                      return (
+                        <form id="formOthers" className="form-font-size mt-3" onSubmit={handleSubmit}>
+                          <div className="row">
+                            <div className="col-lg-6">
+                              <FormGroup>
+                                <label htmlFor="taxNumber">Tax Number</label>
+                                <input className="form-control mr-3 input-font-size" type="text" placeholder="Enter Tax Number"
+                                  value={this.state.taxNumber} onChange={e => this.changeState("taxNumber", e.target.value)}
+                                />
+                              </FormGroup>
 
-                        <FormGroup>
-                          <label htmlFor="submittedOnDate">Submitted on</label>
-                          <Datetime
-                            inputProps={{
-                              name: "submittedOnDate",
-                              className: "form-control input-font-size dt-bg",
-                              id: "submittedOnDate",
-                              placeholder: "dd mmmm yyyy",
-                              autoComplete: "off",
-                              readOnly: true
-                            }}
-                            value={this.state.submittedOnDate}
-                            dateFormat="DD MMMM YYYY"
-                            timeFormat={false}
-                            closeOnSelect={true}
-                            onChange={e => this.changeDateState("submittedOnDate", e)}
-                          />
-                        </FormGroup>
-                      </div>
-                    </div>
-                  </form>
+                              <FormGroup>
+                                <label htmlFor="taxName">
+                                  Name Based on Tax <span className="red"> *</span>
+                                </label>
+                                <input
+                                  name="taxName"
+                                  className={
+                                    touched.taxName && errors.taxName
+                                      ? "form-control mr-3 input-font-size input-error"
+                                      : "form-control mr-3 input-font-size"
+                                  }
+                                  type="text"
+                                  placeholder="Enter Tax Number"
+                                  value={values.taxName}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                />
+                                <div className="input-feedback">{touched.taxName && errors.taxName}</div>
+                              </FormGroup>
+                            </div>
+
+                            <div className="col-lg-6">
+                              <FormGroup>
+                                <label htmlFor="taxAddress">Address Based on Tax</label>
+                                <textarea rows="4" className="form-control mr-3 form-font-size" type="text" placeholder="Enter Tax Address"
+                                  value={this.state.taxAddress} onChange={e => this.changeState("taxAddress", e.target.value)}
+                                />
+                              </FormGroup>
+                            </div>
+                          </div>
+
+                          <hr className="col-6" />
+
+                          <div className="row">
+                            <div className="col-lg-6">
+                              <FormGroup>
+                                <label htmlFor="flagTax">Flag Tax</label>
+                                <select value={this.state.flagTax}
+                                  className="custom-select custom-select-sm input-font-size" name="flagTax"
+                                  onChange={e => this.changeState("flagTax", e.target.value)}
+                                >
+                                  <option value="">Select Flag Tax</option>
+                                  {
+                                    Array.isArray(this.state.flagTaxOptions) && this.state.flagTaxOptions.length > 0
+                                      ? this.state.flagTaxOptions.map((option, i) => {
+                                        return (
+                                          <option value={option.name} key={"Flag Tax option " + i} >{option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="merchantInformationCode">Merchant Account Information Code</label>
+                                <select value={this.state.merchantInformationCode}
+                                  className="custom-select custom-select-sm input-font-size" name="merchantInformationCode"
+                                  onChange={e => this.changeState("merchantInformationCode", e.target.value)}
+                                >
+                                  <option value="">Select Merchant Account Information Code</option>
+                                  {
+                                    Array.isArray(this.state.merchantInformationCodeOption) && this.state.merchantInformationCodeOption.length > 0
+                                      ? this.state.merchantInformationCodeOption.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="merchantCategoryCode">Merchant Category</label>
+                                <select value={this.state.merchantCategoryCode}
+                                  className="custom-select custom-select-sm input-font-size" name="merchantCategoryCode"
+                                  onChange={e => this.changeState("merchantCategoryCode", e.target.value)}
+                                >
+                                  <option value="">Select Merchant Category</option>
+                                  {
+                                    Array.isArray(this.state.merchantCategoryOption) && this.state.merchantCategoryOption.length > 0
+                                      ? this.state.merchantCategoryOption.map((option, i) => {
+                                        return (
+                                          <option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</option>
+                                        )
+                                      })
+                                      : ""
+                                  }
+                                </select>
+                              </FormGroup>
+                            </div>
+
+                            <div className="col-lg-6">
+                              <FormGroup>
+                                <label htmlFor="mobileUser">Mobile Username</label>
+                                <input className="form-control mr-3 form-font-size" type="text" placeholder="Enter Mobile Username"
+                                  value={this.state.mobileUser} onChange={e => this.changeState("mobileUser", e.target.value)}
+                                  readOnly disabled
+                                />
+                              </FormGroup>
+
+                              <FormGroup>
+                                <label htmlFor="submittedOnDate">Submitted on</label>
+                                <Datetime
+                                  inputProps={{
+                                    name: "submittedOnDate",
+                                    className: "form-control input-font-size dt-bg",
+                                    id: "submittedOnDate",
+                                    placeholder: "dd mmmm yyyy",
+                                    autoComplete: "off",
+                                    readOnly: true
+                                  }}
+                                  value={this.state.submittedOnDate}
+                                  dateFormat="DD MMMM YYYY"
+                                  timeFormat={false}
+                                  closeOnSelect={true}
+                                  onChange={e => this.changeDateState("submittedOnDate", e)}
+                                />
+                              </FormGroup>
+                            </div>
+                          </div>
+                        </form>
+                      )
+                    }}
+                  </Formik>
                 </TabPane>
               </TabContent>
             </div>
 
             <Button className="mt-4 mb-2 col-12" color="warning"
-              type="submit" onClick={() => editMember()}
+              type="submit" onClick={() => {
+                handleSubmitForm()
+              }}
             >
               Edit Member
             </Button>
