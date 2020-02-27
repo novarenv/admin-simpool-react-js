@@ -65,10 +65,6 @@ export function getClientDetail(payload, setClientDetail) {
   return { type: GET_CLIENT_DETAIL, payload, setClientDetail };
 }
 
-export function getClientDetailParams(payload, setClientDetail) {
-  return { type: GET_CLIENT_DETAIL_PARAMS, payload, setClientDetail };
-}
-
 export function getClientDocuments(payload, setClientDocuments) {
   return { type: GET_CLIENT_DOCUMENTS, payload, setClientDocuments };
 }

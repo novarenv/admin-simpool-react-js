@@ -61,7 +61,7 @@ const onFieldChange = (val, field, form) => {
   form.setFieldValue(field.name, val);
 }
 
-const DateTime = ({ field, form, locale, tabIndex, value, error, touched, name }) => {
+const DateTime = ({ field, form, locale, value, error, touched, name }) => {
   return (
     <Datetime
       inputProps={{
@@ -75,7 +75,6 @@ const DateTime = ({ field, form, locale, tabIndex, value, error, touched, name }
         placeholder: "dd mmmm yyyy",
         autoComplete: "off",
         readOnly: true,
-        tabIndex: tabIndex,
         value: value
       }}
       dateFormat="DD MMMM YYYY"
@@ -87,9 +86,9 @@ const DateTime = ({ field, form, locale, tabIndex, value, error, touched, name }
   );
 }
 
-const ValidDate = ({ field, form, locale, tabIndex, value, error, touched, name }) => {
+const ValidDate = ({ field, form, locale, value, error, touched, name }) => {
   let yesterday = Datetime.moment().subtract(1, 'day')
-  let valid = function( current ){
+  let valid = current => {
     return current.isAfter( yesterday )
   }
 
@@ -105,7 +104,6 @@ const ValidDate = ({ field, form, locale, tabIndex, value, error, touched, name 
         placeholder: "dd mmmm yyyy",
         autoComplete: "off",
         readOnly: true,
-        tabIndex: tabIndex,
         value: value
       }}
       dateFormat="DD MMMM YYYY"
@@ -811,7 +809,6 @@ class MemberDataAdd extends Component {
                   </label>
                   <Field name="identityValidDate" onChange={handleChange} component={ValidDate}
                     locale={this.props.dashboard.language} value={values.identityValidDate}
-                    name="identityValidDate"
                   />
 
                   <label className="mt-3" htmlFor="genderCodeValue">Jenis Kelamin</label>
@@ -1606,7 +1603,7 @@ class MemberDataAdd extends Component {
                         </label>
                         <div className="py-2">
                           <label className="c-radio">
-                            <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1" tabIndex="7"
+                            <Input id="individu" type="radio" name="legalFormId" className="input-font-size" value="1"
                               checked={values.legalFormId === "1"} required onChange={handleChange}
                             />
                             <span className="fa fa-circle" />Individu</label>
@@ -1660,7 +1657,6 @@ class MemberDataAdd extends Component {
                                   id="fullname"
                                   onChange={handleChange}
                                   onBlur={handleBlur}
-                                  tabIndex="1"
                                   placeholder={this.props.i18n.t("member.data-add.FULLNAME_ID_PH")}
                                   value={values.fullname}
                                 />
@@ -1670,8 +1666,7 @@ class MemberDataAdd extends Component {
                                   <Trans i18nKey='member.data-add.BIRTHDATE' />
                                 </label>
                                 <Field name="dateOfBirth" onChange={handleChange} component={DateTime}
-                                  locale={this.props.dashboard.language} tabIndex="2" value={values.dateOfBirth}
-                                  name="dateOfBirth"
+                                  locale={this.props.dashboard.language} value={values.dateOfBirth}
                                 />
 
                                 <label className="mt-3" htmlFor="addressBasedOnIdentity">
@@ -1683,7 +1678,6 @@ class MemberDataAdd extends Component {
                                   className="form-control form-font-size"
                                   type="text"
                                   id="addressBasedOnIdentity"
-                                  tabIndex="3"
                                   placeholder={this.props.i18n.t("member.data-add.IDENTITY_ADDRESS_PH")}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
@@ -1702,7 +1696,6 @@ class MemberDataAdd extends Component {
                                   }
                                   type="text"
                                   id="motherName"
-                                  tabIndex="4"
                                   placeholder={this.props.i18n.t("member.data-add.MOTHER_NAME_PH")}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
@@ -1722,7 +1715,6 @@ class MemberDataAdd extends Component {
                                   }
                                   name="typeOfIdentityId"
                                   onChange={handleChange}
-                                  tabIndex="5"
                                 >
                                   <option value="">
                                     {this.props.i18n.t("member.data-add.IDENTITY_TYPE_PH")}
@@ -1765,7 +1757,6 @@ class MemberDataAdd extends Component {
                                           id="identityNumber"
                                           onChange={handleChange}
                                           onBlur={handleBlur}
-                                          tabIndex="6"
                                           placeholder="101001002"
                                           value={values.identityNumber}
                                         />
@@ -1783,7 +1774,6 @@ class MemberDataAdd extends Component {
                           className="btn btn-block mt-4 mb-3 justify-content-center"
                           type="submit"
                           color="primary"
-                          tabIndex="6"
                           outlined="true"
                         >
                           <Trans i18nKey='member.data-add.DUPLICATE_CHECK' />

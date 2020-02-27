@@ -12,7 +12,6 @@ import {
   DELETE_CLIENT_DOC,
   GET_CLIENT_ACCOUNT,
   GET_CLIENT_DETAIL,
-  GET_CLIENT_DETAIL_PARAMS,
   GET_CLIENT_DOCUMENTS,
   GET_CLIENT_IMAGE,
   GET_CLIENT_ID,
@@ -275,6 +274,7 @@ function* deleteClientDoc(action) {
 
 function* getClientDetail(action) {
   const auth = yield select(authSelector)
+  console.log(auth)
 
   try {
     const getClientDetail = yield axios
@@ -286,35 +286,6 @@ function* getClientDetail(action) {
           ...headers,
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
-        }
-      })
-      .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
-
-    action.setClientDetail(getClientDetail)
-
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-function* getClientDetailParams(action) {
-  const auth = yield select(authSelector)
-
-  try {
-    const getClientDetail = yield axios
-      .get(
-        clientDetailUrl(
-          action.payload
-        ), {
-        headers: {
-          ...headers,
-          'Authorization': 'Basic ' + auth,
-          'Access-Control-Allow-Origin': '*'
-        },
-        params: {
-          "staffInSelectedOfficeOnly": "true",
-          "template": "true"
         }
       })
       .then(response => response.data)
@@ -501,7 +472,6 @@ export default function* root() {
   yield takeEvery(DELETE_CLIENT_DOC, deleteClientDoc);
   yield takeEvery(GET_CLIENT_ACCOUNT, getClientAccount);
   yield takeEvery(GET_CLIENT_DETAIL, getClientDetail);
-  yield takeEvery(GET_CLIENT_DETAIL_PARAMS, getClientDetailParams);
   yield takeEvery(GET_CLIENT_DOCUMENTS, getClientDocuments);
   yield takeEvery(GET_CLIENT_IMAGE, getClientImage);
   yield takeEvery(GET_CLIENT_ID, getClientId);
