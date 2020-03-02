@@ -445,7 +445,10 @@ class MemberDataEdit extends Component {
     const state = this.state
 
     const setClientPutRes = res => {
-      this.props.history.push("/simpool/member/data-detail/" + state.clientIdNo)
+      this.props.history.push({
+        pathname: "/simpool/member/data-detail/" + state.clientIdNo,
+        search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+      })
     }
 
     const errorExist = {
@@ -611,7 +614,12 @@ class MemberDataEdit extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to={"/simpool/member/data-detail/" + this.state.clientIdNo}>
+            <Link
+              to={{
+                pathname: "/simpool/member/data-detail/" + this.state.clientIdNo,
+                search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+              }}
+            >
               <Button outline className="col-4 col-md-2 mb-4" color="primary">Kembali</Button>
             </Link>
 
@@ -2584,13 +2592,15 @@ MemberDataEdit.propTypes = {
   actions: PropTypes.object,
   dashboard: PropTypes.object,
   memberData: PropTypes.object,
-  search: PropTypes.object
+  search: PropTypes.object,
+  settings: PropTypes.object
 }
 
 const mapStateToProps = state => ({
   dashboard: state.dashboard,
   memberData: state.memberData,
-  search: state.search
+  search: state.search,
+  settings: state.settings
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 

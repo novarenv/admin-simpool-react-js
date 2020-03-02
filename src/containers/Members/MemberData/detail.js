@@ -862,7 +862,12 @@ class MemberDataDetail extends Component {
 
         <Card className="card-default">
           <CardBody>
-            <Link to="/simpool/member/data">
+            <Link
+              to={{
+                pathname: "/simpool/member/data",
+                search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+              }}
+            >
               <Button outline className="col-4 col-lg-2" color="primary" >
                 Kembali
               </Button>
@@ -1902,7 +1907,12 @@ class MemberDataDetail extends Component {
                     </div>
                   </div>
 
-                  <Link to={"/simpool/member/data-edit/" + this.state.clientIdNo}>
+                  <Link
+                    to={{
+                      pathname: "/simpool/member/data-edit/" + this.state.clientIdNo,
+                      search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+                    }}
+                  >
                     <Button outline className="mt-4 mb-2 col-12" color="warning" tabIndex={7}>Edit Member</Button>
                   </Link>
                 </TabPane>
@@ -1917,7 +1927,12 @@ class MemberDataDetail extends Component {
                         </div>
                       )
                   }
-                  <Link to="/simpool/member/saving-data-add">
+                  <Link
+                    to={{
+                      pathname: "/simpool/member/saving-data-add",
+                      search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+                    }}
+                  >
                     <Button outline className="col-12 mt-4 mb-2" color="primary" type="button">
                       Tambah Simpanan
                     </Button>
@@ -1934,7 +1949,12 @@ class MemberDataDetail extends Component {
                         </div>
                       )
                   }
-                  <Link to="/simpool/member/loan-data-add">
+                  <Link
+                    to={{
+                      pathname: "/simpool/member/loan-data-add",
+                      search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+                    }}
+                  >
                     <Button outline className="col-12 mt-4 mb-2" color="primary" type="button">
                       Tambah Pinjaman
                     </Button>
@@ -1953,12 +1973,14 @@ class MemberDataDetail extends Component {
 MemberDataDetail.propTypes = {
   actions: PropTypes.object,
   memberData: PropTypes.object,
-  search: PropTypes.object
+  search: PropTypes.object,
+  settings: PropTypes.object
 }
 
 const mapStateToProps = state => ({
   memberData: state.memberData,
-  search: state.search
+  search: state.search,
+  settings: state.settings
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 

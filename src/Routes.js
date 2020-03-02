@@ -27,7 +27,7 @@ const Login = lazy(() => import('./containers/Auth/Login'));
 
 // Members
 const MemberData = lazy(() => import('./containers/Members/MemberData'));
-const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/addV2'));
+const MemberDataAdd = lazy(() => import('./containers/Members/MemberData/add'));
 const MemberDataDetail = lazy(() => import('./containers/Members/MemberData/detail'));
 const MemberDataEdit = lazy(() => import('./containers/Members/MemberData/edit'));
 const SavingData = lazy(() => import('./containers/Members/SavingData/index'));
@@ -87,7 +87,7 @@ const Routes = ({ location, ...props }) => {
 
   const animationName = 'rag-fadeIn'
 
-  const [tenantIdentifier, setTenantIdentifier] = useState("010006")
+  const [tenantIdentifier, setTenantIdentifier] = useState(props.settings.tenantIdentifier)
 
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)

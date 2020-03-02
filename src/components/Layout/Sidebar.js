@@ -21,16 +21,22 @@ const SidebarItemHeader = ({ item }) => (
 )
 
 /** Normal items for the sidebar */
-const SidebarItem = ({ item, isActive }) => (
+const SidebarItem = ({ item, isActive, tenant }) => {
+  return (
   <li className={isActive ? 'active' : ''}>
-    <Link to={item.path} title={item.name}>
+    <Link
+      to={{
+        pathname: item.path,
+        search: "?tenantIdentifier=" + tenant
+      }}
+      title={item.name}>
       {item.label && <Badge tag="div" className="float-right" color={item.label.color}>{item.label.value}</Badge>}
       {item.icon && <em className={item.icon}></em>}
       <span><Trans i18nKey={item.translate}>{item.name}</Trans></span>
     </Link>
   </li>
 )
-
+}
 /** Build a sub menu with items inside and attach collapse behavior */
 const SidebarSubItem = ({ item, isActive, handler, children, isOpen }) => (
   <li className={isActive ? 'active' : ''}>
@@ -142,7 +148,7 @@ class Sidebar extends Component {
                   else {
                     if (this.itemType(item) === 'menu')
                       return (
-                        <SidebarItem isActive={this.routeActive(item.path)} item={item} key={i} />
+                        <SidebarItem isActive={this.routeActive(item.path)} item={item} key={i} tenant={this.props.settings.tenantIdentifier}/>
                       )
                     if (this.itemType(item) === 'submenu')
                       return [
@@ -150,7 +156,7 @@ class Sidebar extends Component {
                           <SidebarSubHeader item={item} key={i} />
                           {
                             item.submenu.map((subitem, i) =>
-                              <SidebarItem key={i} item={subitem} isActive={this.routeActive(subitem.path)} />
+                              <SidebarItem key={i} item={subitem} isActive={this.routeActive(subitem.path)} tenant={this.props.settings.tenantIdentifier} />
                             )
                           }
                         </SidebarSubItem>

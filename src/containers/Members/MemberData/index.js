@@ -20,10 +20,13 @@ import { bindActionCreators, compose } from 'redux';
 
 const COLUMN_WIDTH = 314;
 
-const AddBar = () => {
+const AddBar = props => {
   return (
     <div className="row mb-3 mr-1 justify-content-end">
-      <Link to="/simpool/member/data-add" >
+      <Link to={{
+        pathname: "/simpool/member/data-add",
+        search: "?tenantIdentifier=" + props.tenant
+      }} >
         <Button color="primary" type="button">
           <Trans i18nKey='member.data.ADD_MEMBER_DATA'>Add Member Data</Trans>
         </Button>
@@ -275,13 +278,7 @@ class MemberData extends Component {
     }
   }
 
-  editMember = () => {
-    console.log("Edit")
-  }
-
   onCellSelected = ({ rowIdx, idx }) => {
-    console.log(rowIdx)
-    console.log(idx)
     if (idx !== 0) {
       let clientId
 
@@ -299,7 +296,10 @@ class MemberData extends Component {
         })
       }
 
-      this.props.history.push('/simpool/member/data-detail/' + clientId)
+      this.props.history.push({
+        pathname: '/simpool/member/data-detail/' + clientId,
+        search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+      })
     }
 
     this.setState({ rowIdx })
@@ -316,12 +316,9 @@ class MemberData extends Component {
   };
 
   changePage = page => {
-    console.log(page)
     this.setState({ page: page })
 
     const offset = parseInt((page - 1) * 25)
-
-    console.log(offset)
 
     this.props.actions.clientIndex(
       {
@@ -341,7 +338,7 @@ class MemberData extends Component {
         <Container fluid>
           <Card>
             <CardBody>
-              <AddBar />
+              <AddBar tenant={this.props.settings.tenantIdentifier} />
               <SearchBar props={this.props} searchRows={this.searchRows} />
 
               <Container fluid className="center-parent">
@@ -383,12 +380,14 @@ class MemberData extends Component {
 MemberData.propTypes = {
   actions: PropTypes.object,
   memberData: PropTypes.object,
-  search: PropTypes.object
+  search: PropTypes.object,
+  settings: PropTypes.object
 }
 
 const mapStateToProps = state => ({
   memberData: state.memberData,
-  search: state.search
+  search: state.search,
+  settings: state.settings
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 

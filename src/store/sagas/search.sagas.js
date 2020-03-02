@@ -19,7 +19,8 @@ function* search(action) {
     const search = yield axios
       .get(searchUrl, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth
         },
         params: {
