@@ -3,9 +3,17 @@
 const apiEntrySimpool =
   'https://demo.ikkat.datacomm.co.id:8443/fineract-provider/api/v1';
 
-export const headers = {
-  'Content-Type': 'application/json',
-  'Fineract-Platform-TenantId': '010006',
+let tenantIdentifier
+export const setTenantIdentifier = id => {
+  tenantIdentifier = id
+}
+
+export const headers = () => {
+  console.log(tenantIdentifier)
+  return {
+    'Content-Type': 'application/json',
+    'Fineract-Platform-TenantId': tenantIdentifier,
+  }
 };
 
 export const loginUrl = `${apiEntrySimpool}/authentication`;

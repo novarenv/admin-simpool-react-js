@@ -1,27 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
   Button,
   Card,
   CardBody,
   Input
-} from 'reactstrap';
-import NumberFormat from 'react-number-format';
-import Modal from 'react-modal';
-import SlidingPane from 'react-sliding-pane';
-import 'react-sliding-pane/dist/react-sliding-pane.css';
-import ReactDataGrid from 'react-data-grid';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+} from 'reactstrap'
+import NumberFormat from 'react-number-format'
+import Modal from 'react-modal'
+import SlidingPane from 'react-sliding-pane'
+import 'react-sliding-pane/dist/react-sliding-pane.css'
+import ReactDataGrid from 'react-data-grid'
+import PropTypes from 'prop-types'
+import { withTranslation } from 'react-i18next'
 
-import * as actions from '../../../store/actions/actions';
-import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import * as actions from '../../../store/actions/actions'
+import { connect } from 'react-redux'
+import { bindActionCreators, compose } from 'redux'
 
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
 
 // DateTimePicker
-import Datetime from 'react-datetime';
-import 'react-datetime/css/react-datetime.css';
+import Datetime from 'react-datetime'
+import 'react-datetime/css/react-datetime.css'
+import 'moment/locale/id'
 
 const MONTHS = [
   'Jan',
@@ -101,10 +102,12 @@ class Deposit extends Component {
     let mm = MONTHS[e.toDate().getMonth()]
     let yyyy = e.toDate().getFullYear()
 
-    let today = dd + " " + mm + " " + yyyy
+    let date = dd + " " + mm + " " + yyyy
+
+    console.log(e)
 
     this.setState({
-      transactionDate: today
+      transactionDate: date
     })
   }
 
@@ -213,7 +216,7 @@ class Deposit extends Component {
                 dateFormat="DD MMM YYYY"
                 timeFormat={false}
                 closeOnSelect={true}
-                renderInput={this.renderInputGroup}
+                locale={this.props.dashboard.language}
                 onChange={this.handleDate}
               />
 

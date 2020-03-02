@@ -13,7 +13,6 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import Swal from '../../../components/Common/Swal';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
@@ -137,12 +136,6 @@ class MemberData extends Component {
     super(props, context);
     this._columns = [
       {
-        key: 'ACTION',
-        name: 'Action',
-        width: 100,
-        frozen: true
-      },
-      {
         key: 'ID_MEMBER',
         name: 'Id',
         width: 100,
@@ -170,7 +163,7 @@ class MemberData extends Component {
         key: 'STATUS',
         name: 'Status',
         sortable: true,
-        width: COLUMN_WIDTH
+        width: 200
       }
     ];
 
@@ -200,7 +193,6 @@ class MemberData extends Component {
     let rowsTemp = [];
     res.pageItems.map(row => {
       rowsTemp.push({
-        ACTION: '',
         ID_MEMBER: row.accountNo,
         EXTERNAL_ID: row.legalForm.value,
         FULLNAME: row.displayName,
@@ -217,7 +209,6 @@ class MemberData extends Component {
     let rowsTemp = [];
     rows.map(row => {
       rowsTemp.push({
-        ACTION: '',
         ID_MEMBER: row.entityAccountNo,
         EXTERNAL_ID: row.entityType,
         FULLNAME: row.entityName,
@@ -229,7 +220,7 @@ class MemberData extends Component {
       rows: rowsTemp,
       searchRes: rows
     })
-  };
+  }
 
   rowGetter = (i) => this.state.rows[i]
 
@@ -288,22 +279,6 @@ class MemberData extends Component {
     console.log("Edit")
   }
 
-  actionCell = [
-    {
-      icon: <Swal options={this.swalOption} callback={this.swalCallback} deleterow={this.deleterow}> <span className="fas fa-times swal-del" /> </Swal>
-    },
-    {
-      icon: <span className="fas fa-pen-square" />
-    }
-  ];
-  getCellActions = (column, row) => {
-    const cellActions = {
-      ACTION: this.actionCell
-    };
-
-    return cellActions[column.key];
-  }
-
   onCellSelected = ({ rowIdx, idx }) => {
     console.log(rowIdx)
     console.log(idx)
@@ -327,25 +302,6 @@ class MemberData extends Component {
       this.props.history.push('/simpool/member/data-detail/' + clientId)
     }
 
-    // if (idx === 0) {
-    //   let clientId
-
-    //   if (this.state.searchRes != null) {
-    //     this.state.searchRes.map(item => {
-    //       if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
-    //         clientId = item.entityId
-    //       }
-    //     })
-    //   } else {
-    //     this.state.res.pageItems.map(item => {
-    //       if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-    //         clientId = item.id
-    //       }
-    //     })
-    //   }
-
-    //   this.props.history.push('/simpool/member/data-edit/' + clientId)
-    // }
     this.setState({ rowIdx })
   };
 
@@ -399,7 +355,6 @@ class MemberData extends Component {
                           rowGetter={this.rowGetter}
                           rowsCount={this.state.rows.length}
                           minHeight={25 * 35 + 50}
-                          getCellActions={this.getCellActions.bind(this)}
                           onCellSelected={this.onCellSelected.bind(this)}
                           onGridRowsUpdated={this.onGridRowsUpdated}
                         />

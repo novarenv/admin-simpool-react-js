@@ -1,9 +1,10 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Cookies from "js-cookie";
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
+import queryString from 'query-string'
 
 import * as actions from './store/actions/actions';
 import { connect } from 'react-redux';
@@ -14,6 +15,8 @@ import PageLoader from './components/Common/PageLoader';
 
 import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
+
+import { setTenantIdentifier as setTenantId } from './lib/jsonPlaceholderAPI'
 
 const waitFor = Tag => props => <Tag {...props} />;
 
@@ -84,8 +87,37 @@ const Routes = ({ location, ...props }) => {
 
   const animationName = 'rag-fadeIn'
 
+  const [tenantIdentifier, setTenantIdentifier] = useState("010006")
+
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)
+
+
+    const values = queryString.parse(location.search)
+
+    // if (values.tenantIdentifier === props.settings.tenantIdentifier) {
+    //   console.log(props)
+      
+    //   props.history.replace({
+    //     pathname: "/simpool/login",
+    //     search: "?tenantIdentifier=" + tenantIdentifier
+    //   })
+    //   return (
+    //     <Redirect to={"/simpool/dashboard"} />
+    //   )
+    // }
+
+    if (values.tenantIdentifier !== null) {
+      setTenantId(values.tenantIdentifier)
+
+      props.actions.changeSetting("tenantIdentifier", values.tenantIdentifier)
+
+      setTenantIdentifier(props.settings.tenantIdentifier)
+    }
+
+    console.log(values)
+    console.log(tenantIdentifier)
+    console.log(props.settings.tenantIdentifier)
 
     return () => { };
   }, [])
@@ -163,7 +195,14 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/accounting/account-chart-tree" component={waitFor(AccountChartTree)} />
                     <Route exact path="/simpool/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
-                    <Redirect from="*" to="/simpool/dashboard" />
+                    {
+                      
+                    }
+
+                    <Redirect from="*" to={{
+                      pathname: "/simpool/dashboard",
+                      search: "?tenantIdentifier=" + tenantIdentifier
+                    }} />
                   </Switch>
                 </Suspense>
               </div>
@@ -179,7 +218,10 @@ const Routes = ({ location, ...props }) => {
           <Switch location={location}>
             <Route exact path="/simpool/login" component={waitFor(Login)} />
 
-            <Redirect from="*" to="/simpool/login" />
+            <Redirect from="*" to={{
+              pathname: "/simpool/login",
+              search: "?tenantIdentifier=" + tenantIdentifier
+            }} />
           </Switch>
         </Suspense>
       </BasePage>
@@ -190,12 +232,14 @@ const Routes = ({ location, ...props }) => {
 Routes.propTypes = {
   actions: PropTypes.object,
   auth: PropTypes.object,
-  dasboard: PropTypes.object
+  dasboard: PropTypes.object,
+  settings: PropTypes.object
 }
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  dashboard: state.dashboard
+  dashboard: state.dashboard,
+  settings: state.settings
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 

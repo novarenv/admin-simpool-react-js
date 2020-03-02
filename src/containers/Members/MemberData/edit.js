@@ -21,6 +21,8 @@ import Swal from '../../../components/Common/Swal';
 // DateTimePicker
 import Datetime from 'react-datetime'
 import 'react-datetime/css/react-datetime.css'
+import moment from 'moment'
+import 'moment/locale/id'
 
 import * as actions from '../../../store/actions/actions'
 import { connect } from 'react-redux'
@@ -67,53 +69,55 @@ const onFieldChange = (val, field, form) => {
   form.setFieldValue(field.name, val);
 }
 
-const DateTime = ({ field, form, locale, tabIndex, value, error, touched, name }) => {
-  return (
-    <Datetime
-      inputProps={{
-        name: name,
-        className:
-          touched && error
-            ? "form-control input-font-size dt-bg input-error"
-            : "form-control input-font-size dt-bg"
-        ,
-        id: name,
-        placeholder: "dd mmmm yyyy",
-        autoComplete: "off",
-        readOnly: true,
-        tabIndex: tabIndex,
-        value: value
-      }}
-      dateFormat="DD MMMM YYYY"
-      timeFormat={false}
-      closeOnSelect={true}
-      locale={locale}
-      onChange={val => onFieldChange(val, field, form)}
-    />
-  );
-}
+const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => {
+  let valid
 
-const ValidDate = ({ field, form, locale, tabIndex, value, error, touched, name }) => {
-  let yesterday = Datetime.moment().subtract(1, 'day')
-  let valid = current => {
-    return current.isAfter(yesterday)
+  if (field.name === "submittedOnDate") {
+    const dateParamSplit = dateParam.split(" ", 3)
+
+    MONTHS_ID.map((month, i) => {
+      if (month === dateParamSplit[1]) {
+        if (i <= 10) {
+          dateParamSplit[1] = "0" + (i + 1)
+        }
+      }
+    })
+
+    dateParam = dateParamSplit[2] + "-" + dateParamSplit[1] + "-" + dateParamSplit[0]
+  }
+
+  if (field.name === "identityValidDate") {
+    const yesterday = Datetime.moment().subtract(1, 'd')
+    valid = current => {
+      return current.isAfter(yesterday)
+    }
+  } else if (field.name === "submittedOnDate") {
+    const valueDate = moment(dateParam).add(1, 'd')
+    valid = current => {
+      return current.isBefore(valueDate)
+    }
+  }
+  else {
+    valid = current => {
+      return current
+    }
   }
 
   return (
     <Datetime
       inputProps={{
-        name: name,
+        name: field.name,
         className:
           touched && error
             ? "form-control input-font-size dt-bg input-error"
-            : "form-control input-font-size dt-bg",
-        id: name,
+            : "form-control input-font-size dt-bg"
+        ,
+        id: field.name,
         placeholder: "dd mmmm yyyy",
         autoComplete: "off",
-        readOnly: true,
-        tabIndex: tabIndex,
-        value: value
+        readOnly: true
       }}
+      value={value}
       dateFormat="DD MMMM YYYY"
       timeFormat={false}
       closeOnSelect={true}
@@ -142,25 +146,26 @@ class MemberDataEdit extends Component {
       cityOptions: [],
       cityOptionsFilter: [],
       clientIdNo: clientIdNo,
+      clientLegalFormOptions: "",
       clientNonPersonDetails: {},
       clientTypeIsActive: false,
       clientTypeOptions: [],
-      company: '',
-      country: '',
+      companyCode: '',
+      countryCodeValue: '',
       countryOptions: [],
       countryIsActive: false,
       dateOfBirth: "",
       dateOfBirthSpouse: [],
-      directorate: '',
+      directorateCode: '',
       email: '',
       externalId: '',
       faxNumber: '',
       firstname: '',
-      flagTax: '',
+      flagTaxCodeValue: '',
       flagTaxOptions: [],
       fullname: '',
-      fullNameNonIdentity: '',
-      gender: '',
+      fullnameNonIdentity: '',
+      genderCodeValue: '',
       genderOptions: [],
       homeOwnershipStatus: '',
       homeOwnershipStatusOption: [],
@@ -185,6 +190,7 @@ class MemberDataEdit extends Component {
       lastEducationLevelCodeOption: [],
       lastEducationLevelDescription: '',
       lasEducationOtherIsActive: false,
+      legalForm: '',
       legalFormId: '',
       maritalStatusCode: '',
       maritalStatusOption: [],
@@ -205,7 +211,7 @@ class MemberDataEdit extends Component {
       phoneNumber: '',
       placeOfBirth: '',
       postalCode: '',
-      prefix: '',
+      prefixCode: '',
       prefixNameCodeOption: [],
       prePostNuptialAggreement: "",
       provinceId: '',
@@ -222,8 +228,9 @@ class MemberDataEdit extends Component {
       staffId: "",
       staffOptions: [],
       submittedOnDate: "",
+      submittedOnDateStatic: "",
       subDistrict: '',
-      suffix: "",
+      suffixCode: "",
       suffixNameCodeOption: [],
       taxAddress: '',
       taxName: '',
@@ -284,7 +291,7 @@ class MemberDataEdit extends Component {
           Array.isArray(res.activationDate) && res.activationDate.length > 0
             ? res.activationDate[2] + " " + MONTHS_ID[res.activationDate[1] - 1] + " " + res.activationDate[0]
             : "",
-        active: res.active ? res.active : "",
+        active: res.active ? res.active : false,
         address: res.address ? res.address : "",
         addressBasedOnIdentity: res.addressBasedOnIdentity ? res.addressBasedOnIdentity : "",
         nickname: res.nickname ? res.nickname : "",
@@ -306,8 +313,8 @@ class MemberDataEdit extends Component {
         },
         clientTypeIsActive: res.clientType.isActive ? res.clientType.isActive : "",
         clientLegalFormOptions: res.clientLegalFormOptions ? res.clientLegalFormOptions : "",
-        company: res.company.name ? res.company.name : "",
-        country: res.country.name ? res.country.name : "",
+        companyCode: res.company.name ? res.company.name : "",
+        countryCodeValue: res.country.name ? res.country.name : "",
         countryOptions: res.countryOptions ? res.countryOptions : "",
         countryIsActive: res.country.isActive ? res.country.isActive : "",
         dateOfBirth:
@@ -315,18 +322,18 @@ class MemberDataEdit extends Component {
             ? res.dateOfBirth[2] + " " + MONTHS_ID[res.dateOfBirth[1] - 1] + " " + res.dateOfBirth[0]
             : "",
         dateOfBirthSpouse: dateOfBirthSpouse ? dateOfBirthSpouse : "",
-        directorate: res.directorate.name ? res.directorate.name : "",
+        directorateCode: res.directorate.name ? res.directorate.name : "",
         email: res.email ? res.email : "",
         externalId: res.externalId ? res.externalId : "",
         faxNumber: res.faxNumber ? res.faxNumber : "",
         firstname: res.firstname ? res.firstname : "",
-        flagTax: res.flagTax.name ? res.flagTax.name : "",
+        flagTaxCodeValue: res.flagTax.name ? res.flagTax.name : "",
         flagTaxOptions: res.flagTaxOptions ? res.flagTaxOptions : "",
         fullname: res.fullname ? res.fullname : "",
-        fullNameNonIdentity: res.fullnameNonIdentity ? res.fullnameNonIdentity : "",
-        gender: res.gender.name ? res.gender.name : "",
+        fullnameNonIdentity: res.fullnameNonIdentity ? res.fullnameNonIdentity : "",
+        genderCodeValue: res.gender.name ? res.gender.name : "",
         genderOptions: res.genderOptions ? res.genderOptions : "",
-        homeOwnershipStatus: res.homeOwnershipStatus ? res.homeOwnershipStatus.id : "",
+        homeOwnershipStatus: res.homeOwnershipStatus ? res.homeOwnershipStatus.name : "",
         homeOwnershipStatusOption: res.homeOwnershipStatusOption ? res.homeOwnershipStatusOption : "",
         identityCityId: res.identityCity.code ? res.identityCity.code : "",
         identityCityName: res.identityCity.description ? res.identityCity.description : "",
@@ -347,10 +354,11 @@ class MemberDataEdit extends Component {
         lastEducationLevelCode: res.lastEducationLevelCode.name ? res.lastEducationLevelCode.name : "",
         lastEducationLevelCodeOption: res.lastEducationLevelCodeOption ? res.lastEducationLevelCodeOption : "",
         lastEducationLevelDescription: res.lastEducationLevelDescription ? res.lastEducationLevelDescription : "",
+        legalForm: res.legalForm.value ? res.legalForm.value : "",
         legalFormId: res.legalForm.id ? res.legalForm.id : "",
         maritalStatusCode: res.maritalStatusCode.name ? res.maritalStatusCode.name : "",
         maritalStatusOption: res.maritalStatusCodeOption ? res.maritalStatusCodeOption : "",
-        member: res.member ? res.member : "",
+        member: res.member ? res.member : false,
         merchantCategoryCode: res.merchantCategoryCode ? res.merchantCategoryCode : "",
         merchantCategoryOption: res.merchantCategoryOption ? res.merchantCategoryOption : "",
         merchantInformationCode: res.merchantInformationCode ? res.merchantInformationCode : "",
@@ -366,7 +374,7 @@ class MemberDataEdit extends Component {
         phoneNumber: res.phoneNumber ? res.phoneNumber : "",
         placeOfBirth: res.placeOfBirth ? res.placeOfBirth : "",
         postalCode: res.postalCode ? res.postalCode : "",
-        prefix: res.prefixDescription.code ? res.prefixDescription.code : "",
+        prefixCode: res.prefixDescription.code ? res.prefixDescription.code : "",
         prefixNameCodeOption: res.prefixNameCodeOption ? res.prefixNameCodeOption : "",
         prePostNuptialAggreement: res.biInformation.prePostNuptialAggreement ? res.biInformation.prePostNuptialAggreement : "",
         provinceId: res.province.code ? res.province.code : "",
@@ -383,6 +391,10 @@ class MemberDataEdit extends Component {
         staffId: res.staffId ? res.staffId : "",
         staffOptions: res.staffOptions ? res.staffOptions : "",
         submittedOnDate:
+          Array.isArray(res.timeline.submittedOnDate) && res.timeline.submittedOnDate.length > 0
+            ? res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0]
+            : "",
+        submittedOnDateStatic:
           Array.isArray(res.timeline.submittedOnDate) && res.timeline.submittedOnDate.length > 0
             ? res.timeline.submittedOnDate[2] + " " + MONTHS_ID[res.timeline.submittedOnDate[1] - 1] + " " + res.timeline.submittedOnDate[0]
             : "",
@@ -450,6 +462,7 @@ class MemberDataEdit extends Component {
     }
 
     const showErrorExist = error => {
+      console.log(error)
       document.getElementById("errorExist").click()
     }
 
@@ -457,7 +470,7 @@ class MemberDataEdit extends Component {
       this.props.actions.putClientId(
         {
           "officeId": state.officeId,
-          "legalForm": state.clientType,
+          "legalForm": state.legalForm,
           "firstname": state.firstname,
           "middlename": state.middlename,
           "lastname": state.lastname,
@@ -466,15 +479,15 @@ class MemberDataEdit extends Component {
           "staffId": state.staffId,
           "externalId": state.externalId,
           "mobileNo": state.mobileNo,
-          "genderCodeValue": state.gender,
+          "genderCodeValue": state.genderCodeValue,
           "address": state.address,
           "typeOfIdentityId": state.typeOfIdentityId,
           "provinceId": state.provinceId,
           "provinceName": state.provinceName,
           "cityId": state.cityId,
           "cityName": state.cityName,
-          "countryCodeValue": state.country,
-          "flagTaxCodeValue": state.flagTax,
+          "countryCodeValue": state.countryCodeValue,
+          "flagTaxCodeValue": state.flagTaxCodeValue,
           "placeOfBirth": state.placeOfBirth,
           "motherName": state.motherName,
           "sectorId": state.sectorId,
@@ -484,8 +497,8 @@ class MemberDataEdit extends Component {
           "postalCode": state.postalCode,
           "fullname": state.fullname,
           "member": state.member,
-          "directorateCode": state.directorate,
-          "companyCode": state.company,
+          "directorateCode": state.directorateCode,
+          "companyCode": state.companyCode,
           "addressBasedOnIdentity": state.addressBasedOnIdentity,
           "phoneNumber": state.phoneNumber,
           "religion": state.religion,
@@ -507,8 +520,8 @@ class MemberDataEdit extends Component {
             "publicationDate": state.clientNonPersonDetails.publicationDate,
             "legalityEndDate": state.clientNonPersonDetails.legalityEndDate
           },
-          "prefixCode": state.prefix,
-          "suffixCode": state.suffix,
+          "prefixCode": state.prefixCode,
+          "suffixCode": state.suffixCode,
           "nickname": state.nickname,
           "identityValidDate": state.identityValidDate,
           "maritalStatusCode": state.maritalStatusCode,
@@ -533,11 +546,11 @@ class MemberDataEdit extends Component {
           "identityCountryCodeValue": state.identityCountryCodeValue,
           "identityRt": state.identityRt,
           "identityRw": state.identityRw,
-          "fullnameNonIdentity": state.fullname,
+          "fullnameNonIdentity": state.fullnameNonIdentity,
           "otherHomeOwnershipStatus": state.otherHomeOwnershipStatus,
-          "homeOwnnershipStatus": state.homeOwnershipStatus,
+          "homeOwnershipStatus": state.homeOwnershipStatus,
           "legalFormId": state.legalFormId,
-          "locale": "id",
+          "locale": this.props.dashboard.language,
           "dateFormat": "dd MMMM yyyy",
           "activationDate": state.activationDate,
           "dateOfBirth": state.dateOfBirth,
@@ -638,11 +651,11 @@ class MemberDataEdit extends Component {
                         sectorId: state.sectorId,
                         externalId: state.externalId,
                         nip: state.nip,
-                        prefix: state.prefix,
+                        prefixCode: state.prefixCode,
                         fullname: state.fullname,
-                        fullNameNonIdentity: state.fullNameNonIdentity,
+                        fullnameNonIdentity: state.fullnameNonIdentity,
                         nickname: state.nickname,
-                        suffix: state.suffix,
+                        suffixCode: state.suffixCode,
                         typeOfIdentityId: state.typeOfIdentityId,
                         identityNumber: state.identityNumber,
                         identityValidDate: state.identityValidDate,
@@ -682,10 +695,54 @@ class MemberDataEdit extends Component {
                         errors.sectorId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
+                      if (/^[a-zA-Z\s\'.-]+$/.test(values.fullname) === false) {
+                        errors.fullname = "Identitiy Name harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
+                      }
                       if (!values.fullname) {
                         errors.fullname = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
+                      if (/^[a-zA-Z\s\'.-]+$/.test(values.fullnameNonIdentity) === false && values.fullnameNonIdentity !== "") {
+                        errors.fullnameNonIdentity = "Identitiy Name harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
+                      }
+
+                      switch (values.typeOfIdentityId) {
+                        case "IC":
+                          if (/^(0|[1-9]\d*)$/.test(values.identityNumber) === false) {
+                            errors.identityNumber = "E-KTP harus terdiri dari angka"
+                          } else if (values.identityNumber.length !== 16) {
+                            errors.identityNumber = "E-KTP License harus berisi 16 angka"
+                          }
+                          break;
+                        case "PASS":
+                          if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
+                            errors.identityNumber = "Passport harus terdiri dari alphanumeric"
+                          } else if (values.identityNumber.length !== 8) {
+                            errors.identityNumber = "Passport harus berisi 8 alphanumeric"
+                          }
+                          break;
+                        case "DL":
+                          if (/^(0|[1-9]\d*)$/.test(values.identityNumber) === false) {
+                            errors.identityNumber = "Driver License harus terdiri dari angka"
+                          } else if (values.identityNumber.length !== 12) {
+                            errors.identityNumber = "Driver License harus berisi 12 angka"
+                          }
+                          break;
+                        case "SC":
+                          if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
+                            errors.identityNumber = "Student Card harus terdiri dari alphanumeric"
+                          } else if (values.identityNumber.length !== 15) {
+                            errors.identityNumber = "Student Card harus berisi 15 alphanumeric"
+                          }
+                          break;
+                        case "NIP":
+                          if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
+                            errors.identityNumber = "Kartu Kepegawaian harus terdiri dari alphanumeric"
+                          } else if (values.identityNumber.length < 12 && values.identityNumber.length > 14) {
+                            errors.identityNumber = "Kartu Kepegawaian harus berisi 12-14 alphanumeric"
+                          }
+                          break;
+                      }
                       if (!values.typeOfIdentityId) {
                         errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
@@ -702,16 +759,31 @@ class MemberDataEdit extends Component {
                         errors.dateOfBirth = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
+                      if (/^[a-zA-Z\s]+$/.test(values.placeOfBirth) === false) {
+                        errors.placeOfBirth = "Identitiy Name harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
+                      }
                       if (!values.placeOfBirth) {
                         errors.placeOfBirth = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
+                      if (/^[a-zA-Z\s\'.-]+$/.test(values.motherName) === false) {
+                        errors.motherName = "Mother's Maiden Name harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
+                      }
                       if (!values.motherName) {
                         errors.motherName = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
+                      if (/^([0-9]\d*)$/.test(values.mobileNo) === false && values.mobileNo !== "") {
+                        errors.mobileNo = "Mobile No. harus berisi angka 0 sampai 9"
+                      } else if (values.mobileNo.length < 10 || values.mobileNo.length > 15) {
+                        errors.mobileNo = "Mobile No. harus terdiri dari 10-15 angka"
+                      }
                       if (!values.mobileNo) {
                         errors.mobileNo = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
+                      }
+
+                      if (/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
+                        errors.email = "Email yang dimasukkan tidak valid"
                       }
 
                       if (!values.religion) {
@@ -741,101 +813,107 @@ class MemberDataEdit extends Component {
                       }
 
 
-                      if (values.officeId) {
+                      if (values.officeId || values.officeId === "") {
                         this.changeState("officeId", values.officeId)
                       }
-                      if (values.staffId) {
+                      if (values.staffId || values.staffId === "") {
                         this.changeState("staffId", values.staffId)
                       }
-                      if (values.legalFormId) {
+                      if (values.legalFormId || values.legalFormId === "") {
                         this.changeState("legalFormId", values.legalFormId)
+
+                        state.clientLegalFormOptions.map(option => {
+                          if (option.id == values.legalFormId) {
+                            this.changeState("legalForm", option.value)
+                          }
+                        })
                       }
-                      if (values.sectorId) {
+                      if (values.sectorId || values.sectorId === "") {
                         this.changeState("sectorId", values.sectorId)
                       }
-                      if (values.externalId) {
+                      if (values.externalId || values.externalId === "") {
                         this.changeState("externalId", values.externalId)
                       }
-                      if (values.nip) {
+                      if (values.nip || values.nip === "") {
                         this.changeState("nip", values.nip)
                       }
-                      if (values.prefix) {
-                        this.changeState("prefix", values.prefix)
+                      if (values.prefixCode || values.prefixCode === "") {
+                        this.changeState("prefixCode", values.prefixCode)
                       }
-                      if (values.fullname) {
+                      if (values.fullname || values.fullname === "") {
                         this.changeState("fullname", values.fullname)
                       }
-                      if (values.fullNameNonIdentity) {
-                        this.changeState("fullNameNonIdentity", values.fullNameNonIdentity)
+                      if (values.fullnameNonIdentity || values.fullnameNonIdentity === "") {
+                        this.changeState("fullnameNonIdentity", values.fullnameNonIdentity)
 
-                        const fullnameSplit = values.fullNameNonIdentity.split(" ", 3)
+                        const fullnameSplit = values.fullnameNonIdentity.split(" ", 3)
                         this.setState({
                           firstname: fullnameSplit[0],
                           middlename: fullnameSplit[1],
                           lastname: fullnameSplit[2]
                         })
                       }
-                      if (values.nickname) {
+                      if (values.nickname || values.nickname === "") {
                         this.changeState("nickname", values.nickname)
                       }
-                      if (values.suffix) {
-                        this.changeState("suffix", values.suffix)
+                      if (values.suffixCode || values.suffixCode === "") {
+                        this.changeState("suffixCode", values.suffixCode)
                       }
-                      if (values.typeOfIdentityId) {
+                      if (values.typeOfIdentityId || values.typeOfIdentityId === "") {
                         this.changeState("typeOfIdentityId", values.typeOfIdentityId)
                       }
-                      if (values.identityNumber) {
+                      if (values.identityNumber || values.identityNumber === "") {
                         this.changeState("identityNumber", values.identityNumber)
                       }
-                      if (values.identityValidDate) {
+                      if (values.identityValidDate || values.identityValidDate === "") {
                         this.changeState("identityValidDate", values.identityValidDate)
                       }
-                      if (values.genderCodeValue) {
+                      if (values.genderCodeValue || values.genderCodeValue === "") {
                         this.changeState("genderCodeValue", values.genderCodeValue)
                       }
-                      if (values.dateOfBirth) {
+                      if (values.dateOfBirth || values.dateOfBirth === "") {
                         this.changeState("dateOfBirth", values.dateOfBirth)
                       }
-                      if (values.placeOfBirth) {
+                      if (values.placeOfBirth || values.placeOfBirth === "") {
                         this.changeState("placeOfBirth", values.placeOfBirth)
                       }
-                      if (values.motherName) {
+                      if (values.motherName || values.motherName === "") {
                         this.changeState("motherName", values.motherName)
                       }
-                      if (values.mobileNo) {
+                      if (values.mobileNo || values.mobileNo === "") {
                         this.changeState("mobileNo", values.mobileNo)
                       }
-                      if (values.phoneNumber) {
+                      if (values.phoneNumber || values.phoneNumber === "") {
                         this.changeState("phoneNumber", values.phoneNumber)
                       }
-                      if (values.faxNumber) {
+                      if (values.faxNumber || values.faxNumber === "") {
                         this.changeState("faxNumber", values.faxNumber)
                       }
-                      if (values.email) {
+                      if (values.email || values.email === "") {
                         this.changeState("email", values.email)
                       }
-                      if (values.religion) {
+                      if (values.religion || values.religion === "") {
                         this.changeState("religion", values.religion)
                       }
-                      if (values.maritalStatusCode) {
+                      if (values.maritalStatusCode || values.maritalStatusCode === "") {
                         this.changeState("maritalStatusCode", values.maritalStatusCode)
                       }
-                      if (values.typeOfIdentitySpouse) {
+                      if (values.typeOfIdentitySpouse || values.typeOfIdentitySpouse === "") {
                         this.changeState("typeOfIdentitySpouse", values.typeOfIdentitySpouse)
                       }
-                      if (values.spouseIdentityNumber) {
+                      if (values.spouseIdentityNumber || values.spouseIdentityNumber === "") {
                         this.changeState("spouseIdentityNumber", values.spouseIdentityNumber)
                       }
-                      if (values.spouseName) {
+                      if (values.spouseName || values.spouseName === "") {
                         this.changeState("spouseName", values.spouseName)
                       }
-                      if (values.prePostNuptialAggreement) {
+                      if (values.prePostNuptialAggreement || values.prePostNuptialAggreement === "") {
                         this.changeState("prePostNuptialAggreement", values.prePostNuptialAggreement)
                       }
-                      if (values.dateOfBirthSpouse) {
+                      if (values.dateOfBirthSpouse || values.dateOfBirthSpouse === "") {
                         this.changeState("dateOfBirthSpouse", values.dateOfBirthSpouse)
                       }
-                      if (values.lastEducationLevelCode) {
+                      if (values.lastEducationLevelCode || values.lastEducationLevelCode === "") {
                         this.changeState("lastEducationLevelCode", values.lastEducationLevelCode)
                         if (values.lastEducationLevelCode === "0199") {
                           this.changeState("lasEducationOtherIsActive", true)
@@ -843,7 +921,7 @@ class MemberDataEdit extends Component {
                           this.changeState("lasEducationOtherIsActive", false)
                         }
                       }
-                      if (values.lastEducationLevelDescription) {
+                      if (values.lastEducationLevelDescription || values.lastEducationLevelDescription === "") {
                         this.changeState("lastEducationLevelDescription", values.lastEducationLevelDescription)
                       }
                       if (values.isCitizen) {
@@ -1021,10 +1099,10 @@ class MemberDataEdit extends Component {
                             </FormGroup>
 
                             <FormGroup>
-                              <label htmlFor="prefix">Prefix Title Name</label>
+                              <label htmlFor="prefixCode">Prefix Title Name</label>
                               <select
-                                name="prefix"
-                                value={values.prefix}
+                                name="prefixCode"
+                                value={values.prefixCode}
                                 className="custom-select custom-select-sm input-font-size"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -1066,13 +1144,18 @@ class MemberDataEdit extends Component {
                               <label htmlFor="fullnameNonIdentity">Fullname</label>
                               <input
                                 name="fullnameNonIdentity"
-                                className="form-control mr-3 input-font-size"
+                                className={
+                                  touched.fullnameNonIdentity && errors.fullnameNonIdentity
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
                                 type="text"
                                 placeholder="Enter fullname"
                                 value={values.fullnameNonIdentity}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                               />
+                              <div className="input-feedback">{touched.fullnameNonIdentity && errors.fullnameNonIdentity}</div>
                             </FormGroup>
 
                             <FormGroup>
@@ -1089,10 +1172,10 @@ class MemberDataEdit extends Component {
                             </FormGroup>
 
                             <FormGroup>
-                              <label htmlFor="suffix">Suffix Title Name</label>
+                              <label htmlFor="suffixCode">Suffix Title Name</label>
                               <select
-                                name="suffix"
-                                value={values.suffix}
+                                name="suffixCode"
+                                value={values.suffixCode}
                                 className="custom-select custom-select-sm input-font-size"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -1141,7 +1224,15 @@ class MemberDataEdit extends Component {
 
                             <FormGroup>
                               <label htmlFor="identityNumber">
-                                Identity Number <span className="red"> *</span>
+                                No. {
+                                  Array.isArray(state.typeOfIdentityOptions) && state.typeOfIdentityOptions.length > 0
+                                    ? state.typeOfIdentityOptions.map((identity, i) => {
+                                      if (identity.name === values.typeOfIdentityId) {
+                                        return (<span key={"No. Identity " + i}>{identity.description}</span>)
+                                      }
+                                    })
+                                    : null
+                                } <span className="red"> *</span>
                               </label>
                               <input
                                 name="identityNumber"
@@ -1155,6 +1246,11 @@ class MemberDataEdit extends Component {
                                 value={values.identityNumber}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
+                                disabled={
+                                  values.typeOfIdentityId === ""
+                                    ? true
+                                    : false
+                                }
                               />
                               <div className="input-feedback">{touched.identityNumber && errors.identityNumber}</div>
                             </FormGroup>
@@ -1166,7 +1262,7 @@ class MemberDataEdit extends Component {
                               <Field
                                 name="identityValidDate"
                                 onChange={handleChange}
-                                component={ValidDate}
+                                component={DateTime}
                                 locale={this.props.dashboard.language}
                                 value={values.identityValidDate}
                               />
@@ -1309,9 +1405,18 @@ class MemberDataEdit extends Component {
                               <label htmlFor="email">Email</label>
                               <input
                                 name="email"
-                                className="form-control mr-3 input-font-size" type="text" placeholder="Enter email"
-                                value={this.state.email} onChange={e => this.changeState("email", e.target.value)}
+                                className={
+                                  touched.email && errors.email
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
+                                type="text"
+                                placeholder="Enter email"
+                                value={values.email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
                               />
+                              <div className="input-feedback">{touched.email && errors.email}</div>
                             </FormGroup>
 
                             <FormGroup>
@@ -1562,7 +1667,7 @@ class MemberDataEdit extends Component {
                         identityRw: state.identityRw,
 
                         address: state.address,
-                        countryCodeValue: state.country,
+                        countryCodeValue: state.countryCodeValue,
                         provinceId: state.provinceId,
                         cityId: state.cityId,
                         subDistrict: state.subDistrict,
@@ -1571,7 +1676,7 @@ class MemberDataEdit extends Component {
                         rt: state.rt,
                         rw: state.rw,
 
-                        homeOwnnershipStatus: state.homeOwnershipStatus,
+                        homeOwnershipStatus: state.homeOwnershipStatus,
                         otherHomeOwnershipStatus: state.otherHomeOwnershipStatus
                       }
                     }
@@ -1603,12 +1708,25 @@ class MemberDataEdit extends Component {
                         errors.identityVillage = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
+                      if (/^(0|[1-9]\d*)$/.test(values.identityPostalCode) === false && values.identityPostalCode !== "") {
+                        errors.identityPostalCode = "Postal Code harus berisi angka 0 sampai 9"
+                      } else if (values.identityPostalCode.length !== 5 && values.identityPostalCode !== "") {
+                        errors.identityPostalCode = "Postal Code harus berisi 5 angka"
+                      }
                       if (!values.identityPostalCode) {
                         errors.identityPostalCode = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
-                      if (!values.otherHomeOwnershipStatus) {
-                        errors.otherHomeOwnershipStatus = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      if (/^(0|[1-9]\d*)$/.test(values.postalCode) === false && values.postalCode !== "") {
+                        errors.postalCode = "Postal Code harus berisi angka 0 sampai 9"
+                      } else if (values.postalCode.length !== 5 && values.postalCode !== "") {
+                        errors.postalCode = "Postal Code harus berisi 5 angka"
+                      }
+
+                      if (values.homeOwnershipStatus === "99") {
+                        if (!values.otherHomeOwnershipStatus) {
+                          errors.otherHomeOwnershipStatus = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                        }
                       }
 
 
@@ -1620,6 +1738,12 @@ class MemberDataEdit extends Component {
                       }
                       if (values.identityProvinceId) {
                         this.changeState("identityProvinceId", values.identityProvinceId)
+
+                        state.provinceOptions.map(province => {
+                          if (province.code === values.identityProvinceId) {
+                            this.changeState("identityProvinceName", province.description)
+                          }
+                        })
 
                         let cityOptions = []
 
@@ -1668,9 +1792,15 @@ class MemberDataEdit extends Component {
                       if (values.provinceId) {
                         this.changeState("provinceId", values.provinceId)
 
+                        state.provinceOptions.map(province => {
+                          if (province.code === values.provinceId) {
+                            this.changeState("provinceName", province.description)
+                          }
+                        })
+
                         let cityOptions = []
 
-                        this.state.cityOptions.map(city => {
+                        state.cityOptions.map(city => {
                           if (city.provinceId === values.provinceId) {
                             cityOptions.push(city)
                           }
@@ -1681,7 +1811,7 @@ class MemberDataEdit extends Component {
                         })
                       }
                       if (values.cityId) {
-                        this.state.cityOptionsFilter.map(city => {
+                        state.cityOptionsFilter.map(city => {
                           if (city.code === values.cityId) {
                             this.setState({
                               cityId: city.code,
@@ -2053,13 +2183,18 @@ class MemberDataEdit extends Component {
                                 <label htmlFor="postalCode">Postal Code</label>
                                 <input
                                   name="postalCode"
-                                  className="form-control mr-3 input-font-size"
+                                  className={
+                                    touched.postalCode && errors.postalCode
+                                      ? "form-control mr-3 input-font-size input-error"
+                                      : "form-control mr-3 input-font-size"
+                                  }
                                   type="text"
                                   placeholder="Enter postal code"
                                   value={values.postalCode}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                 />
+                                <div className="input-feedback">{touched.postalCode && errors.postalCode}</div>
                               </FormGroup>
 
                               <div className="row">
@@ -2115,21 +2250,26 @@ class MemberDataEdit extends Component {
                               </select>
                             </FormGroup>
                             {
-                              this.state.homeOwnershipStatus === "99"
+                              values.homeOwnershipStatus === "99"
                                 ? (
                                   <FormGroup>
                                     <label htmlFor="otherHomeOwnershipStatus">
-                                      Other Home Ownership Status
+                                      Other Home Ownership Status <span className="red"> *</span>
                                     </label>
                                     <input
                                       name="otherHomeOwnershipStatus"
-                                      className="form-control mr-3 input-font-size"
+                                      className={
+                                        touched.otherHomeOwnershipStatus && errors.otherHomeOwnershipStatus
+                                          ? "form-control mr-3 input-font-size input-error"
+                                          : "form-control mr-3 input-font-size"
+                                      }
                                       type="text"
                                       placeholder="Enter RW"
                                       value={values.otherHomeOwnershipStatus}
                                       onChange={handleChange}
                                       onBlur={handleBlur}
                                     />
+                                    <div className="input-feedback">{touched.otherHomeOwnershipStatus && errors.otherHomeOwnershipStatus}</div>
                                   </FormGroup>
                                 )
                                 : ""
@@ -2149,7 +2289,7 @@ class MemberDataEdit extends Component {
                         taxName: state.taxName,
                         taxAddress: state.taxAddress,
 
-                        flagTaxCodeValue: state.flagTax,
+                        flagTaxCodeValue: state.flagTaxCodeValue,
                         merchantInformationCode: state.merchantInformationCode,
                         merchantCategoryCode: state.merchantCategoryCode,
                         mobileUser: state.mobileUser,
@@ -2160,10 +2300,18 @@ class MemberDataEdit extends Component {
                       const errors = {};
                       console.log(values)
 
+                      if (/^(0|[1-9]\d*)$/.test(values.taxNumber) === false && values.taxNumber !== "") {
+                        errors.taxNumber = "Tax Number harus berisi angka 0 sampai 9"
+                      } else if (values.taxNumber.length > 15) {
+                        errors.taxNumber = "Tax Number harus <= 15 angka"
+                      }
                       if (!values.taxNumber) {
                         errors.taxNumber = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
+                      if (/^[a-zA-Z\s\'.-]+$/.test(values.taxName) === false) {
+                        errors.taxName = "Name based on tax harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
+                      }
                       if (!values.taxName) {
                         errors.taxName = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
@@ -2172,8 +2320,8 @@ class MemberDataEdit extends Component {
                         errors.taxAddress = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
-                      if (!values.flagTax) {
-                        errors.flagTax = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
+                      if (!values.flagTaxCodeValue) {
+                        errors.flagTaxCodeValue = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
                       if (!values.submittedOnDate) {
@@ -2188,10 +2336,10 @@ class MemberDataEdit extends Component {
                         this.changeState("taxName", values.taxName)
                       }
                       if (values.taxAddress) {
-                        this.changeState("taxName", values.taxAddress)
+                        this.changeState("taxAddress", values.taxAddress)
                       }
-                      if (values.flagTax) {
-                        this.changeState("flagTax", values.flagTax)
+                      if (values.flagTaxCodeValue) {
+                        this.changeState("flagTaxCodeValue", values.flagTaxCodeValue)
                       }
                       if (values.merchantInformationCode) {
                         this.changeState("merchantInformationCode", values.merchantInformationCode)
@@ -2304,17 +2452,17 @@ class MemberDataEdit extends Component {
                           <div className="row">
                             <div className="col-lg-6">
                               <FormGroup>
-                                <label htmlFor="flagTax">
+                                <label htmlFor="flagTaxCodeValue">
                                   Flag Tax <span className="red"> *</span>
                                 </label>
                                 <select
-                                  name="flagTax"
+                                  name="flagTaxCodeValue"
                                   className={
-                                    touched.flagTax && errors.flagTax
+                                    touched.flagTaxCodeValue && errors.flagTaxCodeValue
                                       ? "custom-select custom-select-sm input-font-size input-error"
                                       : "custom-select custom-select-sm input-font-size"
                                   }
-                                  value={values.flagTax}
+                                  value={values.flagTaxCodeValue}
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                 >
@@ -2329,7 +2477,7 @@ class MemberDataEdit extends Component {
                                       : ""
                                   }
                                 </select>
-                                <div className="input-feedback">{touched.flagTax && errors.flagTax}</div>
+                                <div className="input-feedback">{touched.flagTaxCodeValue && errors.flagTaxCodeValue}</div>
                               </FormGroup>
 
                               <FormGroup>
@@ -2403,6 +2551,7 @@ class MemberDataEdit extends Component {
                                   value={values.submittedOnDate}
                                   touched={touched.submittedOnDate}
                                   error={errors.submittedOnDate}
+                                  dateParam={state.submittedOnDateStatic}
                                 />
                                 <div className="input-feedback">{touched.dateOfBirthSpouse && errors.dateOfBirthSpouse}</div>
                               </FormGroup>
@@ -2425,7 +2574,7 @@ class MemberDataEdit extends Component {
             </Button>
           </CardBody>
         </Card>
-      </ContentWrapper>
+      </ContentWrapper >
     )
   }
 }

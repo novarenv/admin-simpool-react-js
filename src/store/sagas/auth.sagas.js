@@ -13,7 +13,6 @@ import {
 import axios from 'axios';
 
 const loginError = (error, action) => {
-  console.log(error.response)
   if (!error.response) {
     action.onServerDown()
   } else {
@@ -34,10 +33,11 @@ const loginError = (error, action) => {
 }
 
 function* loginUser(action) {
+  console.log(headers())
   try {
     const login = yield axios
       .post(loginUrl, action.payload, {
-        headers: headers
+        headers: headers()
       })
       .then(response => response.data)
       .catch(error => loginError(error, action))
@@ -57,7 +57,7 @@ function* otpFun(action) {
   try {
     const otp = yield axios
       .post(otpUrl, action.payload, {
-        headers: headers
+        headers: headers()
       })
       .then(response => response.data)
       .catch(error => console.log(error.response.data))
@@ -73,16 +73,14 @@ function* loginOtpUser(action) {
   try {
     const loginOtpUser = yield axios
       .post(loginUrl, action.payload, {
-        headers: headers
+        headers: headers()
       })
-      .then(response => {
-        action.onLoginOtpSuccess()
-
-        return response.data
-      })
+      .then(response => response.data)
       .catch(error => console.log(error.response.data))
 
     yield put(loginOtpUserSuccess(loginOtpUser))
+
+    action.onLoginOtpSuccess()
 
   } catch (error) {
     console.log(error)

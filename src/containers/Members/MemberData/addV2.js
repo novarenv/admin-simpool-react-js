@@ -585,6 +585,9 @@ class MemberDataAdd extends Component {
               errors.email = "Email yang dimasukkan tidak valid"
             }
 
+            if (/^[a-zA-Z\s\'.-]+$/.test(values.taxName) === false) {
+              errors.taxName = "Name based on tax harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
+            }
             if (!values.taxName) {
               errors.taxName = <Trans i18nKey='forms.REQUIRED'/>
             }
@@ -613,7 +616,8 @@ class MemberDataAdd extends Component {
               errors.taxNumber = "Tax Number harus berisi angka 0 sampai 9"              
             } else if (values.taxNumber.length > 15) {
               errors.taxNumber = "Tax Number harus <= 15 angka" 
-            } else if (!values.taxNumber) {
+            }
+            if (!values.taxNumber) {
               errors.taxNumber = <Trans i18nKey='forms.REQUIRED'/>
             }
 
@@ -1497,6 +1501,26 @@ class MemberDataAdd extends Component {
                   validate={values => {
                     const errors = {};
 
+                    if (!values.legalFormId) {
+                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'/>
+                    }
+
+                    if (/^[a-zA-Z\s\'.-]+$/.test(values.fullname) === false) {
+                      errors.fullname = this.props.i18n.t('member.data-add.FULLNAME_ID')
+                          + " harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
+                    }
+                    if (!values.fullname) {
+                      errors.fullname = <Trans i18nKey='forms.REQUIRED' />
+                    }
+
+                    if (/^[a-zA-Z\s\'.-]+$/.test(values.motherName) === false) {
+                      errors.motherName = this.props.i18n.t('member.data-add.MOTHER_NAME')
+                          + " harus terdiri dari alphanumeric (a-zA-Z\s\'.-)"
+                    }
+                    if (!values.motherName) {
+                      errors.motherName = <Trans i18nKey='forms.REQUIRED' />
+                    }
+
                     switch (values.typeOfIdentityId) {
                       case "IC":  
                         if (/^(0|[1-9]\d*)$/.test(values.identityNumber) === false) {
@@ -1534,52 +1558,38 @@ class MemberDataAdd extends Component {
                         }
                         break;
                     }
-
-                    if (values.membership) {
-                      this.changeAddValidation("membership", values.membership)
-                    }
-
-                    if (!values.legalFormId) {
-                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'/>
-                    }
-                    if (values.legalFormId) {
-                      this.changeAddValidation("legalFormId", values.legalFormId)
-                    }
-
-                    if (!values.fullname) {
-                      errors.fullname = <Trans i18nKey='forms.REQUIRED' />
-                    }
-                    if (values.fullname) {
-                      this.changeAddValidation("fullname", values.fullname)
-                    }
-
-                    if (values.dateOfBirth) {
-                      this.changeAddValidation("dateOfBirth", values.dateOfBirth)
-                    }
-
-                    if (!values.motherName) {
-                      errors.motherName = <Trans i18nKey='forms.REQUIRED' />
-                    }
-                    if (values.motherName) {
-                      this.changeAddValidation("motherName", values.motherName)
-                    }
-
                     if (values.typeOfIdentityId === "") {
                       errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED' />
-                    }
-                    else if (values.typeOfIdentityId !== "") {
-                      this.changeAddValidation("typeOfIdentityId", values.typeOfIdentityId)
                     }
 
                     if (!values.identityNumber) {
                       errors.identityNumber = <Trans i18nKey='forms.REQUIRED' />
                     }
-                    if (values.identityNumber) {
-                      this.changeAddValidation("identityNumber", values.identityNumber)
-                    }
 
+                    
+                    if (values.legalFormId) {
+                      this.changeAddValidation("legalFormId", values.legalFormId)
+                    }
+                    if (values.membership) {
+                      this.changeAddValidation("membership", values.membership)
+                    }
+                    if (values.fullname) {
+                      this.changeAddValidation("fullname", values.fullname)
+                    }
+                    if (values.dateOfBirth) {
+                      this.changeAddValidation("dateOfBirth", values.dateOfBirth)
+                    }
                     if (values.addressBasedOnIdentity) {
                       this.changeAddValidation("addressBasedOnIdentity", values.addressBasedOnIdentity)
+                    }
+                    if (values.motherName) {
+                      this.changeAddValidation("motherName", values.motherName)
+                    }
+                    if (values.typeOfIdentityId) {
+                      this.changeAddValidation("typeOfIdentityId", values.typeOfIdentityId)
+                    }
+                    if (values.identityNumber) {
+                      this.changeAddValidation("identityNumber", values.identityNumber)
                     }
 
                     return errors;
@@ -1827,19 +1837,42 @@ class MemberDataAdd extends Component {
                     if (!values.addressBasedOnIdentity) {
                       errors.addressBasedOnIdentity = <Trans i18nKey='forms.REQUIRED' />                      
                     }
-                    if (values.addressBasedOnIdentity) {
-                      this.changeAddValidation("addressBasedOnIdentity", values.addressBasedOnIdentity)
-                    }
 
                     if (!values.identityCountryCodeValue) {
                       errors.identityCountryCodeValue = <Trans i18nKey='forms.REQUIRED' />                      
                     }
-                    if (values.identityCountryCodeValue) {
-                      this.changeAddValidation("identityCountryCodeValue", values.identityCountryCodeValue)                      
-                    }
 
                     if (!values.identityProvinceId) {
                       errors.identityProvinceId = <Trans i18nKey='forms.REQUIRED' />                      
+                    }
+
+                    if (!values.identityCityId) {
+                      errors.identityCityId = <Trans i18nKey='forms.REQUIRED' />                      
+                    }
+
+                    if (!values.identitySubDistrict) {
+                      errors.identitySubDistrict = <Trans i18nKey='forms.REQUIRED' />  
+                    }
+
+                    if (!values.identityVillage) {
+                      errors.identityVillage = <Trans i18nKey='forms.REQUIRED' />                        
+                    }
+
+                    if (/^(0|[1-9]\d*)$/.test(values.identityPostalCode) === false && values.identityPostalCode !== "") {
+                      errors.identityPostalCode = "Postal Code harus berisi angka"
+                    } else if (values.identityPostalCode.length !== 5 && values.identityPostalCode !== "") {
+                      errors.identityPostalCode = "Postal Code harus berisi 5 angka"      
+                    }
+                    if (!values.identityPostalCode) {
+                      errors.identityPostalCode = "Postal Code harus diisi"      
+                    }
+
+                    
+                    if (values.addressBasedOnIdentity) {
+                      this.changeAddValidation("addressBasedOnIdentity", values.addressBasedOnIdentity)
+                    }
+                    if (values.identityCountryCodeValue) {
+                      this.changeAddValidation("identityCountryCodeValue", values.identityCountryCodeValue)                      
                     }
                     if (values.identityProvinceId) {
                       let identityCityOptionsFilter = [];
@@ -1851,6 +1884,25 @@ class MemberDataAdd extends Component {
                       this.changeAddValidation("identityCityOptionsFilter", identityCityOptionsFilter)
                       this.changeAddValidation("identityProvinceId", values.identityProvinceId)
                     }
+                    if (values.identityCityId) {
+                      this.changeAddValidation("identityCityId", values.identityCityId)                      
+                    }
+                    if (values.identitySubDistrict) {
+                      this.changeAddValidation("identitySubDistrict", values.identitySubDistrict)                      
+                    }
+                    if (values.identityVillage) {
+                      this.changeAddValidation("identityVillage", values.identityVillage)                      
+                    }
+                    if (values.identityPostalCode) {
+                      this.changeAddValidation("identityPostalCode", values.identityPostalCode)                      
+                    }
+                    if (values.identityRt) {
+                      this.changeAddValidation("identityRt", values.identityRt)                      
+                    }
+                    if (values.identityRw) {
+                      this.changeAddValidation("identityRw", values.identityRw)                      
+                    }
+
                     if (values.provinceId) {
                       let cityOptionsFilter = [];
                       this.state.addValidation.cityOptionsFilter.map(row => {
@@ -1859,46 +1911,6 @@ class MemberDataAdd extends Component {
                         }
                       })
                       this.changeAddValidation("cityOptionsFilter", cityOptionsFilter)
-                    }
-
-                    if (!values.identityCityId) {
-                      errors.identityCityId = <Trans i18nKey='forms.REQUIRED' />                      
-                    }
-                    if (values.identityCityId) {
-                      this.changeAddValidation("identityCityId", values.identityCityId)                      
-                    }
-
-                    if (!values.identitySubDistrict) {
-                      errors.identitySubDistrict = <Trans i18nKey='forms.REQUIRED' />  
-                    }
-                    if (values.identitySubDistrict) {
-                      this.changeAddValidation("identitySubDistrict", values.identitySubDistrict)                      
-                    }
-
-                    if (!values.identityVillage) {
-                      errors.identityVillage = <Trans i18nKey='forms.REQUIRED' />                        
-                    }
-                    if (values.identityVillage) {
-                      this.changeAddValidation("identityVillage", values.identityVillage)                      
-                    }
-
-                    if (/^(0|[1-9]\d*)$/.test(values.identityPostalCode) === false && values.identityPostalCode !== "") {
-                      errors.identityPostalCode = "Postal Code harus berisi angka"
-                    } else if (values.identityPostalCode.length !== 5 && values.identityPostalCode !== "") {
-                      errors.identityPostalCode = "Postal Code harus berisi 5 angka"      
-                    } else if (!values.identityPostalCode) {
-                      errors.identityPostalCode = "Postal Code harus diisi"      
-                    }
-                    if (values.identityPostalCode) {
-                      this.changeAddValidation("identityPostalCode", values.identityPostalCode)                      
-                    }
-
-                    if (values.identityRt) {
-                      this.changeAddValidation("identityRt", values.identityRt)                      
-                    }
-
-                    if (values.identityRw) {
-                      this.changeAddValidation("identityRw", values.identityRw)                      
                     }
 
                     return errors;

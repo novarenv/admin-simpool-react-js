@@ -96,7 +96,10 @@ class Login extends Component {
     this.setState({
       OTPStatus: true
     })
-    this.props.history.push("/simpool/dashboard")
+    this.props.history.push({
+      pathname: "/simpool/dashboard",
+      search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+    })
   }
 
   changeLanguage = lng => {
@@ -377,12 +380,14 @@ class Login extends Component {
 Login.propTypes = {
   actions: PropTypes.object,
   auth: PropTypes.object,
-  dashboard: PropTypes.object
+  dashboard: PropTypes.object,
+  settings: PropTypes.object
 }
 
 const mapStateToProps = state => ({
   auth: state.auth,
-  dashboard: state.dashboard
+  dashboard: state.dashboard,
+  settings: state.settings
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 

@@ -436,6 +436,7 @@ class MemberDataDetail extends Component {
     super(props);
 
     const clientIdNo = this.props.match.params.id
+    console.log(this.props)
 
     const setClientAccount = res => {
       this.setState({
@@ -1220,7 +1221,7 @@ class MemberDataDetail extends Component {
                         </strong>
                       </div>
                       <div className="row mt-3">
-                        <span className="col-md-4">Full Name</span>
+                        <span className="col-md-4">Fullname</span>
                         <strong className="col-md-8">
                           {
                             clientDetail != null

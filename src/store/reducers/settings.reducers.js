@@ -26,7 +26,9 @@ const initialSettings = {
     /* Full size layout */
     useFullLayout: false,
     /* Hide footer */
-    hiddenFooter: false
+    hiddenFooter: false,
+
+    tenantIdentifier: "010006"
 };
 
 const settingsReducer = (state = initialSettings, action) => {

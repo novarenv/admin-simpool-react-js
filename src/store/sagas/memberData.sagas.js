@@ -39,11 +39,15 @@ import { languageSelector } from '../reducers/dashboard.reducers';
 // Index
 function* clientIndex(action) {
   const auth = yield select(authSelector)
+  const allHeaders = headers()
+  console.log(allHeaders)
+
   try {
     const clientIndex = yield axios
       .get(clientUrl, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         },
@@ -72,7 +76,8 @@ function* checkDuplicate(action) {
     const checkDuplicate = yield axios
       .get(checkDuplicateUrl, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth
         }, params: {
           fullname: action.payload.fullname,
@@ -104,7 +109,8 @@ function* clientTemplate(action) {
     const clientTemplate = yield axios
       .get(clientTemplateUrl, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth
         }, params: {
           staffInSelectedOfficeOnly: "true"
@@ -127,7 +133,8 @@ function* clientAdd(action) {
     const clientAdd = yield axios
       .post(clientUrl, action.payload, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth
         }
       })
@@ -153,7 +160,8 @@ function* getClientAccount(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -178,7 +186,8 @@ function* clientAddImage(action) {
           action.res.clientId
         ), action.payload, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -203,7 +212,8 @@ function* clientAddDocument(action) {
           action.res.clientId
         ), action.payload, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -231,7 +241,8 @@ function* deleteClientImage(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -257,7 +268,8 @@ function* deleteClientDoc(action) {
           action.payload.documentId
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -283,7 +295,8 @@ function* getClientDetail(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -308,7 +321,8 @@ function* getClientDocuments(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -333,7 +347,8 @@ function* getClientImage(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -358,7 +373,8 @@ function* getClientId(action) {
           action.payload
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         }
@@ -381,7 +397,8 @@ function* getClientSummary(action) {
       .get(
         clientSummaryUrl, {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*'
         },
@@ -411,7 +428,8 @@ function* getDocAttach(action) {
           action.payload.documentId
         ), {
         headers: {
-          ...headers,
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'image/jpeg'
@@ -444,7 +462,8 @@ function* putClientId(action) {
         action.payload,
         {
           headers: {
-            ...headers,
+            'Content-Type': headers()["Content-Type"],
+            'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
             'Authorization': 'Basic ' + auth,
             'Access-Control-Allow-Origin': '*'
           }
