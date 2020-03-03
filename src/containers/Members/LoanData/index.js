@@ -262,7 +262,7 @@ class LoanData extends Component {
     if (idx !== 0) {
       this.props.history.push('/simpool/member/loan-data-detail')
     }
-    this.state.rowIdx = rowIdx
+    this.setState({rowIdx: rowIdx})
   };
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {

@@ -90,11 +90,9 @@ const Routes = ({ location, ...props }) => {
   const [tenantIdentifier, setTenantIdentifier] = useState(props.settings.tenantIdentifier)
 
   useEffect(() => {
-    props.i18n.changeLanguage(props.dashboard.language)
-
-
     const values = queryString.parse(location.search)
 
+    // Redirect if tenant different
     // if (values.tenantIdentifier === props.settings.tenantIdentifier) {
     //   console.log(props)
       
@@ -109,18 +107,19 @@ const Routes = ({ location, ...props }) => {
 
     if (values.tenantIdentifier !== null) {
       setTenantId(values.tenantIdentifier)
+      setTenantIdentifier(values.tenantIdentifier)
 
       props.actions.changeSetting("tenantIdentifier", values.tenantIdentifier)
-
-      setTenantIdentifier(props.settings.tenantIdentifier)
     }
 
-    console.log(values)
-    console.log(tenantIdentifier)
-    console.log(props.settings.tenantIdentifier)
+    return () => { };
+  }, [location.search, props.actions])
+
+  useEffect(() => {
+    props.i18n.changeLanguage(props.dashboard.language)
 
     return () => { };
-  }, [])
+  }, [props.dashboard.language, props.i18n])
 
   if (Cookies.get("loginToken")) {
     if (listofPages.indexOf(location.pathname) > -1) {
@@ -163,7 +162,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/member/data-edit/:id" component={waitFor(MemberDataEdit)} />
                     <Route exact path="/simpool/member/saving-data" component={waitFor(SavingData)} />
                     <Route exact path="/simpool/member/saving-data-add" component={waitFor(SavingDataAdd)} />
-                    <Route exact path="/simpool/member/saving-data-detail" component={waitFor(SavingDataDetail)} />
+                    <Route exact path="/simpool/member/saving-data-detail/:id" component={waitFor(SavingDataDetail)} />
                     <Route exact path="/simpool/member/saving-data-edit" component={waitFor(SavingDataEdit)} />
                     <Route exact path="/simpool/member/saving-data-history" component={waitFor(SavingDataHistory)} />
                     <Route exact path="/simpool/member/saving-data-history-detail" component={waitFor(SavingDataHistoryDetail)} />

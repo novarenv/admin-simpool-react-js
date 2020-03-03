@@ -81,6 +81,8 @@ const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => 
           dateParamSplit[1] = "0" + (i + 1)
         }
       }
+
+      return null
     })
 
     dateParam = dateParamSplit[2] + "-" + dateParamSplit[1] + "-" + dateParamSplit[0]
@@ -174,7 +176,6 @@ class MemberDataEdit extends Component {
       identityCityOptionsFilter: [],
       identityCountryCodeValue: '',
       identityCountryIsActive: false,
-      fullname: '',
       identityNumber: '',
       identityPostalCode: '',
       identityProvinceId: '',
@@ -258,6 +259,8 @@ class MemberDataEdit extends Component {
         if (city.provinceId === res.province.code) {
           cityOptions.push(city)
         }
+
+        return null
       })
 
       res.lastEducationLevelCode.name === "0199"
@@ -274,6 +277,8 @@ class MemberDataEdit extends Component {
           if (month === monthMap) {
             monthMMMM = MONTHS_ID[key]
           }
+
+          return null
         })
 
         return day + " " + monthMMMM + " " + year
@@ -465,7 +470,6 @@ class MemberDataEdit extends Component {
     }
 
     const showErrorExist = error => {
-      console.log(error)
       document.getElementById("errorExist").click()
     }
 
@@ -688,8 +692,7 @@ class MemberDataEdit extends Component {
                       }
                     }
                     validate={values => {
-                      const errors = {};
-                      console.log(values)
+                      const errors = {}
 
                       if (!values.officeId) {
                         errors.officeId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
@@ -703,14 +706,14 @@ class MemberDataEdit extends Component {
                         errors.sectorId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
-                      if (/^[a-zA-Z\s\'.-]+$/.test(values.fullname) === false) {
+                      if (/^[a-zA-Z\s'.-]+$/.test(values.fullname) === false) {
                         errors.fullname = "Identitiy Name harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
                       }
                       if (!values.fullname) {
                         errors.fullname = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
-                      if (/^[a-zA-Z\s\'.-]+$/.test(values.fullnameNonIdentity) === false && values.fullnameNonIdentity !== "") {
+                      if (/^[a-zA-Z\s'.-]+$/.test(values.fullnameNonIdentity) === false && values.fullnameNonIdentity !== "") {
                         errors.fullnameNonIdentity = "Identitiy Name harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
                       }
 
@@ -750,6 +753,7 @@ class MemberDataEdit extends Component {
                             errors.identityNumber = "Kartu Kepegawaian harus berisi 12-14 alphanumeric"
                           }
                           break;
+                        default: break;
                       }
                       if (!values.typeOfIdentityId) {
                         errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
@@ -774,7 +778,7 @@ class MemberDataEdit extends Component {
                         errors.placeOfBirth = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
-                      if (/^[a-zA-Z\s\'.-]+$/.test(values.motherName) === false) {
+                      if (/^[a-zA-Z\s'.-]+$/.test(values.motherName) === false) {
                         errors.motherName = "Mother's Maiden Name harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
                       }
                       if (!values.motherName) {
@@ -790,7 +794,7 @@ class MemberDataEdit extends Component {
                         errors.mobileNo = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
                       }
 
-                      if (/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
+                      if (/^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
                         errors.email = "Email yang dimasukkan tidak valid"
                       }
 
@@ -831,9 +835,11 @@ class MemberDataEdit extends Component {
                         this.changeState("legalFormId", values.legalFormId)
 
                         state.clientLegalFormOptions.map(option => {
-                          if (option.id == values.legalFormId) {
+                          if (option.id === values.legalFormId) {
                             this.changeState("legalForm", option.value)
                           }
+
+                          return null
                         })
                       }
                       if (values.sectorId || values.sectorId === "") {
@@ -942,10 +948,9 @@ class MemberDataEdit extends Component {
                     }}
                     enableReinitialize="true"
                     onSubmit={(val, { setSubmitting }) => {
-                      console.log("yay Submit Identity")
-                      if (Object.getOwnPropertyNames(state.formIdentityErrors).length == 0) {
-                        if (Object.getOwnPropertyNames(state.formAddressErrors).length == 0
-                          && Object.getOwnPropertyNames(state.formOthersErrors).length == 0) {
+                      if (Object.getOwnPropertyNames(state.formIdentityErrors).length === 0) {
+                        if (Object.getOwnPropertyNames(state.formAddressErrors).length === 0
+                          && Object.getOwnPropertyNames(state.formOthersErrors).length === 0) {
                           editMember()
                         }
                       }
@@ -1238,6 +1243,8 @@ class MemberDataEdit extends Component {
                                       if (identity.name === values.typeOfIdentityId) {
                                         return (<span key={"No. Identity " + i}>{identity.description}</span>)
                                       }
+
+                                      return null
                                     })
                                     : null
                                 } <span className="red"> *</span>
@@ -1690,7 +1697,6 @@ class MemberDataEdit extends Component {
                     }
                     validate={values => {
                       const errors = {};
-                      console.log(values)
 
                       if (!values.addressBasedOnIdentity) {
                         errors.addressBasedOnIdentity = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
@@ -1751,6 +1757,8 @@ class MemberDataEdit extends Component {
                           if (province.code === values.identityProvinceId) {
                             this.changeState("identityProvinceName", province.description)
                           }
+
+                          return null
                         })
 
                         let cityOptions = []
@@ -1759,6 +1767,8 @@ class MemberDataEdit extends Component {
                           if (city.provinceId === values.identityProvinceId) {
                             cityOptions.push(city)
                           }
+
+                          return null
                         })
 
                         this.setState({
@@ -1773,6 +1783,8 @@ class MemberDataEdit extends Component {
                               identityCityName: city.description
                             })
                           }
+
+                          return null
                         })
                       }
                       if (values.identitySubDistrict) {
@@ -1804,6 +1816,8 @@ class MemberDataEdit extends Component {
                           if (province.code === values.provinceId) {
                             this.changeState("provinceName", province.description)
                           }
+
+                          return null
                         })
 
                         let cityOptions = []
@@ -1812,6 +1826,8 @@ class MemberDataEdit extends Component {
                           if (city.provinceId === values.provinceId) {
                             cityOptions.push(city)
                           }
+
+                          return null
                         })
 
                         this.setState({
@@ -1826,6 +1842,8 @@ class MemberDataEdit extends Component {
                               cityName: city.description
                             })
                           }
+
+                          return null
                         })
                       }
                       if (values.subDistrict) {
@@ -1857,8 +1875,6 @@ class MemberDataEdit extends Component {
                     }}
                     enableReinitialize="true"
                     onSubmit={(val, { setSubmitting }) => {
-                      console.log("yay Submit Address")
-
                       setSubmitting(false)
                     }}
                   >
@@ -2306,7 +2322,6 @@ class MemberDataEdit extends Component {
                     }
                     validate={values => {
                       const errors = {};
-                      console.log(values)
 
                       if (/^(0|[1-9]\d*)$/.test(values.taxNumber) === false && values.taxNumber !== "") {
                         errors.taxNumber = "Tax Number harus berisi angka 0 sampai 9"
@@ -2317,7 +2332,7 @@ class MemberDataEdit extends Component {
                         errors.taxNumber = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>;
                       }
 
-                      if (/^[a-zA-Z\s\'.-]+$/.test(values.taxName) === false) {
+                      if (/^[a-zA-Z\s'.-]+$/.test(values.taxName) === false) {
                         errors.taxName = "Name based on tax harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
                       }
                       if (!values.taxName) {
@@ -2368,8 +2383,6 @@ class MemberDataEdit extends Component {
                     }}
                     enableReinitialize="true"
                     onSubmit={(val, { setSubmitting }) => {
-                      console.log("yay Submit Others")
-
                       setSubmitting(false)
                     }}
                   >

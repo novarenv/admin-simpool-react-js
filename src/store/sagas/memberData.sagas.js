@@ -39,8 +39,6 @@ import { languageSelector } from '../reducers/dashboard.reducers';
 // Index
 function* clientIndex(action) {
   const auth = yield select(authSelector)
-  const allHeaders = headers()
-  console.log(allHeaders)
 
   try {
     const clientIndex = yield axios
@@ -261,7 +259,7 @@ function* deleteClientDoc(action) {
   const auth = yield select(authSelector)
 
   try {
-    const deleteClientDoc = yield axios
+    yield axios
       .delete(
         clientDocumentIdUrl(
           action.payload.clientId,
@@ -428,7 +426,6 @@ function* getDocAttach(action) {
           action.payload.documentId
         ), {
         headers: {
-          'Content-Type': headers()["Content-Type"],
           'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
           'Authorization': 'Basic ' + auth,
           'Access-Control-Allow-Origin': '*',
@@ -454,7 +451,7 @@ function* putClientId(action) {
   const auth = yield select(authSelector)
 
   try {
-    const putClientId = yield axios
+    yield axios
       .put(
         clientIdUrl(
           action.clientId

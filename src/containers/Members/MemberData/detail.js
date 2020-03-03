@@ -1,5 +1,5 @@
-import React, { Component, useState } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React, { Component, useState } from 'react'
+import { Link, withRouter } from 'react-router-dom'
 import {
   Button,
   Card,
@@ -10,22 +10,22 @@ import {
   NavLink,
   TabContent,
   TabPane
-} from 'reactstrap';
-import 'react-sliding-pane/dist/react-sliding-pane.css';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
-import Modal from 'react-modal';
-import { useDropzone } from 'react-dropzone';
+} from 'reactstrap'
+import 'react-sliding-pane/dist/react-sliding-pane.css'
+import { withTranslation } from 'react-i18next'
+import Modal from 'react-modal'
+import { useDropzone } from 'react-dropzone'
 
-import Camera from 'react-html5-camera-photo';
-import 'react-html5-camera-photo/build/css/index.css';
+import Camera from 'react-html5-camera-photo'
+import 'react-html5-camera-photo/build/css/index.css'
 
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
-import Swal from '../../../components/Common/Swal';
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import Swal from '../../../components/Common/Swal'
 
-import * as actions from '../../../store/actions/actions';
-import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import PropTypes from 'prop-types'
+import * as actions from '../../../store/actions/actions'
+import { connect } from 'react-redux'
+import { bindActionCreators, compose } from 'redux'
 
 const SHORT_MONTHS_ID = [
   'Jan',
@@ -65,7 +65,12 @@ const Savings = props => {
   }
 
   const rowClicked = () => {
+    console.log(props)
     console.log("Clicked!")
+    props.history.push({
+      pathname: '/simpool/member/saving-data-detail/' + props.clientId,
+      search: "?tenantIdentifier=" + props.tenant
+    })
   }
 
   return (
@@ -299,7 +304,7 @@ const Documents = props => {
                     ? (
                       <div>
                         <div className="row justify-content-center">
-                          <img className="col-md-6" src={docImage} />
+                          <img className="col-md-6" src={docImage} alt="Doc" />
                         </div>
                       </div>
                     )
@@ -400,7 +405,7 @@ const DragDrop = props => {
           <h5>
             {file.path} - {file.size} bytes
           </h5>
-          <img src={file.preview} style={img} />
+          <img src={file.preview} style={img} alt="File Preview"/>
         </div>
       )
     } else {
@@ -611,6 +616,8 @@ class MemberDataDetail extends Component {
         if (month === monthMap) {
           monthMMMM = MONTHS_ID[key]
         }
+
+        return null
       })
 
       return day + " " + monthMMMM + " " + year
@@ -623,6 +630,8 @@ class MemberDataDetail extends Component {
         if (merchant.code === code) {
           desc = merchant.description
         }
+
+        return null
       })
 
       return code + " - " + desc
@@ -635,6 +644,8 @@ class MemberDataDetail extends Component {
         if (merchant.code === code) {
           desc = merchant.description
         }
+
+        return null
       })
 
       return code + " - " + desc
@@ -771,7 +782,7 @@ class MemberDataDetail extends Component {
                         <h1>Preview Image</h1>
                       </div>
                       <div className="row justify-content-center">
-                        <img className="col-md-6" src={this.state.selfieUri} />
+                        <img className="col-md-6" src={this.state.selfieUri} alt="selfieUri" />
                       </div>
                     </div>
                   )
@@ -890,8 +901,8 @@ class MemberDataDetail extends Component {
                 <div className="center-parent" style={imgOpt}>
                   {
                     this.state.clientImage != null
-                      ? (<img src={this.state.clientImage} style={img} />)
-                      : (<img src={"/img/user.png"} style={img} />)
+                      ? (<img src={this.state.clientImage} style={img} alt="client" />)
+                      : (<img src={"/img/user.png"} style={img} alt="user" />)
                   }
                 </div>
                 <div className="mt-1 d-flex justify-content-center" style={imgOpt}>
@@ -933,7 +944,7 @@ class MemberDataDetail extends Component {
                     {
                       clientId != null
                         ? clientId.member != null
-                          ? clientId.member == false
+                          ? clientId.member === false
                             ? "Unassigned"
                             : clientId.member
                           : "-"
@@ -1920,7 +1931,12 @@ class MemberDataDetail extends Component {
                 <TabPane tabId="savings" role="tabpanel">
                   {
                     Array.isArray(this.state.clientAccount.savingsAccounts) && this.state.clientAccount.savingsAccounts.length > 0
-                      ? (<Savings savings={this.state.clientAccount.savingsAccounts} />)
+                      ? (<Savings
+                          history= {this.props.history}
+                          savings={this.state.clientAccount.savingsAccounts}
+                          tenant={this.props.settings.tenantIdentifier}
+                          clientId={this.state.clientIdNo}
+                        />)
                       : (
                         <div className="center-parent mt-3 ft-detail">
                           <span>Pengguna tidak punya simpanan</span>

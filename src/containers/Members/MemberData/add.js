@@ -193,7 +193,7 @@ const DragDropMultiple = props => {
           <h5>
             {file.path} - {file.size} bytes
           </h5>
-          <img src={file.preview} style={img} />
+          <img src={file.preview} style={img} alt="preview" />
         </div>
       )
     } else {
@@ -331,36 +331,48 @@ class MemberDataAdd extends Component {
     let identityTypeOptions = []
     res.typeOfIdentityOptions.map(row => {
       identityTypeOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("identityTypeOptions", identityTypeOptions)
 
     let officeOptions = []
     res.officeOptions.map(row => {
       officeOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("officeOptions", officeOptions)
 
     let religionOptions = []
     res.religionOption.map(row => {
       religionOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("religionOptions", religionOptions)
 
     let countryOptions = []
     res.countryOptions.map(row => {
       countryOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("countryOptions", countryOptions)
 
     let provinceOptions = []
     res.provinceOptions.map(row => {
       provinceOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("provinceOptions", provinceOptions)
     
     let identityCityOptionsFilter = []
     res.cityOptions.map(row => {
       identityCityOptionsFilter.push(row)
+
+      return null
     })
     this.changeAddValidation("identityCityOptions", identityCityOptionsFilter)
     this.changeAddValidation("identityCityOptionsFilter", identityCityOptionsFilter)
@@ -368,6 +380,8 @@ class MemberDataAdd extends Component {
     let cityOptions = []
     res.cityOptions.map(row => {
       cityOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("cityOptions", cityOptions)
     this.changeAddValidation("cityOptionsFilter", cityOptions)
@@ -375,12 +389,16 @@ class MemberDataAdd extends Component {
     let flagTaxOptions = []
     res.flagTaxOptions.map(row => {
       flagTaxOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("flagTaxOptions", flagTaxOptions)
 
     let staffOptions = []
     res.staffOptions.map(row => {
       staffOptions.push(row)
+
+      return null
     })
     this.changeAddValidation("staffOptions", staffOptions)
 
@@ -391,6 +409,8 @@ class MemberDataAdd extends Component {
       if (sectorCodeString.substring(0,1) === "1") {
         sectorOptions.push(row)
       }
+
+      return null
     })
     this.changeAddValidation("sectorOptions", sectorOptions)
   }
@@ -584,11 +604,11 @@ class MemberDataAdd extends Component {
               errors.mobileNo = <Trans i18nKey='forms.REQUIRED'/>
             }
 
-            if (/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
+            if (/^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
               errors.email = "Email yang dimasukkan tidak valid"
             }
 
-            if (/^[a-zA-Z\s\'.-]+$/.test(values.taxName) === false) {
+            if (/^[a-zA-Z\s'.-]+$/.test(values.taxName) === false) {
               errors.taxName = "Name based on tax harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
             }
             if (!values.taxName) {
@@ -626,7 +646,7 @@ class MemberDataAdd extends Component {
 
             if (/^([0-9]\d*)$/.test(values.phoneNumber) === false && values.phoneNumber !== "") {
               errors.phoneNumber = "Phone Number harus berisi angka 0 sampai 9"              
-            } else if (values.phoneNumber.length > 13 || values.phoneNumber.length < 6 && values.phoneNumber !== "") {
+            } else if ((values.phoneNumber.length > 13 || values.phoneNumber.length < 6) && values.phoneNumber !== "") {
               errors.phoneNumber = "Phone Number harus terdiri dari 6-13 angka"              
             }
 
@@ -771,7 +791,7 @@ class MemberDataAdd extends Component {
                   </label>
                   <Field name="dateOfBirth" onChange={handleChange} component={DateTime}
                     locale={this.props.dashboard.language} value={values.dateOfBirth}
-                    error={errors.dateOfBirth} touched={touched.dateOfBirth} name="dateOfBirth"
+                    error={errors.dateOfBirth} touched={touched.dateOfBirth}
                   />
                   <div className="input-feedback">{touched.dateOfBirth && errors.dateOfBirth}</div>
 
@@ -1102,7 +1122,7 @@ class MemberDataAdd extends Component {
                   </label>
                   <Field name="submittedOnDate" onChange={handleChange} component={DateTime}
                     locale={this.props.dashboard.language} value={values.submittedOnDate}
-                    error={errors.submittedOnDate} touched={touched.submittedOnDate} name="submittedOnDate"
+                    error={errors.submittedOnDate} touched={touched.submittedOnDate}
                   />
                   <div className="input-feedback">{touched.submittedOnDate && errors.submittedOnDate}</div>
 
@@ -1244,6 +1264,8 @@ class MemberDataAdd extends Component {
       if (row.provinceId === val) {
         cityOptions.push(row)
       }
+
+      return null
     })
     this.setState(prevState =>
       ({
@@ -1320,6 +1342,8 @@ class MemberDataAdd extends Component {
       )
 
       clientOtherDocs.push(formdata)
+
+      return null
     })
 
     const setClientAddRes = res => {
@@ -1332,6 +1356,8 @@ class MemberDataAdd extends Component {
 
       clientOtherDocs.map(doc => {
         this.props.actions.clientAddDocument(doc, res)
+
+        return null
       })
 
       this.props.history.push({
@@ -1408,7 +1434,7 @@ class MemberDataAdd extends Component {
         <Swal options={tabNotPermit} id="tabNotPermit" />
 
         <div className="content-heading">
-          <div>Anggota Baru V2</div>
+          <div>Anggota Baru</div>
         </div>
 
         <Card className="card-default">
@@ -1515,7 +1541,7 @@ class MemberDataAdd extends Component {
                       errors.legalFormId = <Trans i18nKey='forms.REQUIRED'/>
                     }
 
-                    if (/^[a-zA-Z\s\'.-]+$/.test(values.fullname) === false) {
+                    if (/^[a-zA-Z\s'.-]+$/.test(values.fullname) === false) {
                       errors.fullname = this.props.i18n.t('member.data-add.FULLNAME_ID')
                           + " harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
                     }
@@ -1523,9 +1549,9 @@ class MemberDataAdd extends Component {
                       errors.fullname = <Trans i18nKey='forms.REQUIRED' />
                     }
 
-                    if (/^[a-zA-Z\s\'.-]+$/.test(values.motherName) === false) {
+                    if (/^[a-zA-Z\s'.-]+$/.test(values.motherName) === false) {
                       errors.motherName = this.props.i18n.t('member.data-add.MOTHER_NAME')
-                          + " harus terdiri dari alphanumeric (a-zA-Z\s\'.-)"
+                          + " harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
                     }
                     if (!values.motherName) {
                       errors.motherName = <Trans i18nKey='forms.REQUIRED' />
@@ -1567,6 +1593,7 @@ class MemberDataAdd extends Component {
                           errors.identityNumber =  "Kartu Kepegawaian harus berisi 12-14 alphanumeric"
                         }
                         break;
+                      default: break;
                     }
                     if (values.typeOfIdentityId === "") {
                       errors.typeOfIdentityId = <Trans i18nKey='forms.REQUIRED' />
@@ -1762,6 +1789,8 @@ class MemberDataAdd extends Component {
                                                 if (identity.name === values.typeOfIdentityId) {
                                                   return (<span key={"No. Identity " + i}>{identity.description}</span>)
                                                 }
+
+                                                return null
                                               })
                                               : null
                                           } <span className="red"> *</span>
@@ -1890,6 +1919,8 @@ class MemberDataAdd extends Component {
                         if (row.provinceId === values.identityProvinceId) {
                           identityCityOptionsFilter.push(row)
                         }
+
+                        return null
                       })
                       this.changeAddValidation("identityCityOptionsFilter", identityCityOptionsFilter)
                       this.changeAddValidation("identityProvinceId", values.identityProvinceId)
@@ -1919,6 +1950,8 @@ class MemberDataAdd extends Component {
                         if (row.provinceId === values.provinceId) {
                           cityOptionsFilter.push(row)
                         }
+
+                        return null
                       })
                       this.changeAddValidation("cityOptionsFilter", cityOptionsFilter)
                     }

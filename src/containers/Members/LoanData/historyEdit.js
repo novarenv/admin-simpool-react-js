@@ -211,7 +211,7 @@ export default class LoanDataHistoryEdit extends Component {
                 onChange={this.handleDate}
               />
 
-              <label className="mt-3" htmlFor="initDepositValue">// Nanti Ambil dari API</label><br />
+              <label className="mt-3" htmlFor="initDepositValue">/ Nanti Ambil dari API</label><br />
               <label className="mt-3" htmlFor="initDepositValue">Nilai Setoran Awal</label>
               <Input
                 type="number"
@@ -222,7 +222,7 @@ export default class LoanDataHistoryEdit extends Component {
                 tabIndex={5}
               />
 
-              <label className="mt-3" htmlFor="initDepositValue">// Nomor Rekening Ambil dari Anggota</label><br />
+              <label className="mt-3" htmlFor="initDepositValue">/ Nomor Rekening Ambil dari Anggota</label><br />
               <label className="mt-3" htmlFor="depositNumber">Nomor Rekening Simpanan</label>
               <Input
                 type="text"

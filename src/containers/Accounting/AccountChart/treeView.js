@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useState } from 'react';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import { Button, Container, Card, CardBody, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ export function ACTreeView(props) {
 
   const classes = useStyles();
   const [expanded, setExpanded] = useState([]);
-  const [treeItems, setTreeItem] = useState([
+  const [treeItems] = useState([
     {
       nodeId: 101003600000000,
       label: "101003600000000 Kas",
@@ -99,7 +99,7 @@ export function ACTreeView(props) {
     >
       {
         treeItems.map(treeItem => {
-          if (treeItem.children1.length == 0) {
+          if (treeItem.children1.length === 0) {
             return (
               <TreeItem nodeId={treeItem.nodeId} label={treeItem.label} onClick={props.openPane} />
             )

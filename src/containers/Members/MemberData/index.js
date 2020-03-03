@@ -202,6 +202,8 @@ class MemberData extends Component {
         OFFICE: row.officeName,
         STATUS: row.status.value
       })
+
+      return null
     })
     this.setState({
       rows: rowsTemp
@@ -218,6 +220,8 @@ class MemberData extends Component {
         OFFICE: row.parentName,
         STATUS: row.entityStatus.value
       })
+
+      return null
     })
     this.setState({
       rows: rowsTemp,
@@ -287,12 +291,16 @@ class MemberData extends Component {
           if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
             clientId = item.entityId
           }
+
+          return null
         })
       } else {
         this.state.res.pageItems.map(item => {
           if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
             clientId = item.id
           }
+
+          return null
         })
       }
 
@@ -303,6 +311,8 @@ class MemberData extends Component {
     }
 
     this.setState({ rowIdx })
+
+    return null
   };
 
   onGridRowsUpdated = ({ fromRow, toRow, updated }) => {

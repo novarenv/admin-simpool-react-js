@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../store/actions/actions';
 
-import SidebarRun from './Sidebar.run';
 import SidebarUserBlock from './SidebarUserBlock';
 
 import Menu from '../../Menu.js';
@@ -66,7 +65,7 @@ class Sidebar extends Component {
 
   componentDidMount() {
     // pass navigator to access router api
-    SidebarRun(this.navigator, this.closeSidebar);
+    // SidebarRun(this.navigator, this.closeSidebar);
     // prepare the flags to handle menu collapsed states
     this.buildCollapseList()
 
