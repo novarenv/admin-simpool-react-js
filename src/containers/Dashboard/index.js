@@ -8,6 +8,8 @@ import * as actions from '../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 
+import { Bar, Pie } from 'react-chartjs-2'
+
 class Dashboard extends Component {
   constructor(props) {
     super(props)
@@ -41,6 +43,60 @@ class Dashboard extends Component {
     this.props.i18n.changeLanguage(lng)
   }
 
+  gender = {
+    labels: ['Female', 'Male'],
+    datasets: [{
+      label: 'gender',
+      data: [12, 19],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.4)',
+        'rgba(54, 162, 235, 0.4)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)'
+      ],
+      borderWidth: 1,
+      hoverBackgroundColor: [
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(54, 162, 235, 0.6)'
+      ],
+    }]
+  };
+
+  province = {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [{
+      label: "Province",
+      barPercentage: 0.5,
+      barThickness: 20,
+      maxBarThickness: 20,
+      minBarLength: 2,
+      data: [100, 20, 30, 40, 50, 60, 70],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.4)',
+        'rgba(54, 162, 235, 0.4)',
+        'rgba(255, 206, 86, 0.4)',
+        'rgba(75, 192, 192, 0.4)',
+        'rgba(153, 102, 255, 0.4)',
+        'rgba(255, 159, 64, 0.4)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1,
+      hoverBackgroundColor: [
+        'rgba(255, 99, 132, 0.6)',
+        'rgba(54, 162, 235, 0.6)'
+      ]
+    }]
+  };
+
   render() {
     return (
       <ContentWrapper>
@@ -59,7 +115,16 @@ class Dashboard extends Component {
           </div>
         </div>
 
-        <p className="lead text-center">Pinjaman Kredit</p>
+        <div className="row justify-content-center">
+          <div className="col-md-4 mt-3">
+            <Pie data={this.gender} />
+          </div>
+          <div className="col-md-8 mt-3">
+            <Bar data={this.province} />
+          </div>
+        </div>
+
+        <p className="lead text-center mt-3">Pinjaman Kredit</p>
         <Row>
           <div className="col-xl-4 col-md-6">
             <div className="card flex-row align-items-center align-items-stretch border-0">

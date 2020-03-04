@@ -35,6 +35,7 @@ export const docAttachUrl = (clientId, documentId) => `${apiEntrySimpool}/client
 
 // Savings
 export const savingsAccoountAssosiationsUrl = savingsId => `${apiEntrySimpool}/savingsaccounts/${savingsId}`
+export const qrCodeUrl = savingsId => `${apiEntrySimpool}/ppob/qrcode/${savingsId}/100`
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`

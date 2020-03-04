@@ -1,6 +1,6 @@
 import $ from '../Common/wrapper.js';
 
-export default (navigator, closeSidebar) => {
+export default (navigator) => {
 
     var $html = $('html');
     var $body = $('body');
@@ -52,7 +52,7 @@ export default (navigator, closeSidebar) => {
                 !$target.is('#user-block-toggle') && // user block toggle anchor
                 !$target.parent().is('#user-block-toggle') // user block toggle icon
             ) {
-                closeSidebar()
+                // closeSidebar()
             }
 
         });

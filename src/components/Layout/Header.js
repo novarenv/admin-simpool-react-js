@@ -15,6 +15,7 @@ class Header extends Component {
 
   toggleUserblock = e => {
     e.preventDefault();
+    console.log(e)
     this.props.actions.toggleSetting('showUserBlock');
   }
 
@@ -25,7 +26,7 @@ class Header extends Component {
   }
 
   toggleAside = e => {
-    e.preventDefault()
+    // e.preventDefault()
     this.props.actions.toggleSetting('asideToggled');
   }
 

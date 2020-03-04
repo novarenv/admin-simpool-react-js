@@ -13,10 +13,14 @@ export default function configureStore() {
 
     const sagaMiddleware = createSagaMiddleware();
 
+    const composeEnhancers = composeWithDevTools({
+        trace: true
+    })
+
     const store = createStore(
         reducers,
         persistedState, // second argument overrides the initial state
-        composeWithDevTools(
+        composeEnhancers(
             applyMiddleware(
                 ...middlewares,
                 sagaMiddleware

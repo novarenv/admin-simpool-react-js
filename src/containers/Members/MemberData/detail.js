@@ -64,11 +64,9 @@ const Savings = props => {
     return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
-  const rowClicked = () => {
-    console.log(props)
-    console.log("Clicked!")
+  const rowClicked = id => {
     props.history.push({
-      pathname: '/simpool/member/saving-data-detail/' + props.clientId,
+      pathname: '/simpool/member/saving-data-detail/' + id,
       search: "?tenantIdentifier=" + props.tenant
     })
   }
@@ -96,7 +94,7 @@ const Savings = props => {
         props.savings.map((acc, key) => {
           return (
             <div key={"Savings " + key}>
-              <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
+              <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
                 <div className="col-2">
                   <span>{acc.accountNo}</span>
                 </div>
@@ -107,7 +105,11 @@ const Savings = props => {
                   <span>{acc.bilyetNumber}</span>
                 </div>
                 <div className="col-2">
-                  <span>{acc.lastActiveTransactionDate[2]} {MONTHS_ID[acc.lastActiveTransactionDate[1] - 1]} {acc.lastActiveTransactionDate[0]}</span>
+                  <span>{
+                    Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
+                      ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
+                      : null
+                  }</span>
                 </div>
                 <div className="col-2">
                   {
@@ -282,6 +284,7 @@ const Documents = props => {
       <Modal
         isOpen={modalPreview}
         onRequestClose={() => setModalPreview(false)}
+        ariaHideApp={false}
       >
         <div className="container-fluid">
           <div className="row">
@@ -405,7 +408,7 @@ const DragDrop = props => {
           <h5>
             {file.path} - {file.size} bytes
           </h5>
-          <img src={file.preview} style={img} alt="File Preview"/>
+          <img src={file.preview} style={img} alt="File Preview" />
         </div>
       )
     } else {
@@ -524,10 +527,25 @@ class MemberDataDetail extends Component {
     }
   }
 
-  NumberFormatted = amount => {
+  numToMoney = amount => {
     const amountInt = parseInt(amount)
+    const amountNum = amount.toFixed(2)
+    const amountStr = amountNum.toString()
+    let afterComma
 
-    return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    if (amountStr.includes('.')) {
+      afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
+    }
+
+    if (afterComma != null) {
+      if (afterComma === "00") {
+        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      } else {
+        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + afterComma
+      }
+    } else {
+      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    }
   }
 
   swalOption = {
@@ -1010,8 +1028,8 @@ class MemberDataDetail extends Component {
                   <strong className="col-md-8">
                     {
                       clientSummary != null
-                        ? clientSummary.loancycle != null
-                          ? clientSummary.loancycle
+                        ? clientSummary.lastloanamount != null
+                          ? this.numToMoney(clientSummary.lastloanamount)
                           : 0
                         : "-"
                     }
@@ -1035,7 +1053,7 @@ class MemberDataDetail extends Component {
                     {
                       clientSummary != null
                         ? clientSummary.totalsavings != null
-                          ? this.NumberFormatted(clientSummary.totalsavings)
+                          ? this.numToMoney(clientSummary.totalsavings)
                           : "-"
                         : "-"
                     }
@@ -1932,11 +1950,11 @@ class MemberDataDetail extends Component {
                   {
                     Array.isArray(this.state.clientAccount.savingsAccounts) && this.state.clientAccount.savingsAccounts.length > 0
                       ? (<Savings
-                          history= {this.props.history}
-                          savings={this.state.clientAccount.savingsAccounts}
-                          tenant={this.props.settings.tenantIdentifier}
-                          clientId={this.state.clientIdNo}
-                        />)
+                        history={this.props.history}
+                        savings={this.state.clientAccount.savingsAccounts}
+                        tenant={this.props.settings.tenantIdentifier}
+                        clientId={this.state.clientIdNo}
+                      />)
                       : (
                         <div className="center-parent mt-3 ft-detail">
                           <span>Pengguna tidak punya simpanan</span>
