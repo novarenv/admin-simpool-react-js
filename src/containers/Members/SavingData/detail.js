@@ -66,7 +66,7 @@ const SavingDataDetail = props => {
       afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
     }
 
-    if (afterComma != null) {
+    if (afterComma) {
       if (afterComma === "00") {
         return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
       } else {
@@ -91,7 +91,7 @@ const SavingDataDetail = props => {
   }
 
   let clientId
-  if (savingsAssosiations.clientId != null) {
+  if (savingsAssosiations && savingsAssosiations.clientId) {
     clientId = savingsAssosiations.clientId
   }
   console.log(clientId)
@@ -172,7 +172,8 @@ const SavingDataDetail = props => {
             <div className="mt-3">
               <h1>
                 {
-                  savingsAssosiations.savingsProductName != null
+                  savingsAssosiations
+                    && savingsAssosiations.savingsProductName
                     ? savingsAssosiations.savingsProductName
                     : "-"
                 }
@@ -181,14 +182,15 @@ const SavingDataDetail = props => {
                 style={{ marginBottom: 0 }}
               >
                 {
-                  savingsAssosiations.accountNo != null
+                  savingsAssosiations
+                    && savingsAssosiations.accountNo
                     ? savingsAssosiations.accountNo
                     : "-"
                 }
               </h3>
             </div>
             {
-              qrCode != null
+              qrCode
                 ? (
                   <QRCode
                     id="qrCode"
@@ -229,17 +231,22 @@ const SavingDataDetail = props => {
           <div className="center-parent mt-5">
             <h1>
               {
-                savingsAssosiations.savingsProductName != null
+                savingsAssosiations
+                  && savingsAssosiations.savingsProductName
                   ? savingsAssosiations.savingsProductName + " "
                   : "-"
               }
               {
-                savingsAssosiations.status.id != null
+                savingsAssosiations
+                  && savingsAssosiations.status
+                  && savingsAssosiations.status.id
                   ? savingsAssosiations.status.id === 300
                     ? (<span className="ml-auto circle bg-success circle-lg mb-3" />)
-                    : savingsAssosiations.status.id === 100
+                    : savingsAssosiations.status.id === 200
                       ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
-                      : null
+                      : savingsAssosiations.status.id === 100
+                        ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
+                        : null
                   : null
               }
             </h1>
@@ -247,7 +254,8 @@ const SavingDataDetail = props => {
               className="mb-0"
             >
               {
-                savingsAssosiations.accountNo != null
+                savingsAssosiations
+                  && savingsAssosiations.accountNo
                   ? savingsAssosiations.accountNo
                   : "-"
               }
@@ -275,8 +283,12 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      Array.isArray(savingsAssosiations.timeline.activatedOnDate) && savingsAssosiations.timeline.activatedOnDate.length > 0
-                        ? savingsAssosiations.timeline.activatedOnDate[2] + " " + MONTHS_ID[savingsAssosiations.timeline.activatedOnDate[1] - 1] + " " + savingsAssosiations.timeline.activatedOnDate[0]
+                      savingsAssosiations
+                        && savingsAssosiations.timeline
+                        && savingsAssosiations.timeline.activatedOnDate
+                        ? Array.isArray(savingsAssosiations.timeline.activatedOnDate) && savingsAssosiations.timeline.activatedOnDate.length > 0
+                          ? savingsAssosiations.timeline.activatedOnDate[2] + " " + MONTHS_ID[savingsAssosiations.timeline.activatedOnDate[1] - 1] + " " + savingsAssosiations.timeline.activatedOnDate[0]
+                          : "-"
                         : "-"
                     }
                   </strong>
@@ -293,7 +305,9 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.currency.name != null
+                      savingsAssosiations
+                        && savingsAssosiations.currency
+                        && savingsAssosiations.currency.name
                         ? savingsAssosiations.currency.name
                         : "-"
                     }
@@ -311,7 +325,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.externalId != null
+                      savingsAssosiations
+                        && savingsAssosiations.externalId
                         ? savingsAssosiations.externalId
                         : "-"
                     }
@@ -329,7 +344,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.passbook != null
+                      savingsAssosiations
+                        && savingsAssosiations.passbook
                         ? savingsAssosiations.passbook
                           ? "Ya"
                           : "Tidak"
@@ -349,7 +365,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.isIntermediateAccount != null
+                      savingsAssosiations
+                        && savingsAssosiations.isIntermediateAccount
                         ? savingsAssosiations.isIntermediateAccount
                           ? "Ya"
                           : "Tidak"
@@ -369,7 +386,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.displayName != null
+                      savingsAssosiations
+                        && savingsAssosiations.displayName
                         ? savingsAssosiations.displayName
                         : "-"
                     }
@@ -387,7 +405,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.passbookNumber != null
+                      savingsAssosiations
+                        && savingsAssosiations.passbookNumber
                         ? savingsAssosiations.passbookNumber
                         : "-"
                     }
@@ -412,7 +431,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.fieldOfficerName != null
+                      savingsAssosiations
+                        && savingsAssosiations.fieldOfficerName
                         ? savingsAssosiations.fieldOfficerName
                         : "Unassigned"
                     }
@@ -429,7 +449,9 @@ const SavingDataDetail = props => {
                   style={second}
                 >
                   {
-                    savingsAssosiations.summary.accountBalance != null
+                    savingsAssosiations
+                      && savingsAssosiations.summary
+                      && savingsAssosiations.summary.accountBalance
                       ? numToMoney(savingsAssosiations.summary.accountBalance).includes("-")
                         ? (
                           <strong style={{ color: "red" }}>
@@ -456,7 +478,8 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.availableBalance != null
+                      savingsAssosiations
+                        && savingsAssosiations.availableBalance
                         ? numToMoney(savingsAssosiations.availableBalance)
                         : "-"
                     }
@@ -474,7 +497,9 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.openReason.description != null
+                      savingsAssosiations
+                        && savingsAssosiations.openReason
+                        && savingsAssosiations.openReason.description
                         ? savingsAssosiations.openReason.description
                         : "-"
                     }
@@ -492,7 +517,9 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.transactionRestriction.name != null
+                      savingsAssosiations
+                        && savingsAssosiations.transactionRestriction
+                        && savingsAssosiations.transactionRestriction.name
                         ? savingsAssosiations.transactionRestriction.name
                         : "-"
                     }
@@ -510,7 +537,9 @@ const SavingDataDetail = props => {
                 >
                   <strong>
                     {
-                      savingsAssosiations.officeData.name != null
+                      savingsAssosiations
+                        && savingsAssosiations.officeData
+                        && savingsAssosiations.officeData.name
                         ? savingsAssosiations.officeData.name
                         : "-"
                     }
@@ -536,7 +565,8 @@ const SavingDataDetail = props => {
 
           <Nav tabs justified className="mt-5">
             {
-              savingsAssosiations.summary != null
+              savingsAssosiations
+                && savingsAssosiations.summary
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'summary' ? 'active' : ''}
@@ -609,7 +639,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.summary.totalDeposits != null
+                          savingsAssosiations
+                            && savingsAssosiations.summary
+                            && savingsAssosiations.summary.totalDeposits
                             ? numToMoney(savingsAssosiations.summary.totalDeposits)
                             : "-"
                         }
@@ -627,7 +659,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.summary.totalWithdrawals != null
+                          savingsAssosiations
+                            && savingsAssosiations.summary
+                            && savingsAssosiations.summary.totalWithdrawals
                             ? numToMoney(savingsAssosiations.summary.totalWithdrawals)
                             : "-"
                         }
@@ -645,7 +679,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.summary.totalInterestEarned != null
+                          savingsAssosiations
+                            && savingsAssosiations.summary
+                            && savingsAssosiations.summary.totalInterestEarned
                             ? numToMoney(savingsAssosiations.summary.totalInterestEarned)
                             : "-"
                         }
@@ -663,7 +699,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.summary.totalInterestPosted != null
+                          savingsAssosiations
+                            && savingsAssosiations.summary
+                            && savingsAssosiations.summary.totalInterestPosted
                             ? numToMoney(savingsAssosiations.summary.totalInterestPosted)
                             : "-"
                         }
@@ -681,7 +719,8 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.nominalAnnualInterestRate != null
+                          savingsAssosiations
+                            && savingsAssosiations.nominalAnnualInterestRate
                             ? numToMoney(savingsAssosiations.nominalAnnualInterestRate) + " %"
                             : "-"
                         }
@@ -699,7 +738,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.interestCompoundingPeriodType.value != null
+                          savingsAssosiations
+                            && savingsAssosiations.interestCompoundingPeriodType
+                            && savingsAssosiations.interestCompoundingPeriodType.value
                             ? savingsAssosiations.interestCompoundingPeriodType.value
                             : "-"
                         }
@@ -717,7 +758,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.interestPostingPeriodType.value != null
+                          savingsAssosiations
+                            && savingsAssosiations.interestPostingPeriodType
+                            && savingsAssosiations.interestPostingPeriodType.value
                             ? savingsAssosiations.interestPostingPeriodType.value
                             : "-"
                         }
@@ -743,7 +786,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.interestCalculationType.value != null
+                          savingsAssosiations
+                            && savingsAssosiations.interestCalculationType
+                            && savingsAssosiations.interestCalculationType.value
                             ? savingsAssosiations.interestCalculationType.value
                             : "-"
                         }
@@ -761,7 +806,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.interestCalculationDaysInYearType.value != null
+                          savingsAssosiations
+                            && savingsAssosiations.interestCalculationDaysInYearType
+                            && savingsAssosiations.interestCalculationDaysInYearType.value
                             ? savingsAssosiations.interestCalculationDaysInYearType.value
                             : "-"
                         }
@@ -779,7 +826,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.summary.totalFeeCharge != null
+                          savingsAssosiations
+                            && savingsAssosiations.summary
+                            && savingsAssosiations.summary.totalFeeCharge
                             ? savingsAssosiations.summary.totalFeeCharge
                             : "-"
                         }
@@ -797,8 +846,11 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          Array.isArray(savingsAssosiations.lastActiveTransactionDate) && savingsAssosiations.lastActiveTransactionDate.length > 0
-                            ? savingsAssosiations.lastActiveTransactionDate[2] + " " + MONTHS_ID[savingsAssosiations.lastActiveTransactionDate[1] - 1] + " " + savingsAssosiations.lastActiveTransactionDate[0]
+                          savingsAssosiations
+                            && savingsAssosiations.lastActiveTransactionDate
+                            ? Array.isArray(savingsAssosiations.lastActiveTransactionDate) && savingsAssosiations.lastActiveTransactionDate.length > 0
+                              ? savingsAssosiations.lastActiveTransactionDate[2] + " " + MONTHS_ID[savingsAssosiations.lastActiveTransactionDate[1] - 1] + " " + savingsAssosiations.lastActiveTransactionDate[0]
+                              : "-"
                             : "-"
                         }
                       </strong>
@@ -815,7 +867,8 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.minBalanceForInterestCalculation != null
+                          savingsAssosiations
+                            && savingsAssosiations.minBalanceForInterestCalculation
                             ? numToMoney(savingsAssosiations.minBalanceForInterestCalculation)
                             : "-"
                         }
@@ -833,7 +886,8 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.enforceMinRequiredBalance != null
+                          savingsAssosiations
+                            && savingsAssosiations.enforceMinRequiredBalance
                             ? savingsAssosiations.enforceMinRequiredBalance
                               ? "Yes"
                               : "No"
@@ -853,7 +907,8 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.minRequiredBalance != null
+                          savingsAssosiations
+                            && savingsAssosiations.minRequiredBalance
                             ? numToMoney(savingsAssosiations.minRequiredBalance)
                             : "-"
                         }
@@ -871,7 +926,9 @@ const SavingDataDetail = props => {
                     >
                       <strong>
                         {
-                          savingsAssosiations.taxGroup.name != null
+                          savingsAssosiations
+                            && savingsAssosiations.taxGroup
+                            && savingsAssosiations.taxGroup.name
                             ? savingsAssosiations.taxGroup.name
                             : "-"
                         }

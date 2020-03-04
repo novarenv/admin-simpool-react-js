@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import {
   Button,
@@ -71,8 +71,29 @@ const Savings = props => {
     })
   }
 
+  const [activeSavings, setActiveSavings] = useState([])
+  let shownSavings = []
+
+  useEffect(() => {
+    props.savings.map(acc => {
+      if (acc.status.id === 300 || acc.status.id === 200 || acc.status.id === 100) {
+        setActiveSavings(prevArray => [...prevArray, acc])
+      }
+
+      return null
+    })
+
+    return () => { };
+  }, [props.savings])
+
   return (
     <div>
+      <div className="row justify-content-end">
+        <Button outline className="mt-2 mr-3 mb-3 col-4 col-md-3" color="primary">
+          View Closed Savings
+        </Button >
+      </div>
+
       <div className="row ft-detail list-header d-flex justify-content-center center-parent">
         <div className="col-2">
           <span>Account Number</span>
@@ -90,12 +111,25 @@ const Savings = props => {
           <span>Balance</span>
         </div>
       </div>
+
       {
-        props.savings.map((acc, key) => {
+        activeSavings.map((acc, key) => {
           return (
             <div key={"Savings " + key}>
               <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
                 <div className="col-2">
+
+                  {
+                    acc.status.id != null
+                      ? acc.status.id === 300
+                        ? (<span className="ml-auto circle bg-success circle-lg" />)
+                        : acc.status.id === 200
+                          ? (<span className="ml-auto circle bg-primary circle-lg" />)
+                          : acc.status.id === 100
+                            ? (<span className="ml-auto circle bg-warning circle-lg" />)
+                            : null
+                      : null
+                  }
                   <span>{acc.accountNo}</span>
                 </div>
                 <div className="col-2">
@@ -1924,12 +1958,6 @@ class MemberDataDetail extends Component {
                         <strong className="col-md-8">
                           {
                             "-"
-                            // clientId != null
-                            //   ? clientId.officeName != null
-                            //     ? clientId.officeName
-                            //     : "-"
-                            //   : 
-                            // "-"
                           }
                         </strong>
                       </div>
@@ -1949,12 +1977,14 @@ class MemberDataDetail extends Component {
                 <TabPane tabId="savings" role="tabpanel">
                   {
                     Array.isArray(this.state.clientAccount.savingsAccounts) && this.state.clientAccount.savingsAccounts.length > 0
-                      ? (<Savings
-                        history={this.props.history}
-                        savings={this.state.clientAccount.savingsAccounts}
-                        tenant={this.props.settings.tenantIdentifier}
-                        clientId={this.state.clientIdNo}
-                      />)
+                      ? (
+                        <Savings
+                          history={this.props.history}
+                          savings={this.state.clientAccount.savingsAccounts}
+                          tenant={this.props.settings.tenantIdentifier}
+                          clientId={this.state.clientIdNo}
+                        />
+                      )
                       : (
                         <div className="center-parent mt-3 ft-detail">
                           <span>Pengguna tidak punya simpanan</span>
