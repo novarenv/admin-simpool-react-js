@@ -25,11 +25,16 @@ const SavingDataDetail = props => {
   const [activeTab, setActiveTab] = useState("summary")
   const [savingsAssosiations, setSavingsAssosiations] = useState({
     currency: {},
+    interestCalculationDaysInYearType: {},
+    interestCalculationType: {},
+    interestCompoundingPeriodType: {},
+    interestPostingPeriodType: {},
     officeData: {},
     openReason: {},
     transactionRestriction: {},
     status: {},
     summary: {},
+    taxGroup: {},
     timeline: {}
   })
   const [savingsId] = useState(props.match.params.id)
@@ -85,37 +90,42 @@ const SavingDataDetail = props => {
     document.body.removeChild(downloadLink);
   }
 
-  const leftFirst = {
-    backgroundColor: "#F9F9F9",
-    width: "40%",
-    height: 36,
-    alignItems: "center",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#DDDDDD"
+  let clientId
+  if (savingsAssosiations.clientId != null) {
+    clientId = savingsAssosiations.clientId
   }
-  const leftSecond = {
-    backgroundColor: "#FFFFFF",
-    width: "40%",
-    height: 36,
-    alignItems: "center",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "#DDDDDD"
-  }
+  console.log(clientId)
 
-  const rightFirst = {
-    backgroundColor: "#F9F9F9",
-    width: "60%",
+  const leftCol = {
+    backgroundColor: "#F5F5F5",
+    width: "55%",
     height: 36,
     alignItems: "center",
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "#DDDDDD"
   }
-  const rightSecond = {
+  const rightCol = {
     backgroundColor: "#FFFFFF",
-    width: "60%",
+    width: "45%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
+  }
+  const first = {
+    backgroundColor: "#F9F9F9",
+    width: "40%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
+  }
+  const second = {
+    backgroundColor: "#FFFFFF",
+    width: "40%",
     height: 36,
     alignItems: "center",
     borderWidth: 1,
@@ -210,7 +220,7 @@ const SavingDataDetail = props => {
         <CardBody>
           <Link
             to={{
-              pathname: "/simpool/member/saving-data",
+              pathname: "/simpool/member/data-detail/" + clientId,
               search: "?tenantIdentifier=" + props.settings.tenantIdentifier
             }}>
             <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit">Kembali</Button>
@@ -256,12 +266,12 @@ const SavingDataDetail = props => {
             >
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Activated On</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -274,12 +284,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Currency</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   <strong>
                     {
@@ -292,12 +302,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Product Code</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -310,12 +320,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Is Use Passbook ?</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   <strong>
                     {
@@ -330,12 +340,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Is Intermediate Account ?</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -350,12 +360,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Display Name</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   <strong>
                     {
@@ -368,12 +378,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Passbook Number</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -393,12 +403,12 @@ const SavingDataDetail = props => {
             >
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Field Officer</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -411,12 +421,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Balance</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   {
                     savingsAssosiations.summary.accountBalance != null
@@ -437,12 +447,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Available Balance</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -455,12 +465,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Open Reason</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   <strong>
                     {
@@ -473,12 +483,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>Transaction Restriction</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     {
@@ -491,12 +501,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftSecond}
+                  style={second}
                 >
                   <span>Office</span>
                 </td>
                 <td
-                  style={rightSecond}
+                  style={second}
                 >
                   <strong>
                     {
@@ -509,12 +519,12 @@ const SavingDataDetail = props => {
               </tr>
               <tr>
                 <td
-                  style={leftFirst}
+                  style={first}
                 >
                   <span>External Account Number</span>
                 </td>
                 <td
-                  style={rightFirst}
+                  style={first}
                 >
                   <strong>
                     -
@@ -525,13 +535,19 @@ const SavingDataDetail = props => {
           </div>
 
           <Nav tabs justified className="mt-5">
-            <NavItem className="nav-tab">
-              <NavLink className={activeTab === 'summary' ? 'active' : ''}
-                onClick={() => { setActiveTab('summary'); }}
-              >
-                Summary
-              </NavLink>
-            </NavItem>
+            {
+              savingsAssosiations.summary != null
+                ? (
+                  <NavItem className="nav-tab">
+                    <NavLink className={activeTab === 'summary' ? 'active' : ''}
+                      onClick={() => { setActiveTab('summary'); }}
+                    >
+                      Summary
+                    </NavLink>
+                  </NavItem>
+                )
+                : null
+            }
             {
               tes
                 ? (
@@ -558,7 +574,7 @@ const SavingDataDetail = props => {
                 )
                 : null
             }
-            
+
             {
               tes
                 ? (
@@ -576,13 +592,303 @@ const SavingDataDetail = props => {
           </Nav>
 
           <TabContent activeTab={activeTab}>
-            <TabPane className="ft-detail" tabId="detail" role="tabpanel">
+            <TabPane className="ft-detail" tabId="summary" role="tabpanel">
+              <div className="row justify-content-center my-3">
+                <table
+                  className="table col-lg-5 ft-detail mx-2"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Total Deposits</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.summary.totalDeposits != null
+                            ? numToMoney(savingsAssosiations.summary.totalDeposits)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Total withdrawals</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.summary.totalWithdrawals != null
+                            ? numToMoney(savingsAssosiations.summary.totalWithdrawals)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Interest earned</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.summary.totalInterestEarned != null
+                            ? numToMoney(savingsAssosiations.summary.totalInterestEarned)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Interest posted</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.summary.totalInterestPosted != null
+                            ? numToMoney(savingsAssosiations.summary.totalInterestPosted)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Normal interest rate</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.nominalAnnualInterestRate != null
+                            ? numToMoney(savingsAssosiations.nominalAnnualInterestRate) + " %"
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Interest compounding period</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.interestCompoundingPeriodType.value != null
+                            ? savingsAssosiations.interestCompoundingPeriodType.value
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Interest posting period</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.interestPostingPeriodType.value != null
+                            ? savingsAssosiations.interestPostingPeriodType.value
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                </table>
+
+                <div className="col-1" />
+
+                <table
+                  className="table col-lg-5 ft-detail mx-2"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Interest calculated using</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.interestCalculationType.value != null
+                            ? savingsAssosiations.interestCalculationType.value
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Calculation Days in Year</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.interestCalculationDaysInYearType.value != null
+                            ? savingsAssosiations.interestCalculationDaysInYearType.value
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Withdrawal fee</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.summary.totalFeeCharge != null
+                            ? savingsAssosiations.summary.totalFeeCharge
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Last Active Transaction Date</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          Array.isArray(savingsAssosiations.lastActiveTransactionDate) && savingsAssosiations.lastActiveTransactionDate.length > 0
+                            ? savingsAssosiations.lastActiveTransactionDate[2] + " " + MONTHS_ID[savingsAssosiations.lastActiveTransactionDate[1] - 1] + " " + savingsAssosiations.lastActiveTransactionDate[0]
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Balance Required For Interest Calculation</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.minBalanceForInterestCalculation != null
+                            ? numToMoney(savingsAssosiations.minBalanceForInterestCalculation)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Enforce minimum balance</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.enforceMinRequiredBalance != null
+                            ? savingsAssosiations.enforceMinRequiredBalance
+                              ? "Yes"
+                              : "No"
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Minimum Balance</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.minRequiredBalance != null
+                            ? numToMoney(savingsAssosiations.minRequiredBalance)
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style={leftCol}
+                    >
+                      <span>Withhold Tax group</span>
+                    </td>
+                    <td
+                      style={rightCol}
+                    >
+                      <strong>
+                        {
+                          savingsAssosiations.taxGroup.name != null
+                            ? savingsAssosiations.taxGroup.name
+                            : "-"
+                        }
+                      </strong>
+                    </td>
+                  </tr>
+                </table>
+              </div>
 
             </TabPane>
-            <TabPane className="ft-detail" tabId="detail" role="tabpanel">
+            <TabPane className="ft-detail" tabId="transactions" role="tabpane2">
 
             </TabPane>
-            <TabPane className="ft-detail" tabId="detail" role="tabpanel">
+            <TabPane className="ft-detail" tabId="taxTransactions" role="tabpane3">
+
+            </TabPane>
+            <TabPane className="ft-detail" tabId="charges" role="tabpane4">
 
             </TabPane>
           </TabContent>
