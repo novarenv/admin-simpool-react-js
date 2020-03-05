@@ -12,8 +12,6 @@ import { authSelector } from '../reducers/auth.reducers'
 
 function* search(action) {
   const auth = yield select(authSelector)
-
-  console.log(action)
   
   try {
     const search = yield axios

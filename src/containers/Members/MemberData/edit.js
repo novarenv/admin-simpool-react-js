@@ -834,13 +834,15 @@ class MemberDataEdit extends Component {
                       if (values.legalFormId || values.legalFormId === "") {
                         this.changeState("legalFormId", values.legalFormId)
 
-                        state.clientLegalFormOptions.map(option => {
-                          if (option.id === values.legalFormId) {
-                            this.changeState("legalForm", option.value)
-                          }
+                        if (Array.isArray(state.clientLegalFormOptions) && state.clientLegalFormOptions.length > 0) {
+                          state.clientLegalFormOptions.map(option => {
+                            if (option.id === values.legalFormId) {
+                              this.changeState("legalForm", option.value)
+                            }
 
-                          return null
-                        })
+                            return null
+                          })
+                        }
                       }
                       if (values.sectorId || values.sectorId === "") {
                         this.changeState("sectorId", values.sectorId)
