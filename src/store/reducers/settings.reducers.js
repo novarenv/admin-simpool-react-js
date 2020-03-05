@@ -18,7 +18,7 @@ const initialSettings = {
     /* Toggle for the offsidebar */
     offsidebarOpen: false,
     /* Toggle for the sidebar offcanvas (mobile) */
-    asideToggled: false,
+    asideToggled: true,
     /* Toggle for the sidebar user block */
     showUserBlock: false,
     /* Enables layout horizontal */

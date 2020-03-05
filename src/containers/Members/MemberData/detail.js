@@ -72,12 +72,29 @@ const Savings = props => {
   }
 
   const [activeSavings, setActiveSavings] = useState([])
-  let shownSavings = []
+  const [inActiveSavings, setInActiveSavings] = useState([])
+  const [shownSavings, setShownSavings] = useState(true)
+
+  const [activeDeposito, setActiveDeposito] = useState([])
+  const [inActiveDeposito, setInActiveDeposito] = useState([])
+  const [shownDeposito, setShownDeposito] = useState(true)
 
   useEffect(() => {
     props.savings.map(acc => {
-      if (acc.status.id === 300 || acc.status.id === 200 || acc.status.id === 100) {
-        setActiveSavings(prevArray => [...prevArray, acc])
+      if (acc.depositType.id === 100) {
+        if (acc.status.id === 600) {
+          setInActiveSavings(prevArray => [...prevArray, acc])
+        } else {
+          setActiveSavings(prevArray => [...prevArray, acc])
+        }
+      }
+      
+      if (acc.depositType.id === 200) {
+        if (acc.status.id === 600) {
+          setInActiveDeposito(prevArray => [...prevArray, acc])
+        } else {
+          setActiveDeposito(prevArray => [...prevArray, acc])
+        }
       }
 
       return null
@@ -88,77 +105,266 @@ const Savings = props => {
 
   return (
     <div>
-      <div className="row justify-content-end">
-        <Button outline className="mt-2 mr-3 mb-3 col-4 col-md-3" color="primary">
-          View Closed Savings
+      <div className="row justify-content-between">
+        <div className="col-7 col-md-8 row align-items-center ml-3">
+          <h2>Savings</h2>
+        </div>
+        <Button outline className="mt-2 mr-3 mb-3 col-4 col-md-3" color="primary" onClick={() => setShownSavings(!shownSavings)}>
+          {
+            shownSavings
+              ? "View Closed Savings"
+              : "View Active Savings"
+          }
         </Button >
       </div>
 
-      <div className="row ft-detail list-header d-flex justify-content-center center-parent">
-        <div className="col-2">
-          <span>Account Number</span>
+      {
+        shownSavings
+          ? (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+                <div className="col-2">
+                  <span>Account Number</span>
+                </div>
+                <div className="col-2">
+                  <span>Saving Product</span>
+                </div>
+                <div className="col-2">
+                  <span>Bilyet Number</span>
+                </div>
+                <div className="col-2">
+                  <span>Last Active</span>
+                </div>
+                <div className="col-2">
+                  <span>Balance</span>
+                </div>
+              </div>
+
+              {
+                activeSavings.map((acc, key) => {
+                  return (
+                    <div key={"Savings " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
+                        <div className="col-2">
+                          {
+                            acc.status.id != null
+                              ? acc.status.id === 300
+                                ? (<span className="ml-auto circle bg-success circle-lg" />)
+                                : acc.status.id === 200
+                                  ? (<span className="ml-auto circle bg-primary circle-lg" />)
+                                  : acc.status.id === 100
+                                    ? (<span className="ml-auto circle bg-warning circle-lg" />)
+                                    : null
+                              : null
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.bilyetNumber}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{
+                            Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
+                              ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
+                              : null
+                          }</span>
+                        </div>
+                        <div className="col-2">
+                          {
+                            acc.accountBalance != null
+                              ? (<span>{NumberFormatted(acc.accountBalance)}</span>)
+                              : null
+                          }
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center">
+                        <hr className="col-10 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          )
+          : (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+                <div className="col-4">
+                  <span>Account Number</span>
+                </div>
+                <div className="col-4">
+                  <span>Saving Product</span>
+                </div>
+                <div className="col-4">
+                  <span>Last Active</span>
+                </div>
+              </div>
+
+              {
+                inActiveSavings.map((acc, key) => {
+                  return (
+                    <div key={"Savings " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
+                        <div className="col-4">
+                          {
+                            (<span className="ml-auto circle circle-lg" style={{ backgroundColor: "gray" }} />)
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-4">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-4">
+                          <span>{
+                            Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
+                              ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
+                              : null
+                          }</span>
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center">
+                        <hr className="col-10 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          )
+      }
+
+      <div className="row justify-content-between mt-5">
+        <div className="col-7 col-md-8 row align-items-center ml-3">
+          <h2>Deposito</h2>
         </div>
-        <div className="col-2">
-          <span>Saving Product</span>
-        </div>
-        <div className="col-2">
-          <span>Bilyet Number</span>
-        </div>
-        <div className="col-2">
-          <span>Last Active</span>
-        </div>
-        <div className="col-2">
-          <span>Balance</span>
-        </div>
+        <Button outline className="mt-2 mr-3 mb-3 col-4 col-md-3" color="primary" onClick={() => setShownDeposito(!shownDeposito)}>
+          {
+            shownDeposito
+              ? "View Closed Deposito"
+              : "View Active Deposito"
+          }
+        </Button >
       </div>
 
       {
-        activeSavings.map((acc, key) => {
-          return (
-            <div key={"Savings " + key}>
-              <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
+        shownDeposito
+          ? (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
                 <div className="col-2">
+                  <span>Account Number</span>
+                </div>
+                <div className="col-2">
+                  <span>Saving Product</span>
+                </div>
+                <div className="col-2">
+                  <span>Bilyet Number</span>
+                </div>
+                <div className="col-2">
+                  <span>Last Active</span>
+                </div>
+                <div className="col-2">
+                  <span>Balance</span>
+                </div>
+              </div>
 
-                  {
-                    acc.status.id != null
-                      ? acc.status.id === 300
-                        ? (<span className="ml-auto circle bg-success circle-lg" />)
-                        : acc.status.id === 200
-                          ? (<span className="ml-auto circle bg-primary circle-lg" />)
-                          : acc.status.id === 100
-                            ? (<span className="ml-auto circle bg-warning circle-lg" />)
-                            : null
-                      : null
-                  }
-                  <span>{acc.accountNo}</span>
-                </div>
-                <div className="col-2">
-                  <span>{acc.productName}</span>
-                </div>
-                <div className="col-2">
-                  <span>{acc.bilyetNumber}</span>
-                </div>
-                <div className="col-2">
-                  <span>{
-                    Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
-                      ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
-                      : null
-                  }</span>
-                </div>
-                <div className="col-2">
-                  {
-                    acc.accountBalance != null
-                      ? (<span>{NumberFormatted(acc.accountBalance)}</span>)
-                      : null
-                  }
-                </div>
-              </div>
-              <div className="row d-flex justify-content-center">
-                <hr className="col-10 hr-margin-0" />
-              </div>
+              {
+                activeDeposito.map((acc, key) => {
+                  return (
+                    <div key={"Deposito " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
+                        <div className="col-2">
+                          {
+                            acc.status.id != null
+                              ? acc.status.id === 300
+                                ? (<span className="ml-auto circle bg-success circle-lg" />)
+                                : acc.status.id === 200
+                                  ? (<span className="ml-auto circle bg-primary circle-lg" />)
+                                  : acc.status.id === 100
+                                    ? (<span className="ml-auto circle bg-warning circle-lg" />)
+                                    : null
+                              : null
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.bilyetNumber}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{
+                            Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
+                              ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
+                              : null
+                          }</span>
+                        </div>
+                        <div className="col-2">
+                          {
+                            acc.accountBalance != null
+                              ? (<span>{NumberFormatted(acc.accountBalance)}</span>)
+                              : null
+                          }
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center">
+                        <hr className="col-10 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
             </div>
           )
-        })
+          : (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+                <div className="col-4">
+                  <span>Account Number</span>
+                </div>
+                <div className="col-4">
+                  <span>Saving Product</span>
+                </div>
+                <div className="col-4">
+                  <span>Last Active</span>
+                </div>
+              </div>
+
+              {
+                inActiveDeposito.map((acc, key) => {
+                  return (
+                    <div key={"Deposito " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked(acc.id)}>
+                        <div className="col-4">
+                          {
+                            (<span className="ml-auto circle circle-lg" style={{ backgroundColor: "gray" }} />)
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-4">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-4">
+                          <span>{
+                            Array.isArray(acc.lastActiveTransactionDate) && acc.lastActiveTransactionDate.length > 0
+                              ? acc.lastActiveTransactionDate[2] + " " + MONTHS_ID[acc.lastActiveTransactionDate[1] - 1] + " " + acc.lastActiveTransactionDate[0]
+                              : null
+                          }</span>
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center">
+                        <hr className="col-10 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          )
       }
     </div>
   )
@@ -1997,7 +2203,7 @@ class MemberDataDetail extends Component {
                       search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
                     }}
                   >
-                    <Button outline className="col-12 mt-4 mb-2" color="primary" type="button">
+                    <Button className="col-12 mt-4 mb-2" color="primary" type="button">
                       Tambah Simpanan
                     </Button>
                   </Link>

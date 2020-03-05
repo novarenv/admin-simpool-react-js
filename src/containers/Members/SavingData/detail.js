@@ -23,20 +23,7 @@ import ContentWrapper from '../../../components/Layout/ContentWrapper'
 
 const SavingDataDetail = props => {
   const [activeTab, setActiveTab] = useState("summary")
-  const [savingsAssosiations, setSavingsAssosiations] = useState({
-    currency: {},
-    interestCalculationDaysInYearType: {},
-    interestCalculationType: {},
-    interestCompoundingPeriodType: {},
-    interestPostingPeriodType: {},
-    officeData: {},
-    openReason: {},
-    transactionRestriction: {},
-    status: {},
-    summary: {},
-    taxGroup: {},
-    timeline: {}
-  })
+  const [savingsAssosiations, setSavingsAssosiations] = useState({})
   const [savingsId] = useState(props.match.params.id)
   const [modalQr, setModalQr] = useState(false)
   const [qrCode, setQrCode] = useState(null)
@@ -94,7 +81,6 @@ const SavingDataDetail = props => {
   if (savingsAssosiations && savingsAssosiations.clientId) {
     clientId = savingsAssosiations.clientId
   }
-  console.log(clientId)
 
   const leftCol = {
     backgroundColor: "#F5F5F5",
@@ -147,6 +133,40 @@ const SavingDataDetail = props => {
 
     return () => { }
   }, [props.actions, savingsId])
+
+  const [colIndex, setColIndex] = useState([])
+
+  useEffect(() => {
+    if (savingsAssosiations
+      && savingsAssosiations.status
+      && savingsAssosiations.status.id
+      && savingsAssosiations.status.id !== 600) {
+      setColIndex([
+        savingsAssosiations
+          && savingsAssosiations.summary
+          && savingsAssosiations.summary.totalDeposits
+          ? numToMoney(savingsAssosiations.summary.totalDeposits)
+          : "-",
+        savingsAssosiations
+          && savingsAssosiations.summary
+          && savingsAssosiations.summary.totalWithdrawals
+          ? numToMoney(savingsAssosiations.summary.totalWithdrawals)
+          : "-",
+        savingsAssosiations
+          && savingsAssosiations.summary
+          && savingsAssosiations.summary.totalInterestEarned
+          ? numToMoney(savingsAssosiations.summary.totalInterestEarned)
+          : "-",
+        savingsAssosiations
+          && savingsAssosiations.summary
+          && savingsAssosiations.summary.totalInterestPosted
+          ? numToMoney(savingsAssosiations.summary.totalInterestPosted)
+          : "-"
+      ])
+    }
+
+    return () => { };
+  }, [savingsAssosiations])
 
   return (
     <ContentWrapper>
@@ -240,13 +260,15 @@ const SavingDataDetail = props => {
                 savingsAssosiations
                   && savingsAssosiations.status
                   && savingsAssosiations.status.id
-                  ? savingsAssosiations.status.id === 300
-                    ? (<span className="ml-auto circle bg-success circle-lg mb-3" />)
-                    : savingsAssosiations.status.id === 200
-                      ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
-                      : savingsAssosiations.status.id === 100
+                  ? savingsAssosiations.status.id === 600
+                    ? (<span className="ml-auto circle circle-lg mb-3" style={{backgroundColor: "gray"}} />)
+                    : savingsAssosiations.status.id === 300
+                      ? (<span className="ml-auto circle bg-success circle-lg mb-3" />)
+                      : savingsAssosiations.status.id === 200
                         ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
-                        : null
+                        : savingsAssosiations.status.id === 100
+                          ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
+                          : null
                   : null
               }
             </h1>
@@ -272,147 +294,149 @@ const SavingDataDetail = props => {
             <table
               className="table col-md-5 col-lg-4 ft-detail mt-5 mx-2"
             >
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Activated On</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.timeline
-                        && savingsAssosiations.timeline.activatedOnDate
-                        ? Array.isArray(savingsAssosiations.timeline.activatedOnDate) && savingsAssosiations.timeline.activatedOnDate.length > 0
-                          ? savingsAssosiations.timeline.activatedOnDate[2] + " " + MONTHS_ID[savingsAssosiations.timeline.activatedOnDate[1] - 1] + " " + savingsAssosiations.timeline.activatedOnDate[0]
+              <tbody>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Activated On</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.timeline
+                          && savingsAssosiations.timeline.activatedOnDate
+                          ? Array.isArray(savingsAssosiations.timeline.activatedOnDate) && savingsAssosiations.timeline.activatedOnDate.length > 0
+                            ? savingsAssosiations.timeline.activatedOnDate[2] + " " + MONTHS_ID[savingsAssosiations.timeline.activatedOnDate[1] - 1] + " " + savingsAssosiations.timeline.activatedOnDate[0]
+                            : "-"
                           : "-"
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Currency</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.currency
-                        && savingsAssosiations.currency.name
-                        ? savingsAssosiations.currency.name
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Product Code</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.externalId
-                        ? savingsAssosiations.externalId
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Is Use Passbook ?</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.passbook
-                        ? savingsAssosiations.passbook
-                          ? "Ya"
-                          : "Tidak"
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Is Intermediate Account ?</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.isIntermediateAccount
-                        ? savingsAssosiations.isIntermediateAccount
-                          ? "Ya"
-                          : "Tidak"
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Display Name</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.displayName
-                        ? savingsAssosiations.displayName
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Passbook Number</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.passbookNumber
-                        ? savingsAssosiations.passbookNumber
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Currency</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.currency
+                          && savingsAssosiations.currency.name
+                          ? savingsAssosiations.currency.name
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Product Code</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.externalId
+                          ? savingsAssosiations.externalId
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Is Use Passbook ?</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.passbook
+                          ? savingsAssosiations.passbook
+                            ? "Ya"
+                            : "Tidak"
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Is Intermediate Account ?</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.isIntermediateAccount
+                          ? savingsAssosiations.isIntermediateAccount
+                            ? "Ya"
+                            : "Tidak"
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Display Name</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.displayName
+                          ? savingsAssosiations.displayName
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Passbook Number</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.passbookNumber
+                          ? savingsAssosiations.passbookNumber
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+              </tbody>
             </table>
 
             <div className="col-1" />
@@ -420,146 +444,148 @@ const SavingDataDetail = props => {
             <table
               className="table col-md-5 col-lg-4 ft-detail mt-5 mx-2"
             >
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Field Officer</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
+              <tbody>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Field Officer</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.fieldOfficerName
+                          ? savingsAssosiations.fieldOfficerName
+                          : "Unassigned"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Balance</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
                     {
                       savingsAssosiations
-                        && savingsAssosiations.fieldOfficerName
-                        ? savingsAssosiations.fieldOfficerName
-                        : "Unassigned"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Balance</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  {
-                    savingsAssosiations
-                      && savingsAssosiations.summary
-                      && savingsAssosiations.summary.accountBalance
-                      ? numToMoney(savingsAssosiations.summary.accountBalance).includes("-")
-                        ? (
-                          <strong style={{ color: "red" }}>
-                            {numToMoney(savingsAssosiations.summary.accountBalance)}
-                          </strong>
-                        )
-                        : (
-                          <strong>
-                            {numToMoney(savingsAssosiations.summary.accountBalance)}
-                          </strong>
-                        )
-                      : "-"
-                  }
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Available Balance</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.availableBalance
-                        ? numToMoney(savingsAssosiations.availableBalance)
+                        && savingsAssosiations.summary
+                        && savingsAssosiations.summary.accountBalance
+                        ? numToMoney(savingsAssosiations.summary.accountBalance).includes("-")
+                          ? (
+                            <strong style={{ color: "red" }}>
+                              {numToMoney(savingsAssosiations.summary.accountBalance)}
+                            </strong>
+                          )
+                          : (
+                            <strong>
+                              {numToMoney(savingsAssosiations.summary.accountBalance)}
+                            </strong>
+                          )
                         : "-"
                     }
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Available Balance</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.availableBalance
+                          ? numToMoney(savingsAssosiations.availableBalance)
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Open Reason</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.openReason
+                          && savingsAssosiations.openReason.description
+                          ? savingsAssosiations.openReason.description
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>Transaction Restriction</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.transactionRestriction
+                          && savingsAssosiations.transactionRestriction.name
+                          ? savingsAssosiations.transactionRestriction.name
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={second}
+                  >
+                    <span>Office</span>
+                  </td>
+                  <td
+                    style={second}
+                  >
+                    <strong>
+                      {
+                        savingsAssosiations
+                          && savingsAssosiations.officeData
+                          && savingsAssosiations.officeData.name
+                          ? savingsAssosiations.officeData.name
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={first}
+                  >
+                    <span>External Account Number</span>
+                  </td>
+                  <td
+                    style={first}
+                  >
+                    <strong>
+                      -
                   </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Open Reason</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.openReason
-                        && savingsAssosiations.openReason.description
-                        ? savingsAssosiations.openReason.description
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>Transaction Restriction</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.transactionRestriction
-                        && savingsAssosiations.transactionRestriction.name
-                        ? savingsAssosiations.transactionRestriction.name
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={second}
-                >
-                  <span>Office</span>
-                </td>
-                <td
-                  style={second}
-                >
-                  <strong>
-                    {
-                      savingsAssosiations
-                        && savingsAssosiations.officeData
-                        && savingsAssosiations.officeData.name
-                        ? savingsAssosiations.officeData.name
-                        : "-"
-                    }
-                  </strong>
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={first}
-                >
-                  <span>External Account Number</span>
-                </td>
-                <td
-                  style={first}
-                >
-                  <strong>
-                    -
-                  </strong>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
 
@@ -628,145 +654,158 @@ const SavingDataDetail = props => {
                   className="table col-lg-5 ft-detail mx-2"
                   style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
                 >
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Total Deposits</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.summary
-                            && savingsAssosiations.summary.totalDeposits
-                            ? numToMoney(savingsAssosiations.summary.totalDeposits)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Total withdrawals</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.summary
-                            && savingsAssosiations.summary.totalWithdrawals
-                            ? numToMoney(savingsAssosiations.summary.totalWithdrawals)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Interest earned</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.summary
-                            && savingsAssosiations.summary.totalInterestEarned
-                            ? numToMoney(savingsAssosiations.summary.totalInterestEarned)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Interest posted</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.summary
-                            && savingsAssosiations.summary.totalInterestPosted
-                            ? numToMoney(savingsAssosiations.summary.totalInterestPosted)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Normal interest rate</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.nominalAnnualInterestRate
-                            ? numToMoney(savingsAssosiations.nominalAnnualInterestRate) + " %"
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Interest compounding period</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.interestCompoundingPeriodType
-                            && savingsAssosiations.interestCompoundingPeriodType.value
-                            ? savingsAssosiations.interestCompoundingPeriodType.value
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Interest posting period</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.interestPostingPeriodType
-                            && savingsAssosiations.interestPostingPeriodType.value
-                            ? savingsAssosiations.interestPostingPeriodType.value
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
+                  <tbody>
+                    {
+                      colIndex[0]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Total Deposits</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[0]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[1]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Total Withdrawal</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[1]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[2]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Interest earned</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[2]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[3]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Interest posted</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[3]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Normal interest rate</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.nominalAnnualInterestRate
+                              ? numToMoney(savingsAssosiations.nominalAnnualInterestRate) + " %"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest compounding period</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.interestCompoundingPeriodType
+                              && savingsAssosiations.interestCompoundingPeriodType.value
+                              ? savingsAssosiations.interestCompoundingPeriodType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest posting period</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            colIndex.map(col => { return col })
+                          }
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.interestPostingPeriodType
+                              && savingsAssosiations.interestPostingPeriodType.value
+                              ? savingsAssosiations.interestPostingPeriodType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
 
                 <div className="col-1" />
@@ -775,166 +814,168 @@ const SavingDataDetail = props => {
                   className="table col-lg-5 ft-detail mx-2"
                   style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
                 >
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Interest calculated using</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.interestCalculationType
-                            && savingsAssosiations.interestCalculationType.value
-                            ? savingsAssosiations.interestCalculationType.value
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Calculation Days in Year</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.interestCalculationDaysInYearType
-                            && savingsAssosiations.interestCalculationDaysInYearType.value
-                            ? savingsAssosiations.interestCalculationDaysInYearType.value
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Withdrawal fee</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.summary
-                            && savingsAssosiations.summary.totalFeeCharge
-                            ? savingsAssosiations.summary.totalFeeCharge
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Last Active Transaction Date</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.lastActiveTransactionDate
-                            ? Array.isArray(savingsAssosiations.lastActiveTransactionDate) && savingsAssosiations.lastActiveTransactionDate.length > 0
-                              ? savingsAssosiations.lastActiveTransactionDate[2] + " " + MONTHS_ID[savingsAssosiations.lastActiveTransactionDate[1] - 1] + " " + savingsAssosiations.lastActiveTransactionDate[0]
+                  <tbody>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest calculated using</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.interestCalculationType
+                              && savingsAssosiations.interestCalculationType.value
+                              ? savingsAssosiations.interestCalculationType.value
                               : "-"
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Balance Required For Interest Calculation</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.minBalanceForInterestCalculation
-                            ? numToMoney(savingsAssosiations.minBalanceForInterestCalculation)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Enforce minimum balance</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.enforceMinRequiredBalance
-                            ? savingsAssosiations.enforceMinRequiredBalance
-                              ? "Yes"
-                              : "No"
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Minimum Balance</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.minRequiredBalance
-                            ? numToMoney(savingsAssosiations.minRequiredBalance)
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={leftCol}
-                    >
-                      <span>Withhold Tax group</span>
-                    </td>
-                    <td
-                      style={rightCol}
-                    >
-                      <strong>
-                        {
-                          savingsAssosiations
-                            && savingsAssosiations.taxGroup
-                            && savingsAssosiations.taxGroup.name
-                            ? savingsAssosiations.taxGroup.name
-                            : "-"
-                        }
-                      </strong>
-                    </td>
-                  </tr>
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Calculation Days in Year</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.interestCalculationDaysInYearType
+                              && savingsAssosiations.interestCalculationDaysInYearType.value
+                              ? savingsAssosiations.interestCalculationDaysInYearType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Withdrawal fee</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.summary
+                              && savingsAssosiations.summary.totalFeeCharge
+                              ? savingsAssosiations.summary.totalFeeCharge
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Last Active Transaction Date</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.lastActiveTransactionDate
+                              ? Array.isArray(savingsAssosiations.lastActiveTransactionDate) && savingsAssosiations.lastActiveTransactionDate.length > 0
+                                ? savingsAssosiations.lastActiveTransactionDate[2] + " " + MONTHS_ID[savingsAssosiations.lastActiveTransactionDate[1] - 1] + " " + savingsAssosiations.lastActiveTransactionDate[0]
+                                : "-"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Balance Required For Interest Calculation</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.minBalanceForInterestCalculation
+                              ? numToMoney(savingsAssosiations.minBalanceForInterestCalculation)
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Enforce minimum balance</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.enforceMinRequiredBalance
+                              ? savingsAssosiations.enforceMinRequiredBalance
+                                ? "Yes"
+                                : "No"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Minimum Balance</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.minRequiredBalance
+                              ? numToMoney(savingsAssosiations.minRequiredBalance)
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Withhold Tax group</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            savingsAssosiations
+                              && savingsAssosiations.taxGroup
+                              && savingsAssosiations.taxGroup.name
+                              ? savingsAssosiations.taxGroup.name
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
 
