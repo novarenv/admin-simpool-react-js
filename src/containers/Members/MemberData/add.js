@@ -30,6 +30,8 @@ import Swal from '../../../components/Common/Swal';
 // DateTimePicker
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
+import moment from 'moment'
+import 'moment/locale/id'
 
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
@@ -61,29 +63,58 @@ const onFieldChange = (val, field, form) => {
   form.setFieldValue(field.name, val);
 }
 
-const DateTime = ({ field, form, locale, value, error, touched, name }) => {
+const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => {
+  let valid
+  
+  const dd = String(new Date().getDate()).padStart(2, '0')
+  const mmmm = MONTHS_ID[new Date().getMonth()]
+  const yyyy = new Date().getFullYear()
+
+  const today = dd + ' ' + mmmm + ' ' + yyyy
+
+  if (field.name === "identityValidDate") {
+    const yesterday = Datetime.moment().subtract(1, 'd')
+    valid = current => {
+      return current.isAfter(yesterday)
+    }
+  } else if (field.name === "submittedOnDate" || field.name === "dateOfBirth") {
+    const valueDate = moment(dateParam).add(1, 'd')
+    valid = current => {
+      return current.isBefore(valueDate)
+    }
+  } else {
+    valid = current => {
+      return current
+    }
+  }
+
+  if (field.name === "dateOfBirth") {
+    value = today.slice(0, today.length-4) + (parseInt(today.slice(today.length-4, today.length))-17).toString()
+  }
+
   return (
     <Datetime
       inputProps={{
-        name: name,
-        className: 
+        name: field.name,
+        className:
           touched && error
             ? "form-control input-font-size dt-bg input-error"
             : "form-control input-font-size dt-bg"
         ,
-        id: name,
+        id: field.name,
         placeholder: "dd mmmm yyyy",
         autoComplete: "off",
-        readOnly: true,
-        value: value
+        readOnly: true
       }}
+      value={value}
       dateFormat="DD MMMM YYYY"
       timeFormat={false}
       closeOnSelect={true}
       locale={locale}
+      isValidDate={valid}
       onChange={val => onFieldChange(val, field, form)}
     />
-  );
+  )
 }
 
 const ValidDate = ({ field, form, locale, value, error, touched, name }) => {
@@ -236,7 +267,7 @@ class MemberDataAdd extends Component {
 
     this.state = {
       showNotDuplicate: false,
-      privateIdentity: true,
+      privateIdentity: false,
       formValidateDuplicate: false,
       totalFilteredRecords: false,
       pageItems: [],
@@ -1070,9 +1101,16 @@ class MemberDataAdd extends Component {
                                   <label className="mt-3" htmlFor="dateOfBirth">
                                     <Trans i18nKey='member.data-add.BIRTHDATE' /> <span className="red"> *</span>
                                   </label>
-                                  <Field name="dateOfBirth" onChange={handleChange} onBlur={handleBlur} component={DateTime}
-                                    locale={this.props.dashboard.language} value={values.dateOfBirth}
-                                    touched={touched.dateOfBirth} error={errors.dateOfBirth}
+                                  <Field
+                                    name="dateOfBirth"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    component={DateTime}
+                                    locale={this.props.dashboard.language}
+                                    value={values.dateOfBirth}
+                                    touched={touched.dateOfBirth}
+                                    error={errors.dateOfBirth}
+                                    dateParam={state.today}
                                   />
                                   <div className="input-feedback">{touched.dateOfBirth && errors.dateOfBirth}</div>
 
@@ -1088,6 +1126,7 @@ class MemberDataAdd extends Component {
                                     }
                                     name="typeOfIdentityId"
                                     onChange={handleChange}
+                                    onBlur={handleBlur}
                                   >
                                     <option value="">
                                       {this.props.i18n.t("member.data-add.IDENTITY_TYPE_PH")}
@@ -1398,7 +1437,9 @@ class MemberDataAdd extends Component {
                                       ? "custom-select custom-select-sm input-font-size input-error"
                                       : "custom-select custom-select-sm input-font-size"
                                   }
-                                  name="officeId" onChange={handleChange}
+                                  name="officeId"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
                                 >
                                   <option value="">Pilih Kantor</option>
                                   {
@@ -1435,9 +1476,15 @@ class MemberDataAdd extends Component {
                                 <label className="mt-3" htmlFor="dateOfBirth">
                                   <Trans i18nKey='member.data-add.BIRTHDATE' /> <span className="red"> *</span>
                                 </label>
-                                <Field name="dateOfBirth" onChange={handleChange} component={DateTime}
-                                  locale={this.props.dashboard.language} value={values.dateOfBirth}
-                                  error={errors.dateOfBirth} touched={touched.dateOfBirth}
+                                <Field
+                                  name="dateOfBirth"
+                                  onChange={handleChange}
+                                  component={DateTime}
+                                  locale={this.props.dashboard.language}
+                                  value={values.dateOfBirth}
+                                  error={errors.dateOfBirth}
+                                  touched={touched.dateOfBirth}
+                                  dateParam={state.today}
                                 />
                                 <div className="input-feedback">{touched.dateOfBirth && errors.dateOfBirth}</div>
               
@@ -1471,7 +1518,9 @@ class MemberDataAdd extends Component {
                                       ? "custom-select custom-select-sm input-font-size input-error"
                                       : "custom-select custom-select-sm input-font-size"
                                   }
-                                  name="religion" onChange={handleChange}
+                                  name="religion"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
                                 >
                                   <option value="">Pilih agama anda</option>
                                   {
@@ -1572,9 +1621,15 @@ class MemberDataAdd extends Component {
                                 <label className="mt-3" htmlFor="submittedOnDate">
                                   Submitted On Date <span className="red"> *</span>
                                 </label>
-                                <Field name="submittedOnDate" onChange={handleChange} component={DateTime}
-                                  locale={this.props.dashboard.language} value={values.submittedOnDate}
-                                  error={errors.submittedOnDate} touched={touched.submittedOnDate}
+                                <Field
+                                  name="submittedOnDate"
+                                  onChange={handleChange}
+                                  component={DateTime}
+                                  locale={this.props.dashboard.language}
+                                  value={values.submittedOnDate}
+                                  error={errors.submittedOnDate}
+                                  touched={touched.submittedOnDate}
+                                  dateParam={state.today}
                                 />
                                 <div className="input-feedback">{touched.submittedOnDate && errors.submittedOnDate}</div>
               
@@ -1588,7 +1643,9 @@ class MemberDataAdd extends Component {
                                       ? "custom-select custom-select-sm input-font-size input-error"
                                       : "custom-select custom-select-sm input-font-size"
                                   }
-                                  name="sectorId" onChange={handleChange}
+                                  name="sectorId"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
                                 >
                                   <option value="">Pilih Sector</option>
                                   {
@@ -1670,7 +1727,9 @@ class MemberDataAdd extends Component {
                                       ? "custom-select custom-select-sm input-font-size input-error"
                                       : "custom-select custom-select-sm input-font-size"
                                   }
-                                  name="flagTaxCodeValue" onChange={handleChange}
+                                  name="flagTaxCodeValue"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
                                 >
                                   <option value="">Pilih Flag Tax</option>
                                   {
@@ -1691,7 +1750,9 @@ class MemberDataAdd extends Component {
                                 <select
                                   value={values.staffId}
                                   className="custom-select custom-select-sm input-font-size"
-                                  name="staffId" onChange={handleChange}
+                                  name="staffId"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
                                 >
                                   <option value="">Pilih Staff</option>
                                   {
@@ -2015,7 +2076,7 @@ class MemberDataAdd extends Component {
                         <div className="input-feedback">{touched.identityPostalCode && errors.identityPostalCode}</div>
 
                         <label className="mt-3" htmlFor="identityVillage">
-                          Kelurahan / Desa
+                          Kelurahan / Desa <span className="red"> *</span>
                         </label>
                         <Input
                           name="identityVillage"
@@ -2181,7 +2242,7 @@ class MemberDataAdd extends Component {
                         <div className="input-feedback">{touched.subDistrict && errors.subDistrict}</div>
 
                         <label className="mt-3" htmlFor="village">
-                          Kelurahan / Desa <span className="red"> *</span>
+                          Kelurahan / Desa
                         </label>
                         <Input
                           name="village"

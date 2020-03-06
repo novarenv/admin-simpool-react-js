@@ -55,7 +55,7 @@ function* clientIndex(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.createRows(clientIndex)
 
@@ -91,7 +91,7 @@ function* checkDuplicate(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.checkTotalFilter(checkDuplicate)
 
@@ -115,7 +115,7 @@ function* clientTemplate(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientTemplate(clientTemplate)
 
@@ -137,7 +137,7 @@ function* clientAdd(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientAddRes(clientAdd)
 
@@ -165,7 +165,7 @@ function* getClientAccount(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientAccount(getClientAccount)
 
@@ -191,7 +191,7 @@ function* clientAddImage(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.uploadSelfieRes(clientAddImage)
 
@@ -217,7 +217,7 @@ function* clientAddDocument(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     if (typeof action.setClientDocuments == 'function') {
       action.setClientDocuments()
@@ -246,7 +246,7 @@ function* deleteClientImage(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     console.log(clientAddImage)
 
@@ -273,7 +273,7 @@ function* deleteClientDoc(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientDocId()
 
@@ -300,7 +300,7 @@ function* getClientDetail(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientDetail(getClientDetail)
 
@@ -326,7 +326,7 @@ function* getClientDocuments(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientDocuments(getClientDocuments)
 
@@ -352,7 +352,7 @@ function* getClientImage(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.getClientImage(getClientImage)
 
@@ -378,7 +378,7 @@ function* getClientId(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientId(getClientId)
 
@@ -406,7 +406,7 @@ function* getClientSummary(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setClientSummary(getClientSummary)
 
@@ -438,7 +438,7 @@ function* getDocAttach(action) {
         responseType: 'blob'
       })
       .then(response => window.URL.createObjectURL(new Blob([response.data])))
-      .catch(error => console.log(error.response.data, action))
+      .catch(error => console.log(error.response.data))
 
     action.setDocAttach(getDocAttach, action.payload.fileName)
 

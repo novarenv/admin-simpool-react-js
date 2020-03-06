@@ -1007,28 +1007,6 @@ class MemberDataEdit extends Component {
                             </FormGroup>
 
                             <FormGroup>
-                              <label htmlFor="staffId">Staff</label>
-                              <select
-                                name="staffId"
-                                value={values.staffId}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              >
-                                <option value="">Select staff</option>
-                                {
-                                  Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
-                                    ? this.state.staffOptions.map((option, i) => {
-                                      return (
-                                        <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
-                                      )
-                                    })
-                                    : ""
-                                }
-                              </select>
-                            </FormGroup>
-
-                            <FormGroup>
                               <label htmlFor="legalFormId">
                                 Client Type <span className="red"> *</span>
                               </label>
@@ -1088,54 +1066,6 @@ class MemberDataEdit extends Component {
                             </FormGroup>
 
                             <FormGroup>
-                              <label htmlFor="externalId">External Id</label>
-                              <input
-                                name="externalId"
-                                className="form-control mr-3 input-font-size"
-                                type="text"
-                                placeholder="Enter external ID"
-                                value={values.externalId}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="nip">Working ID Number</label>
-                              <input
-                                name="nip"
-                                className="form-control mr-3 input-font-size"
-                                type="text"
-                                placeholder="Enter working ID number"
-                                value={values.nip}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="prefixCode">Prefix Title Name</label>
-                              <select
-                                name="prefixCode"
-                                value={values.prefixCode}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              >
-                                <option value="">Select prefix title name</option>
-                                {
-                                  Array.isArray(state.prefixNameCodeOption) && state.prefixNameCodeOption.length > 0
-                                    ? state.prefixNameCodeOption.map((option, i) => {
-                                      return (
-                                        <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
-                                      )
-                                    })
-                                    : ""
-                                }
-                              </select>
-                            </FormGroup>
-
-                            <FormGroup>
                               <label htmlFor="fullname">
                                 Identity Name <span className="red"> *</span>
                               </label>
@@ -1153,59 +1083,6 @@ class MemberDataEdit extends Component {
                                 onBlur={handleBlur}
                               />
                               <div className="input-feedback">{touched.fullname && errors.fullname}</div>
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="fullnameNonIdentity">Fullname</label>
-                              <input
-                                name="fullnameNonIdentity"
-                                className={
-                                  touched.fullnameNonIdentity && errors.fullnameNonIdentity
-                                    ? "form-control mr-3 input-font-size input-error"
-                                    : "form-control mr-3 input-font-size"
-                                }
-                                type="text"
-                                placeholder="Enter fullname"
-                                value={values.fullnameNonIdentity}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                              <div className="input-feedback">{touched.fullnameNonIdentity && errors.fullnameNonIdentity}</div>
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="nickname">Alias</label>
-                              <input
-                                name="nickname"
-                                className="form-control mr-3 input-font-size"
-                                type="text"
-                                placeholder="Enter nickname"
-                                value={values.nickname}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="suffixCode">Suffix Title Name</label>
-                              <select
-                                name="suffixCode"
-                                value={values.suffixCode}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              >
-                                <option value="">Select suffix title name</option>
-                                {
-                                  Array.isArray(state.suffixNameCodeOption) && state.suffixNameCodeOption.length > 0
-                                    ? state.suffixNameCodeOption.map((option, i) => {
-                                      return (
-                                        <option value={option.code} key={"Staff option " + i} >{option.code}</option>
-                                      )
-                                    })
-                                    : ""
-                                }
-                              </select>
                             </FormGroup>
 
                             <FormGroup>
@@ -1271,22 +1148,6 @@ class MemberDataEdit extends Component {
                               />
                               <div className="input-feedback">{touched.identityNumber && errors.identityNumber}</div>
                             </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="identityValidDate">
-                                Identity Valid Date
-                              </label>
-                              <Field
-                                name="identityValidDate"
-                                onChange={handleChange}
-                                component={DateTime}
-                                locale={this.props.dashboard.language}
-                                value={values.identityValidDate}
-                              />
-                            </FormGroup>
-                          </div>
-
-                          <div className="col-lg-6">
                             <FormGroup>
                               <label htmlFor="genderCodeValue">
                                 Gender <span className="red"> *</span>
@@ -1370,70 +1231,6 @@ class MemberDataEdit extends Component {
                                 onBlur={handleBlur}
                               />
                               <div className="input-feedback">{touched.motherName && errors.motherName}</div>
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="mobileNo">
-                                Mobile Number
-                              </label>
-                              <input
-                                name="mobileNo"
-                                className={
-                                  touched.mobileNo && errors.mobileNo
-                                    ? "form-control mr-3 input-font-size input-error"
-                                    : "form-control mr-3 input-font-size"
-                                }
-                                type="text"
-                                placeholder="Enter mobile number"
-                                value={values.mobileNo}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                              <div className="input-feedback">{touched.mobileNo && errors.mobileNo}</div>
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="phoneNumber">Phone Number</label>
-                              <input
-                                name="phoneNumber"
-                                className="form-control mr-3 input-font-size"
-                                type="text"
-                                placeholder="Enter phone number"
-                                value={values.phoneNumber}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="faxNumber">Fax Number</label>
-                              <input
-                                name="faxNumber"
-                                className="form-control mr-3 input-font-size"
-                                type="text"
-                                placeholder="Enter fax number"
-                                value={values.faxNumber}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                            </FormGroup>
-
-                            <FormGroup>
-                              <label htmlFor="email">Email</label>
-                              <input
-                                name="email"
-                                className={
-                                  touched.email && errors.email
-                                    ? "form-control mr-3 input-font-size input-error"
-                                    : "form-control mr-3 input-font-size"
-                                }
-                                type="text"
-                                placeholder="Enter email"
-                                value={values.email}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                              />
-                              <div className="input-feedback">{touched.email && errors.email}</div>
                             </FormGroup>
 
                             <FormGroup>
@@ -1609,6 +1406,209 @@ class MemberDataEdit extends Component {
                                 )
                                 : null
                             }
+                          </div>
+
+                          <div className="col-lg-6">
+
+                            <FormGroup>
+                              <label htmlFor="staffId">Staff</label>
+                              <select
+                                name="staffId"
+                                value={values.staffId}
+                                className="custom-select custom-select-sm input-font-size"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              >
+                                <option value="">Select staff</option>
+                                {
+                                  Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
+                                    ? this.state.staffOptions.map((option, i) => {
+                                      return (
+                                        <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="externalId">External Id</label>
+                              <input
+                                name="externalId"
+                                className="form-control mr-3 input-font-size"
+                                type="text"
+                                placeholder="Enter external ID"
+                                value={values.externalId}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="nip">Working ID Number</label>
+                              <input
+                                name="nip"
+                                className="form-control mr-3 input-font-size"
+                                type="text"
+                                placeholder="Enter working ID number"
+                                value={values.nip}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="prefixCode">Prefix Title Name</label>
+                              <select
+                                name="prefixCode"
+                                value={values.prefixCode}
+                                className="custom-select custom-select-sm input-font-size"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              >
+                                <option value="">Select prefix title name</option>
+                                {
+                                  Array.isArray(state.prefixNameCodeOption) && state.prefixNameCodeOption.length > 0
+                                    ? state.prefixNameCodeOption.map((option, i) => {
+                                      return (
+                                        <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="fullnameNonIdentity">Fullname</label>
+                              <input
+                                name="fullnameNonIdentity"
+                                className={
+                                  touched.fullnameNonIdentity && errors.fullnameNonIdentity
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
+                                type="text"
+                                placeholder="Enter fullname"
+                                value={values.fullnameNonIdentity}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              <div className="input-feedback">{touched.fullnameNonIdentity && errors.fullnameNonIdentity}</div>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="nickname">Alias</label>
+                              <input
+                                name="nickname"
+                                className="form-control mr-3 input-font-size"
+                                type="text"
+                                placeholder="Enter nickname"
+                                value={values.nickname}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="suffixCode">Suffix Title Name</label>
+                              <select
+                                name="suffixCode"
+                                value={values.suffixCode}
+                                className="custom-select custom-select-sm input-font-size"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              >
+                                <option value="">Select suffix title name</option>
+                                {
+                                  Array.isArray(state.suffixNameCodeOption) && state.suffixNameCodeOption.length > 0
+                                    ? state.suffixNameCodeOption.map((option, i) => {
+                                      return (
+                                        <option value={option.code} key={"Staff option " + i} >{option.code}</option>
+                                      )
+                                    })
+                                    : ""
+                                }
+                              </select>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="identityValidDate">
+                                Identity Valid Date
+                              </label>
+                              <Field
+                                name="identityValidDate"
+                                onChange={handleChange}
+                                component={DateTime}
+                                locale={this.props.dashboard.language}
+                                value={values.identityValidDate}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="mobileNo">
+                                Mobile Number
+                              </label>
+                              <input
+                                name="mobileNo"
+                                className={
+                                  touched.mobileNo && errors.mobileNo
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
+                                type="text"
+                                placeholder="Enter mobile number"
+                                value={values.mobileNo}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              <div className="input-feedback">{touched.mobileNo && errors.mobileNo}</div>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="phoneNumber">Phone Number</label>
+                              <input
+                                name="phoneNumber"
+                                className="form-control mr-3 input-font-size"
+                                type="text"
+                                placeholder="Enter phone number"
+                                value={values.phoneNumber}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="faxNumber">Fax Number</label>
+                              <input
+                                name="faxNumber"
+                                className="form-control mr-3 input-font-size"
+                                type="text"
+                                placeholder="Enter fax number"
+                                value={values.faxNumber}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <label htmlFor="email">Email</label>
+                              <input
+                                name="email"
+                                className={
+                                  touched.email && errors.email
+                                    ? "form-control mr-3 input-font-size input-error"
+                                    : "form-control mr-3 input-font-size"
+                                }
+                                type="text"
+                                placeholder="Enter email"
+                                value={values.email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                              />
+                              <div className="input-feedback">{touched.email && errors.email}</div>
+                            </FormGroup>
 
                             <FormGroup>
                               <label htmlFor="lastEducationLevelCode">Last Education Level</label>

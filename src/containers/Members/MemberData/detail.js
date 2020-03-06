@@ -684,7 +684,6 @@ class MemberDataDetail extends Component {
     super(props);
 
     const clientIdNo = this.props.match.params.id
-    console.log(this.props)
 
     const setClientAccount = res => {
       this.setState({
