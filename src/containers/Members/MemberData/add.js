@@ -662,12 +662,9 @@ class MemberDataAdd extends Component {
     }
 
     const setErrorMsg = err => {
-      console.log(err)
       let newError = ""
 
       err.errors.map(err => newError = newError + err.defaultUserMessage + "<br />")
-
-      console.log(newError)
 
       this.setState({
         errorMsg: newError

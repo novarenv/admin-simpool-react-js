@@ -625,20 +625,31 @@ const Documents = props => {
 }
 
 const DragDrop = props => {
+  const MAX_SIZE = 1048576
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
     useDropzone({
       multiple: false,
+      maxSize: MAX_SIZE,
       onDrop: acceptedFiles => {
         props.setPhotos(acceptedFiles[0])
         acceptedFiles.map(file => Object.assign(file, {
           preview: URL.createObjectURL(file)
         }));
+      },
+      onDropRejected: rejectedFiles => {
+        if (rejectedFiles[0].size > MAX_SIZE) {
+          document.getElementById("dragReject").click()          
+        }
       }
     })
 
   const img = {
     width: "50%",
     height: "50%"
+  }
+
+  const dragReject = {
+    title: "File size's must be under 1 MB"
   }
 
   const files = acceptedFiles.map(file => {
@@ -663,6 +674,7 @@ const DragDrop = props => {
 
   return (
     <div className="container--md mt-3">
+      <Swal options={dragReject} id="dragReject" />
       <section>
         <div {...getRootProps({ className: 'dropzone' })}>
           <input name={props.name} {...getInputProps()} />
