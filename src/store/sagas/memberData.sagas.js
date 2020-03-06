@@ -137,7 +137,7 @@ function* clientAdd(action) {
         }
       })
       .then(response => response.data)
-      .catch(error => console.log(error.response.data))
+      .catch(error => action.setErrorMsg(error.response.data))
 
     action.setClientAddRes(clientAdd)
 

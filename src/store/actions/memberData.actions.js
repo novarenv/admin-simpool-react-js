@@ -31,8 +31,8 @@ export function clientTemplate(payload, setClientTemplate) {
   return { type: CLIENT_TEMPLATE, payload, setClientTemplate };
 }
 
-export function clientAdd(payload, setClientAddRes) {
-  return { type: CLIENT_ADD, payload, setClientAddRes };
+export function clientAdd(payload, setClientAddRes, setErrorMsg) {
+  return { type: CLIENT_ADD, payload, setClientAddRes, setErrorMsg };
 }
 
 export function clientAddImage(payload, res, uploadSelfieRes) {

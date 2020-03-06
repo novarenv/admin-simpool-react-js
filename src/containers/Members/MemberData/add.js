@@ -88,7 +88,7 @@ const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => 
     }
   }
 
-  if (field.name === "dateOfBirth") {
+  if (field.name === "dateOfBirth" && value === "") {
     value = today.slice(0, today.length-4) + (parseInt(today.slice(today.length-4, today.length))-17).toString()
   }
 
@@ -148,20 +148,33 @@ const ValidDate = ({ field, form, locale, value, error, touched, name }) => {
 }
 
 const DragDrop = props => {
+  const MAX_SIZE = 1048576
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
     useDropzone({
       multiple: false,
+      maxSize: MAX_SIZE,
       onDrop: acceptedFiles => {
         props.setPhotos(props.name, acceptedFiles[0])
-        acceptedFiles.map(file => Object.assign(file, {
-          preview: URL.createObjectURL(file)
-        }));
+        acceptedFiles.map(file => 
+          Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          })
+        )
+      },
+      onDropRejected: rejectedFiles => {
+        if (rejectedFiles[0].size > MAX_SIZE) {
+          document.getElementById("dragReject").click()          
+        }
       }
     })
 
   const img = {
     width: "50%",
     height: "50%"
+  }
+
+  const dragReject = {
+    title: "File size's must be under 1 MB"
   }
 
   const files = acceptedFiles.map(file => {
@@ -186,6 +199,7 @@ const DragDrop = props => {
 
   return (
     <Container className="container-md mt-3">
+      <Swal options={dragReject} id="dragReject" />
       <section>
         <div {...getRootProps({ className: 'dropzone' })}>
           <input name={props.name} {...getInputProps()} />
@@ -203,18 +217,29 @@ const DragDrop = props => {
 }
 
 const DragDropMultiple = props => {
+  const MAX_SIZE = 1048576
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({
+    maxSize: MAX_SIZE,
     onDrop: acceptedFiles => {
       props.setPhotos(props.name, acceptedFiles)
       acceptedFiles.map(file => Object.assign(file, {
         preview: URL.createObjectURL(file)
-      }));
+      }))
+    },
+    onDropRejected: rejectedFiles => {
+      if (rejectedFiles[0].size > MAX_SIZE) {
+        document.getElementById("dragReject").click()          
+      }
     }
-  });
+  })
 
   const img = {
     width: "50%",
     height: "50%"
+  }
+
+  const dragReject = {
+    title: "All files size's must be under 1 MB"
   }
 
   const files = acceptedFiles.map(file => {
@@ -239,6 +264,7 @@ const DragDropMultiple = props => {
 
   return (
     <Container className="container-md mt-3">
+      <Swal options={dragReject} id="dragReject" />
       <section>
         <div {...getRootProps({ className: 'dropzone' })}>
           <input name={props.name} {...getInputProps()} />
@@ -635,51 +661,69 @@ class MemberDataAdd extends Component {
       })
     }
 
-    this.props.actions.clientAdd({
-      legalFormId: addValidation.legalFormId,
-      officeId: addValidation.officeId,
-      flagTaxCodeValue: addValidation.flagTaxCodeValue,
-      typeOfIdentityId: addValidation.typeOfIdentityId,
-      motherName: addValidation.motherName,
-      addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
-      taxNumber: addValidation.taxNumber,
-      identityNumber: addValidation.identityNumber,
-      sectorId: addValidation.sectorId,
-      identityCountryCodeValue: addValidation.identityCountryCodeValue,
-      identityProvinceId: addValidation.identityProvinceId,
-      identityCityId: addValidation.identityCityId,
-      identitySubDistrict: addValidation.identitySubDistrict,
-      identityVillage: addValidation.identityVillage,
-      identityPostalCode: addValidation.identityPostalCode,
-      placeOfBirth: addValidation.placeOfBirth,
-      genderCodeValue: addValidation.genderCodeValue,
-      mobileNo: addValidation.mobileNo,
-      religion: addValidation.religion,
-      taxName: addValidation.taxName,
-      taxAddress: addValidation.taxAddress,
-      submittedOnDate: addValidation.submittedOnDate,
-      dateOfBirth: addValidation.dateOfBirth,
-      email: addValidation.email,
-      staffId: addValidation.staffId,
-      externalId: addValidation.externalID,
-      nip: addValidation.nip,
-      nickname: addValidation.nickname,
-      identityValidDate: addValidation.identityValidDate,
-      identityRt: addValidation.identityRt,
-      identityRw: addValidation.identityRw,
-      mobileUser: addValidation.mobileUser,
+    const setErrorMsg = err => {
+      console.log(err)
+      let newError = ""
 
-      clientNonPersonDetails: {
+      err.errors.map(err => newError = newError + err.defaultUserMessage + "<br />")
+
+      console.log(newError)
+
+      this.setState({
+        errorMsg: newError
+      })
+      
+      document.getElementById("errorForm").click()
+    }
+
+    this.props.actions.clientAdd(
+      {
+        legalFormId: addValidation.legalFormId,
+        officeId: addValidation.officeId,
+        flagTaxCodeValue: addValidation.flagTaxCodeValue,
+        typeOfIdentityId: addValidation.typeOfIdentityId,
+        fullname: addValidation.fullname,
+        motherName: addValidation.motherName,
+        addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
+        taxNumber: addValidation.taxNumber,
+        identityNumber: addValidation.identityNumber,
+        sectorId: addValidation.sectorId,
+        identityCountryCodeValue: addValidation.identityCountryCodeValue,
+        identityProvinceId: addValidation.identityProvinceId,
+        identityCityId: addValidation.identityCityId,
+        identitySubDistrict: addValidation.identitySubDistrict,
+        identityVillage: addValidation.identityVillage,
+        identityPostalCode: addValidation.identityPostalCode,
+        placeOfBirth: addValidation.placeOfBirth,
+        genderCodeValue: addValidation.genderCodeValue,
+        mobileNo: addValidation.mobileNo,
+        religion: addValidation.religion,
+        taxName: addValidation.taxName,
+        taxAddress: addValidation.taxAddress,
+        submittedOnDate: addValidation.submittedOnDate,
+        dateOfBirth: addValidation.dateOfBirth,
+        email: addValidation.email,
+        staffId: addValidation.staffId,
+        externalId: addValidation.externalID,
+        nip: addValidation.nip,
+        nickname: addValidation.nickname,
+        identityValidDate: addValidation.identityValidDate,
+        identityRt: addValidation.identityRt,
+        identityRw: addValidation.identityRw,
+        mobileUser: addValidation.mobileUser,
+
+        clientNonPersonDetails: {
+          locale: this.props.dashboard.language,
+          dateFormat: "dd MMMM yyyy"
+        },
         locale: this.props.dashboard.language,
-        dateFormat: "dd MMMM yyyy"
+        active: addValidation.active,
+        dateFormat: "dd MMMM yyyy",
+        activationDate: state.today,
+        savingsProductId: null
       },
-      locale: this.props.dashboard.language,
-      active: addValidation.active,
-      dateFormat: "dd MMMM yyyy",
-      activationDate: state.today,
-      savingsProductId: null
-    },
-      setClientAddRes
+      setClientAddRes,
+      setErrorMsg
     )
   }
 
@@ -692,13 +736,17 @@ class MemberDataAdd extends Component {
       title: "Tolong selesaikan langkah sebelumnya!"
     }
 
+    let h3 = document.createElement("h3");
+    h3.innerHTML = state.errorMsg
+
     const errorForm = {
-      title: this.state.errorMsg
+      title: "Errors",
+      content: h3
     }
 
-    const showTabNotPermit = () => [
+    const showTabNotPermit = () => {
       document.getElementById("tabNotPermit").click()
-    ]
+    }
 
     const bindFormDuplicate = submitForm => {
       submitFormDuplicate = submitForm
@@ -781,15 +829,20 @@ class MemberDataAdd extends Component {
       } else {
         return (
           <div>
-            <Button disabled className="col-12">Tidak ada data yang sama!</Button>
-            {
-              !this.state.dcPass
-                ? (
-                  <Button outline color="primary" className="btn btn-block mt-4 justify-content-center"
-                    onClick={() => setNotDuplicate()}>Create Member</Button>
-                  )
-                : null
-            }
+            <Button
+              disabled
+              className="col-12"
+            >
+              Tidak ada data yang sama!
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className="btn btn-block mt-4 justify-content-center"
+              onClick={() => setNotDuplicate()}
+            >
+              Create Member
+            </Button>
           </div>
         )
       }
@@ -923,6 +976,10 @@ class MemberDataAdd extends Component {
                     if (/^[a-zA-Z\s'.-]+$/.test(values.motherName) === false && values.motherName !== "") {
                       errors.motherName = this.props.i18n.t('member.data-add.MOTHER_NAME')
                           + " harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
+                    }
+                    
+                    if (!values.motherName) {
+                      errors.motherName = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     switch (values.typeOfIdentityId) {
@@ -1181,7 +1238,7 @@ class MemberDataAdd extends Component {
                                   }
 
                                   <label className="mt-3" htmlFor="motherName">
-                                    <Trans i18nKey='member.data-add.MOTHER_NAME' />
+                                    <Trans i18nKey='member.data-add.MOTHER_NAME' /> <span className="red"> *</span>
                                   </label>
                                   <Input
                                     name="motherName"
