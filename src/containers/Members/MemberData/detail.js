@@ -57,13 +57,28 @@ const MONTHS_ID = [
   'Desember'
 ]
 
-const Savings = props => {
-  const NumberFormatted = amount => {
-    const amountInt = parseInt(amount)
+const numToMoney = amount => {
+  const amountInt = parseInt(amount)
+  const amountNum = amount.toFixed(2)
+  const amountStr = amountNum.toString()
+  let afterComma
 
-    return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (amountStr.includes('.')) {
+    afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
   }
 
+  if (afterComma != null) {
+    if (afterComma === "00") {
+      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    } else {
+      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + afterComma
+    }
+  } else {
+    return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+  }
+}
+
+const Savings = props => {
   const rowClicked = id => {
     props.history.push({
       pathname: '/simpool/member/saving-data-detail/' + id,
@@ -88,7 +103,7 @@ const Savings = props => {
           setActiveSavings(prevArray => [...prevArray, acc])
         }
       }
-      
+
       if (acc.depositType.id === 200) {
         if (acc.status.id === 600) {
           setInActiveDeposito(prevArray => [...prevArray, acc])
@@ -175,7 +190,7 @@ const Savings = props => {
                         <div className="col-2">
                           {
                             acc.accountBalance != null
-                              ? (<span>{NumberFormatted(acc.accountBalance)}</span>)
+                              ? (<span>{numToMoney(acc.accountBalance)}</span>)
                               : null
                           }
                         </div>
@@ -306,7 +321,7 @@ const Savings = props => {
                         <div className="col-2">
                           {
                             acc.accountBalance != null
-                              ? (<span>{NumberFormatted(acc.accountBalance)}</span>)
+                              ? (<span>{numToMoney(acc.accountBalance)}</span>)
                               : null
                           }
                         </div>
@@ -375,68 +390,242 @@ const Loans = props => {
     console.log("Clicked!")
   }
 
+  const [activeLoans, setActiveLoans] = useState([])
+  const [inActiveLoans, setInActiveLoans] = useState([])
+  const [shownLoans, setShownLoans] = useState(true)
+
+  useEffect(() => {
+    props.loans.map(acc => {
+      if (acc.status.id === 600) {
+        setInActiveLoans(prevArray => [...prevArray, acc])
+      } else {
+        setActiveLoans(prevArray => [...prevArray, acc])
+      }
+
+      return null
+    })
+
+    return () => { };
+  }, [props.loans])
+
   return (
     <div>
-      <div className="row ft-detail list-header d-flex justify-content-center center-parent">
-        <div className="col-2">
-          <span>Account ID</span>
-        </div>
-        <div className="col-2">
-          <span>Loan Account</span>
-        </div>
-        <div className="col-2">
-          <span>Original Loan</span>
-        </div>
-        <div className="col-2">
-          <span>Loan Balance</span>
-        </div>
-        <div className="col-2">
-          <span>Ammount Paid</span>
-        </div>
-        <div className="col-2 row d-flex justify-content-center">
-          <div className="col-6">
-            <span>Type</span>
-          </div>
-          <div className="col-6">
-            <span>Actions</span>
-          </div>
-        </div>
+      <div className="row justify-content-end">
+        <Button outline className="mt-2 mr-3 mb-3 col-4 col-md-3" color="primary" onClick={() => setShownLoans(!shownLoans)}>
+          {
+            shownLoans
+              ? "View Closed Loans"
+              : "View Active Loans"
+          }
+        </Button >
       </div>
       {
-        props.loans.map((acc, key) => {
-          return (
-            <div key={"Loans " + key}>
-              <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent" onClick={() => rowClicked()}>
+        shownLoans
+          ? (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
                 <div className="col-2">
-                  <span>{acc.accountNo}</span>
+                  <span>Account ID</span>
                 </div>
                 <div className="col-2">
-                  <span>{acc.productName}</span>
+                  <span>Loan Account</span>
                 </div>
                 <div className="col-2">
-                  <span></span>
+                  <span>Original Loan</span>
                 </div>
                 <div className="col-2">
-                  <span></span>
+                  <span>Loan Balance</span>
                 </div>
                 <div className="col-2">
-                  <span></span>
+                  <span>Ammount Paid</span>
                 </div>
                 <div className="col-2 row d-flex justify-content-center">
                   <div className="col-6">
-                    <span>{acc.loanType.value}</span>
+                    <span>Type</span>
                   </div>
                   <div className="col-6">
-                    <span>{acc.status.value}</span>
+                    <span>Actions</span>
                   </div>
                 </div>
               </div>
-              <div className="row d-flex justify-content-center">
-                <hr className="col-11 hr-margin-0" />
-              </div>
+              {
+                activeLoans.map((acc, key) => {
+                  return (
+                    <div key={"Loans " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent py-2" onClick={() => rowClicked()}>
+                        <div className="col-2">
+                          {
+                            acc.status.id != null
+                              ? acc.status.id === 300 && acc.inArrears
+                                ? (<span className="ml-auto circle bg-danger circle-lg" />)
+                                : acc.status.id === 300
+                                  ? (<span className="ml-auto circle bg-success circle-lg" />)
+                                  : acc.status.id === 200
+                                    ? (<span className="ml-auto circle bg-primary circle-lg" />)
+                                    : acc.status.id === 100
+                                      ? (<span className="ml-auto circle bg-warning circle-lg" />)
+                                      : null
+                              : null
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.originalLoan ? numToMoney(acc.originalLoan) : null}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.loanBalance ? numToMoney(acc.loanBalance) : null}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.amountPaid ? numToMoney(acc.amountPaid) : null}</span>
+                        </div>
+                        <div className="col-2 row d-flex justify-content-center">
+                          <div className="col-6">
+                            <span
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title={acc.loanType.value}
+                            >
+                              <em className="fa fa-user" />
+                            </span>
+                          </div>
+                          <div className="col-6">
+                            {
+                              acc.status.id != null
+                                ? acc.status.id === 300
+                                  ? (
+                                    <button
+                                      className="btn btn-sm btn-primary"
+                                      data-toggle="tooltip"
+                                      data-placement="top"
+                                      title="Make Repayment"
+                                      type="button"
+                                      style={{ width: 40 }}
+                                      onClick={() => console.log("Hi")}>
+                                      <em className="fa fa-dollar-sign" />
+                                    </button>
+                                  )
+                                  : acc.status.id === 200
+                                    ? (
+                                      <button
+                                        className="btn btn-sm btn-primary"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="Disburse"
+                                        type="button"
+                                        onClick={() => console.log("Hi")}>
+                                        <em className="fa fa-flag" />
+                                      </button>
+                                    )
+                                    : acc.status.id === 100
+                                      ? (
+                                        <button
+                                          className="btn btn-sm btn-primary"
+                                          data-toggle="tooltip"
+                                          data-placement="top"
+                                          title="Approve"
+                                          type="button"
+                                          onClick={() => console.log("Hi")}>
+                                          <em className="fa fa-check" />
+                                        </button>
+                                      )
+                                      : null
+                                : null
+                            }
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center" style={{ marginRight: 8, marginLeft: 8 }} >
+                        <hr className="col-12 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
             </div>
           )
-        })
+          : (
+            <div>
+              <div className="row ft-detail list-header d-flex justify-content-center center-parent">
+                <div className="col-2">
+                  <span>Account ID</span>
+                </div>
+                <div className="col-2">
+                  <span>Loan Account</span>
+                </div>
+                <div className="col-2">
+                  <span>Original Loan</span>
+                </div>
+                <div className="col-2">
+                  <span>Loan Balance</span>
+                </div>
+                <div className="col-2">
+                  <span>Ammount Paid</span>
+                </div>
+                <div className="col-2 row d-flex justify-content-center">
+                  <div className="col-6">
+                    <span>Type</span>
+                  </div>
+                  <div className="col-6">
+                    <span>Closed Date</span>
+                  </div>
+                </div>
+              </div>
+              {
+                inActiveLoans.map((acc, key) => {
+                  return (
+                    <div key={"Loans " + key}>
+                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent py-2" onClick={() => rowClicked()}>
+                        <div className="col-2">
+                          {
+                            acc.status.id != null
+                              ? (<span className="ml-auto circle circle-lg" style={{ backgroundColor: "gray" }} />)
+                              : null
+                          }
+                          <span>{acc.accountNo}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.productName}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.originalLoan ? numToMoney(acc.originalLoan) : null}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.loanBalance ? numToMoney(acc.loanBalance) : null}</span>
+                        </div>
+                        <div className="col-2">
+                          <span>{acc.amountPaid ? numToMoney(acc.amountPaid) : null}</span>
+                        </div>
+                        <div className="col-2 row d-flex justify-content-center">
+                          <div className="col-6">
+                            <span
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title={acc.loanType.value}
+                            >
+                              <em className="fa fa-user" />
+                            </span>                            
+                          </div>
+                          <div className="col-6">
+                            <span>{
+                              Array.isArray(acc.timeline.closedOnDate) && acc.timeline.closedOnDate.length > 0
+                                ? acc.timeline.closedOnDate[2] + " " + MONTHS_ID[acc.timeline.closedOnDate[1] - 1] + " " + acc.timeline.closedOnDate[0]
+                                : null
+                            }</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row d-flex justify-content-center" style={{ marginRight: 8, marginLeft: 8 }} >
+                        <hr className="col-12 hr-margin-0" />
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          )
       }
     </div>
   )
@@ -638,7 +827,7 @@ const DragDrop = props => {
       },
       onDropRejected: rejectedFiles => {
         if (rejectedFiles[0].size > MAX_SIZE) {
-          document.getElementById("dragReject").click()          
+          document.getElementById("dragReject").click()
         }
       }
     })
@@ -775,27 +964,6 @@ class MemberDataDetail extends Component {
       this.setState({
         activeTab: tab
       });
-    }
-  }
-
-  numToMoney = amount => {
-    const amountInt = parseInt(amount)
-    const amountNum = amount.toFixed(2)
-    const amountStr = amountNum.toString()
-    let afterComma
-
-    if (amountStr.includes('.')) {
-      afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
-    }
-
-    if (afterComma != null) {
-      if (afterComma === "00") {
-        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-      } else {
-        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + afterComma
-      }
-    } else {
-      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     }
   }
 
@@ -1280,7 +1448,7 @@ class MemberDataDetail extends Component {
                     {
                       clientSummary != null
                         ? clientSummary.lastloanamount != null
-                          ? this.numToMoney(clientSummary.lastloanamount)
+                          ? numToMoney(clientSummary.lastloanamount)
                           : 0
                         : "-"
                     }
@@ -1304,7 +1472,7 @@ class MemberDataDetail extends Component {
                     {
                       clientSummary != null
                         ? clientSummary.totalsavings != null
-                          ? this.numToMoney(clientSummary.totalsavings)
+                          ? numToMoney(clientSummary.totalsavings)
                           : "-"
                         : "-"
                     }
