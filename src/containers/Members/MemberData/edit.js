@@ -16,7 +16,7 @@ import { withTranslation, Trans } from 'react-i18next'
 import { Field, Formik } from 'formik'
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
-import Swal from '../../../components/Common/Swal';
+import Swal from '../../../components/Common/Swal'
 
 // DateTimePicker
 import Datetime from 'react-datetime'
@@ -469,7 +469,7 @@ class MemberDataEdit extends Component {
       title: "Terdapat eror pada others"
     }
 
-    const showErrorExist = error => {
+    const showErrorExist = () => {
       document.getElementById("errorExist").click()
     }
 

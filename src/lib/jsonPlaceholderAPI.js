@@ -34,8 +34,10 @@ export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`
 export const docAttachUrl = (clientId, documentId) => `${apiEntrySimpool}/clients/${clientId}/documents/${documentId}/attachment`
 
 // Savings
-export const savingsAccoountAssosiationsUrl = savingsId => `${apiEntrySimpool}/savingsaccounts/${savingsId}`
+export const accountTransactionsUrl = (clientId, trxId) => `${apiEntrySimpool}/savingsaccounts/${clientId}/transactions/${trxId}`
+export const accountTransfersUrl = tfId => `${apiEntrySimpool}/accounttransfers/${tfId}`
 export const qrCodeUrl = savingsId => `${apiEntrySimpool}/ppob/qrcode/${savingsId}/100`
+export const savingsAccoountAssosiationsUrl = savingsId => `${apiEntrySimpool}/savingsaccounts/${savingsId}`
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`

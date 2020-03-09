@@ -20,6 +20,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators, compose } from 'redux'
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import Swal from '../../../components/Common/Swal'
 
 const SavingDataDetail = props => {
   const [activeTab, setActiveTab] = useState("summary")
@@ -27,6 +28,12 @@ const SavingDataDetail = props => {
   const [savingsId] = useState(props.match.params.id)
   const [modalQr, setModalQr] = useState(false)
   const [qrCode, setQrCode] = useState(null)
+  const [modalTransactions, setModalTransactions] = useState(false)
+  const [isAccountTransaction, setIsAccountTransaction] = useState(false)
+  const [isAccountTransfer, setIsAccountTransfer] = useState(false)
+  const [isReversal, setIsReversal] = useState(false)
+  const [accountId, setAccountId] = useState(null)
+  const [trxId, setTrxId] = useState(null)
 
   const MONTHS_ID = [
     'Januari',
@@ -130,34 +137,58 @@ const SavingDataDetail = props => {
   ]
   const [transactions, setTransactions] = useState([])
 
+  const [accountTransaction, setAccountTransaction] = useState({})
+  const setAccountTransactionRes = res => {
+    setAccountTransaction(res)
+    setIsAccountTransaction(true)
+  }
+
+  const [accountTransfer, setAccountTransfer] = useState({})
+  const setAccountTransferRes = res => {
+    setAccountTransfer(res)
+    setIsAccountTransfer(true)
+  }
+
+  const taxTransactionsHead = [
+    "ID",
+    "Transaction Date",
+    "Amount",
+    "View Withholding Tax Slip"
+  ]
+  const [taxTransactions, setTaxTransactions] = useState([])
+
   useEffect(() => {
     const setSavingsAssosiationsRes = res => {
       setSavingsAssosiations(res)
       props.actions.qrCode(res.accountNo, setQrCode)
 
       res.transactions.map(transaction => {
-        setTransactions(prevArray => [
-          ...prevArray,
-          {
-            id: transaction.id,
-            date: transaction.date,
-            transactionType: transaction.transactionType,
-            coreTransactionCode: transaction.coreTransactionCode,
-            runningBalance: transaction.runningBalance,
-            debit: transaction.transactionType.code === "savingsAccountTransactionType.withdrawal"
-              || transaction.transactionType.code === "savingsAccountTransactionType.feeDeduction"
-              || transaction.transactionType.code === "savingsAccountTransactionType.overdraftInterest"
-              || transaction.transactionType.code === "savingsAccountTransactionType.withholdTax"
-              ? transaction.amount
-              : "",
-            credit: transaction.transactionType.code !== "savingsAccountTransactionType.withdrawal"
-              && transaction.transactionType.code !== "savingsAccountTransactionType.feeDeduction"
-              && transaction.transactionType.code !== "savingsAccountTransactionType.overdraftInterest"
-              && transaction.transactionType.code !== "savingsAccountTransactionType.withholdTax"
-              ? transaction.amount
-              : ""
-          }
-        ])
+        if (!transaction.reversed) {
+          setTransactions(prevArray => [
+            ...prevArray,
+            {
+              id: transaction.id,
+              date: transaction.date,
+              transactionType: transaction.transactionType,
+              coreTransactionCode: transaction.coreTransactionCode,
+              runningBalance: transaction.runningBalance,
+              debit: transaction.transactionType.code === "savingsAccountTransactionType.withdrawal"
+                || transaction.transactionType.code === "savingsAccountTransactionType.feeDeduction"
+                || transaction.transactionType.code === "savingsAccountTransactionType.overdraftInterest"
+                || transaction.transactionType.code === "savingsAccountTransactionType.withholdTax"
+                ? numToMoney(transaction.amount)
+                : "-",
+              credit: transaction.transactionType.code !== "savingsAccountTransactionType.withdrawal"
+                && transaction.transactionType.code !== "savingsAccountTransactionType.feeDeduction"
+                && transaction.transactionType.code !== "savingsAccountTransactionType.overdraftInterest"
+                && transaction.transactionType.code !== "savingsAccountTransactionType.withholdTax"
+                ? numToMoney(transaction.amount)
+                : "-",
+              transfer: transaction.transfer,
+              accountId: transaction.accountId
+            }
+          ])
+        }
 
         return null
       })
@@ -204,8 +235,44 @@ const SavingDataDetail = props => {
     return () => { };
   }, [savingsAssosiations])
 
+  const undoAccountTransaction = res => {
+    console.log(res)
+    window.location.reload()
+  }
+
+  const reversalTransaction = {
+    title: 'Are you sure?',
+    text: 'Do you want to reverse this transaction?',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, I want to cancel it!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, reverse it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+  const reversalTransactionCallback = (isConfirm, swal) => {
+    if (isConfirm) {
+      swal("Deleted!", "Your transaction has been reversed.", "success")
+      props.actions.undoAccountTransaction({accountId: accountId, trxId: trxId}, undoAccountTransaction)
+    } else {
+      swal("Cancelled", "Your transaction is safe :)", "error");
+    }
+  }
+
   return (
     <ContentWrapper>
+      <Swal options={reversalTransaction} id="reversalTransaction" callback={reversalTransactionCallback}/>
       <Modal
         style={{
           content: {
@@ -267,6 +334,165 @@ const SavingDataDetail = props => {
               </button>
             </div>
           </div>
+        </div>
+      </Modal>
+
+
+      <Modal
+        style={{
+          content: {
+            width: "50%",
+            left: "25%"
+          }
+        }}
+        isOpen={modalTransactions}
+        onRequestClose={() => {
+          setModalTransactions(false)
+          setIsAccountTransaction(false)
+          setIsAccountTransfer(false)
+          setIsReversal(false)
+        }}
+      >
+        <div className="container-fluid">
+          {
+            isReversal
+              ? (
+                <div className="row justify-content-between">
+                  <Button
+                    outline
+                    color="primary"
+                    onClick={() => {
+                      setModalTransactions(false)
+                      setIsAccountTransaction(false)
+                      setIsAccountTransfer(false)
+                      setIsReversal(false)
+                    }}
+                  >
+                    Tutup
+                  </Button>
+                  <Button color="danger" onClick={() => document.getElementById("reversalTransaction").click()}>
+                    <em className="fa fa-undo-alt" />
+                    <span>&ensp; Reversal Transaction</span>
+                  </Button>
+                </div>
+              )
+              : (
+                <Button
+                  outline
+                  color="primary"
+                  onClick={() => {
+                    setModalTransactions(false)
+                    setIsAccountTransaction(false)
+                    setIsAccountTransfer(false)
+                    setIsReversal(false)
+                  }}
+                >
+                  Tutup
+              </Button>
+              )
+          }
+          {
+            isAccountTransfer
+              ? (
+                <div className="ft-detail">
+                  {
+                    console.log(accountTransfer)
+                  }
+                  <div className="center-parent">
+                    <h1>Transfer Details</h1>
+                  </div>
+
+                  <div className="row justify-content-center mt-3">
+                    <div className="col-4 mr-2">
+                      <div><span>Transaction Amount</span></div>
+                      <div><span>Transaction Date</span></div>
+                      <div><span>Description</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div>
+                        <strong>
+                          {accountTransfer.transferAmount ? numToMoney(accountTransfer.transferAmount) : "-"}
+                        </strong>
+                      </div>
+                      <div>
+                        <strong>
+                          {
+                            Array.isArray(accountTransfer.transferDate) && accountTransfer.transferDate.length > 0
+                              ? accountTransfer.transferDate[2] + " " + MONTHS_ID[accountTransfer.transferDate[1] - 1] + " " + accountTransfer.transferDate[0]
+                              : "-"
+                          }
+                        </strong>
+                      </div>
+                      <div>
+                        <strong>
+                          {accountTransfer.transferDescription ? accountTransfer.transferDescription : "-"}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-3 mr-2 list-header">
+                      <div><span>Fields</span></div>
+                      <div><span>Office</span></div>
+                      <div><span>Client</span></div>
+                      <div><span>Account Type</span></div>
+                      <div><span>Account Id</span></div>
+                    </div>
+                    <div className="col-3 mr-2 list-detail">
+                      <div><strong>From</strong></div>
+                      <div><span>{accountTransfer.fromOffice.name}</span></div>
+                      <div><span>{accountTransfer.fromClient.displayName}</span></div>
+                      <div><span>{accountTransfer.fromAccountType.value}</span></div>
+                      <div><span>{accountTransfer.fromAccount.accountNo}</span></div>
+                    </div>
+                    <div className="col-3 list-detail">
+                      <div><strong>To</strong></div>
+                      <div><span>{accountTransfer.toOffice.name}</span></div>
+                      <div><span>{accountTransfer.toClient.displayName}</span></div>
+                      <div><span>{accountTransfer.toAccountType.value}</span></div>
+                      <div><span>{accountTransfer.toAccount.accountNo}</span></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
+          {
+            isAccountTransaction
+              ? (
+                <div className="ft-detail">
+                  <div className="center-parent">
+                    <div><h1>Transaction Detail</h1></div>
+                    <div><h3>{accountTransaction.id}</h3></div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-4">
+                      <div><span>Type</span></div>
+                      <div><span>Transaction Date</span></div>
+                      <div><span>Currency</span></div>
+                      <div><span>Amount</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div><strong>{accountTransaction.transactionType.value}</strong></div>
+                      <div>
+                        <strong>
+                          {
+                            Array.isArray(accountTransaction.date) && accountTransaction.date.length > 0
+                              ? accountTransaction.date[2] + " " + MONTHS_ID[accountTransaction.date[1] - 1] + " " + accountTransaction.date[0]
+                              : "-"
+                          }
+                        </strong>
+                      </div>
+                      <div><strong>{accountTransaction.currency.name}</strong></div>
+                        <div><strong>{numToMoney(accountTransaction.amount)}</strong></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
         </div>
       </Modal>
 
@@ -1033,7 +1259,31 @@ const SavingDataDetail = props => {
                     {
                       transactions.map((transaction, key) => {
                         return (
-                          <tr key={"transaction" + key}>
+                          <tr
+                            key={"transaction" + key}
+                            className="list-hover"
+                            onClick={() => {
+                              setModalTransactions(true)
+
+                              if (transaction.transfer) {
+                                props.actions.accountTransfer(transaction.transfer.id, setAccountTransferRes)
+                              } else {
+                                setAccountId(transaction.accountId)
+                                setTrxId(transaction.id)
+                                props.actions.accountTransaction(
+                                  {
+                                    accountId: transaction.accountId,
+                                    trxId: transaction.id
+                                  },
+                                  setAccountTransactionRes
+                                )
+
+                                if (transaction.transactionType.id !== 3 && transaction.transactionType.id !== 17) {
+                                  setIsReversal(true)
+                                }
+                              }
+                            }}
+                          >
                             <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.id}</td>
                             <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
                               {transaction.date[2] + " " + MONTHS_ID[transaction.date[1] - 1] + " " + transaction.date[0]}
@@ -1058,7 +1308,36 @@ const SavingDataDetail = props => {
               </div>
             </TabPane>
             <TabPane className="ft-detail" tabId="taxTransactions" role="tabpane3">
-
+              <div className="table-responsive mt-3 mb-3">
+                <table
+                  className="table"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                    <tr>
+                      {
+                        taxTransactionsHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      transactions.map((transaction, key) => {
+                        return (
+                          <tr key={"transaction" + key}>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.id}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {transaction.date[2] + " " + MONTHS_ID[transaction.date[1] - 1] + " " + transaction.date[0]}
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(transaction.runningBalance)}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
             </TabPane>
             <TabPane className="ft-detail" tabId="charges" role="tabpane4">
 
