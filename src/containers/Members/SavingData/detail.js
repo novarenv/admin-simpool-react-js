@@ -119,12 +119,48 @@ const SavingDataDetail = props => {
     borderColor: "#DDDDDD"
   }
 
-  const tes = false
+  const transactionsHead = [
+    "ID",
+    "Transaction Date",
+    "Transaction Type",
+    "Debit",
+    "Credit",
+    "Balance",
+    "View Receipt"
+  ]
+  const [transactions, setTransactions] = useState([])
 
   useEffect(() => {
     const setSavingsAssosiationsRes = res => {
       setSavingsAssosiations(res)
       props.actions.qrCode(res.accountNo, setQrCode)
+
+      res.transactions.map(transaction => {
+        setTransactions(prevArray => [
+          ...prevArray,
+          {
+            id: transaction.id,
+            date: transaction.date,
+            transactionType: transaction.transactionType,
+            coreTransactionCode: transaction.coreTransactionCode,
+            runningBalance: transaction.runningBalance,
+            debit: transaction.transactionType.code === "savingsAccountTransactionType.withdrawal"
+              || transaction.transactionType.code === "savingsAccountTransactionType.feeDeduction"
+              || transaction.transactionType.code === "savingsAccountTransactionType.overdraftInterest"
+              || transaction.transactionType.code === "savingsAccountTransactionType.withholdTax"
+              ? transaction.amount
+              : "",
+            credit: transaction.transactionType.code !== "savingsAccountTransactionType.withdrawal"
+              && transaction.transactionType.code !== "savingsAccountTransactionType.feeDeduction"
+              && transaction.transactionType.code !== "savingsAccountTransactionType.overdraftInterest"
+              && transaction.transactionType.code !== "savingsAccountTransactionType.withholdTax"
+              ? transaction.amount
+              : ""
+          }
+        ])
+
+        return null
+      })
     }
 
     props.actions.savingsAccountAssosiations(savingsId, setSavingsAssosiationsRes)
@@ -261,7 +297,7 @@ const SavingDataDetail = props => {
                   && savingsAssosiations.status
                   && savingsAssosiations.status.id
                   ? savingsAssosiations.status.id === 600
-                    ? (<span className="ml-auto circle circle-lg mb-3" style={{backgroundColor: "gray"}} />)
+                    ? (<span className="ml-auto circle circle-lg mb-3" style={{ backgroundColor: "gray" }} />)
                     : savingsAssosiations.status.id === 300
                       ? (<span className="ml-auto circle bg-success circle-lg mb-3" />)
                       : savingsAssosiations.status.id === 200
@@ -605,7 +641,8 @@ const SavingDataDetail = props => {
                 : null
             }
             {
-              tes
+              savingsAssosiations
+                && savingsAssosiations.transactions
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'transactions' ? 'active' : ''}
@@ -618,7 +655,8 @@ const SavingDataDetail = props => {
                 : null
             }
             {
-              tes
+              savingsAssosiations
+                && savingsAssosiations.taxTransactions
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'taxTransactions' ? 'active' : ''}
@@ -632,7 +670,8 @@ const SavingDataDetail = props => {
             }
 
             {
-              tes
+              savingsAssosiations
+                && savingsAssosiations.charges
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'charges' ? 'active' : ''}
@@ -792,9 +831,6 @@ const SavingDataDetail = props => {
                         style={rightCol}
                       >
                         <strong>
-                          {
-                            colIndex.map(col => { return col })
-                          }
                           {
                             savingsAssosiations
                               && savingsAssosiations.interestPostingPeriodType
@@ -981,7 +1017,45 @@ const SavingDataDetail = props => {
 
             </TabPane>
             <TabPane className="ft-detail" tabId="transactions" role="tabpane2">
-
+              <div className="table-responsive mt-3 mb-3">
+                <table
+                  className="table"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                    <tr>
+                      {
+                        transactionsHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      transactions.map((transaction, key) => {
+                        return (
+                          <tr key={"transaction" + key}>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.id}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {transaction.date[2] + " " + MONTHS_ID[transaction.date[1] - 1] + " " + transaction.date[0]}
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {
+                                transaction.coreTransactionCode.description
+                                  ? transaction.coreTransactionCode.description
+                                  : transaction.transactionType.value
+                              }
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.debit}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.credit}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(transaction.runningBalance)}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
             </TabPane>
             <TabPane className="ft-detail" tabId="taxTransactions" role="tabpane3">
 
