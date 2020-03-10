@@ -169,7 +169,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/member/saving-data-history-edit" component={waitFor(SavingDataHistoryEdit)} />
                     <Route exact path="/simpool/member/loan-data" component={waitFor(LoanData)} />
                     <Route exact path="/simpool/member/loan-data-add" component={waitFor(LoanDataAdd)} />
-                    <Route exact path="/simpool/member/loan-data-detail" component={waitFor(LoanDataDetail)} />
+                    <Route exact path="/simpool/member/loan-data-detail/:id" component={waitFor(LoanDataDetail)} />
                     <Route exact path="/simpool/member/loan-data-edit" component={waitFor(LoanDataEdit)} />
                     <Route exact path="/simpool/member/loan-data-history" component={waitFor(LoanDataHistory)} />
                     <Route exact path="/simpool/member/loan-data-history-detail" component={waitFor(LoanDataHistoryDetail)} />

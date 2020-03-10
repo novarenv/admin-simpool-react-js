@@ -40,6 +40,9 @@ export const accountTransfersUrl = tfId => `${apiEntrySimpool}/accounttransfers/
 export const qrCodeUrl = savingsId => `${apiEntrySimpool}/ppob/qrcode/${savingsId}/100`
 export const savingsAccoountAssosiationsUrl = savingsId => `${apiEntrySimpool}/savingsaccounts/${savingsId}`
 
+// Loans
+export const loansUrl = loanId => `${apiEntrySimpool}/loans/${loanId}`
+
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`
 export const transactionsUrl = `${apiEntrySimpool}/transactions`

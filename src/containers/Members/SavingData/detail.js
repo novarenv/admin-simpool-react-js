@@ -190,7 +190,7 @@ const SavingDataDetail = props => {
     }
     
     return () => { };
-  }, [isChargeActive])
+  }, [isChargeActive, activeCharges, inActiveCharges])
 
   useEffect(() => {
     const setSavingsAssosiationsRes = res => {

@@ -1,6 +1,7 @@
 export * from './auth.actions.js'
 export * from './dashboard.actions.js'
 export * from './deposit.actions.js'
+export * from './loans.actions.js'
 export * from './memberData.actions.js'
 export * from './savings.actions.js'
 export * from './search.actions.js'

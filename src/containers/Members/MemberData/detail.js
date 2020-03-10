@@ -386,8 +386,11 @@ const Savings = props => {
 }
 
 const Loans = props => {
-  const rowClicked = () => {
-    console.log("Clicked!")
+  const rowClicked = id => {
+    props.history.push({
+      pathname: '/simpool/member/loan-data-detail/' + id,
+      search: "?tenantIdentifier=" + props.tenant
+    })
   }
 
   const [activeLoans, setActiveLoans] = useState([])
@@ -452,7 +455,10 @@ const Loans = props => {
                 activeLoans.map((acc, key) => {
                   return (
                     <div key={"Loans " + key}>
-                      <div className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent py-2" onClick={() => rowClicked()}>
+                      <div
+                        className="row ft-detail list-detail d-flex justify-content-center list-hover center-parent py-2"
+                        onClick={() => rowClicked(acc.id)}
+                      >
                         <div className="col-2">
                           {
                             acc.status.id != null
@@ -606,7 +612,7 @@ const Loans = props => {
                               title={acc.loanType.value}
                             >
                               <em className="fa fa-user" />
-                            </span>                            
+                            </span>
                           </div>
                           <div className="col-6">
                             <span>{
@@ -2391,7 +2397,13 @@ class MemberDataDetail extends Component {
                 <TabPane tabId="loan" role="tabpanel">
                   {
                     Array.isArray(this.state.clientAccount.loanAccounts) && this.state.clientAccount.loanAccounts.length > 0
-                      ? (<Loans loans={this.state.clientAccount.loanAccounts} />)
+                      ? (
+                        <Loans
+                          history={this.props.history}
+                          loans={this.state.clientAccount.loanAccounts}
+                          tenant={this.props.settings.tenantIdentifier}
+                        />
+                      )
                       : (
                         <div className="center-parent mt-3 ft-detail">
                           <span>Pengguna tidak punya pinjaman</span>

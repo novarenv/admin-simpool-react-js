@@ -1,191 +1,1475 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { Link, withRouter } from 'react-router-dom'
 import {
   Button,
   Card,
   CardBody,
-  Input
-} from 'reactstrap';
-import Modal from 'react-modal';
-import SlidingPane from 'react-sliding-pane';
-import 'react-sliding-pane/dist/react-sliding-pane.css';
-import ReactDataGrid from 'react-data-grid';
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane
+} from 'reactstrap'
+import { withTranslation } from 'react-i18next'
+import Modal from 'react-modal'
+import QRCode from 'qrcode.react'
 
-import ContentWrapper from '../../../components/Layout/ContentWrapper';
+import PropTypes from 'prop-types'
+import * as actions from '../../../store/actions/actions'
+import { connect } from 'react-redux'
+import { bindActionCreators, compose } from 'redux'
 
-export default class LoanDataDetail extends Component {
-  constructor(props) {
-    super(props);
+import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import Swal from '../../../components/Common/Swal'
 
-    let originalRows = this.createRows(1000);
-    let rows = originalRows.slice(0);
-    
-    this.state = {
-      isPaneOpen: false,
-      rows,
-      selectedMember: ''
-    };
-    
-    this._columns = [
-      {
-        key: 'ANGGOTA',
-        name: 'Anggota',
-        width: 1000
-      }
-    ];
-  }
+const SavingDataDetail = props => {
+  const [activeTab, setActiveTab] = useState("summary")
+  const [loans, setLoans] = useState({})
+  const [loanId] = useState(props.match.params.id)
+  const [qrCode, setQrCode] = useState(null)
+  const [modalTransactions, setModalTransactions] = useState(false)
+  const [isAccountTransaction, setIsAccountTransaction] = useState(false)
+  const [isAccountTransfer, setIsAccountTransfer] = useState(false)
+  const [isAccountCharge, setIsAccountCharge] = useState(false)
+  const [isReversal, setIsReversal] = useState(false)
+  const [accountId, setAccountId] = useState(null)
+  const [trxId, setTrxId] = useState(null)
 
-  createRows = () => {
-    let rows = [];
-    for (let i = 1; i < 100; i++) {
-      rows.push({
-        ANGGOTA: i
-      });
+  const MONTHS_ID = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ]
+
+  const numToMoney = amount => {
+    const amountInt = parseInt(amount)
+    const amountNum = amount.toFixed(2)
+    const amountStr = amountNum.toString()
+    let afterComma
+
+    if (amountStr.includes('.')) {
+      afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
     }
 
-    return rows;
-  };
-
-  rowGetter = (i) => this.state.rows[i]
-
-  onCellSelected = ({ rowIdx, idx }) => {
-    this.setState({
-      isPaneOpen: false,
-      rowIdx: rowIdx,
-      selectedMember: this.state.rows[rowIdx].ANGGOTA
-    })
-    this.handleChange.bind(this)
-    console.log(this.state.rows[rowIdx].ANGGOTA)
-  };
-
-  componentDidMount() {
-    Modal.setAppElement(this.el);
+    if (afterComma) {
+      if (afterComma === "00") {
+        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      } else {
+        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + afterComma
+      }
+    } else {
+      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    }
   }
 
-  handleChange = e => {
-    this.setState({selectedMember: e.target.value});
-    console.log(this.state.selectedMember)
+  let clientId
+  if (loans && loans.clientId) {
+    clientId = loans.clientId
   }
 
-  onSubmit = e => {
-    console.log('Form submitted..');
-    e.preventDefault();
+  const leftCol = {
+    backgroundColor: "#F5F5F5",
+    width: "55%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
+  }
+  const rightCol = {
+    backgroundColor: "#FFFFFF",
+    width: "45%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
+  }
+  const first = {
+    backgroundColor: "#F9F9F9",
+    width: "40%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
+  }
+  const second = {
+    backgroundColor: "#FFFFFF",
+    width: "40%",
+    height: 36,
+    alignItems: "center",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#DDDDDD"
   }
 
-  openPane = () => {
-    this.setState({ isPaneOpen: !this.state.isPaneOpen })
-    console.log(this.state.isPaneOpen)
+  const transactionsHead = [
+    "ID",
+    "Transaction Date",
+    "Transaction Type",
+    "Debit",
+    "Credit",
+    "Balance",
+    "View Receipt"
+  ]
+  const [transactions, setTransactions] = useState([])
+
+  const taxTransactionsHead = [
+    "ID",
+    "Transaction Date",
+    "Amount",
+    "View Withholding Tax Slip"
+  ]
+  const [taxTransactions, setTaxTransactions] = useState([])
+
+  const chargesHead = [
+    "Name",
+    "Feee / Penalty",
+    "Payment due at",
+    "Due as of",
+    "Repeats On Date",
+    "Calculation Type",
+    "Due",
+    "Paid",
+    "Waived",
+    "Outstanding",
+    "Actions"
+  ]
+  const [activeCharges, setActiveCharges] = useState([])
+  const [inActiveCharges, setInActiveCharges] = useState([])
+  const [shownCharges, setShownCharges] = useState([])
+  const [isChargeActive, setIsChargeActive] = useState(true)
+
+  const [accountTransaction, setAccountTransaction] = useState({})
+  const setAccountTransactionRes = res => {
+    setAccountTransaction(res)
+    setIsAccountTransaction(true)
   }
 
-  render() {
-    const dd = String(new Date().getDate()).padStart(2, '0')
-    const mm = String(new Date().getMonth() + 1).padStart(2, '0') //January is 0!
-    const yyyy = new Date().getFullYear()
+  const [accountTransfer, setAccountTransfer] = useState({})
+  const setAccountTransferRes = res => {
+    setAccountTransfer(res)
+    setIsAccountTransfer(true)
+  }
 
-    const today = dd + '/' + mm + '/' + yyyy
+  const [accountCharge, setAccountCharge] = useState({})
+  const setAccountChargeRes = res => {
+    setAccountCharge(res)
+    setIsAccountCharge(true)
+  }
 
-    return (
-      <ContentWrapper ref={ref => this.el = ref}>
-        <SlidingPane
-          className='pos-absolute slide-pane'
-          closeIcon={<i className="fas fa-angle-right" />}
-          isOpen={this.state.isPaneOpen}
-          title='Hasil Pencarian Anggota'
-          subtitle='Pilih salah satu'
-          onRequestClose={() => {
-            this.setState({ isPaneOpen: false });
-          }}
-        >
-          <div className="row mr-1">
-            <div className="col-md-10">
-              <input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.." value={this.state.selectedMember} tabIndex={2} onChange={this.handleChange}/>
-            </div>
-            <Button outline className="col-md-2 btn-search" color="primary" type="button" onClick={this.openPane} tabIndex={3}>
-              <i className="fas fa-search mr-2" />
-              Cari Anggota
-            </Button>
+  useEffect(() => {
+    if (isChargeActive) {
+      setShownCharges(activeCharges)
+    } else {
+      setShownCharges(inActiveCharges)
+    }
 
-            <Card>
-              <CardBody>
-                <ReactDataGrid
-                  onGridSort={this.handleGridSort}
-                  columns={this._columns}
-                  rowGetter={this.rowGetter}
-                  rowsCount={this.state.rows.length}
-                  minHeight={700}
-                  minWidth={1000}
-                  onCellSelected={this.onCellSelected}
-                />
-              </CardBody>
-            </Card>
-          </div>
-        </SlidingPane>
+    return () => { };
+  }, [isChargeActive])
 
-        <div className="content-heading">
-          <div>Detail Pinjaman</div>
+  useEffect(() => {
+    props.actions.loans(loanId, setLoans)
+
+    Modal.setAppElement('body')
+
+    return () => { }
+  }, [])
+
+  const [colIndex, setColIndex] = useState([])
+
+  useEffect(() => {
+    if (loans
+      && loans.status
+      && loans.status.id
+      && loans.status.id !== 600) {
+      setColIndex([
+        loans
+          && loans.summary
+          && loans.summary.totalDeposits
+          ? numToMoney(loans.summary.totalDeposits)
+          : "-",
+        loans
+          && loans.summary
+          && loans.summary.totalWithdrawals
+          ? numToMoney(loans.summary.totalWithdrawals)
+          : "-",
+        loans
+          && loans.summary
+          && loans.summary.totalInterestEarned
+          ? numToMoney(loans.summary.totalInterestEarned)
+          : "-",
+        loans
+          && loans.summary
+          && loans.summary.totalInterestPosted
+          ? numToMoney(loans.summary.totalInterestPosted)
+          : "-"
+      ])
+    }
+
+    return () => { };
+  }, [loans])
+
+  const undoAccountTransaction = res => {
+    window.location.reload()
+  }
+
+  const reversalTransaction = {
+    title: 'Are you sure?',
+    text: 'Do you want to reverse this transaction?',
+    icon: 'warning',
+    buttons: {
+      cancel: {
+        text: 'No, I want to cancel it!',
+        value: null,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+      confirm: {
+        text: 'Yes, reverse it!',
+        value: true,
+        visible: true,
+        className: "bg-danger",
+        closeModal: false
+      }
+    }
+  }
+  const reversalTransactionCallback = (isConfirm, swal) => {
+    if (isConfirm) {
+      swal("Deleted!", "Your transaction has been reversed.", "success")
+      props.actions.undoAccountTransaction({ accountId: accountId, trxId: trxId }, undoAccountTransaction)
+    } else {
+      swal("Cancelled", "Your transaction is safe :)", "error");
+    }
+  }
+
+  return (
+    <ContentWrapper>
+      <Swal options={reversalTransaction} id="reversalTransaction" callback={reversalTransactionCallback} />
+      <Modal
+        style={{
+          content: {
+            width: "50%",
+            left: "25%"
+          }
+        }}
+        isOpen={modalTransactions}
+        onRequestClose={() => {
+          setModalTransactions(false)
+          setIsAccountTransaction(false)
+          setIsAccountTransfer(false)
+          setIsReversal(false)
+          setIsAccountCharge(false)
+        }}
+      >
+        <div className="container-fluid">
+          {
+            isReversal
+              ? (
+                <div className="row justify-content-between">
+                  <Button
+                    outline
+                    color="primary"
+                    onClick={() => {
+                      setModalTransactions(false)
+                      setIsAccountTransaction(false)
+                      setIsAccountTransfer(false)
+                      setIsReversal(false)
+                      setIsAccountCharge(false)
+                    }}
+                  >
+                    Tutup
+                  </Button>
+                  <Button color="danger" onClick={() => document.getElementById("reversalTransaction").click()}>
+                    <em className="fa fa-undo-alt" />
+                    <span>&ensp; Reversal Transaction</span>
+                  </Button>
+                </div>
+              )
+              : (
+                <Button
+                  outline
+                  color="primary"
+                  onClick={() => {
+                    setModalTransactions(false)
+                    setIsAccountTransaction(false)
+                    setIsAccountTransfer(false)
+                    setIsReversal(false)
+                    setIsAccountCharge(false)
+                  }}
+                >
+                  Tutup
+              </Button>
+              )
+          }
+          {
+            isAccountTransfer
+              ? (
+                <div className="ft-detail">
+                  <div className="center-parent">
+                    <h1>Transfer Details</h1>
+                  </div>
+
+                  <div className="row justify-content-center mt-3">
+                    <div className="col-4 mr-2">
+                      <div><span>Transaction Amount</span></div>
+                      <div><span>Transaction Date</span></div>
+                      <div><span>Description</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div>
+                        <strong>
+                          {accountTransfer.transferAmount ? numToMoney(accountTransfer.transferAmount) : "-"}
+                        </strong>
+                      </div>
+                      <div>
+                        <strong>
+                          {
+                            Array.isArray(accountTransfer.transferDate) && accountTransfer.transferDate.length > 0
+                              ? accountTransfer.transferDate[2] + " " + MONTHS_ID[accountTransfer.transferDate[1] - 1] + " " + accountTransfer.transferDate[0]
+                              : "-"
+                          }
+                        </strong>
+                      </div>
+                      <div>
+                        <strong>
+                          {accountTransfer.transferDescription ? accountTransfer.transferDescription : "-"}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-3 mr-2 list-header">
+                      <div><span>Fields</span></div>
+                      <div><span>Office</span></div>
+                      <div><span>Client</span></div>
+                      <div><span>Account Type</span></div>
+                      <div><span>Account Id</span></div>
+                    </div>
+                    <div className="col-3 mr-2 list-detail">
+                      <div><strong>From</strong></div>
+                      <div><span>{accountTransfer.fromOffice.name}</span></div>
+                      <div><span>{accountTransfer.fromClient.displayName}</span></div>
+                      <div><span>{accountTransfer.fromAccountType.value}</span></div>
+                      <div><span>{accountTransfer.fromAccount.accountNo}</span></div>
+                    </div>
+                    <div className="col-3 list-detail">
+                      <div><strong>To</strong></div>
+                      <div><span>{accountTransfer.toOffice.name}</span></div>
+                      <div><span>{accountTransfer.toClient.displayName}</span></div>
+                      <div><span>{accountTransfer.toAccountType.value}</span></div>
+                      <div><span>{accountTransfer.toAccount.accountNo}</span></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
+          {
+            isAccountTransaction
+              ? (
+                <div className="ft-detail">
+                  <div className="center-parent">
+                    <div><h1>Transaction Detail</h1></div>
+                    <div><h3>{accountTransaction.id}</h3></div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-4">
+                      <div><span>Type</span></div>
+                      <div><span>Transaction Date</span></div>
+                      <div><span>Currency</span></div>
+                      <div><span>Amount</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div><strong>{accountTransaction.transactionType.value}</strong></div>
+                      <div>
+                        <strong>
+                          {
+                            Array.isArray(accountTransaction.date) && accountTransaction.date.length > 0
+                              ? accountTransaction.date[2] + " " + MONTHS_ID[accountTransaction.date[1] - 1] + " " + accountTransaction.date[0]
+                              : "-"
+                          }
+                        </strong>
+                      </div>
+                      <div><strong>{accountTransaction.currency.name}</strong></div>
+                      <div><strong>{numToMoney(accountTransaction.amount)}</strong></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
+          {
+            isAccountCharge
+              ? (
+                <div className="ft-detail">
+                  <div className="center-parent">
+                    <div><h1>{accountCharge.name}</h1></div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-4">
+                      <div><span>Type</span></div>
+                      <div><span>Currency</span></div>
+                      <div><span>Payment due at</span></div>
+                      <div><span>Payment Due as Of</span></div>
+                      <div><span>Calculation Type</span></div>
+                      <div><span>Due</span></div>
+                      <div><span>Paid</span></div>
+                      <div><span>Waived</span></div>
+                      <div><span>Outstanding</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div>
+                        <strong>
+                          {
+                            accountCharge.penalty
+                              ? "Penalty"
+                              : "Fee"
+                          }
+                        </strong>
+                      </div>
+                      <div><strong>{accountCharge.currency.name}</strong></div>
+                      <div><strong>{accountCharge.chargeTimeType.value}</strong></div>
+                      <div>
+                        <strong>
+                          {accountCharge.dueDate[2] + " " + MONTHS_ID[accountCharge.dueDate[1] - 1] + " " + accountCharge.dueDate[0]}
+                        </strong>
+                      </div>
+                      <div><strong>{accountCharge.chargeCalculationType.value}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amount)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountPaid)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountWaived)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountOutstanding)}</strong></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
         </div>
+      </Modal>
 
-        <Card className="card-default">
-          <CardBody>
-            <Link to="/simpool/member/loan-data">
-              <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit" tabIndex={7}>Kembali</Button>
-            </Link>
+      <div className="content-heading">
+        <div>Detail Pinjaman</div>
+      </div>
 
-            <form className="form-font-size mt-3" onSubmit={this.onSubmit}>
-              <label htmlFor="savingType">Jenis Simpanan</label>
-              <select defaultValue="" className="custom-select custom-select-sm input-font-size" name="savingType" tabIndex={1} disabled>
-                <option>Jenis Simpanan</option>
-                <option defaultValue="pokok">Pokok</option>
-                <option defaultValue="wajib">Wajib</option>
-                <option defaultValue="sukarela">Sukarela</option>
-              </select>
+      <Card className="card-default">
+        <CardBody>
+          <Link
+            to={{
+              pathname: "/simpool/member/data-detail/" + clientId,
+              search: "?tenantIdentifier=" + props.settings.tenantIdentifier
+            }}>
+            <Button outline className="mt-3 col-4 col-md-2" color="primary" type="submit">Kembali</Button>
+          </Link>
 
-              <label className="mt-3" htmlFor="member">Anggota</label>
-              <Input className="form-control mr-3 input-font-size" type="text" placeholder="Search anggota.."
-                  value={this.state.selectedMember} onChange={this.handleChange} tabIndex={2} readOnly/>
+          <div className="center-parent mt-5">
+            <h1>
+              {
+                loans
+                  && loans.loanProductName
+                  ? loans.loanProductName + " "
+                  : "-"
+              }
+              {
+                loans
+                  && loans.status
+                  && loans.status.id
+                  ? loans.status.id === 600
+                    ? (<span className="ml-auto circle circle-lg mb-3" style={{ backgroundColor: "gray" }} />)
+                    : loans.status.id === 300 && loans.inArrears
+                      ? (<span className="ml-auto circle bg-danger circle-lg mb-3" />)
+                      : loans.status.id === 300
+                        ? (<span className="ml-auto circle bg-success circle-lg mb-3" />)
+                        : loans.status.id === 200
+                          ? (<span className="ml-auto circle bg-primary circle-lg mb-3" />)
+                          : loans.status.id === 100
+                            ? (<span className="ml-auto circle bg-warning circle-lg mb-3" />)
+                            : null
+                  : null
+              }
+            </h1>
+            <h3
+              className="mb-0"
+            >
+              {
+                loans
+                  && loans.accountNo
+                  ? loans.accountNo
+                  : "-"
+              }
+            </h3>
+          </div>
 
-              <label className="mt-3" htmlFor="openDate">Tanggal Buka</label>
-              <Input
-                type="text"
-                id="openDate"
-                name="openDate"
-                className="input-font-size"
-                placeholder="dd-mm-yyyy"
-                value={today}
-                tabIndex={4}
-                readOnly
-              />
+          <div className="row justify-content-center">
+            <table
+              className="table col-md-5 col-lg-4 ft-detail mt-5 mx-2"
+              style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+            >
+              <tbody>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Disbursement Date</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.timeline
+                          && loans.timeline.actualDisbursementDate
+                          ? Array.isArray(loans.timeline.actualDisbursementDate) && loans.timeline.actualDisbursementDate.length > 0
+                            ? loans.timeline.actualDisbursementDate[2] + " " + MONTHS_ID[loans.timeline.actualDisbursementDate[1] - 1] + " " + loans.timeline.actualDisbursementDate[0]
+                            : "Not Available"
+                          : "Not Available"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Currency</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.currency
+                          && loans.currency.name
+                          ? loans.currency.name
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Loan Officer</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.loanOfficerName
+                          ? loans.loanOfficerName
+                          : "Unassigned"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Mobile Agent</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        "Unassigned"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Product Code</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.externalId
+                          ? loans.externalId
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                {
+                  loans
+                    && loans.status
+                    && loans.status.id === 300
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>Account Collectibility By System</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.categoryNameByLoan
+                                && loans.categoryByLoan
+                                ? loans.categoryByLoan + " - " + loans.categoryNameByLoan
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                    : null
+                }
+                {
+                  loans
+                    && loans.status
+                    && loans.status.id === 300
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>CIF Collectibility By System</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.categoryNameByCif
+                                && loans.categoryByCif
+                                ? loans.categoryByCif + " - " + loans.categoryNameByCif
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                    : null
+                }
+                {
+                  loans
+                    && loans.status
+                    && loans.status.id === 300
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>Manual Account Collectibility</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.manualCollectibility !== 0
+                                ? loans.manualCollectibility
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                    : null
+                }
+              </tbody>
+            </table>
 
-              <label className="mt-3" htmlFor="initDepositValue">/ Nanti Ambil dari API</label><br />
-              <label className="mt-3" htmlFor="initDepositValue">Nilai Setoran Awal</label>
-              <Input
-                type="number"
-                id="initDepositValue"
-                name="initDepositValue"
-                className="input-font-size"
-                placeholder="minimal 3.000.000"
-                tabIndex={5}
-                readOnly
-              />
+            <div className="col-1" />
 
-              <label className="mt-3" htmlFor="initDepositValue">/ Nomor Rekening Ambil dari Anggota</label><br />
-              <label className="mt-3" htmlFor="depositNumber">Nomor Rekening Simpanan</label>
-              <Input
-                type="text"
-                id="depositNumber"
-                name="depositNumber"
-                className="input-font-size"
-                tabIndex={6}
-                readOnly
-              />
+            <table
+              className="table col-md-5 col-lg-4 ft-detail mt-5 mx-2"
+              style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+            >
+              <tbody>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Loan Purpose</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.loanPurposeName
+                          ? loans.loanPurposeName
+                          : "Not Provided"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Proposed Amount</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.proposedPrincipal
+                          ? (
+                            <strong>
+                              {numToMoney(loans.proposedPrincipal)}
+                            </strong>
+                          )
+                          : "-"
+                      }
+                    </strong>
+                  </td>
+                </tr>
+                {
+                  loans
+                    && loans.status
+                    && (
+                      loans.status.id === 200
+                      || loans.status.id === 300
+                      || loans.status.id === 600
+                    )
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>Approved Amount</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.approvedPrincipal
+                                ? numToMoney(loans.approvedPrincipal)
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                    : null
+                }
+                {
+                  loans
+                    && loans.status
+                    && (
+                      loans.status.id === 200
+                      || loans.status.id === 300
+                      || loans.status.id === 600
+                    )
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>Disburse Amount</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.principal
+                                ? numToMoney(loans.principal)
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                    : null
+                }
+                <tr>
+                  <td
+                    style={leftCol}
+                  >
+                    <span>Arrears By</span>
+                  </td>
+                  <td
+                    style={rightCol}
+                  >
+                    <strong>
+                      {
+                        loans
+                          && loans.summary
+                          && loans.summary.totalOverdue
+                          ? numToMoney(loans.summary.totalOverdue)
+                          : "Not Provided"
+                      }
+                    </strong>
+                  </td>
+                </tr> 
+                {
+                  loans
+                    && loans.status
+                    && (
+                      loans.status.id === 200
+                      || loans.status.id === 300
+                      || loans.status.id === 600
+                    )
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>NPA</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.isNPA
+                                ? "Yes"
+                                : "No"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                      : null
+                }
+                {
+                  loans
+                    && loans.status
+                    && (
+                      loans.status.id === 200
+                      || loans.status.id === 300
+                      || loans.status.id === 600
+                    )
+                    ? (
+                      <tr>
+                        <td
+                          style={leftCol}
+                        >
+                          <span>Provision Amount By CIF</span>
+                        </td>
+                        <td
+                          style={rightCol}
+                        >
+                          <strong>
+                            {
+                              loans
+                                && loans.reservedAmountByCif
+                                ? numToMoney(loans.reservedAmountByCif)
+                                : "-"
+                            }
+                          </strong>
+                        </td>
+                      </tr>
+                    )
+                      : null
+                }
+              </tbody>
+            </table>
+          </div>
 
-              <Link to="/simpool/member/loan-data-edit">
-                <Button outline className="mt-3 col-12" color="warning" type="submit" tabIndex={7}>Edit Pinjaman</Button>
-              </Link>
-            </form>
-          </CardBody>
-        </Card>
-      </ContentWrapper>
-    )
-  }
+          <Nav tabs justified className="mt-5">
+            {
+              loans
+                && loans.summary
+                ? (
+                  <NavItem className="nav-tab">
+                    <NavLink className={activeTab === 'summary' ? 'active' : ''}
+                      onClick={() => { setActiveTab('summary'); }}
+                    >
+                      Summary
+                    </NavLink>
+                  </NavItem>
+                )
+                : null
+            }
+            {
+              loans
+                && Array.isArray(loans.transactions)
+                && loans.transactions.length > 0
+                ? (
+                  <NavItem className="nav-tab">
+                    <NavLink className={activeTab === 'transactions' ? 'active' : ''}
+                      onClick={() => { setActiveTab('transactions'); }}
+                    >
+                      Transactions
+                    </NavLink>
+                  </NavItem>
+                )
+                : null
+            }
+            {
+              loans
+                && Array.isArray(loans.taxTransactions)
+                && loans.taxTransactions.length > 0
+                ? (
+                  <NavItem className="nav-tab">
+                    <NavLink className={activeTab === 'taxTransactions' ? 'active' : ''}
+                      onClick={() => { setActiveTab('taxTransactions'); }}
+                    >
+                      Tax Transactions
+                    </NavLink>
+                  </NavItem>
+                )
+                : null
+            }
+
+            {
+              loans
+                && Array.isArray(loans.charges)
+                && loans.charges.length > 0
+                ? (
+                  <NavItem className="nav-tab">
+                    <NavLink className={activeTab === 'charges' ? 'active' : ''}
+                      onClick={() => { setActiveTab('charges'); }}
+                    >
+                      Charges
+                    </NavLink>
+                  </NavItem>
+                )
+                : null
+            }
+
+          </Nav>
+
+          <TabContent activeTab={activeTab}>
+            <TabPane className="ft-detail" tabId="summary" role="tabpanel">
+              <div className="row justify-content-center my-3">
+                <table
+                  className="table col-lg-5 ft-detail mx-2"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <tbody>
+                    {
+                      colIndex[0]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Total Deposits</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[0]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[1]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Total Withdrawal</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[1]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[2]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Interest earned</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[2]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    {
+                      colIndex[3]
+                        ? (
+                          <tr>
+                            <td
+                              style={leftCol}
+                            >
+                              <span>Interest posted</span>
+                            </td>
+                            <td
+                              style={rightCol}
+                            >
+                              <strong>
+                                {
+                                  colIndex[3]
+                                }
+                              </strong>
+                            </td>
+                          </tr>
+                        )
+                        : null
+                    }
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Normal interest rate</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.nominalAnnualInterestRate
+                              ? numToMoney(loans.nominalAnnualInterestRate) + " %"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest compounding period</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.interestCompoundingPeriodType
+                              && loans.interestCompoundingPeriodType.value
+                              ? loans.interestCompoundingPeriodType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest posting period</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.interestPostingPeriodType
+                              && loans.interestPostingPeriodType.value
+                              ? loans.interestPostingPeriodType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div className="col-1" />
+
+                <table
+                  className="table col-lg-5 ft-detail mx-2"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <tbody>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Interest calculated using</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.interestCalculationType
+                              && loans.interestCalculationType.value
+                              ? loans.interestCalculationType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Calculation Days in Year</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.interestCalculationDaysInYearType
+                              && loans.interestCalculationDaysInYearType.value
+                              ? loans.interestCalculationDaysInYearType.value
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Withdrawal fee</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.summary
+                              && loans.summary.totalFeeCharge
+                              ? loans.summary.totalFeeCharge
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Last Active Transaction Date</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.lastActiveTransactionDate
+                              ? Array.isArray(loans.lastActiveTransactionDate) && loans.lastActiveTransactionDate.length > 0
+                                ? loans.lastActiveTransactionDate[2] + " " + MONTHS_ID[loans.lastActiveTransactionDate[1] - 1] + " " + loans.lastActiveTransactionDate[0]
+                                : "-"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Balance Required For Interest Calculation</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.minBalanceForInterestCalculation
+                              ? numToMoney(loans.minBalanceForInterestCalculation)
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Enforce minimum balance</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.enforceMinRequiredBalance
+                              ? loans.enforceMinRequiredBalance
+                                ? "Yes"
+                                : "No"
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Minimum Balance</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.minRequiredBalance
+                              ? numToMoney(loans.minRequiredBalance)
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        style={leftCol}
+                      >
+                        <span>Withhold Tax group</span>
+                      </td>
+                      <td
+                        style={rightCol}
+                      >
+                        <strong>
+                          {
+                            loans
+                              && loans.taxGroup
+                              && loans.taxGroup.name
+                              ? loans.taxGroup.name
+                              : "-"
+                          }
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </TabPane>
+            <TabPane className="ft-detail" tabId="transactions" role="tabpane2">
+              <div className="table-responsive mt-3 mb-3">
+                <table
+                  className="table"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                    <tr>
+                      {
+                        transactionsHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      transactions.map((transaction, key) => {
+                        return (
+                          <tr
+                            key={"transaction" + key}
+                            className="list-hover"
+                            onClick={() => {
+                              setModalTransactions(true)
+
+                              if (transaction.transfer) {
+                                props.actions.accountTransfer(transaction.transfer.id, setAccountTransferRes)
+                              } else {
+                                setAccountId(transaction.accountId)
+                                setTrxId(transaction.id)
+                                props.actions.accountTransaction(
+                                  {
+                                    accountId: transaction.accountId,
+                                    trxId: transaction.id
+                                  },
+                                  setAccountTransactionRes
+                                )
+
+                                if (transaction.transactionType.id !== 3 && transaction.transactionType.id !== 17) {
+                                  setIsReversal(true)
+                                }
+                              }
+                            }}
+                          >
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.id}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {transaction.date[2] + " " + MONTHS_ID[transaction.date[1] - 1] + " " + transaction.date[0]}
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {
+                                transaction.coreTransactionCode.description
+                                  ? transaction.coreTransactionCode.description
+                                  : transaction.transactionType.value
+                              }
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.debit}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.credit}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(transaction.runningBalance)}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </TabPane>
+            <TabPane className="ft-detail" tabId="taxTransactions" role="tabpane3">
+              <div className="table-responsive mt-3 mb-3">
+                <table
+                  className="table"
+                  style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                >
+                  <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                    <tr>
+                      {
+                        taxTransactionsHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      taxTransactions.map((taxTrx, key) => {
+                        return (
+                          <tr key={"taxTrx" + key}>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{taxTrx.id}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                              {taxTrx.date[2] + " " + MONTHS_ID[taxTrx.date[1] - 1] + " " + taxTrx.date[0]}
+                            </td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(taxTrx.amount)}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                          </tr>
+                        )
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </TabPane>
+            <TabPane className="ft-detail" tabId="charges" role="tabpane4">
+              <div className="container-fluid">
+                <div className="row justify-content-end mr-1">
+                  <Button outline color="primary" onClick={() => { setIsChargeActive(!isChargeActive) }}>
+                    {
+                      isChargeActive
+                        ? "Inactive Charges"
+                        : "Active Charges"
+                    }
+                  </Button>
+                </div>
+                <div className="table-responsive mt-3 mb-3">
+                  <table
+                    className="table"
+                    style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                  >
+                    <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                      <tr>
+                        {
+                          chargesHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        shownCharges.map((charge, key) => {
+                          return (
+                            <tr
+                              key={"charge" + key}
+                              className="list-hover"
+                              onClick={() => {
+                                setModalTransactions(true)
+
+                                props.actions.accountCharge(
+                                  {
+                                    accountId: charge.accountId,
+                                    chargeId: charge.id
+                                  },
+                                  setAccountChargeRes
+                                )
+                              }}
+                            >
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.name}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.feePenalty}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.chargeTimeType}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                                {charge.dueDate[2] + " " + MONTHS_ID[charge.dueDate[1] - 1] + " " + charge.dueDate[0]}
+                              </td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>-</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.chargeCalculationType}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amount)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountPaid)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountWaived)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountOutstanding)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                            </tr>
+                          )
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabPane>
+          </TabContent>
+        </CardBody>
+      </Card>
+    </ContentWrapper>
+  )
 }
+
+SavingDataDetail.propTypes = {
+  actions: PropTypes.object,
+  settings: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+  settings: state.settings
+})
+const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
+
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(SavingDataDetail))
