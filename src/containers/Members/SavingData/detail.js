@@ -192,6 +192,21 @@ const SavingDataDetail = props => {
 
         return null
       })
+
+      res.taxTransactions.map(taxTrx => {
+        if (!taxTrx.reversed) {
+          setTaxTransactions(prevArray => [
+            ...prevArray,
+            {
+              id: taxTrx.id,
+              date: taxTrx.date,
+              amount: taxTrx.amount,
+            }
+          ])
+        }
+
+        return null
+      })
     }
 
     props.actions.savingsAccountAssosiations(savingsId, setSavingsAssosiationsRes)
@@ -264,7 +279,7 @@ const SavingDataDetail = props => {
   const reversalTransactionCallback = (isConfirm, swal) => {
     if (isConfirm) {
       swal("Deleted!", "Your transaction has been reversed.", "success")
-      props.actions.undoAccountTransaction({accountId: accountId, trxId: trxId}, undoAccountTransaction)
+      props.actions.undoAccountTransaction({ accountId: accountId, trxId: trxId }, undoAccountTransaction)
     } else {
       swal("Cancelled", "Your transaction is safe :)", "error");
     }
@@ -272,7 +287,7 @@ const SavingDataDetail = props => {
 
   return (
     <ContentWrapper>
-      <Swal options={reversalTransaction} id="reversalTransaction" callback={reversalTransactionCallback}/>
+      <Swal options={reversalTransaction} id="reversalTransaction" callback={reversalTransactionCallback} />
       <Modal
         style={{
           content: {
@@ -486,7 +501,7 @@ const SavingDataDetail = props => {
                         </strong>
                       </div>
                       <div><strong>{accountTransaction.currency.name}</strong></div>
-                        <div><strong>{numToMoney(accountTransaction.amount)}</strong></div>
+                      <div><strong>{numToMoney(accountTransaction.amount)}</strong></div>
                     </div>
                   </div>
                 </div>
@@ -1322,14 +1337,14 @@ const SavingDataDetail = props => {
                   </thead>
                   <tbody>
                     {
-                      transactions.map((transaction, key) => {
+                      taxTransactions.map((taxTrx, key) => {
                         return (
-                          <tr key={"transaction" + key}>
-                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{transaction.id}</td>
+                          <tr key={"taxTrx" + key}>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{taxTrx.id}</td>
                             <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
-                              {transaction.date[2] + " " + MONTHS_ID[transaction.date[1] - 1] + " " + transaction.date[0]}
+                              {taxTrx.date[2] + " " + MONTHS_ID[taxTrx.date[1] - 1] + " " + taxTrx.date[0]}
                             </td>
-                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(transaction.runningBalance)}</td>
+                            <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(taxTrx.amount)}</td>
                             <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
                           </tr>
                         )
