@@ -1,7 +1,7 @@
 // const apiEntryBiller =
 //   'http://demo.ikkat.datacomm.co.id:8081/biller-management/api';
 const apiEntrySimpool =
-  'https://demo.ikkat.datacomm.co.id:8443/fineract-provider/api/v1';
+  'https://demo.simpool.id:8444/fineract-provider/api/v1';
 
 let tenantIdentifier
 export const setTenantIdentifier = id => {
@@ -34,6 +34,7 @@ export const clientTemplateUrl = `${apiEntrySimpool}/clients/template`
 export const docAttachUrl = (clientId, documentId) => `${apiEntrySimpool}/clients/${clientId}/documents/${documentId}/attachment`
 
 // Savings
+export const accountChargesUrl = (clientId, chargeId) => `${apiEntrySimpool}/savingsaccounts/${clientId}/charges/${chargeId}`
 export const accountTransactionsUrl = (clientId, trxId) => `${apiEntrySimpool}/savingsaccounts/${clientId}/transactions/${trxId}`
 export const accountTransfersUrl = tfId => `${apiEntrySimpool}/accounttransfers/${tfId}`
 export const qrCodeUrl = savingsId => `${apiEntrySimpool}/ppob/qrcode/${savingsId}/100`

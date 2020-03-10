@@ -2404,7 +2404,7 @@ class MemberDataDetail extends Component {
                       search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
                     }}
                   >
-                    <Button outline className="col-12 mt-4 mb-2" color="primary" type="button">
+                    <Button className="col-12 mt-4 mb-2" color="primary" type="button">
                       Tambah Pinjaman
                     </Button>
                   </Link>

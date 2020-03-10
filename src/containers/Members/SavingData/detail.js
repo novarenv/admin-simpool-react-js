@@ -31,6 +31,7 @@ const SavingDataDetail = props => {
   const [modalTransactions, setModalTransactions] = useState(false)
   const [isAccountTransaction, setIsAccountTransaction] = useState(false)
   const [isAccountTransfer, setIsAccountTransfer] = useState(false)
+  const [isAccountCharge, setIsAccountCharge] = useState(false)
   const [isReversal, setIsReversal] = useState(false)
   const [accountId, setAccountId] = useState(null)
   const [trxId, setTrxId] = useState(null)
@@ -137,6 +138,32 @@ const SavingDataDetail = props => {
   ]
   const [transactions, setTransactions] = useState([])
 
+  const taxTransactionsHead = [
+    "ID",
+    "Transaction Date",
+    "Amount",
+    "View Withholding Tax Slip"
+  ]
+  const [taxTransactions, setTaxTransactions] = useState([])
+
+  const chargesHead = [
+    "Name",
+    "Feee / Penalty",
+    "Payment due at",
+    "Due as of",
+    "Repeats On Date",
+    "Calculation Type",
+    "Due",
+    "Paid",
+    "Waived",
+    "Outstanding",
+    "Actions"
+  ]
+  const [activeCharges, setActiveCharges] = useState([])
+  const [inActiveCharges, setInActiveCharges] = useState([])
+  const [shownCharges, setShownCharges] = useState([])
+  const [isChargeActive, setIsChargeActive] = useState(true)
+
   const [accountTransaction, setAccountTransaction] = useState({})
   const setAccountTransactionRes = res => {
     setAccountTransaction(res)
@@ -149,13 +176,21 @@ const SavingDataDetail = props => {
     setIsAccountTransfer(true)
   }
 
-  const taxTransactionsHead = [
-    "ID",
-    "Transaction Date",
-    "Amount",
-    "View Withholding Tax Slip"
-  ]
-  const [taxTransactions, setTaxTransactions] = useState([])
+  const [accountCharge, setAccountCharge] = useState({})
+  const setAccountChargeRes = res => {
+    setAccountCharge(res)
+    setIsAccountCharge(true)
+  }
+
+  useEffect(() => {
+    if (isChargeActive) {
+      setShownCharges(activeCharges)
+    } else {
+      setShownCharges(inActiveCharges)
+    }
+    
+    return () => { };
+  }, [isChargeActive])
 
   useEffect(() => {
     const setSavingsAssosiationsRes = res => {
@@ -207,6 +242,64 @@ const SavingDataDetail = props => {
 
         return null
       })
+
+      if (Array.isArray(res.charges) && res.charges.length > 0) {
+        res.charges.map(charge => {
+          if (charge.isActive) {
+            setActiveCharges(prevArray => [
+              ...prevArray,
+              {
+                name: charge.name,
+                feePenalty: charge.penalty ? "Penalty" : "Fee",
+                chargeTimeType: charge.chargeTimeType.value,
+                dueDate: charge.dueDate,
+                chargeCalculationType: charge.chargeCalculationType.value,
+                amount: charge.amount,
+                amountPaid: charge.amountPaid,
+                amountWaived: charge.amountWaived,
+                amountOutstanding: charge.amountOutstanding,
+                accountId: charge.accountId,
+                id: charge.id
+              }
+            ])
+            setShownCharges(prevArray => [
+              ...prevArray,
+              {
+                name: charge.name,
+                feePenalty: charge.penalty ? "Penalty" : "Fee",
+                chargeTimeType: charge.chargeTimeType.value,
+                dueDate: charge.dueDate,
+                chargeCalculationType: charge.chargeCalculationType.value,
+                amount: charge.amount,
+                amountPaid: charge.amountPaid,
+                amountWaived: charge.amountWaived,
+                amountOutstanding: charge.amountOutstanding,
+                accountId: charge.accountId,
+                id: charge.id
+              }
+            ])
+          } else {
+            setInActiveCharges(prevArray => [
+              ...prevArray,
+              {
+                name: charge.name,
+                feePenalty: charge.penalty ? "Penalty" : "Fee",
+                chargeTimeType: charge.chargeTimeType.value,
+                dueDate: charge.dueDate,
+                chargeCalculationType: charge.chargeCalculationType.value,
+                amount: charge.amount,
+                amountPaid: charge.amountPaid,
+                amountWaived: charge.amountWaived,
+                amountOutstanding: charge.amountOutstanding,
+                accountId: charge.accountId,
+                id: charge.id
+              }
+            ])
+          }
+
+          return null
+        })
+      }
     }
 
     props.actions.savingsAccountAssosiations(savingsId, setSavingsAssosiationsRes)
@@ -366,6 +459,7 @@ const SavingDataDetail = props => {
           setIsAccountTransaction(false)
           setIsAccountTransfer(false)
           setIsReversal(false)
+          setIsAccountCharge(false)
         }}
       >
         <div className="container-fluid">
@@ -381,6 +475,7 @@ const SavingDataDetail = props => {
                       setIsAccountTransaction(false)
                       setIsAccountTransfer(false)
                       setIsReversal(false)
+                      setIsAccountCharge(false)
                     }}
                   >
                     Tutup
@@ -400,6 +495,7 @@ const SavingDataDetail = props => {
                     setIsAccountTransaction(false)
                     setIsAccountTransfer(false)
                     setIsReversal(false)
+                    setIsAccountCharge(false)
                   }}
                 >
                   Tutup
@@ -410,9 +506,6 @@ const SavingDataDetail = props => {
             isAccountTransfer
               ? (
                 <div className="ft-detail">
-                  {
-                    console.log(accountTransfer)
-                  }
                   <div className="center-parent">
                     <h1>Transfer Details</h1>
                   </div>
@@ -502,6 +595,54 @@ const SavingDataDetail = props => {
                       </div>
                       <div><strong>{accountTransaction.currency.name}</strong></div>
                       <div><strong>{numToMoney(accountTransaction.amount)}</strong></div>
+                    </div>
+                  </div>
+                </div>
+              )
+              : null
+          }
+          {
+            isAccountCharge
+              ? (
+                <div className="ft-detail">
+                  <div className="center-parent">
+                    <div><h1>{accountCharge.name}</h1></div>
+                  </div>
+
+                  <div className="row justify-content-center mt-5">
+                    <div className="col-4">
+                      <div><span>Type</span></div>
+                      <div><span>Currency</span></div>
+                      <div><span>Payment due at</span></div>
+                      <div><span>Payment Due as Of</span></div>
+                      <div><span>Calculation Type</span></div>
+                      <div><span>Due</span></div>
+                      <div><span>Paid</span></div>
+                      <div><span>Waived</span></div>
+                      <div><span>Outstanding</span></div>
+                    </div>
+                    <div className="col-4">
+                      <div>
+                        <strong>
+                          {
+                            accountCharge.penalty
+                              ? "Penalty"
+                              : "Fee"
+                          }
+                        </strong>
+                      </div>
+                      <div><strong>{accountCharge.currency.name}</strong></div>
+                      <div><strong>{accountCharge.chargeTimeType.value}</strong></div>
+                      <div>
+                        <strong>
+                          {accountCharge.dueDate[2] + " " + MONTHS_ID[accountCharge.dueDate[1] - 1] + " " + accountCharge.dueDate[0]}
+                        </strong>
+                      </div>
+                      <div><strong>{accountCharge.chargeCalculationType.value}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amount)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountPaid)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountWaived)}</strong></div>
+                      <div><strong>{numToMoney(accountCharge.amountOutstanding)}</strong></div>
                     </div>
                   </div>
                 </div>
@@ -883,7 +1024,8 @@ const SavingDataDetail = props => {
             }
             {
               savingsAssosiations
-                && savingsAssosiations.transactions
+                && Array.isArray(savingsAssosiations.transactions)
+                && savingsAssosiations.transactions.length > 0
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'transactions' ? 'active' : ''}
@@ -897,7 +1039,8 @@ const SavingDataDetail = props => {
             }
             {
               savingsAssosiations
-                && savingsAssosiations.taxTransactions
+                && Array.isArray(savingsAssosiations.taxTransactions)
+                && savingsAssosiations.taxTransactions.length > 0
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'taxTransactions' ? 'active' : ''}
@@ -912,7 +1055,8 @@ const SavingDataDetail = props => {
 
             {
               savingsAssosiations
-                && savingsAssosiations.charges
+                && Array.isArray(savingsAssosiations.charges)
+                && savingsAssosiations.charges.length > 0
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'charges' ? 'active' : ''}
@@ -1355,7 +1499,68 @@ const SavingDataDetail = props => {
               </div>
             </TabPane>
             <TabPane className="ft-detail" tabId="charges" role="tabpane4">
+              <div className="container-fluid">
+                <div className="row justify-content-end mr-1">
+                  <Button outline color="primary" onClick={() => {setIsChargeActive(!isChargeActive)}}>
+                    {
+                      isChargeActive
+                        ? "Inactive Charges"
+                        : "Active Charges"
+                    }
+                  </Button>
+                </div>
+                <div className="table-responsive mt-3 mb-3">
+                  <table
+                    className="table"
+                    style={{ borderWidth: 2, borderColor: "#DDDDDD", borderStyle: "solid" }}
+                  >
+                    <thead style={{ borderWidth: 2, borderBottomWidth: 3, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                      <tr>
+                        {
+                          chargesHead.map(head => <th key={"head" + head} style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid", color: "black", fontWeight: "bold" }}>{head}</th>)
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        shownCharges.map((charge, key) => {
+                          return (
+                            <tr
+                              key={"charge" + key}
+                              className="list-hover"
+                              onClick={() => {
+                                setModalTransactions(true)
 
+                                props.actions.accountCharge(
+                                  {
+                                    accountId: charge.accountId,
+                                    chargeId: charge.id
+                                  },
+                                  setAccountChargeRes
+                                )
+                              }}
+                            >
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.name}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.feePenalty}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.chargeTimeType}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>
+                                {charge.dueDate[2] + " " + MONTHS_ID[charge.dueDate[1] - 1] + " " + charge.dueDate[0]}
+                              </td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>-</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{charge.chargeCalculationType}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amount)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountPaid)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountWaived)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}>{numToMoney(charge.amountOutstanding)}</td>
+                              <td style={{ borderWidth: 1, borderColor: "#DDDDDD", borderStyle: "solid" }}><em className="fa fa-file-invoice-dollar" /></td>
+                            </tr>
+                          )
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </TabPane>
           </TabContent>
         </CardBody>

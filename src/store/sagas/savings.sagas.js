@@ -2,6 +2,7 @@ import { select, takeEvery } from 'redux-saga/effects'
 import axios from 'axios'
 
 import {
+  ACCOUNT_CHARGE,
   ACCOUNT_TRANSACTION,
   ACCOUNT_TRANSFER,
   QR_CODE,
@@ -10,6 +11,7 @@ import {
 } from '../actions/actions'
 import {
   headers,
+  accountChargesUrl,
   accountTransactionsUrl,
   accountTransfersUrl,
   savingsAccoountAssosiationsUrl,
@@ -116,8 +118,6 @@ function* accountTransaction(action) {
 function* undoAccountTransaction(action) {
   const auth = yield select(authSelector)
 
-  console.log("Undo")
-
   try {
     const undoAccountTransaction = yield axios
       .post(accountTransactionsUrl(action.payload.accountId, action.payload.trxId), null, {
@@ -141,7 +141,31 @@ function* undoAccountTransaction(action) {
   }
 }
 
+function* accountCharge(action) {
+  const auth = yield select(authSelector)
+
+  try {
+    const accountCharge = yield axios
+      .get(accountChargesUrl(action.payload.accountId, action.payload.chargeId), {
+        headers: {
+          'Content-Type': headers()["Content-Type"],
+          'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
+          'Authorization': 'Basic ' + auth,
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+      .then(response => response.data)
+      .catch(error => console.log(error.response.data))
+
+      action.setAccountCharge(accountCharge)
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default function* root() {
+  yield takeEvery(ACCOUNT_CHARGE, accountCharge)
   yield takeEvery(ACCOUNT_TRANSFER, accountTransfer)
   yield takeEvery(ACCOUNT_TRANSACTION, accountTransaction)
   yield takeEvery(QR_CODE, qrCode)
