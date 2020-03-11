@@ -11,6 +11,8 @@ import {
   TabPane
 } from 'reactstrap'
 import { withTranslation } from 'react-i18next'
+import { Table } from 'antd'
+import 'antd/dist/antd.css'
 
 import PropTypes from 'prop-types'
 import * as actions from '../../../store/actions/actions'
@@ -23,6 +25,95 @@ const SavingDataDetail = props => {
   const [activeTab, setActiveTab] = useState("detail")
   const [loans, setLoans] = useState({})
   const [loanId] = useState(props.match.params.id)
+
+  const transactionsColumn = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: {
+        compare: (a, b) => a.id - b.id
+      }
+    },
+    {
+      title: "Office",
+      dataIndex: "office",
+      key: "office",
+      sorter: {
+        compare: (a, b) => a.office.length - b.office.length
+      }
+    },
+    {
+      title: "Transaction Date",
+      dataIndex: "trxDate",
+      key: "trxDate",
+      sorter: {
+        compare: (a, b) => a.trxDate.length - b.trxDate.length
+      }
+    },
+    {
+      title: "Transaction Type",
+      dataIndex: "trxType",
+      key: "trxType",
+      sorter: {
+        compare: (a, b) => a.trxType.length - b.trxType.length
+      }
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      sorter: {
+        compare: (a, b) => a.amount.length - b.amount.length
+      }
+    },
+    {
+      title: "Break Down",
+      children: [
+        {
+          title: "Principal",
+          dataIndex: "principal",
+          key: "principal",
+          sorter: {
+            compare: (a, b) => a.principal.length - b.principal.length
+          }
+        },
+        {
+          title: "Interest",
+          dataIndex: "interest",
+          key: "interest",
+          sorter: {
+            compare: (a, b) => a.interest.length - b.interest.length
+          }
+        },
+        {
+          title: "Fees",
+          dataIndex: "fees",
+          key: "fees",
+          sorter: {
+            compare: (a, b) => a.fees.length - b.fees.length
+          }
+        },
+        {
+          title: "Penalties",
+          dataIndex: "penalties",
+          key: "penalties",
+          sorter: {
+            compare: (a, b) => a.penalties.length - b.penalties.length
+          }
+        },
+      ]
+    },
+    {
+      title: "Loan Balance",
+      dataIndex: "loanBalance",
+      key: "loanBalance",
+      sorter: {
+        compare: (a, b) => a.loanBalance.length - b.loanBalance.length
+      }
+    },
+  ]
+  const [transactionsData, setTransactionsData] = useState([])
 
   const MONTHS_ID = [
     'Januari',
@@ -493,7 +584,54 @@ const SavingDataDetail = props => {
 
           return null
         })
-        
+
+        if (
+          loans && loans.transactions
+          && loans.transactions.length > 0
+        ) {
+          let transactions = []
+
+          loans.transactions.map((trx, key) => {
+            transactions.push({
+              key: key,
+              id: trx && trx.id
+                ? trx.id
+                : "",
+              office: trx && trx.officeName
+                ? trx.officeName
+                : "",
+              trxDate: trx && trx.date
+                && Array.isArray(trx.date)
+                && trx.date.length > 0
+                ? trx.date[2] + " " + MONTHS_ID[trx.date[1] - 1] + " " + trx.date[0]
+                : "",
+              trxType: trx && trx.type && trx.type.value
+                ? trx.type.value
+                : "",
+              amount: trx && trx.amount
+                ? numToMoney(trx.amount)
+                : "0",
+              principal: trx && trx.principalPortion
+                ? numToMoney(trx.principalPortion)
+                : "0",
+              interest: trx && trx.interestPortion
+                ? numToMoney(trx.interestPortion)
+                : "0",
+              fees: trx && trx.feeChargesPortion
+                ? numToMoney(trx.feeChargesPortion)
+                : "0",
+              penalties: trx && trx.penaltyChargesPortion
+                ? numToMoney(trx.penaltyChargesPortion)
+                : "0",
+              loanBalance: trx && trx.outstandingLoanBalance
+                ? numToMoney(trx.outstandingLoanBalance)
+                : "0"
+            })
+          })
+
+          setTransactionsData(transactions)
+        }
+
 
         setRepaymentScheduleBody(periods)
 
@@ -806,11 +944,7 @@ const SavingDataDetail = props => {
                       {
                         loans
                           && loans.proposedPrincipal
-                          ? (
-                            <strong>
-                              {numToMoney(loans.proposedPrincipal)}
-                            </strong>
-                          )
+                          ? numToMoney(loans.proposedPrincipal)
                           : "-"
                       }
                     </strong>
@@ -1009,14 +1143,14 @@ const SavingDataDetail = props => {
 
             {
               loans
-                && Array.isArray(loans.charges)
-                && loans.charges.length > 0
+                && Array.isArray(loans.transactions)
+                && loans.transactions.length > 0
                 ? (
                   <NavItem className="nav-tab">
-                    <NavLink className={activeTab === 'charges' ? 'active' : ''}
-                      onClick={() => { setActiveTab('charges'); }}
+                    <NavLink className={activeTab === 'transactions' ? 'active' : ''}
+                      onClick={() => { setActiveTab('transactions'); }}
                     >
-                      Charges
+                      Transactions
                     </NavLink>
                   </NavItem>
                 )
@@ -1198,8 +1332,15 @@ const SavingDataDetail = props => {
                 </div>
               </div>
             </TabPane>
-            <TabPane className="ft-detail" tabId="charges" role="tabpane4">
-
+            <TabPane className="ft-detail" tabId="transactions" role="tabpane4">
+              <div className="table-responsive my-3">
+                <Table
+                  dataSource={transactionsData}
+                  pagination={false}
+                  bordered={true}
+                  columns={transactionsColumn}
+                />
+              </div>
             </TabPane>
           </TabContent>
         </CardBody>
