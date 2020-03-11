@@ -25,7 +25,8 @@ function* loans(action) {
           'Access-Control-Allow-Origin': '*'
         },
         params: {
-          
+          associations: "all",
+          exclude: "guarantors"
         }
       })
       .then(response => response.data)

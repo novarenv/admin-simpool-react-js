@@ -80,6 +80,19 @@ const SavingDataDetail = props => {
     borderStyle: "solid",
     borderColor: "#DDDDDD"
   }
+  const tHeadLoan = {
+    borderWidth: 2,
+    borderBottomWidth: 3,
+    borderColor: "#DDDDDD",
+    borderStyle: "solid"
+  }
+  const thHeadLoan = {
+    borderWidth: 1,
+    borderColor: "#DDDDDD",
+    borderStyle: "solid",
+    color: "black",
+    fontWeight: "bold"
+  }
 
   const leftDetail = [
     "Repayment Strategy",
@@ -223,6 +236,164 @@ const SavingDataDetail = props => {
       : ""
   ]
 
+  const summaryHead = [
+    "",
+    "Original",
+    "Paid",
+    "Waived",
+    "Written Off",
+    "Outstanding",
+    "Over Due"
+  ]
+
+  const summaryBody = [
+    [
+      "Principal",
+      loans && loans.summary && loans.summary.principalDisbursed
+        ? loans.summary.principalDisbursed
+        : "0",
+      loans && loans.summary && loans.summary.principalPaid
+        ? loans.summary.principalPaid
+        : "0",
+      "-",
+      loans && loans.summary && loans.summary.principalWrittenOff
+        ? loans.summary.principalWrittenOff
+        : "0",
+      loans && loans.summary && loans.summary.principalOutstanding
+        ? loans.summary.principalOutstanding
+        : "0",
+      loans && loans.summary && loans.summary.principalOverdue
+        ? loans.summary.principalOverdue
+        : "0"
+    ],
+    [
+      "Interest",
+      loans && loans.summary && loans.summary.interestCharged
+        ? loans.summary.interestCharged
+        : "0",
+      loans && loans.summary && loans.summary.interestPaid
+        ? loans.summary.interestPaid
+        : "0",
+      loans && loans.summary && loans.summary.interestWaived
+        ? loans.summary.interestWaived
+        : "0",
+      loans && loans.summary && loans.summary.interestWrittenOff
+        ? loans.summary.interestWrittenOff
+        : "0",
+      loans && loans.summary && loans.summary.interestOutstanding
+        ? loans.summary.interestOutstanding
+        : "0",
+      loans && loans.summary && loans.summary.interestOverdue
+        ? loans.summary.interestOverdue
+        : "0"
+    ],
+    [
+      "Fees",
+      loans && loans.summary && loans.summary.feeChargesCharged
+        ? loans.summary.feeChargesCharged
+        : "0",
+      loans && loans.summary && loans.summary.feeChargesPaid
+        ? loans.summary.feeChargesPaid
+        : "0",
+      loans && loans.summary && loans.summary.feeChargestWaived
+        ? loans.summary.feeChargestWaived
+        : "0",
+      loans && loans.summary && loans.summary.feeChargestWrittenOff
+        ? loans.summary.feeChargestWrittenOff
+        : "0",
+      loans && loans.summary && loans.summary.feeChargestOutstanding
+        ? loans.summary.feeChargestOutstanding
+        : "0",
+      loans && loans.summary && loans.summary.feeChargestOverdue
+        ? loans.summary.feeChargestOverdue
+        : "0"
+    ],
+    [
+      "Penalties",
+      loans && loans.summary && loans.summary.penaltyChargesCharged
+        ? loans.summary.penaltyChargesCharged
+        : "0",
+      loans && loans.summary && loans.summary.penaltyChargesPaid
+        ? loans.summary.penaltyChargesPaid
+        : "0",
+      loans && loans.summary && loans.summary.penaltyChargestWaived
+        ? loans.summary.penaltyChargestWaived
+        : "0",
+      loans && loans.summary && loans.summary.penaltyChargestWrittenOff
+        ? loans.summary.penaltyChargestWrittenOff
+        : "0",
+      loans && loans.summary && loans.summary.penaltyChargestOutstanding
+        ? loans.summary.penaltyChargestOutstanding
+        : "0",
+      loans && loans.summary && loans.summary.penaltyChargestOverdue
+        ? loans.summary.penaltyChargestOverdue
+        : "0"
+    ],
+    [
+      "Total",
+      loans && loans.summary && loans.summary.totalExpectedRepayment
+        ? loans.summary.totalExpectedRepayment
+        : "0",
+      loans && loans.summary && loans.summary.totalRepayment
+        ? loans.summary.totalRepayment
+        : "0",
+      loans && loans.summary && loans.summary.totalWaived
+        ? loans.summary.totalWaived
+        : "0",
+      loans && loans.summary && loans.summary.totalWrittenOff
+        ? loans.summary.totalWrittenOff
+        : "0",
+      loans && loans.summary && loans.summary.totalOutstanding
+        ? loans.summary.totalOutstanding
+        : "0",
+      loans && loans.summary && loans.summary.totalOverdue
+        ? loans.summary.totalOverdue
+        : "0"
+    ]
+  ]
+
+  const repaymentScheduleHead = [
+    [
+      "",
+      "Loan Amount and Balance",
+      "Total Cost of Loan",
+      "Installment Totals"
+    ],
+    [
+      "Id",
+      "Days",
+      "Date",
+      "Paid Date",
+      "Principal Due",
+      "Balance of Loan",
+      "Interest",
+      "Fees",
+      "Penaltiees",
+      "Due",
+      "Paid",
+      "In Advance",
+      "Late",
+      "Outstanding"
+    ]
+  ]
+  const [repaymentScheduleBody, setRepaymentScheduleBody] = useState([])
+  const [repaymentScheduleTotals, setRepaymentScheduleTotals] = useState([
+    "",
+    0,
+    "Total",
+    "",
+    0,
+    "",
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ])
+
   const numToMoney = amount => {
     const amountInt = parseInt(amount)
     const amountNum = amount.toFixed(2)
@@ -245,7 +416,111 @@ const SavingDataDetail = props => {
   }
 
   useEffect(() => {
-    props.actions.loans(loanId, setLoans)
+    const MONTHS_ID = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ]
+
+    const setLoansRes = loans => {
+      setLoans(loans)
+
+      if (
+        loans && loans.repaymentSchedule
+        && Array.isArray(loans.repaymentSchedule.periods)
+        && loans.repaymentSchedule.periods.length > 0
+      ) {
+        let periods = []
+
+        loans.repaymentSchedule.periods.map(period => {
+          periods.push([
+            period && period.period
+              ? period.period
+              : "",
+            period && period.daysInPeriod
+              ? period.daysInPeriod
+              : "",
+            period && period.dueDate
+              && Array.isArray(period.dueDate)
+              && period.dueDate.length > 0
+              ? period.dueDate[2] + " " + MONTHS_ID[period.dueDate[1] - 1] + " " + period.dueDate[0]
+              : "",
+            period && period.obligationsMetOnDate
+              && Array.isArray(period.obligationsMetOnDate)
+              && period.obligationsMetOnDate.length > 0
+              ? period.obligationsMetOnDate[2] + " " + MONTHS_ID[period.obligationsMetOnDate[1] - 1] + " " + period.obligationsMetOnDate[0]
+              : "",
+            period && period.principalDue
+              ? period.principalDue
+              : "0",
+            period && period.principalLoanBalanceOutstanding
+              ? period.principalLoanBalanceOutstanding
+              : "0",
+            period && period.interestDue
+              ? period.interestDue
+              : "0",
+            period && period.feeChargesDue
+              ? period.feeChargesDue
+              : "0",
+            period && period.penaltyChargesDue
+              ? period.penaltyChargesDue
+              : "0",
+            period && period.totalDueForPeriod
+              ? period.totalDueForPeriod
+              : "0",
+            period && period.totalPaidForPeriod
+              ? period.totalPaidForPeriod
+              : "0",
+            period && period.totalPaidInAdvanceForPeriod
+              ? period.totalPaidInAdvanceForPeriod
+              : "0",
+            period && period.totalPaidLateForPeriod
+              ? period.totalPaidLateForPeriod
+              : "0",
+            period && period.totalOutstandingForPeriod
+              ? period.totalOutstandingForPeriod
+              : "0"
+          ])
+
+          return null
+        })
+        
+
+        setRepaymentScheduleBody(periods)
+
+        periods.map(period => {
+          if (period[1] === "") {
+            period[1] = 0
+          }
+          setRepaymentScheduleTotals(prevArray => [
+            "",
+            prevArray[1] + parseInt(period[1]),
+            "Total",
+            "",
+            prevArray[4] + parseInt(period[4]),
+            "",
+            prevArray[6] + parseInt(period[6]),
+            prevArray[7] + parseInt(period[7]),
+            prevArray[8] + parseInt(period[8]),
+            prevArray[9] + parseInt(period[9]),
+            prevArray[10] + parseInt(period[10]),
+            prevArray[11] + parseInt(period[11]),
+            prevArray[12] + parseInt(period[12]),
+            prevArray[13] + parseInt(period[13]),
+          ])
+        })
+      }
+    }
+    props.actions.loans(loanId, setLoansRes)
 
     return () => { }
   }, [loanId, props.actions])
@@ -692,7 +967,6 @@ const SavingDataDetail = props => {
           <Nav tabs justified className="mt-5">
             {
               loans
-                && loans.summary
                 ? (
                   <NavItem className="nav-tab">
                     <NavLink className={activeTab === 'detail' ? 'active' : ''}
@@ -706,14 +980,13 @@ const SavingDataDetail = props => {
             }
             {
               loans
-                && Array.isArray(loans.transactions)
-                && loans.transactions.length > 0
+                && loans.summary
                 ? (
                   <NavItem className="nav-tab">
-                    <NavLink className={activeTab === 'transactions' ? 'active' : ''}
-                      onClick={() => { setActiveTab('transactions'); }}
+                    <NavLink className={activeTab === 'summary' ? 'active' : ''}
+                      onClick={() => { setActiveTab('summary'); }}
                     >
-                      Transactions
+                      Summary
                     </NavLink>
                   </NavItem>
                 )
@@ -721,14 +994,13 @@ const SavingDataDetail = props => {
             }
             {
               loans
-                && Array.isArray(loans.taxTransactions)
-                && loans.taxTransactions.length > 0
+                && loans.repaymentSchedule
                 ? (
                   <NavItem className="nav-tab">
-                    <NavLink className={activeTab === 'taxTransactions' ? 'active' : ''}
-                      onClick={() => { setActiveTab('taxTransactions'); }}
+                    <NavLink className={activeTab === 'repaymentSchedule' ? 'active' : ''}
+                      onClick={() => { setActiveTab('repaymentSchedule'); }}
                     >
-                      Tax Transactions
+                      Repayment Schedule
                     </NavLink>
                   </NavItem>
                 )
@@ -781,11 +1053,150 @@ const SavingDataDetail = props => {
                 </div>
               </div>
             </TabPane>
-            <TabPane className="ft-detail" tabId="transactions" role="tabpane2">
+            <TabPane className="ft-detail" tabId="summary" role="tabpane2">
+              <div className="row justify-content-center my-3">
+                <div className="table-responsive col-10">
+                  <table className="table">
+                    <thead style={tHeadLoan}>
+                      <tr>
+                        {
+                          summaryHead.map((head, key) => {
+                            return (<th key={"head " + key} style={thHeadLoan}>{head}</th>)
+                          })
+                        }
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        summaryBody.map((detailRow, key) => {
+                          let endRow = false
 
+                          if (summaryBody.length - 1 === key) {
+                            endRow = true
+                          }
+
+                          return (
+                            <tr
+                              key={"detailRow " + key}
+                              style={
+                                key % 2 === 0
+                                  ? first
+                                  : second
+                              }
+                            >
+                              {
+                                detailRow.map((detailCol, key) => {
+                                  return (
+                                    <td
+                                      key={"detailCol " + key}
+                                      style={
+                                        endRow
+                                          ? { borderWidth: 1, borderStyle: "solid", borderColor: "#DDDDDD", color: "black", fontWeight: "bold" }
+                                          : key === 0
+                                            ? { borderWidth: 1, borderStyle: "solid", borderColor: "#DDDDDD", color: "black", fontWeight: "bold" }
+                                            : { borderWidth: 1, borderStyle: "solid", borderColor: "#DDDDDD" }
+                                      }
+                                    >
+                                      {detailCol}
+                                    </td>
+                                  )
+                                })
+                              }
+                            </tr>
+                          )
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </TabPane>
-            <TabPane className="ft-detail" tabId="taxTransactions" role="tabpane3">
+            <TabPane className="ft-detail" tabId="repaymentSchedule" role="tabpane3">
+              <div className="row justify-content-center my-3">
+                <div className="table-responsive col-12">
+                  <table className="table">
+                    <thead style={tHeadLoan}>
+                      {
+                        repaymentScheduleHead.map((headRow, keyRow) => {
+                          return (
+                            <tr key={"headRow " + keyRow}>
+                              {
+                                headRow.map((headCol, keyCol) => {
+                                  return (
+                                    <th
+                                      key={"headCol " + keyCol}
+                                      style={thHeadLoan}
+                                      colSpan={
+                                        keyRow === 0
+                                          ? keyCol === 0
+                                            ? "4"
+                                            : keyCol === 1
+                                              ? "2"
+                                              : keyCol === 2
+                                                ? "3"
+                                                : keyCol === 3
+                                                  ? "5"
+                                                  : ""
+                                          : ""
+                                      }
+                                    >
+                                      {headCol}
+                                    </th>
+                                  )
+                                })
+                              }
+                            </tr>
+                          )
+                        })
+                      }
+                    </thead>
+                    <tbody>
+                      {
+                        repaymentScheduleBody.map((detailRow, key) => {
+                          return (
+                            <tr
+                              key={"detailRow " + key}
+                              style={
+                                key % 2 === 0
+                                  ? first
+                                  : second
+                              }
+                            >
+                              {
+                                detailRow.map((detailCol, key) => {
 
+                                  return (
+                                    <td
+                                      key={"detailCol " + key}
+                                      style={{ borderWidth: 1, borderStyle: "solid", borderColor: "#DDDDDD" }}
+                                    >
+                                      {detailCol}
+                                    </td>
+                                  )
+                                })
+                              }
+                            </tr>
+                          )
+                        })
+                      }
+                      <tr style={second}>
+                        {
+                          repaymentScheduleTotals.map((total, key) => {
+                            return (
+                              <td
+                                key={"detailCol " + key}
+                                style={{ borderWidth: 1, borderStyle: "solid", borderColor: "#DDDDDD", color: "black", fontWeight: "bold" }}
+                              >
+                                {total}
+                              </td>
+                            )
+                          })
+                        }
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </TabPane>
             <TabPane className="ft-detail" tabId="charges" role="tabpane4">
 
@@ -793,7 +1204,7 @@ const SavingDataDetail = props => {
           </TabContent>
         </CardBody>
       </Card>
-    </ContentWrapper>
+    </ContentWrapper >
   )
 }
 
