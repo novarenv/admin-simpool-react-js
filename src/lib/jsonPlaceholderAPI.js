@@ -45,6 +45,7 @@ export const loansUrl = loanId => `${apiEntrySimpool}/loans/${loanId}`
 export const loansDocumentsUrl = loanId => `${apiEntrySimpool}/loans/${loanId}/documents`
 export const loansDocumentsIdUrl = (loanId, docId) => `${apiEntrySimpool}/loans/${loanId}/documents/${docId}`
 export const loansDocAttachmentUrl = (loanId, docId) => `${apiEntrySimpool}/loans/${loanId}/documents/${docId}/attachment`
+export const loansNotesUrl = loanId => `${apiEntrySimpool}/loans/${loanId}/notes`
 
 // Transactions
 export const findAccountTransferUrl = `${apiEntrySimpool}/accounttransfers/findaccount`

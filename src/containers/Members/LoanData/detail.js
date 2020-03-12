@@ -109,6 +109,8 @@ const LoansDataDetail = props => {
   const [loans, setLoans] = useState({})
   const [loanId] = useState(props.match.params.id)
   const [loansDocuments, setLoansDocuments] = useState([])
+  const [loansNotes, setLoansNotes] = useState([])
+  const [noteValue, setNoteValue] = useState("")
 
   // Modal Upload 
   const [isModalUploadDoc, setIsModalUploadDoc] = useState(false)
@@ -340,7 +342,7 @@ const LoansDataDetail = props => {
       : ""
 
   const rightDetail = [
-    loans?.transactionProcessingStrategyName?? "",
+    loans?.transactionProcessingStrategyName ?? "",
     loans?.numberOfRepayments && loans?.repaymentEvery && repaymentFrequencyType
       ? loans.numberOfRepayments + " every "
       + loans.repaymentEvery
@@ -351,9 +353,9 @@ const LoansDataDetail = props => {
     loans && loans.amortizationType && loans.amortizationType.value
       ? loans.amortizationType.value
       : "",
-    loans?.annualInterestRate? loans.annualInterestRate: 0 + " per annum ("
-    + loans?.annualInterestRate? loans.annualInterestRate: 0 + "% Per year) - "
-    + interestType?? "flat",
+    loans?.annualInterestRate ? loans.annualInterestRate : 0 + " per annum ("
+      + loans?.annualInterestRate ? loans.annualInterestRate : 0 + "% Per year) - "
+      + interestType ?? "flat",
     "",
     "",
     "",
@@ -610,6 +612,10 @@ const LoansDataDetail = props => {
     )
   }
 
+  const setNoteValueRes = () => {
+    props.actions.loansNotes(loanId, setLoansNotes)
+  }
+
   useEffect(() => {
     const setLoansRes = loans => {
       setLoans(loans)
@@ -754,6 +760,8 @@ const LoansDataDetail = props => {
     props.actions.loans(loanId, setLoansRes)
 
     props.actions.loansDocuments(loanId, setLoansDocuments)
+
+    props.actions.loansNotes(loanId, setLoansNotes)
 
     return () => { }
   }, [loanId, props.actions])
@@ -1255,7 +1263,14 @@ const LoansDataDetail = props => {
                 onClick={() => { setActiveTab('loanDocuments'); }}
               >
                 Loan Documents
-                    </NavLink>
+            </NavLink>
+            </NavItem>
+            <NavItem className="nav-tab">
+              <NavLink className={activeTab === 'notes' ? 'active' : ''}
+                onClick={() => { setActiveTab('notes'); }}
+              >
+                Notes
+            </NavLink>
             </NavItem>
           </Nav>
 
@@ -1576,6 +1591,102 @@ const LoansDataDetail = props => {
                         <span>Tidak ada dokumen pinjaman</span>
                       </div>
                     )
+                }
+              </div>
+            </TabPane>
+            <TabPane className="ft-detail" tabId="notes" role="tabpane6">
+              <div className="col-12 my-3">
+                <Formik
+                  initialValues={{
+                    note: noteValue
+                  }}
+                  validate={values => {
+                    const errors = {};
+
+                    if (values.note > 1000) {
+                      errors.note = "Catatan harus kurang dari 1000 huruf"
+                    }
+
+                    if (values.note) {
+                      setNoteValue(values.note)
+                    }
+
+                    return errors;
+                  }}
+                  onSubmit={() => {
+                    console.log(noteValue)
+                    if (noteValue) {
+                      props.actions.postLoansNotes({loanId: loanId, note: noteValue}, setNoteValueRes)
+                    }
+                  }}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit
+                  }) => (
+                      <form onSubmit={handleSubmit}>
+                        <textarea
+                          id="note"
+                          rows="4"
+                          className={errors.note && touched.note ? "input-error" : null}
+                          style={{ width: "100%" }}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <div className="input-feedback center-parent">{errors.note && touched.note}</div>
+
+                        <div className="row justify-content-end mr-1 mt-2 mb-3">
+                          <Button color="primary" type="submit">Tambah Catatan</Button>
+                        </div>
+                      </form>
+                    )}
+                </Formik>
+                {/* max length line 80 */}
+                {/* max length 1000 */}
+                {
+                  loansNotes
+                    ? loansNotes.map((note, key) => (
+                      <div
+                        className="mb-3 ft-detail"
+                        key={"Note " + key}
+                        style={{
+                          padding: 20,
+                          borderWidth: 0,
+                          borderLeftWidth: 3,
+                          borderStyle: "solid",
+                          borderColor: "#189AD3",
+                          backgroundColor: "#F2F2F2",
+                          borderRadius: 8
+                        }}
+                      >
+                        <div>
+                          <span
+                            style={{
+                              fontWeight: "bold"
+                            }}
+                          >
+                            {note.id}
+                          </span>
+                        </div>
+                        <div>
+                          <span>
+                            <em className="fa fa-user" style={{ color: "#189AD3" }} />&ensp; {note.createdByUsername}
+                          </span>
+                          <em>&emsp;</em>
+                          <span>
+                            <em className="fa fa-clock" style={{ color: "#189AD3" }} />&ensp; {note.createdOn}
+                          </span>
+                        </div>
+                        <div className="mt-2">
+                          <div style={note.note.length >= 167 ? { textIndent: "20px" } : null}>{note.note}</div>
+                        </div>
+                      </div>
+                    ))
+                    : null
                 }
               </div>
             </TabPane>
