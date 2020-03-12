@@ -35,7 +35,7 @@ export default class Sparkline extends Component {
         options: this.props.options
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.normalizeParams();
     }
 

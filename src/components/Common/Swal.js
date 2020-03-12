@@ -14,7 +14,7 @@ const Swal = props => {
         swal(props.options).then(p => props.callback(p, swal, props.deleterow, props.id));
     }
 
-    const { callback, ...rest } = props;
+    const { callback, deleterow, ...rest } = props;
     return (
         <div {...rest} onClick={handleClick}>
             {props.children}

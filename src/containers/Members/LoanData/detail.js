@@ -4,15 +4,19 @@ import {
   Button,
   Card,
   CardBody,
+  FormGroup,
   Nav,
   NavItem,
   NavLink,
   TabContent,
   TabPane
 } from 'reactstrap'
-import { withTranslation } from 'react-i18next'
+import { withTranslation, Trans } from 'react-i18next'
 import { Table } from 'antd'
 import 'antd/dist/antd.css'
+import { Formik } from 'formik'
+import { useDropzone } from 'react-dropzone'
+import Modal from 'react-modal'
 
 import PropTypes from 'prop-types'
 import * as actions from '../../../store/actions/actions'
@@ -20,12 +24,132 @@ import { connect } from 'react-redux'
 import { bindActionCreators, compose } from 'redux'
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
+import Swal from '../../../components/Common/Swal'
+import Documents from '../../../components/Simpool/Documents'
 
-const SavingDataDetail = props => {
+import MONTHS_ID from '../../../constants/MONTHS_ID'
+
+import numToMoney from '../../../functions/numToMoney'
+
+const DragDrop = props => {
+  const { setFieldValue } = props
+  const MAX_SIZE = 1048576
+
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      multiple: false,
+      maxSize: MAX_SIZE,
+      onDrop: acceptedFiles => {
+        props.setDocUpload(acceptedFiles[0])
+        setFieldValue("docUpload", acceptedFiles[0])
+
+        acceptedFiles.map(file =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          })
+        )
+      },
+      onDropRejected: rejectedFiles => {
+        if (rejectedFiles[0].size > MAX_SIZE) {
+          document.getElementById("dragReject").click()
+        }
+      }
+    })
+
+  const img = {
+    width: "50%",
+    height: "50%"
+  }
+
+  const dragReject = {
+    title: "File size's must be under 1 MB"
+  }
+
+  const files = acceptedFiles.map(file => {
+    if (file.preview != null) {
+      return (
+        <div key={"File " + file.path} className="center-parent mt-1">
+          <h5>
+            {file.path} - {file.size} bytes
+          </h5>
+          <img src={file.preview} style={img} alt="File Preview" />
+        </div>
+      )
+    } else {
+      return (
+        <div key={"File " + file.path} className="center-parent mt-1">
+          <h4>File's preview is being uploaded..</h4>
+          <em className="fas fa-circle-notch fa-spin fa-2x text-muted" />
+        </div>
+      )
+    }
+  })
+
+  return (
+    <div className="container--md mt-3">
+      <Swal options={dragReject} id="dragReject" />
+      <section>
+        <div {...getRootProps({ className: 'dropzone' })}>
+          <input name={props.name} {...getInputProps()} />
+          <p className="text-center box-placeholder-upload m-0 ft-detail">
+            {!isDragActive && "Drag 'n' drop some files here, or click to select files"}
+            {isDragActive && "Drop Here!"}
+          </p>
+          <aside>
+            {files}
+          </aside>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+const LoansDataDetail = props => {
   const [activeTab, setActiveTab] = useState("detail")
   const [loans, setLoans] = useState({})
   const [loanId] = useState(props.match.params.id)
+  const [loansDocuments, setLoansDocuments] = useState([])
 
+  // Modal Upload 
+  const [isModalUploadDoc, setIsModalUploadDoc] = useState(false)
+  const [docDesc, setDocDesc] = useState("")
+  const [docName, setDocName] = useState("")
+  const [docUpload, setDocUpload] = useState(null)
+
+  const uploadDoc = () => {
+    const uploadDocRes = () => {
+      setIsModalUploadDoc(false)
+
+      props.actions.loansDocuments(loanId, setLoansDocuments)
+    }
+
+    if (docUpload && docName) {
+      const docUploadFD = new FormData()
+
+      docUploadFD.append(
+        "name",
+        docName
+      )
+
+      if (docDesc) {
+        docUploadFD.append(
+          "description",
+          docDesc
+        )
+      }
+
+      docUploadFD.append(
+        "file",
+        docUpload
+      )
+
+      props.actions.postLoansDocuments(docUploadFD, { loanId }, uploadDocRes)
+    }
+  }
+
+  // End Modal Upload
+
+  // Detail
   const transactionsColumn = [
     {
       title: "ID",
@@ -114,21 +238,6 @@ const SavingDataDetail = props => {
     },
   ]
   const [transactionsData, setTransactionsData] = useState([])
-
-  const MONTHS_ID = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember'
-  ]
 
   let clientId
   if (loans && loans.clientId) {
@@ -231,18 +340,20 @@ const SavingDataDetail = props => {
       : ""
 
   const rightDetail = [
-    loans.transactionProcessingStrategyName,
-    loans.numberOfRepayments + " every "
-    + loans.repaymentEvery
-    + " "
-    + repaymentFrequencyType
-    + " on",
+    loans?.transactionProcessingStrategyName?? "",
+    loans?.numberOfRepayments && loans?.repaymentEvery && repaymentFrequencyType
+      ? loans.numberOfRepayments + " every "
+      + loans.repaymentEvery
+      + " "
+      + repaymentFrequencyType
+      + " on"
+      : "",
     loans && loans.amortizationType && loans.amortizationType.value
       ? loans.amortizationType.value
       : "",
-    loans.annualInterestRate + " per annum ("
-    + loans.annualInterestRate + "% Per year) - "
-    + interestType,
+    loans?.annualInterestRate? loans.annualInterestRate: 0 + " per annum ("
+    + loans?.annualInterestRate? loans.annualInterestRate: 0 + "% Per year) - "
+    + interestType?? "flat",
     "",
     "",
     "",
@@ -485,43 +596,21 @@ const SavingDataDetail = props => {
     0
   ])
 
-  const numToMoney = amount => {
-    const amountInt = parseInt(amount)
-    const amountNum = amount.toFixed(2)
-    const amountStr = amountNum.toString()
-    let afterComma
-
-    if (amountStr.includes('.')) {
-      afterComma = amountStr.slice(amountStr.length - 2, amountStr.length)
+  const deleteLoanDoc = docId => {
+    const deleteLoanDocRes = () => {
+      props.actions.loansDocuments(loanId, setLoansDocuments)
     }
 
-    if (afterComma) {
-      if (afterComma === "00") {
-        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-      } else {
-        return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + afterComma
-      }
-    } else {
-      return amountInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    }
+    props.actions.deleteLoanDoc(
+      {
+        loanId: loanId,
+        docId: docId
+      },
+      deleteLoanDocRes
+    )
   }
 
   useEffect(() => {
-    const MONTHS_ID = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember'
-    ]
-
     const setLoansRes = loans => {
       setLoans(loans)
 
@@ -627,6 +716,8 @@ const SavingDataDetail = props => {
                 ? numToMoney(trx.outstandingLoanBalance)
                 : "0"
             })
+
+            return null
           })
 
           setTransactionsData(transactions)
@@ -655,10 +746,14 @@ const SavingDataDetail = props => {
             prevArray[12] + parseInt(period[12]),
             prevArray[13] + parseInt(period[13]),
           ])
+
+          return null
         })
       }
     }
     props.actions.loans(loanId, setLoansRes)
+
+    props.actions.loansDocuments(loanId, setLoansDocuments)
 
     return () => { }
   }, [loanId, props.actions])
@@ -1140,7 +1235,6 @@ const SavingDataDetail = props => {
                 )
                 : null
             }
-
             {
               loans
                 && Array.isArray(loans.transactions)
@@ -1156,7 +1250,13 @@ const SavingDataDetail = props => {
                 )
                 : null
             }
-
+            <NavItem className="nav-tab">
+              <NavLink className={activeTab === 'loanDocuments' ? 'active' : ''}
+                onClick={() => { setActiveTab('loanDocuments'); }}
+              >
+                Loan Documents
+                    </NavLink>
+            </NavItem>
           </Nav>
 
           <TabContent activeTab={activeTab}>
@@ -1253,7 +1353,14 @@ const SavingDataDetail = props => {
                       {
                         repaymentScheduleHead.map((headRow, keyRow) => {
                           return (
-                            <tr key={"headRow " + keyRow}>
+                            <tr
+                              key={"headRow " + keyRow}
+                              className={
+                                keyRow === 0
+                                  ? "center-parent"
+                                  : null
+                              }
+                            >
                               {
                                 headRow.map((headCol, keyCol) => {
                                   return (
@@ -1342,6 +1449,136 @@ const SavingDataDetail = props => {
                 />
               </div>
             </TabPane>
+            <TabPane className="ft-detail" tabId="loanDocuments" role="tabpane5">
+              <div className="container-fluid ft-detail">
+                <Modal
+                  isOpen={isModalUploadDoc}
+                  onRequestClose={() => setIsModalUploadDoc(false)}
+                  ariaHideApp={false}
+                >
+                  <div className="container-fluid">
+                    <div className="row">
+                      <Button outline className="col-4 col-lg-2" color="primary"
+                        onClick={() => setIsModalUploadDoc(false)}
+                      >
+                        Batalkan
+                      </Button>
+                    </div>
+
+                    <div className="row d-flex justify-content-center">
+                      <div className="col-md-6 center-parent form-font-size">
+                        <Formik
+                          initialValues={{
+                            docDesc,
+                            docName,
+                            docUpload
+                          }}
+                          validate={values => {
+                            const errors = {};
+
+                            if (!values.docName) {
+                              errors.docName = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
+                            }
+
+                            if (!values.docUpload) {
+                              errors.docUpload = <Trans i18nKey='forms.REQUIRED'>Form is required!</Trans>
+                            }
+
+                            if (values.docDesc) {
+                              setDocDesc(values.docDesc)
+                            }
+                            if (values.docName) {
+                              setDocName(values.docName)
+                            }
+
+                            return errors;
+                          }}
+                          onSubmit={() => {
+                            uploadDoc()
+                          }}
+                        >
+                          {({
+                            values,
+                            errors,
+                            touched,
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+                            setFieldValue
+                          }) => (
+                              <form onSubmit={handleSubmit}>
+                                <FormGroup>
+                                  <label htmlFor="docName">Name <span className="red"> *</span></label>
+                                  <input
+                                    id="docName"
+                                    className={
+                                      errors.docName && touched.docName
+                                        ? "form-control mr-3 input-error"
+                                        : "form-control mr-3"
+                                    }
+                                    type="text"
+                                    placeholder="Enter document's name"
+                                    value={values.docName}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                  />
+                                  <div className="input-feedback center-parent mt-0">{touched.docName && errors.docName}</div>
+                                </FormGroup>
+
+                                <FormGroup>
+                                  <label htmlFor="docDesc">Description</label>
+                                  <textarea
+                                    id="docDesc"
+                                    rows="4"
+                                    className="form-control mr-3"
+                                    type="text"
+                                    placeholder="Enter descriptions"
+                                    value={values.docDesc}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                  />
+                                </FormGroup>
+
+                                <div className="row d-flex justify-content-center mt-5">
+                                  <h1>Upload File <span className="red"> *</span></h1>
+                                </div>
+
+                                <DragDrop setDocUpload={setDocUpload} setFieldValue={setFieldValue} />
+                                <div className="input-feedback center-parent mt-0">{touched.docUpload && errors.docUpload}</div>
+
+                                <div className="row">
+                                  <Button outline className="col-12 mt-3" color="primary" type="submit">
+                                    Upload Dokumen
+                                  </Button>
+                                </div>
+                              </form>
+                            )}
+                        </Formik>
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
+
+                <div className="row justify-content-end mr-1 mt-3">
+                  <Button outline color="primary" onClick={() => setIsModalUploadDoc(true)}>Tambah Dokumen</Button>
+                </div>
+                {
+                  loans
+                    && Array.isArray(loansDocuments)
+                    && loansDocuments.length > 0
+                    ? (
+                      <div className="my-3">
+                        <Documents documents={loansDocuments} actions={props.actions} deleteDoc={deleteLoanDoc} docType="loan" />
+                      </div>
+                    )
+                    : (
+                      <div className="row justify-content-center">
+                        <span>Tidak ada dokumen pinjaman</span>
+                      </div>
+                    )
+                }
+              </div>
+            </TabPane>
           </TabContent>
         </CardBody>
       </Card>
@@ -1349,7 +1586,7 @@ const SavingDataDetail = props => {
   )
 }
 
-SavingDataDetail.propTypes = {
+LoansDataDetail.propTypes = {
   actions: PropTypes.object,
   settings: PropTypes.object
 }
@@ -1359,4 +1596,4 @@ const mapStateToProps = state => ({
 })
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) })
 
-export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(SavingDataDetail))
+export default compose(connect(mapStateToProps, mapDispatchToProps), withTranslation('translations'))(withRouter(LoansDataDetail))

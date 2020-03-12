@@ -15,7 +15,7 @@ import {
   accountChargesUrl,
   accountTransactionsUrl,
   accountTransfersUrl,
-  savingsAccoountAssosiationsUrl,
+  savingsAccountAssosiationsUrl,
   qrCodeUrl,
 } from '../../lib/jsonPlaceholderAPI'
 
@@ -27,7 +27,7 @@ function* savingsAccountAssosiations(action) {
 
   try {
     const savingsAccountAssosiations = yield axios
-      .get(savingsAccoountAssosiationsUrl(action.payload), {
+      .get(savingsAccountAssosiationsUrl(action.payload), {
         headers: {
           'Content-Type': headers()["Content-Type"],
           'Fineract-Platform-TenantId': headers()["Fineract-Platform-TenantId"],
