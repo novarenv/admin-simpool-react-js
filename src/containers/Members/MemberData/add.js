@@ -19,6 +19,8 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
 import { Field, Formik } from 'formik';
+import { Select } from 'antd';
+import 'antd/dist/antd.css';
 
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
@@ -27,33 +29,22 @@ import { bindActionCreators, compose } from 'redux';
 import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import Swal from '../../../components/Common/Swal';
 
+import MONTHS_ID from '../../../constants/MONTHS_ID'
+
 // DateTimePicker
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import moment from 'moment'
 import 'moment/locale/id'
 
+const { Option } = Select;
+
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
-};
-
-const MONTHS_ID = [
-  'Januari',
-  'Februari',
-  'Maret',
-  'April',
-  'Mei',
-  'Juni',
-  'Juli',
-  'Agustus',
-  'September',
-  'Oktober',
-  'November',
-  'Desember'
-]
+}
 
 
-const onFieldChange = (val, field, form) => {  
+const onFieldChange = (val, field, form) => {
   const dd = String(val.toDate().getDate()).padStart(2, '0')
   const mm = MONTHS_ID[val.toDate().getMonth()]
   const yyyy = val.toDate().getFullYear()
@@ -65,7 +56,7 @@ const onFieldChange = (val, field, form) => {
 
 const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => {
   let valid
-  
+
   const dd = String(new Date().getDate()).padStart(2, '0')
   const mmmm = MONTHS_ID[new Date().getMonth()]
   const yyyy = new Date().getFullYear()
@@ -89,7 +80,7 @@ const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => 
   }
 
   if (field.name === "dateOfBirth" && value === "") {
-    value = today.slice(0, today.length-4) + (parseInt(today.slice(today.length-4, today.length))-17).toString()
+    value = today.slice(0, today.length - 4) + (parseInt(today.slice(today.length - 4, today.length)) - 17).toString()
   }
 
   return (
@@ -120,14 +111,14 @@ const DateTime = ({ field, form, locale, value, error, touched, dateParam }) => 
 const ValidDate = ({ field, form, locale, value, error, touched, name }) => {
   let yesterday = Datetime.moment().subtract(1, 'day')
   let valid = current => {
-    return current.isAfter( yesterday )
+    return current.isAfter(yesterday)
   }
 
   return (
     <Datetime
       inputProps={{
         name: name,
-        className: 
+        className:
           touched && error
             ? "form-control input-font-size dt-bg input-error"
             : "form-control input-font-size dt-bg",
@@ -155,7 +146,7 @@ const DragDrop = props => {
       maxSize: MAX_SIZE,
       onDrop: acceptedFiles => {
         props.setPhotos(props.name, acceptedFiles[0])
-        acceptedFiles.map(file => 
+        acceptedFiles.map(file =>
           Object.assign(file, {
             preview: URL.createObjectURL(file)
           })
@@ -163,7 +154,7 @@ const DragDrop = props => {
       },
       onDropRejected: rejectedFiles => {
         if (rejectedFiles[0].size > MAX_SIZE) {
-          document.getElementById("dragReject").click()          
+          document.getElementById("dragReject").click()
         }
       }
     })
@@ -228,7 +219,7 @@ const DragDropMultiple = props => {
     },
     onDropRejected: rejectedFiles => {
       if (rejectedFiles[0].size > MAX_SIZE) {
-        document.getElementById("dragReject").click()          
+        document.getElementById("dragReject").click()
       }
     }
   })
@@ -359,7 +350,7 @@ class MemberDataAdd extends Component {
         identityVillage: '',
         identityRt: '',
         identityRw: '',
-        
+
         address: '',
         cityId: '',
         countryCodeValue: '',
@@ -429,7 +420,7 @@ class MemberDataAdd extends Component {
       return null
     })
     this.changeAddValidation("provinceOptions", provinceOptions)
-    
+
     let identityCityOptionsFilter = []
     res.cityOptions.map(row => {
       identityCityOptionsFilter.push(row)
@@ -468,7 +459,7 @@ class MemberDataAdd extends Component {
     let sectorCodeString
     res.sectorOptions.map(row => {
       sectorCodeString = row.code.toString()
-      if (sectorCodeString.substring(0,1) === "1") {
+      if (sectorCodeString.substring(0, 1) === "1") {
         sectorOptions.push(row)
       }
 
@@ -669,7 +660,7 @@ class MemberDataAdd extends Component {
       this.setState({
         errorMsg: newError
       })
-      
+
       document.getElementById("errorForm").click()
     }
 
@@ -701,10 +692,10 @@ class MemberDataAdd extends Component {
         dateOfBirth: addValidation.dateOfBirth,
         email: addValidation.email,
         staffId: addValidation.staffId,
-        externalId: addValidation.externalID,
+        externalId: addValidation.externalID,
         nip: addValidation.nip,
-        nickname: addValidation.nickname,
-        identityValidDate: addValidation.identityValidDate,
+        nickname: addValidation.nickname,
+        identityValidDate: addValidation.identityValidDate,
         identityRt: addValidation.identityRt,
         identityRw: addValidation.identityRw,
         mobileUser: addValidation.mobileUser,
@@ -757,14 +748,14 @@ class MemberDataAdd extends Component {
           dcPass: true
         })
       }
-  
+
       const editMember = id => {
         this.props.history.push({
           pathname: "/simpool/member/data-edit/" + id,
           search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
         })
       }
-  
+
       if (this.state.totalFilteredRecords > 0) {
         return (
           <div>
@@ -792,7 +783,7 @@ class MemberDataAdd extends Component {
               this.state.pageItems.map((item, key) => {
                 return (
                   <div key={"Savings " + key}>
-                    <div 
+                    <div
                       className="row row-mx-0 ft-detail list-detail 
                         d-flex justify-content-center list-hover center-parent"
                       onClick={() => editMember(item.id)}
@@ -877,7 +868,7 @@ class MemberDataAdd extends Component {
                   tag="div"
                   className={
                     this.state.activeStep === '1'
-                      ? classnames({active: true})
+                      ? classnames({ active: true })
                       : "cursor-pointer"
                   }
                   onClick={() => this.toggleStep('1')}
@@ -894,13 +885,13 @@ class MemberDataAdd extends Component {
                   tag="div"
                   className={
                     this.state.activeStep === '2'
-                      ? classnames({active: true})
+                      ? classnames({ active: true })
                       : "cursor-pointer"
                   }
                   onClick={() => {
                     if (this.state.tab1Pass) {
-                      this.toggleStep('2')                      
-                    } else if(!this.state.tab1Pass) {
+                      this.toggleStep('2')
+                    } else if (!this.state.tab1Pass) {
                       showTabNotPermit()
                     }
                   }}
@@ -917,12 +908,12 @@ class MemberDataAdd extends Component {
                   tag="div"
                   className={
                     this.state.activeStep === '3'
-                      ? classnames({active: true})
+                      ? classnames({ active: true })
                       : "cursor-pointer"
                   }
                   onClick={() => {
                     if (this.state.tab1Pass && this.state.tab2Pass) {
-                      this.toggleStep('3')                      
+                      this.toggleStep('3')
                     } else if (!this.state.tab1Pass || !this.state.tab2Pass) {
                       showTabNotPermit()
                     }
@@ -952,15 +943,17 @@ class MemberDataAdd extends Component {
                     }
                   }
                   validate={values => {
-                    const errors = {};
+                    const errors = {}
+
+                    console.log(values.typeOfIdentityId)
 
                     if (!values.legalFormId) {
-                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED'/>
+                      errors.legalFormId = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (/^[a-zA-Z\s'.-]+$/.test(values.fullname) === false) {
                       errors.fullname = this.props.i18n.t('member.data-add.FULLNAME_ID')
-                          + " harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
+                        + " harus terdiri dari alphabet (a-zA-Z\\s\\'.-)"
                     }
                     if (!values.fullname) {
                       errors.fullname = <Trans i18nKey='forms.REQUIRED' />
@@ -972,47 +965,47 @@ class MemberDataAdd extends Component {
 
                     if (/^[a-zA-Z\s'.-]+$/.test(values.motherName) === false && values.motherName !== "") {
                       errors.motherName = this.props.i18n.t('member.data-add.MOTHER_NAME')
-                          + " harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
+                        + " harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
                     }
-                    
+
                     if (!values.motherName) {
                       errors.motherName = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     switch (values.typeOfIdentityId) {
-                      case "IC":  
+                      case "IC":
                         if (/^(0|[1-9]\d*)$/.test(values.identityNumber) === false) {
                           errors.identityNumber = "E-KTP harus terdiri dari angka"
                         } else if (values.identityNumber.length !== 16) {
-                          errors.identityNumber =  "E-KTP License harus berisi 16 angka"
+                          errors.identityNumber = "E-KTP License harus berisi 16 angka"
                         }
                         break;
                       case "PASS":
                         if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
                           errors.identityNumber = "Passport harus terdiri dari alphanumeric"
                         } else if (values.identityNumber.length !== 8) {
-                          errors.identityNumber =  "Passport harus berisi 8 alphanumeric"
+                          errors.identityNumber = "Passport harus berisi 8 alphanumeric"
                         }
                         break;
                       case "DL":
                         if (/^(0|[1-9]\d*)$/.test(values.identityNumber) === false) {
                           errors.identityNumber = "Driver License harus terdiri dari angka"
                         } else if (values.identityNumber.length !== 12) {
-                          errors.identityNumber =  "Driver License harus berisi 12 angka"
+                          errors.identityNumber = "Driver License harus berisi 12 angka"
                         }
                         break;
                       case "SC":
                         if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
                           errors.identityNumber = "Student Card harus terdiri dari alphanumeric"
                         } else if (values.identityNumber.length !== 15) {
-                          errors.identityNumber =  "Student Card harus berisi 15 alphanumeric"
+                          errors.identityNumber = "Student Card harus berisi 15 alphanumeric"
                         }
                         break;
                       case "NIP":
                         if (/^[a-zA-Z0-9]+$/.test(values.identityNumber) === false) {
                           errors.identityNumber = "Kartu Kepegawaian harus terdiri dari alphanumeric"
                         } else if (values.identityNumber.length < 12 && values.identityNumber.length > 14) {
-                          errors.identityNumber =  "Kartu Kepegawaian harus berisi 12-14 alphanumeric"
+                          errors.identityNumber = "Kartu Kepegawaian harus berisi 12-14 alphanumeric"
                         }
                         break;
                       default: break;
@@ -1025,7 +1018,7 @@ class MemberDataAdd extends Component {
                       errors.identityNumber = <Trans i18nKey='forms.REQUIRED' />
                     }
 
-                    
+
                     if (values.legalFormId) {
                       this.changeAddValidation("legalFormId", values.legalFormId)
                     }
@@ -1072,7 +1065,7 @@ class MemberDataAdd extends Component {
                     return null
                   }}
                 >
-                  { 
+                  {
                     formikProps => {
                       const {
                         values,
@@ -1081,11 +1074,13 @@ class MemberDataAdd extends Component {
                         handleChange,
                         handleBlur,
                         handleSubmit,
+                        setFieldTouched,
+                        setFieldValue,
                         submitForm
-                      } = formikProps 
+                      } = formikProps
 
                       bindFormDuplicate(submitForm)
-                  
+
                       return (
                         <form className="pt-3 mb-3" onSubmit={handleSubmit} name="tab1">
                           <label className="mt-3" htmlFor="legalFormId">
@@ -1171,30 +1166,38 @@ class MemberDataAdd extends Component {
                                   <label className="mt-3" htmlFor="typeOfIdentityId">
                                     <Trans i18nKey='member.data-add.IDENTITY_TYPE' /> <span className="red"> *</span>
                                   </label>
-                                  <select
-                                    value={values.typeOfIdentityId}
-                                    className={
-                                      touched.typeOfIdentityId && errors.typeOfIdentityId
-                                        ? "custom-select custom-select-sm input-font-size input-error"
-                                        : "custom-select custom-select-sm input-font-size"
-                                    }
-                                    name="typeOfIdentityId"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                  >
-                                    <option value="">
-                                      {this.props.i18n.t("member.data-add.IDENTITY_TYPE_PH")}
-                                    </option>
-                                    {
-                                      Array.isArray(addValidation.identityTypeOptions) && addValidation.identityTypeOptions.length > 0
-                                        ? addValidation.identityTypeOptions.map((option, i) => {
-                                          return (
-                                            <option value={option.name} key={"identityType " + i} >{option.description}</option>
-                                          )
-                                        })
-                                        : null
-                                    }
-                                  </select>
+
+                                  <div>
+                                    <Select
+                                      value={values.typeOfIdentityId}
+                                      className={
+                                        touched.typeOfIdentityId && errors.typeOfIdentityId
+                                          ? "col-12 input-error"
+                                          : "col-12"
+                                      }
+                                      name="typeOfIdentityId"
+                                      onChange={val => setFieldValue("typeOfIdentityId", val)}
+                                      onBlur={val => setFieldTouched("typeOfIdentityId", val)}
+                                      showSearch
+                                      filterOption={(input, option) =>
+                                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                      }
+                                      size="large"
+                                    >
+                                      <Option value="">
+                                        {this.props.i18n.t("member.data-add.IDENTITY_TYPE_PH")}
+                                      </Option>
+                                      {
+                                        Array.isArray(addValidation.identityTypeOptions) && addValidation.identityTypeOptions.length > 0
+                                          ? addValidation.identityTypeOptions.map((option, i) => {
+                                            return (
+                                              <Option value={option.name} key={"identityType " + i} >{option.description}</Option>
+                                            )
+                                          })
+                                          : null
+                                      }
+                                    </Select>
+                                  </div>
                                   <div className="input-feedback">{touched.typeOfIdentityId && errors.typeOfIdentityId}</div>
 
                                   {
@@ -1329,105 +1332,105 @@ class MemberDataAdd extends Component {
                         }
                         validate={values => {
                           const errors = {}
-              
+
                           if (!values.officeId) {
-                            errors.officeId = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.officeId = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (!values.dateOfBirth) {
-                            errors.dateOfBirth = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.dateOfBirth = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (!values.genderCodeValue) {
-                            errors.genderCodeValue = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.genderCodeValue = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (/^([0-9]\d*)$/.test(values.mobileNo) === false && values.mobileNo !== "") {
                             errors.mobileNo = "Mobile No. harus berisi angka 0 sampai 9"
                           } else if (values.mobileNo.length < 10 || values.mobileNo.length > 15) {
                             errors.mobileNo = "Mobile No. harus terdiri dari 10-15 angka"
-                          } 
-                          if (!values.mobileNo) {
-                            errors.mobileNo = <Trans i18nKey='forms.REQUIRED'/>
                           }
-              
+                          if (!values.mobileNo) {
+                            errors.mobileNo = <Trans i18nKey='forms.REQUIRED' />
+                          }
+
                           if (/^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/.test(values.email) === false && values.email !== "") {
                             errors.email = "Email yang dimasukkan tidak valid"
                           }
-              
+
                           if (/^[a-zA-Z\s'.-]+$/.test(values.taxName) === false) {
                             errors.taxName = "Name based on tax harus terdiri dari alphanumeric (a-zA-Z\\s\\'.-)"
                           }
                           if (!values.taxName) {
-                            errors.taxName = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.taxName = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (!values.taxAddress) {
-                            errors.taxAddress = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.taxAddress = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (values.flagTaxCodeValue === "") {
-                            errors.flagTaxCodeValue = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.flagTaxCodeValue = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (values.sectorId === "") {
-                            errors.sectorId = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.sectorId = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (!values.placeOfBirth) {
-                            errors.placeOfBirth = <Trans i18nKey='forms.REQUIRED'/>              
+                            errors.placeOfBirth = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (/^(0|[1-9]\d*)$/.test(values.nip) === false && values.nip !== "") {
-                            errors.nip = "NIP harus berisi angka 0 sampai 9"              
+                            errors.nip = "NIP harus berisi angka 0 sampai 9"
                           }
-              
+
                           if (/^(0|[1-9]\d*)$/.test(values.taxNumber) === false && values.taxNumber !== "") {
-                            errors.taxNumber = "Tax Number harus berisi angka 0 sampai 9"              
+                            errors.taxNumber = "Tax Number harus berisi angka 0 sampai 9"
                           } else if (values.taxNumber.length > 15) {
-                            errors.taxNumber = "Tax Number harus <= 15 angka" 
+                            errors.taxNumber = "Tax Number harus <= 15 angka"
                           }
                           if (!values.taxNumber) {
-                            errors.taxNumber = <Trans i18nKey='forms.REQUIRED'/>
+                            errors.taxNumber = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
+
                           if (values.religion === "") {
-                            errors.religion = <Trans i18nKey='forms.REQUIRED'/>  
+                            errors.religion = <Trans i18nKey='forms.REQUIRED' />
                           }
-              
-                          
+
+
                           if (values.active) {
-                            this.changeAddValidation("active", values.active)              
+                            this.changeAddValidation("active", values.active)
                           }
                           if (values.nickname) {
-                            this.changeAddValidation("nickname", values.nickname)         
+                            this.changeAddValidation("nickname", values.nickname)
                           }
                           if (values.dateOfBirth) {
-                            this.changeAddValidation("dateOfBirth", values.dateOfBirth)         
+                            this.changeAddValidation("dateOfBirth", values.dateOfBirth)
                           }
                           if (values.email) {
-                            this.changeAddValidation("email", values.email)        
+                            this.changeAddValidation("email", values.email)
                           }
                           if (values.externalID) {
-                            this.changeAddValidation("externalID", values.externalID)        
+                            this.changeAddValidation("externalID", values.externalID)
                           }
                           if (values.flagTaxCodeValue) {
-                            this.changeAddValidation("flagTaxCodeValue", values.flagTaxCodeValue)       
+                            this.changeAddValidation("flagTaxCodeValue", values.flagTaxCodeValue)
                           }
                           if (values.genderCodeValue) {
-                            this.changeAddValidation("genderCodeValue", values.genderCodeValue)     
+                            this.changeAddValidation("genderCodeValue", values.genderCodeValue)
                           }
                           if (values.identityValidDate) {
-                            this.changeAddValidation("identityValidDate", values.identityValidDate)  
+                            this.changeAddValidation("identityValidDate", values.identityValidDate)
                           }
                           if (values.mobileUser) {
-                            this.changeAddValidation("mobileUser", values.mobileUser)      
+                            this.changeAddValidation("mobileUser", values.mobileUser)
                           }
                           if (values.mobileNo) {
-                            this.changeAddValidation("mobileNo", values.mobileNo)      
+                            this.changeAddValidation("mobileNo", values.mobileNo)
                           }
                           if (values.nip) {
-                            this.changeAddValidation("nip", values.nip)   
+                            this.changeAddValidation("nip", values.nip)
                           }
                           if (values.officeId) {
                             this.changeAddValidation("officeId", values.officeId)
@@ -1436,27 +1439,27 @@ class MemberDataAdd extends Component {
                             this.changeAddValidation("placeOfBirth", values.placeOfBirth)
                           }
                           if (values.religion) {
-                            this.changeAddValidation("religion", values.religion)       
+                            this.changeAddValidation("religion", values.religion)
                           }
                           if (values.sectorId) {
-                            this.changeAddValidation("sectorId", values.sectorId)     
+                            this.changeAddValidation("sectorId", values.sectorId)
                           }
                           if (values.staffId) {
-                            this.changeAddValidation("staffId", values.staffId)        
+                            this.changeAddValidation("staffId", values.staffId)
                           }
                           if (values.taxAddress) {
-                            this.changeAddValidation("taxAddress", values.taxAddress)       
+                            this.changeAddValidation("taxAddress", values.taxAddress)
                           }
                           if (values.taxName) {
-                            this.changeAddValidation("taxName", values.taxName)       
+                            this.changeAddValidation("taxName", values.taxName)
                           }
                           if (values.taxNumber) {
-                            this.changeAddValidation("taxNumber", values.taxNumber)        
+                            this.changeAddValidation("taxNumber", values.taxNumber)
                           }
                           if (values.submittedOnDate) {
-                            this.changeAddValidation("submittedOnDate", values.submittedOnDate)  
+                            this.changeAddValidation("submittedOnDate", values.submittedOnDate)
                           }
-                          
+
                           return errors;
                         }}
                         enableReinitialize="true"
@@ -1464,9 +1467,9 @@ class MemberDataAdd extends Component {
                           this.setState({
                             tab1Pass: true
                           })
-                          
+
                           if (state.dcPass) {
-                            this.toggleStep('2')                            
+                            this.toggleStep('2')
                           }
                         }}
                       >
@@ -1476,393 +1479,424 @@ class MemberDataAdd extends Component {
                           touched,
                           handleChange,
                           handleBlur,
-                          handleSubmit
+                          handleSubmit,
+                          setFieldTouched,
+                          setFieldValue
                         }) => (
-                          <form onSubmit={handleSubmit}>
-                            <div className="row">
-                              <div className="col-md-6">
-                                <label className="mt-3" htmlFor="officeId">
-                                  Kantor <span className="red"> *</span>
-                                </label>
-                                <select
-                                  value={values.officeId}
-                                  className={
-                                    touched.officeId && errors.officeId
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
-                                  }
-                                  name="officeId"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                >
-                                  <option value="">Pilih Kantor</option>
-                                  {
-                                    Array.isArray(addValidation.officeOptions) && addValidation.officeOptions.length > 0
-                                      ? addValidation.officeOptions.map((option, i) => {
+                            <form onSubmit={handleSubmit}>
+                              <div className="row">
+                                <div className="col-md-6">
+                                  <label className="mt-3" htmlFor="officeId">
+                                    Kantor <span className="red"> *</span>
+                                  </label>
+                                  <Select
+                                    value={values.officeId}
+                                    className={
+                                      touched.officeId && errors.officeId
+                                        ? "col-12 input-error"
+                                        : "col-12"
+                                    }
+                                    name="officeId"
+                                    onChange={val => setFieldValue("officeId", val)}
+                                    onBlur={val => setFieldTouched("officeId", val)}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    size="large"
+                                  >
+                                    <Option value="">Pilih Kantor</Option>
+                                    {
+                                      Array.isArray(addValidation.officeOptions) && addValidation.officeOptions.length > 0
+                                        ? addValidation.officeOptions.map((option, i) => {
+                                          return (
+                                            <Option value={option.id} key={"identityType " + i} >{option.name}</Option>
+                                          )
+                                        })
+                                        : null
+                                    }
+                                  </Select>
+                                  <div className="input-feedback">{touched.officeId && errors.officeId}</div>
+
+                                  <label className="mt-3" htmlFor="placeOfBirth">
+                                    Tempat Lahir <span className="red"> *</span>
+                                  </label>
+                                  <Input
+                                    name="placeOfBirth"
+                                    className={
+                                      touched.placeOfBirth && errors.placeOfBirth
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="placeOfBirth"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="contoh: Tangerang"
+                                    value={values.placeOfBirth}
+                                  />
+                                  <div className="input-feedback">{touched.placeOfBirth && errors.placeOfBirth}</div>
+
+                                  <label className="mt-3" htmlFor="dateOfBirth">
+                                    <Trans i18nKey='member.data-add.BIRTHDATE' /> <span className="red"> *</span>
+                                  </label>
+                                  <Field
+                                    name="dateOfBirth"
+                                    onChange={handleChange}
+                                    component={DateTime}
+                                    locale={this.props.dashboard.language}
+                                    value={values.dateOfBirth}
+                                    error={errors.dateOfBirth}
+                                    touched={touched.dateOfBirth}
+                                    dateParam={state.today}
+                                  />
+                                  <div className="input-feedback">{touched.dateOfBirth && errors.dateOfBirth}</div>
+
+                                  <label className="mt-3" htmlFor="genderCodeValue">
+                                    Jenis Kelamin <span className="red"> *</span>
+                                  </label>
+                                  <div className="py-2">
+                                    {
+                                      state.addValidation.genderOptions.map(gender => {
                                         return (
-                                          <option value={option.id} key={"identityType " + i} >{option.name}</option>
+                                          <label className="c-radio" key={"gender " + gender.name}>
+                                            <Input id={gender.name} type="radio" name="genderCodeValue" className="input-font-size"
+                                              value={gender.name} checked={values.genderCodeValue === gender.name} onChange={handleChange} onBlur={handleBlur}
+                                            />
+                                            <span className="fa fa-circle" />
+                                            {gender.description}
+                                          </label>
                                         )
                                       })
-                                      : null
-                                  }
-                                </select>
-                                <div className="input-feedback">{touched.officeId && errors.officeId}</div>
-              
-                                <label className="mt-3" htmlFor="placeOfBirth">
-                                  Tempat Lahir <span className="red"> *</span>
+                                    }
+                                  </div>
+                                  <div className="input-feedback">{touched.genderCodeValue && errors.genderCodeValue}</div>
+
+                                  <label className="mt-3" htmlFor="religion">
+                                    Agama <span className="red"> *</span>
+                                  </label>
+                                  <Select
+                                    value={values.religion}
+                                    className={
+                                      touched.religion && errors.religion
+                                        ? "col-12 input-error"
+                                        : "col-12"
+                                    }
+                                    name="religion"
+                                    onChange={val => setFieldValue("religion", val)}
+                                    onBlur={val => setFieldTouched("religion", val)}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    size="large"
+                                  >
+                                    <Option value="">Pilih agama anda</Option>
+                                    {
+                                      Array.isArray(addValidation.religionOptions) && addValidation.religionOptions.length > 0
+                                        ? addValidation.religionOptions.map((option, i) => {
+                                          return (
+                                            <Option value={option.name} key={"identityType " + i} >{option.description}</Option>
+                                          )
+                                        })
+                                        : null
+                                    }
+                                  </Select>
+                                  <div className="input-feedback">{touched.religion && errors.religion}</div>
+
+                                  <label className="mt-3" htmlFor="mobileNo">
+                                    Mobile No. <span className="red"> *</span>
+                                  </label>
+                                  <Input
+                                    name="mobileNo"
+                                    className={
+                                      touched.mobileNo && errors.mobileNo
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="mobileNo"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="contoh: 08123456789"
+                                    value={values.mobileNo}
+                                  />
+                                  <div className="input-feedback">{touched.mobileNo && errors.mobileNo}</div>
+
+                                  <label className="mt-3" htmlFor="externalID">External ID</label>
+                                  <Input
+                                    name="externalID"
+                                    className="input-font-size"
+                                    type="text"
+                                    id="externalID"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="contoh: 123456789"
+                                    value={values.externalID}
+                                  />
+
+                                  <label className="mt-3" htmlFor="nickname">Alias</label>
+                                  <Input
+                                    name="nickname"
+                                    className="input-font-size"
+                                    type="text"
+                                    id="nickname"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="contoh: Ikkat"
+                                    value={values.nickname}
+                                  />
+
+                                  <label className="mt-3" htmlFor="identityValidDate">
+                                    Identity Valid Date
                                 </label>
-                                <Input
-                                  name="placeOfBirth"
-                                  className={
-                                    touched.placeOfBirth && errors.placeOfBirth
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="placeOfBirth"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  placeholder="contoh: Tangerang"
-                                  value={values.placeOfBirth}
-                                />
-                                <div className="input-feedback">{touched.placeOfBirth && errors.placeOfBirth}</div>
-              
-                                <label className="mt-3" htmlFor="dateOfBirth">
-                                  <Trans i18nKey='member.data-add.BIRTHDATE' /> <span className="red"> *</span>
+                                  <Field name="identityValidDate" onChange={handleChange} component={ValidDate}
+                                    locale={this.props.dashboard.language} value={values.identityValidDate}
+                                  />
+
+                                  <label className="mt-3" htmlFor="email">Email</label>
+                                  <Input
+                                    name="email"
+                                    className={
+                                      touched.email && errors.email
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="email"
+                                    id="email"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.email}
+                                    placeholder="contoh: simpool@ikkat.com"
+                                  />
+                                  <div className="input-feedback">{touched.email && errors.email}</div>
+
+                                  <label className="mt-3" htmlFor="mobileUser">
+                                    Mobile Username
                                 </label>
-                                <Field
-                                  name="dateOfBirth"
-                                  onChange={handleChange}
-                                  component={DateTime}
-                                  locale={this.props.dashboard.language}
-                                  value={values.dateOfBirth}
-                                  error={errors.dateOfBirth}
-                                  touched={touched.dateOfBirth}
-                                  dateParam={state.today}
-                                />
-                                <div className="input-feedback">{touched.dateOfBirth && errors.dateOfBirth}</div>
-              
-                                <label className="mt-3" htmlFor="genderCodeValue">
-                                  Jenis Kelamin <span className="red"> *</span>
-                                </label>
-                                <div className="py-2">
-                                  {
-                                    state.addValidation.genderOptions.map(gender => {
-                                      return (
-                                        <label className="c-radio" key={"gender " + gender.name}>
-                                          <Input id={gender.name} type="radio" name="genderCodeValue" className="input-font-size"
-                                            value={gender.name} checked={values.genderCodeValue === gender.name} onChange={handleChange} onBlur={handleBlur}
-                                          />
-                                          <span className="fa fa-circle" />
-                                          {gender.description}
-                                        </label>
-                                      )
-                                    })
-                                  }
+                                  <Input
+                                    name="mobileUser"
+                                    className="input-font-size"
+                                    type="text"
+                                    id="mobileUser"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.mobileUser}
+                                    placeholder="contoh: simpool"
+                                  />
                                 </div>
-                                <div className="input-feedback">{touched.genderCodeValue && errors.genderCodeValue}</div>
-              
-                                <label className="mt-3" htmlFor="religion">
-                                  Agama <span className="red"> *</span>
+
+                                <div className="col-md-6">
+                                  <label className="mt-3" htmlFor="submittedOnDate">
+                                    Submitted On Date <span className="red"> *</span>
+                                  </label>
+                                  <Field
+                                    name="submittedOnDate"
+                                    onChange={handleChange}
+                                    component={DateTime}
+                                    locale={this.props.dashboard.language}
+                                    value={values.submittedOnDate}
+                                    error={errors.submittedOnDate}
+                                    touched={touched.submittedOnDate}
+                                    dateParam={state.today}
+                                  />
+                                  <div className="input-feedback">{touched.submittedOnDate && errors.submittedOnDate}</div>
+
+                                  <label className="mt-3" htmlFor="sectorId">
+                                    Sector <span className="red"> *</span>
+                                  </label>
+                                  <Select
+                                    value={values.sectorId}
+                                    className={
+                                      touched.sectorId && errors.sectorId
+                                        ? "col-12 input-error"
+                                        : "col-12"
+                                    }
+                                    name="sectorId"
+                                    onChange={val => setFieldValue("sectorId", val)}
+                                    onBlur={val => setFieldTouched("sectorId", val)}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    size="large"
+                                  >
+                                    <Option value="">Pilih Sector</Option>
+                                    {
+                                      Array.isArray(addValidation.sectorOptions) && addValidation.sectorOptions.length > 0
+                                        ? addValidation.sectorOptions.map((option, i) => {
+                                          return (
+                                            <Option value={option.code} key={"identityType " + i} >{option.name}</Option>
+                                          )
+                                        })
+                                        : null
+                                    }
+                                  </Select>
+                                  <div className="input-feedback">{touched.sectorId && errors.sectorId}</div>
+
+                                  <label className="mt-3" htmlFor="taxNumber">
+                                    Tax Number <span className="red"> *</span>
+                                  </label>
+                                  <Input
+                                    name="taxNumber"
+                                    className={
+                                      touched.taxNumber && errors.taxNumber
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="taxNumber"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="contoh: 123456789"
+                                    value={values.taxNumber}
+                                  />
+                                  <div className="input-feedback">{touched.taxNumber && errors.taxNumber}</div>
+
+                                  <label className="mt-3" htmlFor="taxName">
+                                    Name Based on Tax <span className="red"> *</span>
+                                  </label>
+                                  <Input
+                                    name="taxName"
+                                    className={
+                                      touched.taxName && errors.taxName
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="taxName"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.taxName}
+                                    placeholder="contoh: simpool"
+                                  />
+                                  <div className="input-feedback">{touched.taxName && errors.taxName}</div>
+
+                                  <label className="mt-3" htmlFor="taxName">
+                                    Address Based on Tax <span className="red"> *</span>
+                                  </label>
+                                  <Input
+                                    name="taxAddress"
+                                    className={
+                                      touched.taxAddress && errors.taxAddress
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="taxAddress"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.taxAddress}
+                                    placeholder="contoh: Jl. Gading Serpong"
+                                  />
+                                  <div className="input-feedback">{touched.taxAddress && errors.taxAddress}</div>
+
+                                  <label className="mt-3" htmlFor="flagTaxCodeValue">
+                                    Flag Tax <span className="red"> *</span>
+                                  </label>
+                                  <Select
+                                    value={values.flagTaxCodeValue}
+                                    className={
+                                      touched.flagTaxCodeValue && errors.flagTaxCodeValue
+                                        ? "col-12 input-error"
+                                        : "col-12"
+                                    }
+                                    name="flagTaxCodeValue"
+                                    onChange={val => setFieldValue("flagTaxCodeValue", val)}
+                                    onBlur={val => setFieldTouched("flagTaxCodeValue", val)}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    size="large"
+                                  >
+                                    <Option value="">Pilih Flag Tax</Option>
+                                    {
+                                      Array.isArray(addValidation.flagTaxOptions) && addValidation.flagTaxOptions.length > 0
+                                        ? addValidation.flagTaxOptions.map((option, i) => {
+                                          return (
+                                            <Option value={option.name} key={"Flag Tax  " + i} >{option.description}</Option>
+                                          )
+                                        })
+                                        : null
+                                    }
+                                  </Select>
+                                  <div className="input-feedback">{touched.flagTaxCodeValue && errors.flagTaxCodeValue}</div>
+
+                                  <label className="mt-3" htmlFor="staffId">
+                                    Staff
                                 </label>
-                                <select
-                                  value={values.religion}
-                                  className={
-                                    touched.religion && errors.religion
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
-                                  }
-                                  name="religion"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                >
-                                  <option value="">Pilih agama anda</option>
-                                  {
-                                    Array.isArray(addValidation.religionOptions) && addValidation.religionOptions.length > 0
-                                      ? addValidation.religionOptions.map((option, i) => {
-                                        return (
-                                          <option value={option.name} key={"identityType " + i} >{option.description}</option>
-                                        )
-                                      })
-                                      : null
-                                  }
-                                </select>
-                                <div className="input-feedback">{touched.religion && errors.religion}</div>
-              
-                                <label className="mt-3" htmlFor="mobileNo">
-                                  Mobile No. <span className="red"> *</span>
+                                  <Select
+                                    value={values.staffId}
+                                    className={
+                                      touched.staffId && errors.staffId
+                                        ? "col-12 input-error"
+                                        : "col-12"
+                                    }
+                                    name="staffId"
+                                    onChange={val => setFieldValue("staffId", val)}
+                                    onBlur={val => setFieldTouched("staffId", val)}
+                                    showSearch
+                                    filterOption={(input, option) =>
+                                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    size="large"
+                                  >
+                                    <Option value="">Pilih Staff</Option>
+                                    {
+                                      Array.isArray(addValidation.staffOptions) && addValidation.staffOptions.length > 0
+                                        ? addValidation.staffOptions.map((option, i) => {
+                                          return (
+                                            <Option value={option.id} key={"identityType " + i} >{option.displayName}</Option>
+                                          )
+                                        })
+                                        : null
+                                    }
+                                  </Select>
+
+                                  <label className="mt-3" htmlFor="nip">
+                                    Working ID Number
                                 </label>
-                                <Input
-                                  name="mobileNo"
-                                  className={
-                                    touched.mobileNo && errors.mobileNo
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="mobileNo"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  placeholder="contoh: 08123456789"
-                                  value={values.mobileNo}
-                                />
-                                <div className="input-feedback">{touched.mobileNo && errors.mobileNo}</div>
-              
-                                <label className="mt-3" htmlFor="externalID">External ID</label>
-                                <Input
-                                  name="externalID"
-                                  className="input-font-size"
-                                  type="text"
-                                  id="externalID"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  placeholder="contoh: 123456789"
-                                  value={values.externalID}
-                                />
-              
-                                <label className="mt-3" htmlFor="nickname">Alias</label>
-                                <Input
-                                  name="nickname"
-                                  className="input-font-size"
-                                  type="text"
-                                  id="nickname"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  placeholder="contoh: Ikkat"
-                                  value={values.nickname}
-                                />
-                                
-                                <label className="mt-3" htmlFor="identityValidDate">
-                                  Identity Valid Date
-                                </label>
-                                <Field name="identityValidDate" onChange={handleChange} component={ValidDate}
-                                  locale={this.props.dashboard.language} value={values.identityValidDate}
-                                />
-              
-                                <label className="mt-3" htmlFor="email">Email</label>
-                                <Input
-                                  name="email"
-                                  className={
-                                    touched.email && errors.email
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="email"
-                                  id="email"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.email}
-                                  placeholder="contoh: simpool@ikkat.com"
-                                />
-                                <div className="input-feedback">{touched.email && errors.email}</div>
-              
-                                <label className="mt-3" htmlFor="mobileUser">
-                                  Mobile Username
-                                </label>
-                                <Input
-                                  name="mobileUser"
-                                  className="input-font-size"
-                                  type="text"
-                                  id="mobileUser"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.mobileUser}
-                                  placeholder="contoh: simpool"
-                                />
+                                  <Input
+                                    name="nip"
+                                    className={
+                                      touched.nip && errors.nip
+                                        ? "input-font-size input-error"
+                                        : "input-font-size"
+                                    }
+                                    type="text"
+                                    id="nip"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.nip}
+                                    placeholder="contoh: 123456789"
+                                  />
+                                  <div className="input-feedback">{touched.nip && errors.nip}</div>
+
+                                  <CustomInput
+                                    type="checkbox"
+                                    id="active"
+                                    className="mt-3"
+                                    name="active"
+                                    checked={values.active}
+                                    label="Active"
+                                    onChange={handleChange}
+                                  />
+                                </div>
                               </div>
-              
-                              <div className="col-md-6">
-                                <label className="mt-3" htmlFor="submittedOnDate">
-                                  Submitted On Date <span className="red"> *</span>
-                                </label>
-                                <Field
-                                  name="submittedOnDate"
-                                  onChange={handleChange}
-                                  component={DateTime}
-                                  locale={this.props.dashboard.language}
-                                  value={values.submittedOnDate}
-                                  error={errors.submittedOnDate}
-                                  touched={touched.submittedOnDate}
-                                  dateParam={state.today}
-                                />
-                                <div className="input-feedback">{touched.submittedOnDate && errors.submittedOnDate}</div>
-              
-                                <label className="mt-3" htmlFor="sectorId">
-                                  Sector <span className="red"> *</span>
-                                </label>
-                                <select
-                                  value={values.sectorId}
-                                  className={
-                                    touched.sectorId && errors.sectorId
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
-                                  }
-                                  name="sectorId"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+
+                              <div className="d-flex justify-content-end">
+                                <button
+                                  className="btn btn-primary mt-4 col-3 col-md-2"
+                                  type="submit"
+                                  onClick={e => submitFormDuplicate(e)}
                                 >
-                                  <option value="">Pilih Sector</option>
-                                  {
-                                    Array.isArray(addValidation.sectorOptions) && addValidation.sectorOptions.length > 0
-                                      ? addValidation.sectorOptions.map((option, i) => {
-                                        return (
-                                          <option value={option.code} key={"identityType " + i} >{option.name}</option>
-                                        )
-                                      })
-                                      : null
-                                  }
-                                </select>
-                                <div className="input-feedback">{touched.sectorId && errors.sectorId}</div>
-                                
-                                <label className="mt-3" htmlFor="taxNumber">
-                                  Tax Number <span className="red"> *</span>
-                                </label>
-                                <Input
-                                  name="taxNumber"
-                                  className={
-                                    touched.taxNumber && errors.taxNumber
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="taxNumber"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  placeholder="contoh: 123456789"
-                                  value={values.taxNumber}
-                                />
-                                <div className="input-feedback">{touched.taxNumber && errors.taxNumber}</div>
-              
-                                <label className="mt-3" htmlFor="taxName">
-                                  Name Based on Tax <span className="red"> *</span>
-                                </label>
-                                <Input
-                                  name="taxName"
-                                  className={
-                                    touched.taxName && errors.taxName
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="taxName"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.taxName}
-                                  placeholder="contoh: simpool"
-                                />
-                                <div className="input-feedback">{touched.taxName && errors.taxName}</div>
-                                
-                                <label className="mt-3" htmlFor="taxName">
-                                  Address Based on Tax <span className="red"> *</span>
-                                </label>
-                                <Input
-                                  name="taxAddress"
-                                  className={
-                                    touched.taxAddress && errors.taxAddress
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="taxAddress"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.taxAddress}
-                                  placeholder="contoh: Jl. Gading Serpong"
-                                />
-                                <div className="input-feedback">{touched.taxAddress && errors.taxAddress}</div>
-              
-                                <label className="mt-3" htmlFor="flagTaxCodeValue">
-                                  Flag Tax <span className="red"> *</span>
-                                </label>
-                                <select
-                                  value={values.flagTaxCodeValue}
-                                  className={
-                                    touched.flagTaxCodeValue && errors.flagTaxCodeValue
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
-                                  }
-                                  name="flagTaxCodeValue"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                >
-                                  <option value="">Pilih Flag Tax</option>
-                                  {
-                                    Array.isArray(addValidation.flagTaxOptions) && addValidation.flagTaxOptions.length > 0
-                                      ? addValidation.flagTaxOptions.map((option, i) => {
-                                        return (
-                                          <option value={option.name} key={"Flag Tax  " + i} >{option.description}</option>
-                                        )
-                                      })
-                                      : null
-                                  }
-                                </select>
-                                <div className="input-feedback">{touched.flagTaxCodeValue && errors.flagTaxCodeValue}</div>
-              
-                                <label className="mt-3" htmlFor="staffId">
-                                  Staff
-                                </label>
-                                <select
-                                  value={values.staffId}
-                                  className="custom-select custom-select-sm input-font-size"
-                                  name="staffId"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                >
-                                  <option value="">Pilih Staff</option>
-                                  {
-                                    Array.isArray(addValidation.staffOptions) && addValidation.staffOptions.length > 0
-                                      ? addValidation.staffOptions.map((option, i) => {
-                                        return (
-                                          <option value={option.id} key={"identityType " + i} >{option.displayName}</option>
-                                        )
-                                      })
-                                      : null
-                                  }
-                                </select>
-              
-                                <label className="mt-3" htmlFor="nip">
-                                  Working ID Number
-                                </label>
-                                <Input
-                                  name="nip"
-                                  className={
-                                    touched.nip && errors.nip
-                                      ? "input-font-size input-error"
-                                      : "input-font-size"
-                                  }
-                                  type="text"
-                                  id="nip"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.nip}
-                                  placeholder="contoh: 123456789"
-                                />
-                                <div className="input-feedback">{touched.nip && errors.nip}</div>
-              
-                                <CustomInput
-                                  type="checkbox"
-                                  id="active"
-                                  className="mt-3"
-                                  name="active"
-                                  checked={values.active}
-                                  label="Active"
-                                  onChange={handleChange}
-                                />
-                              </div>
-                            </div>
-              
-                            <div className="d-flex justify-content-end">
-                              <button
-                                className="btn btn-primary mt-4 col-3 col-md-2"
-                                type="submit"
-                                onClick={e => submitFormDuplicate(e)}
-                              >
-                                Lanjutkan
+                                  Lanjutkan
                               </button>
-                            </div>
-                          </form>
-                        )
-                      }
+                              </div>
+                            </form>
+                          )
+                        }
                       </Formik>
                     )
                     : null
@@ -1871,7 +1905,7 @@ class MemberDataAdd extends Component {
 
               <TabPane id="tabPane2" tabId="2">
                 <Formik
-                  initialValues={{ 
+                  initialValues={{
                     addressBasedOnIdentity: addValidation.addressBasedOnIdentity,
                     identityCityId: addValidation.identityCityId,
                     identityCountryCodeValue: addValidation.identityCountryCodeValue,
@@ -1881,7 +1915,7 @@ class MemberDataAdd extends Component {
                     identityVillage: addValidation.identityVillage,
                     identityRt: addValidation.identityRt,
                     identityRw: addValidation.identityRw,
-                    
+
                     address: addValidation.address,
                     cityId: addValidation.cityId,
                     countryCodeValue: addValidation.countryCodeValue,
@@ -1896,44 +1930,44 @@ class MemberDataAdd extends Component {
                     const errors = {};
 
                     if (!values.addressBasedOnIdentity) {
-                      errors.addressBasedOnIdentity = <Trans i18nKey='forms.REQUIRED' />                      
+                      errors.addressBasedOnIdentity = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.identityCountryCodeValue) {
-                      errors.identityCountryCodeValue = <Trans i18nKey='forms.REQUIRED' />                      
+                      errors.identityCountryCodeValue = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.identityProvinceId) {
-                      errors.identityProvinceId = <Trans i18nKey='forms.REQUIRED' />                      
+                      errors.identityProvinceId = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.identityCityId) {
-                      errors.identityCityId = <Trans i18nKey='forms.REQUIRED' />                      
+                      errors.identityCityId = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.identitySubDistrict) {
-                      errors.identitySubDistrict = <Trans i18nKey='forms.REQUIRED' />  
+                      errors.identitySubDistrict = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (!values.identityVillage) {
-                      errors.identityVillage = <Trans i18nKey='forms.REQUIRED' />                        
+                      errors.identityVillage = <Trans i18nKey='forms.REQUIRED' />
                     }
 
                     if (/^(0|[1-9]\d*)$/.test(values.identityPostalCode) === false && values.identityPostalCode !== "") {
                       errors.identityPostalCode = "Postal Code harus berisi angka"
                     } else if (values.identityPostalCode.length !== 5 && values.identityPostalCode !== "") {
-                      errors.identityPostalCode = "Postal Code harus berisi 5 angka"      
+                      errors.identityPostalCode = "Postal Code harus berisi 5 angka"
                     }
                     if (!values.identityPostalCode) {
-                      errors.identityPostalCode = "Postal Code harus diisi"      
+                      errors.identityPostalCode = "Postal Code harus diisi"
                     }
 
-                    
+
                     if (values.addressBasedOnIdentity) {
                       this.changeAddValidation("addressBasedOnIdentity", values.addressBasedOnIdentity)
                     }
                     if (values.identityCountryCodeValue) {
-                      this.changeAddValidation("identityCountryCodeValue", values.identityCountryCodeValue)                      
+                      this.changeAddValidation("identityCountryCodeValue", values.identityCountryCodeValue)
                     }
                     if (values.identityProvinceId) {
                       let identityCityOptionsFilter = [];
@@ -1948,22 +1982,22 @@ class MemberDataAdd extends Component {
                       this.changeAddValidation("identityProvinceId", values.identityProvinceId)
                     }
                     if (values.identityCityId) {
-                      this.changeAddValidation("identityCityId", values.identityCityId)                      
+                      this.changeAddValidation("identityCityId", values.identityCityId)
                     }
                     if (values.identitySubDistrict) {
-                      this.changeAddValidation("identitySubDistrict", values.identitySubDistrict)                      
+                      this.changeAddValidation("identitySubDistrict", values.identitySubDistrict)
                     }
                     if (values.identityVillage) {
-                      this.changeAddValidation("identityVillage", values.identityVillage)                      
+                      this.changeAddValidation("identityVillage", values.identityVillage)
                     }
                     if (values.identityPostalCode) {
-                      this.changeAddValidation("identityPostalCode", values.identityPostalCode)                      
+                      this.changeAddValidation("identityPostalCode", values.identityPostalCode)
                     }
                     if (values.identityRt) {
-                      this.changeAddValidation("identityRt", values.identityRt)                      
+                      this.changeAddValidation("identityRt", values.identityRt)
                     }
                     if (values.identityRw) {
-                      this.changeAddValidation("identityRw", values.identityRw)                      
+                      this.changeAddValidation("identityRw", values.identityRw)
                     }
 
                     if (values.provinceId) {
@@ -1985,7 +2019,7 @@ class MemberDataAdd extends Component {
                     this.setState({
                       tab2Pass: true
                     })
-                    this.toggleStep('3')  
+                    this.toggleStep('3')
                   }}
                 >
                   {({
@@ -1994,394 +2028,442 @@ class MemberDataAdd extends Component {
                     touched,
                     handleChange,
                     handleBlur,
-                    handleSubmit
+                    handleSubmit,
+                    setFieldTouched,
+                    setFieldValue,
                   }) => (
-                    <form className="mt-5 row" onSubmit={handleSubmit} name="tab2">
-                      <div className="col-md-6">
-                        <p className="lead text-center">Identitas</p>
+                      <form className="mt-5 row" onSubmit={handleSubmit} name="tab2">
+                        <div className="col-md-6">
+                          <p className="lead text-center">Identitas</p>
 
-                        <label className="mt-3" htmlFor="addressBasedOnIdentity">
-                          Alamat Sesuai Identitas <span className="red"> *</span>
-                        </label>
-                        <textarea
-                          rows="4"
-                          name="addressBasedOnIdentity"
-                          className={
-                            touched.addressBasedOnIdentity && errors.addressBasedOnIdentity
-                              ? "form-control form-font-size input-error"
-                              : "form-control form-font-size"
-                          }
-                          type="text"
-                          onChange={handleChange}
-                          placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                          value={values.addressBasedOnIdentity}
-                        />
-                        <div className="input-feedback">{touched.addressBasedOnIdentity && errors.addressBasedOnIdentity}</div>
+                          <label className="mt-3" htmlFor="addressBasedOnIdentity">
+                            Alamat Sesuai Identitas <span className="red"> *</span>
+                          </label>
+                          <textarea
+                            rows="4"
+                            name="addressBasedOnIdentity"
+                            className={
+                              touched.addressBasedOnIdentity && errors.addressBasedOnIdentity
+                                ? "form-control form-font-size input-error"
+                                : "form-control form-font-size"
+                            }
+                            type="text"
+                            onChange={handleChange}
+                            placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                            value={values.addressBasedOnIdentity}
+                          />
+                          <div className="input-feedback">{touched.addressBasedOnIdentity && errors.addressBasedOnIdentity}</div>
 
-                        <label className="mt-3" htmlFor="identityCountryCodeValue">
-                          Negara <span className="red"> *</span>
-                        </label>
-                        <select value={values.identityCountryCodeValue}
-                          className={
-                            touched.identityCountryCodeValue && errors.identityCountryCodeValue
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          } name="identityCountryCodeValue"
-                          onChange={handleChange}>
-                          <option value="">Pilih negara!</option>
-                          {
-                            Array.isArray(this.state.addValidation.countryOptions) && this.state.addValidation.countryOptions.length > 0
-                              ? this.state.addValidation.countryOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"country " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.identityCountryCodeValue && errors.identityCountryCodeValue}</div>
+                          <label className="mt-3" htmlFor="identityCountryCodeValue">
+                            Negara <span className="red"> *</span>
+                          </label>
+                          <Select
+                            value={values.identityCountryCodeValue}
+                            className={
+                              touched.identityCountryCodeValue && errors.identityCountryCodeValue
+                                ? "col-12 input-error"
+                                : "col-12"
+                            }
+                            name="identityCountryCodeValue"
+                            onChange={val => setFieldValue("identityCountryCodeValue", val)}
+                            onBlur={val => setFieldTouched("identityCountryCodeValue", val)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            size="large"
+                          >
+                            <Option value="">Pilih negara!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.countryOptions) && this.state.addValidation.countryOptions.length > 0
+                                ? this.state.addValidation.countryOptions.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"country " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.identityCountryCodeValue && errors.identityCountryCodeValue}</div>
 
-                        <label className="mt-3" htmlFor="identityProvinceId">
-                          Provinsi <span className="red"> *</span>
-                        </label>
-                        <select 
-                          value={values.identityProvinceId}
-                          className={
-                            touched.identityProvinceId && errors.identityProvinceId
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          }
-                          name="identityProvinceId"
-                          onChange={handleChange}>
-                          <option value="">Pilih provinsi!</option>
-                          {
-                            Array.isArray(this.state.addValidation.provinceOptions) && this.state.addValidation.provinceOptions.length > 0
-                              ? this.state.addValidation.provinceOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"province " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.identityProvinceId && errors.identityProvinceId}</div>
+                          <label className="mt-3" htmlFor="identityProvinceId">
+                            Provinsi <span className="red"> *</span>
+                          </label>
+                          <Select
+                            value={values.identityProvinceId}
+                            className={
+                              touched.identityProvinceId && errors.identityProvinceId
+                                ? "col-12 input-error"
+                                : "col-12"
+                            }
+                            name="identityProvinceId"
+                            onChange={val => setFieldValue("identityProvinceId", val)}
+                            onBlur={val => setFieldTouched("identityProvinceId", val)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            size="large"
+                          >
+                            <Option value="">Pilih provinsi!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.provinceOptions) && this.state.addValidation.provinceOptions.length > 0
+                                ? this.state.addValidation.provinceOptions.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"province " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.identityProvinceId && errors.identityProvinceId}</div>
 
-                        <label className="mt-3" htmlFor="identityCityId">
-                          Kabupaten / Kota <span className="red"> *</span>
-                        </label>
-                        <select
-                          value={values.identityCityId}
-                          className={
-                            touched.identityCityId && errors.identityCityId
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          }
-                          name="identityCityId"
-                          onChange={handleChange}>
-                          <option value="">Pilih kota!</option>
-                          {
-                            Array.isArray(this.state.addValidation.identityCityOptionsFilter) && this.state.addValidation.identityCityOptionsFilter.length > 0
-                              ? this.state.addValidation.identityCityOptionsFilter.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"city " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.identityCityId && errors.identityCityId}</div>
-                        
-                        <label className="mt-3" htmlFor="identitySubDistrict">
-                          Kecamatan <span className="red"> *</span>
-                        </label>
-                        <Input
-                          name="identitySubDistrict"
-                          className={
-                            touched.identitySubDistrict && errors.identitySubDistrict
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="identitySubDistrict"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: Mulyorejo"
-                          value={values.identitySubDistrict}
-                        />
-                        <div className="input-feedback">{touched.identitySubDistrict && errors.identitySubDistrict}</div>
+                          <label className="mt-3" htmlFor="identityCityId">
+                            Kabupaten / Kota <span className="red"> *</span>
+                          </label>
+                          <Select
+                            value={values.identityCityId}
+                            className={
+                              touched.identityCityId && errors.identityCityId
+                                ? "col-12 input-error"
+                                : "col-12"
+                            }
+                            name="identityCityId"
+                            onChange={val => setFieldValue("identityCityId", val)}
+                            onBlur={val => setFieldTouched("identityCityId", val)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            size="large"
+                          >
+                            <Option value="">Pilih kota!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.identityCityOptionsFilter) && this.state.addValidation.identityCityOptionsFilter.length > 0
+                                ? this.state.addValidation.identityCityOptionsFilter.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"city " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.identityCityId && errors.identityCityId}</div>
 
-                        <label className="mt-3" htmlFor="identityPostalCode">
-                          Kode Pos <span className="red"> *</span>
-                        </label>
-                        <Input
-                          name="identityPostalCode"
-                          className={
-                            touched.identityPostalCode && errors.identityPostalCode
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="identityPostalCode"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: 12345"
-                          value={values.identityPostalCode}
-                        />
-                        <div className="input-feedback">{touched.identityPostalCode && errors.identityPostalCode}</div>
+                          <label className="mt-3" htmlFor="identitySubDistrict">
+                            Kecamatan <span className="red"> *</span>
+                          </label>
+                          <Input
+                            name="identitySubDistrict"
+                            className={
+                              touched.identitySubDistrict && errors.identitySubDistrict
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="identitySubDistrict"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: Mulyorejo"
+                            value={values.identitySubDistrict}
+                          />
+                          <div className="input-feedback">{touched.identitySubDistrict && errors.identitySubDistrict}</div>
 
-                        <label className="mt-3" htmlFor="identityVillage">
-                          Kelurahan / Desa <span className="red"> *</span>
-                        </label>
-                        <Input
-                          name="identityVillage"
-                          className={
-                            touched.identityVillage && errors.identityVillage
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="identityVillage"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: Mulyosari"
-                          value={values.identityVillage}
-                        />
-                        <div className="input-feedback">{touched.identityVillage && errors.identityVillage}</div>
-                        
-                        <div className="row">
-                          <div className="col-6">
-                            <label className="mt-3" htmlFor="identityRt">
-                              RT
+                          <label className="mt-3" htmlFor="identityPostalCode">
+                            Kode Pos <span className="red"> *</span>
+                          </label>
+                          <Input
+                            name="identityPostalCode"
+                            className={
+                              touched.identityPostalCode && errors.identityPostalCode
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="identityPostalCode"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: 12345"
+                            value={values.identityPostalCode}
+                          />
+                          <div className="input-feedback">{touched.identityPostalCode && errors.identityPostalCode}</div>
+
+                          <label className="mt-3" htmlFor="identityVillage">
+                            Kelurahan / Desa <span className="red"> *</span>
+                          </label>
+                          <Input
+                            name="identityVillage"
+                            className={
+                              touched.identityVillage && errors.identityVillage
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="identityVillage"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: Mulyosari"
+                            value={values.identityVillage}
+                          />
+                          <div className="input-feedback">{touched.identityVillage && errors.identityVillage}</div>
+
+                          <div className="row">
+                            <div className="col-6">
+                              <label className="mt-3" htmlFor="identityRt">
+                                RT
                             </label>
-                            <Input
-                              name="identityRt"
-                              className="input-font-size"
-                              type="text"
-                              id="identityRt"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              placeholder="contoh: 1"
-                              value={values.identityRt}
-                            />
-                          </div>
-                          <div className="col-6">
-                            <label className="mt-3" htmlFor="identityRw">
-                              RW
+                              <Input
+                                name="identityRt"
+                                className="input-font-size"
+                                type="text"
+                                id="identityRt"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                placeholder="contoh: 1"
+                                value={values.identityRt}
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label className="mt-3" htmlFor="identityRw">
+                                RW
                             </label>
-                            <Input
-                              name="identityRw"
-                              className="input-font-size"
-                              type="text"
-                              id="identityRw"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              placeholder="contoh: 1"
-                              value={values.identityRw}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="col-md-6">
-                        <p className="lead text-center">ZZZ Domisili</p>
-
-                        <label className="mt-3" htmlFor="address">
-                          Alamat Sesuai Domisili
-                        </label>
-                        <textarea
-                          rows="4"
-                          name="address"
-                          className={
-                            touched.address && errors.address
-                              ? "form-control form-font-size input-error"
-                              : "form-control form-font-size"
-                          }
-                          type="text"
-                          onChange={handleChange}
-                          placeholder="contoh: One PM, Gading Serpong, Tangerang"
-                          value={values.address}
-                        />
-                        <div className="input-feedback">{touched.address && errors.address}</div>
-
-                        <label className="mt-3" htmlFor="countryCodeValue">
-                          Negara
-                        </label>
-                        <select value={values.countryCodeValue}
-                          className={
-                            touched.countryCodeValue && errors.countryCodeValue
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          } name="countryCodeValue"
-                          onChange={handleChange}>
-                          <option value="">Pilih negara!</option>
-                          {
-                            Array.isArray(this.state.addValidation.countryOptions) && this.state.addValidation.countryOptions.length > 0
-                              ? this.state.addValidation.countryOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"country " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.countryCodeValue && errors.countryCodeValue}</div>
-
-                        <label className="mt-3" htmlFor="provinceId">
-                          Provinsi
-                        </label>
-                        <select 
-                          value={values.provinceId}
-                          className={
-                            touched.provinceId && errors.provinceId
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          }
-                          name="provinceId"
-                          onChange={handleChange}>
-                          <option value="">Pilih provinsi!</option>
-                          {
-                            Array.isArray(this.state.addValidation.provinceOptions) && this.state.addValidation.provinceOptions.length > 0
-                              ? this.state.addValidation.provinceOptions.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"province " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.provinceId && errors.provinceId}</div>
-
-                        <label className="mt-3" htmlFor="cityId">
-                          Kabupaten / Kota
-                        </label>
-                        <select
-                          value={values.cityId}
-                          className={
-                            touched.cityId && errors.cityId
-                              ? "custom-select custom-select-sm input-font-size input-error"
-                              : "custom-select custom-select-sm input-font-size"
-                          }
-                          name="cityId"
-                          onChange={handleChange}>
-                          <option value="">Pilih kota!</option>
-                          {
-                            Array.isArray(this.state.addValidation.cityOptionsFilter) && this.state.addValidation.cityOptionsFilter.length > 0
-                              ? this.state.addValidation.cityOptionsFilter.map((option, i) => {
-                                return (
-                                  <option value={option.code} key={"city " + i} >{option.description}</option>
-                                )
-                              })
-                              : null
-                          }
-                        </select>
-                        <div className="input-feedback">{touched.cityId && errors.cityId}</div>
-
-                        <label className="mt-3" htmlFor="subDistrict">
-                          Kecamatan
-                        </label>
-                        <Input
-                          name="subDistrict"
-                          className={
-                            touched.subDistrict && errors.subDistrict
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="subDistrict"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: Mulyorejo"
-                          value={values.subDistrict}
-                        />
-                        <div className="input-feedback">{touched.subDistrict && errors.subDistrict}</div>
-
-                        <label className="mt-3" htmlFor="village">
-                          Kelurahan / Desa
-                        </label>
-                        <Input
-                          name="village"
-                          className={
-                            touched.village && errors.village
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="village"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: Mulyosari"
-                          value={values.village}
-                        />
-                        <div className="input-feedback">{touched.village && errors.village}</div>
-
-                        <label className="mt-3" htmlFor="postalCode">
-                          Kode Pos
-                        </label>
-                        <Input
-                          name="postalCode"
-                          className={
-                            touched.postalCode && errors.postalCode
-                              ? "input-font-size input-error"
-                              : "input-font-size"
-                          }
-                          type="text"
-                          id="postalCode"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder="contoh: 12345"
-                          value={values.postalCode}
-                        />
-                        <div className="input-feedback">{touched.postalCode && errors.postalCode}</div>
-
-                        <div className="row">
-                          <div className="col-6">
-                            <label className="mt-3" htmlFor="rt">
-                              RT
-                            </label>
-                            <Input
-                              name="rt"
-                              className="input-font-size"
-                              type="text"
-                              id="rt"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              placeholder="contoh: 1"
-                              value={values.rt}
-                            />
-                          </div>
-                          <div className="col-6">
-                            <label className="mt-3" htmlFor="rw">
-                              RW
-                            </label>
-                            <Input
-                              name="rw"
-                              className="input-font-size"
-                              type="text"
-                              id="rw"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              placeholder="contoh: 1"
-                              value={values.rw}
-                            />
+                              <Input
+                                name="identityRw"
+                                className="input-font-size"
+                                type="text"
+                                id="identityRw"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                placeholder="contoh: 1"
+                                value={values.identityRw}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <hr />
-                      <div className="mt-4 col-12 d-flex justify-content-between">
-                        <Button color="primary col-3 col-md-2" onClick={() => this.toggleStep('1')} outline>
-                          Sebelumnya
+                        <div className="col-md-6">
+                          <p className="lead text-center">ZZZ Domisili</p>
+
+                          <label className="mt-3" htmlFor="address">
+                            Alamat Sesuai Domisili
+                          </label>
+                          <textarea
+                            rows="4"
+                            name="address"
+                            className={
+                              touched.address && errors.address
+                                ? "form-control form-font-size input-error"
+                                : "form-control form-font-size"
+                            }
+                            type="text"
+                            onChange={handleChange}
+                            placeholder="contoh: One PM, Gading Serpong, Tangerang"
+                            value={values.address}
+                          />
+                          <div className="input-feedback">{touched.address && errors.address}</div>
+
+                          <label className="mt-3" htmlFor="countryCodeValue">
+                            Negara
+                        </label>
+                          <Select
+                            value={values.countryCodeValue}
+                            className={
+                              touched.countryCodeValue && errors.countryCodeValue
+                                ? "col-12 input-error"
+                                : "col-12"
+                            }
+                            name="countryCodeValue"
+                            onChange={val => setFieldValue("countryCodeValue", val)}
+                            onBlur={val => setFieldTouched("countryCodeValue", val)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            size="large"
+                          >
+                            <Option value="">Pilih negara!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.countryOptions) && this.state.addValidation.countryOptions.length > 0
+                                ? this.state.addValidation.countryOptions.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"country " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.countryCodeValue && errors.countryCodeValue}</div>
+
+                          <label className="mt-3" htmlFor="provinceId">
+                            Provinsi
+                        </label>
+                          <Select
+                            value={values.provinceId}
+                            className={
+                              touched.provinceId && errors.provinceId
+                                ? "col-12 input-error"
+                                : "col-12"
+                            }
+                            name="provinceId"
+                            onChange={val => setFieldValue("provinceId", val)}
+                            onBlur={val => setFieldTouched("provinceId", val)}
+                            showSearch
+                            filterOption={(input, option) =>
+                              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                            size="large"
+                          >
+                            <Option value="">Pilih provinsi!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.provinceOptions) && this.state.addValidation.provinceOptions.length > 0
+                                ? this.state.addValidation.provinceOptions.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"province " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.provinceId && errors.provinceId}</div>
+
+                          <label className="mt-3" htmlFor="cityId">
+                            Kabupaten / Kota
+                        </label>
+                            <Select
+                              value={values.cityId}
+                              className={
+                                touched.cityId && errors.cityId
+                                  ? "col-12 input-error"
+                                  : "col-12"
+                              }
+                              name="cityId"
+                              onChange={val => setFieldValue("cityId", val)}
+                              onBlur={val => setFieldTouched("cityId", val)}
+                              showSearch
+                              filterOption={(input, option) =>
+                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                              }
+                              size="large"
+                            >
+                            <Option value="">Pilih kota!</Option>
+                            {
+                              Array.isArray(this.state.addValidation.cityOptionsFilter) && this.state.addValidation.cityOptionsFilter.length > 0
+                                ? this.state.addValidation.cityOptionsFilter.map((option, i) => {
+                                  return (
+                                    <Option value={option.code} key={"city " + i} >{option.description}</Option>
+                                  )
+                                })
+                                : null
+                            }
+                          </Select>
+                          <div className="input-feedback">{touched.cityId && errors.cityId}</div>
+
+                          <label className="mt-3" htmlFor="subDistrict">
+                            Kecamatan
+                          </label>
+                          <Input
+                            name="subDistrict"
+                            className={
+                              touched.subDistrict && errors.subDistrict
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="subDistrict"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: Mulyorejo"
+                            value={values.subDistrict}
+                          />
+                          <div className="input-feedback">{touched.subDistrict && errors.subDistrict}</div>
+
+                          <label className="mt-3" htmlFor="village">
+                            Kelurahan / Desa
+                        </label>
+                          <Input
+                            name="village"
+                            className={
+                              touched.village && errors.village
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="village"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: Mulyosari"
+                            value={values.village}
+                          />
+                          <div className="input-feedback">{touched.village && errors.village}</div>
+
+                          <label className="mt-3" htmlFor="postalCode">
+                            Kode Pos
+                        </label>
+                          <Input
+                            name="postalCode"
+                            className={
+                              touched.postalCode && errors.postalCode
+                                ? "input-font-size input-error"
+                                : "input-font-size"
+                            }
+                            type="text"
+                            id="postalCode"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="contoh: 12345"
+                            value={values.postalCode}
+                          />
+                          <div className="input-feedback">{touched.postalCode && errors.postalCode}</div>
+
+                          <div className="row">
+                            <div className="col-6">
+                              <label className="mt-3" htmlFor="rt">
+                                RT
+                            </label>
+                              <Input
+                                name="rt"
+                                className="input-font-size"
+                                type="text"
+                                id="rt"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                placeholder="contoh: 1"
+                                value={values.rt}
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label className="mt-3" htmlFor="rw">
+                                RW
+                            </label>
+                              <Input
+                                name="rw"
+                                className="input-font-size"
+                                type="text"
+                                id="rw"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                placeholder="contoh: 1"
+                                value={values.rw}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <hr />
+                        <div className="mt-4 col-12 d-flex justify-content-between">
+                          <Button color="primary col-3 col-md-2" onClick={() => this.toggleStep('1')} outline>
+                            Sebelumnya
                         </Button>
-                        <Button
-                          className="col-3 col-md-2"
-                          color="primary"
-                          type="submit"
-                        >
-                          Lanjutkan
+                          <Button
+                            className="col-3 col-md-2"
+                            color="primary"
+                            type="submit"
+                          >
+                            Lanjutkan
                         </Button>
-                      </div>
-                    </form>
-                  )}
+                        </div>
+                      </form>
+                    )}
                 </Formik>
               </TabPane>
 
