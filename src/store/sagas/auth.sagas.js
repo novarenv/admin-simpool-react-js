@@ -33,7 +33,6 @@ const loginError = (error, action) => {
 }
 
 function* loginUser(action) {
-  console.log(headers())
   try {
     const login = yield axios
       .post(loginUrl, action.payload, {
@@ -42,7 +41,8 @@ function* loginUser(action) {
       .then(response => response.data)
       .catch(error => loginError(error, action))
 
-    if (login.authenticated) {
+    console.log(login)
+    if (login?.authenticated) {
       yield put(loginOtpUserSuccess(login))
 
       action.onLoginOtpSuccess()

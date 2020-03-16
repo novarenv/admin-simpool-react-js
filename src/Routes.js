@@ -1,10 +1,11 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { withRouter, Switch, Redirect, Route } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Cookies from "js-cookie";
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import queryString from 'query-string'
+import IdleTimer from 'react-idle-timer'
 
 import * as actions from './store/actions/actions';
 import { connect } from 'react-redux';
@@ -12,11 +13,16 @@ import { bindActionCreators } from 'redux';
 
 /* loader component for Suspense*/
 import PageLoader from './components/Common/PageLoader';
+import Swal from './components/Common/Swal';
 
 import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
 
 import { setTenantIdentifier as setTenantId } from './lib/jsonPlaceholderAPI'
+
+const sessionExpired = {
+  title: "Sesi anda telah berakhir, tolong login kembali"
+}
 
 const waitFor = Tag => props => <Tag {...props} />;
 
@@ -88,6 +94,8 @@ const Routes = ({ location, ...props }) => {
   const animationName = 'rag-fadeIn'
 
   const [tenantIdentifier, setTenantIdentifier] = useState(props.settings.tenantIdentifier)
+  const time = new Date()
+  time.setTime(time.getTime() + (10 * 60 * 1000))
 
   useEffect(() => {
     const values = queryString.parse(location.search)
@@ -95,7 +103,7 @@ const Routes = ({ location, ...props }) => {
     // Redirect if tenant different
     // if (values.tenantIdentifier === props.settings.tenantIdentifier) {
     //   console.log(props)
-      
+
     //   props.history.replace({
     //     pathname: "/simpool/login",
     //     search: "?tenantIdentifier=" + tenantIdentifier
@@ -145,6 +153,25 @@ const Routes = ({ location, ...props }) => {
           <TransitionGroup>
             <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
               <div>
+                <IdleTimer
+                  element={document}
+                  onAction={() => {
+                    Cookies.set("loginToken", "Token", { expires: time })
+                  }}
+                  onIdle={() => {
+                    document.getElementById("sessionExpired").click()
+                    Cookies.remove("loginToken")
+                    props.history.push({
+                      pathname: "/simpool/login",
+                      search: "?tenantIdentifier=" + props.settings.tenantIdentifier
+                    })
+                  }}
+                  debounce={250}
+                  timeout={10 * 60 * 1000}
+                />
+                
+                <Swal options={sessionExpired} id="sessionExpired" />
+
                 <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
                     <Route exact path="/simpool/lock" component={waitFor(Lock)} />
@@ -195,7 +222,7 @@ const Routes = ({ location, ...props }) => {
                     <Route exact path="/simpool/accounting/beginning-balance" component={waitFor(BeginningBalance)} />
 
                     {
-                      
+
                     }
 
                     <Redirect from="*" to={{
