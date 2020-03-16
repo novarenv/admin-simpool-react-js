@@ -2,9 +2,10 @@ import React, { Component, useState } from 'react';
 import { Container, Card, CardBody, Button } from 'reactstrap';
 import { Link, withRouter } from 'react-router-dom';
 import { withTranslation, Trans } from 'react-i18next';
-import ReactDataGrid from 'react-data-grid';
 import PropTypes from 'prop-types';
 import { createUltimatePagination } from 'react-ultimate-pagination';
+import { Table } from 'antd'
+import 'antd/dist/antd.css'
 
 import FlatButton from 'material-ui/FlatButton';
 import NavigationFirstPage from 'material-ui/svg-icons/navigation/first-page';
@@ -17,8 +18,6 @@ import ContentWrapper from '../../../components/Layout/ContentWrapper';
 import * as actions from '../../../store/actions/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-
-const COLUMN_WIDTH = 314;
 
 const AddBar = props => {
   return (
@@ -78,7 +77,7 @@ const SearchBar = props => {
 
 const flatButtonStyle = {
   minWidth: 48
-};
+}
 
 const PaginatedPage = createUltimatePagination({
   itemTypeToComponent: {
@@ -132,43 +131,11 @@ const PaginatedPage = createUltimatePagination({
       />
     )
   }
-});
+})
 
 class MemberData extends Component {
   constructor(props, context) {
     super(props, context);
-    this._columns = [
-      {
-        key: 'ID_MEMBER',
-        name: 'Id',
-        width: 100,
-        frozen: true
-      },
-      {
-        key: 'EXTERNAL_ID',
-        name: 'External Id',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'FULLNAME',
-        name: 'Fullname',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'OFFICE',
-        name: 'Office',
-        sortable: true,
-        width: COLUMN_WIDTH
-      },
-      {
-        key: 'STATUS',
-        name: 'Status',
-        sortable: true,
-        width: 200
-      }
-    ];
 
     this.state = {
       page: 1,
@@ -177,6 +144,7 @@ class MemberData extends Component {
       totalPages: 0,
       rows: [],
       rowIdx: '',
+      memberData: []
     };
 
     this.props.actions.clientIndex(
@@ -187,6 +155,50 @@ class MemberData extends Component {
       this.createRows
     )
   }
+
+  memberCol = [
+    {
+      title: "ID",
+      dataIndex: "ID_MEMBER",
+      key: "ID_MEMBER",
+      sorter: {
+        compare: (a, b) => a.ID_MEMBER - b.ID_MEMBER
+      },
+      fixed: "left"
+    },
+    {
+      title: "External Id",
+      dataIndex: "EXTERNAL_ID",
+      key: "EXTERNAL_ID",
+      sorter: {
+        compare: (a, b) => a.EXTERNAL_ID.length - b.EXTERNAL_ID.length
+      }
+    },
+    {
+      title: "Fullname",
+      dataIndex: "FULLNAME",
+      key: "FULLNAME",
+      sorter: {
+        compare: (a, b) => a.FULLNAME.length - b.FULLNAME.length
+      }
+    },
+    {
+      title: "Office",
+      dataIndex: "OFFICE",
+      key: "OFFICE",
+      sorter: {
+        compare: (a, b) => a.OFFICE.length - b.OFFICE.length
+      }
+    },
+    {
+      title: "Status",
+      dataIndex: "STATUS",
+      key: "STATUS",
+      sorter: {
+        compare: (a, b) => a.STATUS.length - b.STATUS.length
+      }
+    }
+  ]
 
   createRows = res => {
     this.setState({
@@ -200,7 +212,17 @@ class MemberData extends Component {
         EXTERNAL_ID: row.legalForm.value,
         FULLNAME: row.displayName,
         OFFICE: row.officeName,
-        STATUS: row.status.value
+        STATUS:
+          <span>
+            {
+              row?.status?.id === 300
+                ? (<span className="ml-auto circle bg-success circle-lg" />)
+                : row?.status?.id === 100
+                  ? (<span className="ml-auto circle bg-warning circle-lg" />)
+                  : null
+            }
+            {row.status.value}
+          </span>
       })
 
       return null
@@ -228,22 +250,6 @@ class MemberData extends Component {
       searchRes: rows
     })
   }
-
-  rowGetter = (i) => this.state.rows[i]
-
-  handleGridSort = (sortColumn, sortDirection) => {
-    const comparer = (a, b) => {
-      if (sortDirection === 'ASC') {
-        return (a[sortColumn] > b[sortColumn]) ? 1 : -1;
-      } else if (sortDirection === 'DESC') {
-        return (a[sortColumn] < b[sortColumn]) ? 1 : -1;
-      }
-    };
-
-    const rows = sortDirection === 'NONE' ? this.state.rows.slice(0) : this.state.rows.sort(comparer);
-
-    this.setState({ rows });
-  };
 
   deleterow = () => {
     const rows = [...this.state.rows];
@@ -282,49 +288,6 @@ class MemberData extends Component {
     }
   }
 
-  onCellSelected = ({ rowIdx, idx }) => {
-    if (idx !== 0) {
-      let clientId
-
-      if (this.state.searchRes != null) {
-        this.state.searchRes.map(item => {
-          if (item.entityAccountNo === this.state.rows[rowIdx].ID_MEMBER) {
-            clientId = item.entityId
-          }
-
-          return null
-        })
-      } else {
-        this.state.res.pageItems.map(item => {
-          if (item.accountNo === this.state.rows[rowIdx].ID_MEMBER) {
-            clientId = item.id
-          }
-
-          return null
-        })
-      }
-
-      this.props.history.push({
-        pathname: '/simpool/member/data-detail/' + clientId,
-        search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
-      })
-    }
-
-    this.setState({ rowIdx })
-
-    return null
-  };
-
-  onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
-    this.setState(state => {
-      const rows = state.rows.slice();
-      for (let i = fromRow; i <= toRow; i++) {
-        rows[i] = { ...rows[i], ...updated };
-      }
-      return { rows };
-    });
-  };
-
   changePage = page => {
     this.setState({ page: page })
 
@@ -356,16 +319,47 @@ class MemberData extends Component {
                   this.state.rows.length > 0
                     ? (
                       <div>
-                        <ReactDataGrid
-                          onGridSort={this.handleGridSort}
-                          columns={this._columns}
-                          rowGetter={this.rowGetter}
-                          rowsCount={this.state.rows.length}
-                          minHeight={25 * 35 + 50}
-                          onCellSelected={this.onCellSelected.bind(this)}
-                          onGridRowsUpdated={this.onGridRowsUpdated}
-                        />
 
+
+
+                        <div className="table-responsive">
+                          <Table
+                            dataSource={this.state.rows}
+                            pagination={false}
+                            bordered={true}
+                            columns={this.memberCol}
+                            onRow={(_, rowIndex) => {
+                              return {
+                                onClick: () => {
+                                  let clientId
+
+                                  if (this.state.searchRes != null) {
+                                    this.state.searchRes.map(item => {
+                                      if (item.entityAccountNo === this.state.rows[rowIndex].ID_MEMBER) {
+                                        clientId = item.entityId
+                                      }
+
+                                      return null
+                                    })
+                                  } else {
+                                    this.state.res.pageItems.map(item => {
+                                      if (item.accountNo === this.state.rows[rowIndex].ID_MEMBER) {
+                                        clientId = item.id
+                                      }
+
+                                      return null
+                                    })
+                                  }
+
+                                  this.props.history.push({
+                                    pathname: '/simpool/member/data-detail/' + clientId,
+                                    search: "?tenantIdentifier=" + this.props.settings.tenantIdentifier
+                                  })
+                                }
+                              }
+                            }}
+                          />
+                        </div>
                         <PaginatedPage
                           className="mt-3"
                           totalPages={this.state.totalPages}
