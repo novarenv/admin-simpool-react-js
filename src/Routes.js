@@ -20,10 +20,6 @@ import BasePage from './components/Layout/BasePage';
 
 import { setTenantIdentifier as setTenantId } from './lib/jsonPlaceholderAPI'
 
-const sessionExpired = {
-  title: "Sesi anda telah berakhir, tolong login kembali"
-}
-
 const waitFor = Tag => props => <Tag {...props} />;
 
 const Dashboard = lazy(() => import('./containers/Dashboard'));
@@ -97,23 +93,20 @@ const Routes = ({ location, ...props }) => {
   const time = new Date()
   time.setTime(time.getTime() + (10 * 60 * 1000))
 
+  const sessionExpired = {
+    title: "Sesi anda telah berakhir, tolong login kembali"
+  }
+
+  const tenantChanged = {
+    title: "Tenant telah berubah ke tenant " + queryString.parse(location.search).tenantIdentifier
+  }
+
+
+
   useEffect(() => {
     const values = queryString.parse(location.search)
 
-    // Redirect if tenant different
-    // if (values.tenantIdentifier === props.settings.tenantIdentifier) {
-    //   console.log(props)
-
-    //   props.history.replace({
-    //     pathname: "/simpool/login",
-    //     search: "?tenantIdentifier=" + tenantIdentifier
-    //   })
-    //   return (
-    //     <Redirect to={"/simpool/dashboard"} />
-    //   )
-    // }
-
-    if (values.tenantIdentifier !== null) {
+    if (values?.tenantIdentifier) {
       setTenantId(values.tenantIdentifier)
       setTenantIdentifier(values.tenantIdentifier)
 
@@ -122,6 +115,23 @@ const Routes = ({ location, ...props }) => {
 
     return () => { };
   }, [location.search, props.actions])
+
+  useEffect(() => {
+    const values = queryString.parse(location.search)
+
+    // Redirect if tenant is different
+    if (values.tenantIdentifier !== props.settings.tenantIdentifier) {
+      document.getElementById("tenantChanged").click()
+      Cookies.remove("loginToken")
+
+      props.history.push({
+        pathname: "/simpool/login",
+        search: "?tenantIdentifier=" + values.tenantIdentifier
+      })
+    }
+
+    return () => { }
+  }, [location.search, props])
 
   useEffect(() => {
     props.i18n.changeLanguage(props.dashboard.language)
@@ -134,6 +144,7 @@ const Routes = ({ location, ...props }) => {
       return (
         // Page Layout component wrapper
         <BasePage>
+          <Swal options={tenantChanged} id="tenantChanged" />
           <Suspense fallback={<PageLoader />}>
             <Switch location={location}>
               <Route exact path="/simpool/lock" component={waitFor(Lock)} />
@@ -169,8 +180,9 @@ const Routes = ({ location, ...props }) => {
                   debounce={250}
                   timeout={10 * 60 * 1000}
                 />
-                
+
                 <Swal options={sessionExpired} id="sessionExpired" />
+                <Swal options={tenantChanged} id="tenantChanged" />
 
                 <Suspense fallback={<PageLoader />}>
                   <Switch location={location}>
@@ -241,6 +253,7 @@ const Routes = ({ location, ...props }) => {
     return (
       <BasePage>
         <Suspense fallback={<PageLoader />}>
+          <Swal options={tenantChanged} id="tenantChanged" />
           <Switch location={location}>
             <Route exact path="/simpool/login" component={waitFor(Login)} />
 
