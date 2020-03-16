@@ -14,9 +14,14 @@ import {
 import PropTypes from 'prop-types'
 import { withTranslation, Trans } from 'react-i18next'
 import { Field, Formik } from 'formik'
+import { Select } from 'antd'
+import 'antd/dist/antd.css'
 
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import Swal from '../../../components/Common/Swal'
+
+import MONTHS_ID from '../../../constants/MONTHS_ID'
+import SHORT_MONTHS_ID from '../../../constants/SHORT_MONTHS_ID'
 
 // DateTimePicker
 import Datetime from 'react-datetime'
@@ -28,36 +33,7 @@ import * as actions from '../../../store/actions/actions'
 import { connect } from 'react-redux'
 import { bindActionCreators, compose } from 'redux'
 
-const SHORT_MONTHS_ID = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'Mei',
-  'Jun',
-  'Jul',
-  'Agu',
-  'Sep',
-  'Okt',
-  'Nov',
-  'Des',
-];
-
-const MONTHS_ID = [
-  'Januari',
-  'Februari',
-  'Maret',
-  'April',
-  'Mei',
-  'Juni',
-  'Juli',
-  'Agustus',
-  'September',
-  'Oktober',
-  'November',
-  'Desember'
-]
-
+const { Option } = Select
 
 const onFieldChange = (val, field, form) => {
   const dd = String(val.toDate().getDate()).padStart(2, '0')
@@ -968,6 +944,8 @@ class MemberDataEdit extends Component {
                         handleChange,
                         handleBlur,
                         handleSubmit,
+                        setFieldTouched,
+                        setFieldValue,
                         submitForm
                       } = formikProps
 
@@ -980,29 +958,34 @@ class MemberDataEdit extends Component {
                               <label htmlFor="officeId">
                                 Office <span className="red"> *</span>
                               </label>
-                              <select
-                                name="officeId"
+                              <Select
                                 value={values.officeId}
                                 className={
                                   touched.officeId && errors.officeId
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                name="officeId"
+                                onChange={val => setFieldValue("officeId", val)}
+                                onBlur={val => setFieldTouched("officeId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                                 disabled readOnly
                               >
-                                <option value="">Select office</option>
+                                <Option value="">Select office</Option>
                                 {
                                   Array.isArray(this.state.officeOptions) && this.state.officeOptions.length > 0
                                     ? this.state.officeOptions.map((option, i) => {
                                       return (
-                                        <option value={option.id} key={"Office option " + i} >{option.name}</option>
+                                        <Option value={option.id} key={"Office option " + i} >{option.name}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.officeId && errors.officeId}</div>
                             </FormGroup>
 
@@ -1010,29 +993,34 @@ class MemberDataEdit extends Component {
                               <label htmlFor="legalFormId">
                                 Client Type <span className="red"> *</span>
                               </label>
-                              <select
+                              <Select
                                 value={values.legalFormId}
                                 className={
                                   touched.legalFormId && errors.legalFormId
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
                                 name="legalFormId"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                onChange={val => setFieldValue("legalFormId", val)}
+                                onBlur={val => setFieldTouched("legalFormId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                                 disabled={!state.clientTypeIsActive}
                               >
-                                <option value="">Select client type</option>
+                                <Option value="">Select client type</Option>
                                 {
                                   Array.isArray(state.clientLegalFormOptions) && state.clientLegalFormOptions.length > 0
                                     ? state.clientLegalFormOptions.map((option, i) => {
                                       return (
-                                        <option value={option.id} key={"Client type option " + i} >{option.value}</option>
+                                        <Option value={option.id} key={"Client type option " + i} >{option.value}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.legalFormId && errors.legalFormId}</div>
                             </FormGroup>
 
@@ -1040,28 +1028,33 @@ class MemberDataEdit extends Component {
                               <label htmlFor="sectorId">
                                 Sector <span className="red"> *</span>
                               </label>
-                              <select
-                                name="sectorId"
+                              <Select
                                 value={values.sectorId}
                                 className={
                                   touched.sectorId && errors.sectorId
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                name="sectorId"
+                                onChange={val => setFieldValue("sectorId", val)}
+                                onBlur={val => setFieldTouched("sectorId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select sector</option>
+                                <Option value="">Select sector</Option>
                                 {
                                   Array.isArray(state.sectorOptions) && state.sectorOptions.length > 0
                                     ? state.sectorOptions.map((option, i) => {
                                       return (
-                                        <option value={option.code} key={"Sector option " + i} >{option.name}</option>
+                                        <Option value={option.code} key={"Sector option " + i} >{option.name}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.sectorId && errors.sectorId}</div>
                             </FormGroup>
 
@@ -1089,28 +1082,33 @@ class MemberDataEdit extends Component {
                               <label htmlFor="typeOfIdentityId">
                                 Type Of Identity <span className="red"> *</span>
                               </label>
-                              <select
-                                name="typeOfIdentityId"
+                              <Select
                                 value={values.typeOfIdentityId}
                                 className={
                                   touched.typeOfIdentityId && errors.typeOfIdentityId
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                name="typeOfIdentityId"
+                                onChange={val => setFieldValue("typeOfIdentityId", val)}
+                                onBlur={val => setFieldTouched("typeOfIdentityId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select type of identity</option>
+                                <Option value="">Select type of identity</Option>
                                 {
                                   Array.isArray(state.typeOfIdentityOptions) && state.typeOfIdentityOptions.length > 0
                                     ? state.typeOfIdentityOptions.map((option, i) => {
                                       return (
-                                        <option value={option.name} key={"Type of identity option " + i} >{option.description}</option>
+                                        <Option value={option.name} key={"Type of identity option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.typeOfIdentityId && errors.typeOfIdentityId}</div>
                             </FormGroup>
 
@@ -1152,28 +1150,33 @@ class MemberDataEdit extends Component {
                               <label htmlFor="genderCodeValue">
                                 Gender <span className="red"> *</span>
                               </label>
-                              <select
-                                name="genderCodeValue"
+                              <Select
                                 value={values.genderCodeValue}
                                 className={
                                   touched.genderCodeValue && errors.genderCodeValue
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                name="genderCodeValue"
+                                onChange={val => setFieldValue("genderCodeValue", val)}
+                                onBlur={val => setFieldTouched("genderCodeValue", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select gender</option>
+                                <Option value="">Select gender</Option>
                                 {
                                   Array.isArray(this.state.genderOptions) && this.state.genderOptions.length > 0
                                     ? this.state.genderOptions.map((option, i) => {
                                       return (
-                                        <option value={option.name} key={"Gender option " + i} >{option.description}</option>
+                                        <Option value={option.name} key={"Gender option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.genderCodeValue && errors.genderCodeValue}</div>
                             </FormGroup>
 
@@ -1237,51 +1240,65 @@ class MemberDataEdit extends Component {
                               <label htmlFor="religion">
                                 Religion <span className="red"> *</span>
                               </label>
-                              <select
-                                name="religion"
+                              <Select
+                                value={values.religion}
                                 className={
                                   touched.religion && errors.religion
-                                    ? "custom-select custom-select-sm input-font-size input-error"
-                                    : "custom-select custom-select-sm input-font-size"
+                                    ? "col-12 input-error"
+                                    : "col-12"
                                 }
-                                value={values.religion}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                name="religion"
+                                onChange={val => setFieldValue("religion", val)}
+                                onBlur={val => setFieldTouched("religion", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select religion</option>
+                                <Option value="">Select religion</Option>
                                 {
                                   Array.isArray(this.state.religionOptions) && this.state.religionOptions.length > 0
                                     ? this.state.religionOptions.map((option, i) => {
                                       return (
-                                        <option value={option.description} key={"Religion option " + i} >{option.description}</option>
+                                        <Option value={option.description} key={"Religion option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                               <div className="input-feedback">{touched.religion && errors.religion}</div>
                             </FormGroup>
 
                             <FormGroup>
                               <label htmlFor="maritalStatusCode">Marital Status</label>
-                              <select
-                                name="maritalStatusCode"
-                                className="custom-select custom-select-sm input-font-size"
+                              <Select
                                 value={values.maritalStatusCode}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                className={
+                                  touched.maritalStatusCode && errors.maritalStatusCode
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="maritalStatusCode"
+                                onChange={val => setFieldValue("maritalStatusCode", val)}
+                                onBlur={val => setFieldTouched("maritalStatusCode", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select marital status</option>
+                                <Option value="">Select marital status</Option>
                                 {
                                   Array.isArray(this.state.maritalStatusOption) && this.state.maritalStatusOption.length > 0
                                     ? this.state.maritalStatusOption.map((option, i) => {
                                       return (
-                                        <option value={option.name} key={"Marital option " + i} >{option.description}</option>
+                                        <Option value={option.name} key={"Marital option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
 
                             {
@@ -1296,28 +1313,33 @@ class MemberDataEdit extends Component {
                                       <label htmlFor="typeOfIdentitySpouse">
                                         Type Of Identity <span className="red"> *</span>
                                       </label>
-                                      <select
-                                        name="typeOfIdentitySpouse"
+                                      <Select
                                         value={values.typeOfIdentitySpouse}
                                         className={
                                           touched.typeOfIdentitySpouse && errors.typeOfIdentitySpouse
-                                            ? "custom-select custom-select-sm input-font-size input-error"
-                                            : "custom-select custom-select-sm input-font-size"
+                                            ? "col-12 input-error"
+                                            : "col-12"
                                         }
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
+                                        name="typeOfIdentitySpouse"
+                                        onChange={val => setFieldValue("typeOfIdentitySpouse", val)}
+                                        onBlur={val => setFieldTouched("typeOfIdentitySpouse", val)}
+                                        showSearch
+                                        filterOption={(input, option) =>
+                                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                        size="large"
                                       >
-                                        <option value="">Select type of identity</option>
+                                        <Option value="">Select type of identity</Option>
                                         {
                                           Array.isArray(this.state.typeOfIdentitySpouseOptions) && this.state.typeOfIdentitySpouseOptions.length > 0
                                             ? this.state.typeOfIdentitySpouseOptions.map((option, i) => {
                                               return (
-                                                <option value={option.name} key={"Type of identity bi option " + i} >{option.description}</option>
+                                                <Option value={option.name} key={"Type of identity bi option " + i} >{option.description}</Option>
                                               )
                                             })
                                             : ""
                                         }
-                                      </select>
+                                      </Select>
                                       <div className="input-feedback">{touched.typeOfIdentitySpouse && errors.typeOfIdentitySpouse}</div>
                                     </FormGroup>
 
@@ -1365,21 +1387,26 @@ class MemberDataEdit extends Component {
                                       <label htmlFor="prePostNuptialAggreement">
                                         Pre-post Nuptial Agreement <span className="red"> *</span>
                                       </label>
-                                      <select
-                                        name="prePostNuptialAggreement"
+                                      <Select
+                                        value={values.prePostNuptialAggreement}
                                         className={
                                           touched.prePostNuptialAggreement && errors.prePostNuptialAggreement
-                                            ? "custom-select custom-select-sm input-font-size input-error"
-                                            : "custom-select custom-select-sm input-font-size"
+                                            ? "col-12 input-error"
+                                            : "col-12"
                                         }
-                                        value={values.prePostNuptialAggreement}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
+                                        name="prePostNuptialAggreement"
+                                        onChange={val => setFieldValue("prePostNuptialAggreement", val)}
+                                        onBlur={val => setFieldTouched("prePostNuptialAggreement", val)}
+                                        showSearch
+                                        filterOption={(input, option) =>
+                                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
+                                        size="large"
                                       >
-                                        <option value="">Select type of identity</option>
-                                        <option value="Y">Yes</option>
-                                        <option value="N">No</option>
-                                      </select>
+                                        <Option value="">Select type of identity</Option>
+                                        <Option value="Y">Yes</Option>
+                                        <Option value="N">No</Option>
+                                      </Select>
                                       <div className="input-feedback">{touched.prePostNuptialAggreement && errors.prePostNuptialAggreement}</div>
                                     </FormGroup>
 
@@ -1409,27 +1436,35 @@ class MemberDataEdit extends Component {
                           </div>
 
                           <div className="col-lg-6">
-
                             <FormGroup>
                               <label htmlFor="staffId">Staff</label>
-                              <select
-                                name="staffId"
+                              <Select
                                 value={values.staffId}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                className={
+                                  touched.staffId && errors.staffId
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="staffId"
+                                onChange={val => setFieldValue("staffId", val)}
+                                onBlur={val => setFieldTouched("staffId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select staff</option>
+                                <Option value="">Select staff</Option>
                                 {
                                   Array.isArray(this.state.staffOptions) && this.state.staffOptions.length > 0
                                     ? this.state.staffOptions.map((option, i) => {
                                       return (
-                                        <option value={option.id} key={"Staff option " + i} >{option.displayName}</option>
+                                        <Option value={option.id} key={"Staff option " + i} >{option.displayName}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
 
                             <FormGroup>
@@ -1460,24 +1495,33 @@ class MemberDataEdit extends Component {
 
                             <FormGroup>
                               <label htmlFor="prefixCode">Prefix Title Name</label>
-                              <select
-                                name="prefixCode"
+                              <Select
                                 value={values.prefixCode}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                className={
+                                  touched.prefixCode && errors.prefixCode
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="prefixCode"
+                                onChange={val => setFieldValue("prefixCode", val)}
+                                onBlur={val => setFieldTouched("prefixCode", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select prefix title name</option>
+                                <Option value="">Select prefix title name</Option>
                                 {
                                   Array.isArray(state.prefixNameCodeOption) && state.prefixNameCodeOption.length > 0
                                     ? state.prefixNameCodeOption.map((option, i) => {
                                       return (
-                                        <option value={option.code} key={"Prefix option " + i} >{option.code}</option>
+                                        <Option value={option.code} key={"Prefix option " + i} >{option.code}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
 
                             <FormGroup>
@@ -1513,24 +1557,33 @@ class MemberDataEdit extends Component {
 
                             <FormGroup>
                               <label htmlFor="suffixCode">Suffix Title Name</label>
-                              <select
-                                name="suffixCode"
+                              <Select
                                 value={values.suffixCode}
-                                className="custom-select custom-select-sm input-font-size"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                className={
+                                  touched.suffixCode && errors.suffixCode
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="suffixCode"
+                                onChange={val => setFieldValue("suffixCode", val)}
+                                onBlur={val => setFieldTouched("suffixCode", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select suffix title name</option>
+                                <Option value="">Select suffix title name</Option>
                                 {
                                   Array.isArray(state.suffixNameCodeOption) && state.suffixNameCodeOption.length > 0
                                     ? state.suffixNameCodeOption.map((option, i) => {
                                       return (
-                                        <option value={option.code} key={"Staff option " + i} >{option.code}</option>
+                                        <Option value={option.code} key={"Staff option " + i} >{option.code}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
 
                             <FormGroup>
@@ -1612,25 +1665,34 @@ class MemberDataEdit extends Component {
 
                             <FormGroup>
                               <label htmlFor="lastEducationLevelCode">Last Education Level</label>
-                              <select
-                                name="lastEducationLevelCode"
-                                className="custom-select custom-select-sm input-font-size"
-                                value={values.lastEducationLevelCode}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                              <Select
+                                value={values.typeOfIdentityId}
+                                className={
+                                  touched.typeOfIdentityId && errors.typeOfIdentityId
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="typeOfIdentityId"
+                                onChange={val => setFieldValue("typeOfIdentityId", val)}
+                                onBlur={val => setFieldTouched("typeOfIdentityId", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select last education level</option>
+                                <Option value="">Select last education level</Option>
                                 {
                                   Array.isArray(this.state.lastEducationLevelCodeOption)
                                     && this.state.lastEducationLevelCodeOption.length > 0
                                     ? this.state.lastEducationLevelCodeOption.map((option, i) => {
                                       return (
-                                        <option value={option.name} key={"Last edu lvl option " + i} >{option.description}</option>
+                                        <Option value={option.name} key={"Last edu lvl option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
 
                             <FormGroup>
@@ -1888,6 +1950,8 @@ class MemberDataEdit extends Component {
                         handleChange,
                         handleBlur,
                         handleSubmit,
+                        setFieldTouched,
+                        setFieldValue,
                         submitForm
                       } = formikProps
 
@@ -1923,29 +1987,34 @@ class MemberDataEdit extends Component {
                                 <label htmlFor="identityCountryCodeValue">
                                   Country <span className="red"> *</span>
                                 </label>
-                                <select
-                                  name="identityCountryCodeValue"
+                                <Select
+                                  value={values.identityCountryCodeValue}
                                   className={
                                     touched.identityCountryCodeValue && errors.identityCountryCodeValue
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
+                                      ? "col-12 input-error"
+                                      : "col-12"
                                   }
-                                  value={values.identityCountryCodeValue}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  name="identityCountryCodeValue"
+                                  onChange={val => setFieldValue("identityCountryCodeValue", val)}
+                                  onBlur={val => setFieldTouched("identityCountryCodeValue", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                   disabled={!this.state.identityCountryIsActive}
                                 >
-                                  <option value="">Select country</option>
+                                  <Option value="">Select country</Option>
                                   {
                                     Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
                                       ? this.state.countryOptions.map((option, i) => {
                                         return (
-                                          <option value={option.name} key={"Country identity option " + i} >{option.description}</option>
+                                          <Option value={option.name} key={"Country identity option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                                 <div className="input-feedback">{touched.identityCountryCodeValue && errors.identityCountryCodeValue}</div>
                               </FormGroup>
 
@@ -1953,28 +2022,33 @@ class MemberDataEdit extends Component {
                                 <label htmlFor="identityProvinceId">
                                   Province <span className="red"> *</span>
                                 </label>
-                                <select
-                                  name="identityProvinceId"
+                                <Select
+                                  value={values.identityProvinceId}
                                   className={
                                     touched.identityProvinceId && errors.identityProvinceId
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
+                                      ? "col-12 input-error"
+                                      : "col-12"
                                   }
-                                  value={values.identityProvinceId}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  name="identityProvinceId"
+                                  onChange={val => setFieldValue("identityProvinceId", val)}
+                                  onBlur={val => setFieldTouched("identityProvinceId", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select province</option>
+                                  <Option value="">Select province</Option>
                                   {
                                     Array.isArray(this.state.provinceOptions) && this.state.provinceOptions.length > 0
                                       ? this.state.provinceOptions.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"Province identity option " + i} >{option.description}</option>
+                                          <Option value={option.code} key={"Province identity option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                                 <div className="input-feedback">{touched.identityProvinceId && errors.identityProvinceId}</div>
                               </FormGroup>
 
@@ -1982,28 +2056,33 @@ class MemberDataEdit extends Component {
                                 <label htmlFor="identityCityId">
                                   District / City <span className="red"> *</span>
                                 </label>
-                                <select
-                                  name="identityCityId"
+                                <Select
+                                  value={values.identityCityId}
                                   className={
                                     touched.identityCityId && errors.identityCityId
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
+                                      ? "col-12 input-error"
+                                      : "col-12"
                                   }
-                                  value={values.identityCityId}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  name="identityCityId"
+                                  onChange={val => setFieldValue("identityCityId", val)}
+                                  onBlur={val => setFieldTouched("identityCityId", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
                                   <option value="">Select city</option>
                                   {
                                     Array.isArray(this.state.cityOptionsFilter) && this.state.cityOptionsFilter.length > 0
                                       ? this.state.cityOptionsFilter.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"City identity option " + i} >{option.description}</option>
+                                          <Option value={option.code} key={"City identity option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                                 <div className="input-feedback">{touched.identityCityId && errors.identityCityId}</div>
                               </FormGroup>
 
@@ -2115,68 +2194,96 @@ class MemberDataEdit extends Component {
 
                               <FormGroup>
                                 <label htmlFor="countryCodeValue">Country</label>
-                                <select
-                                  name="countryCodeValue"
-                                  className="custom-select custom-select-sm input-font-size"
+                                <Select
                                   value={values.countryCodeValue}
-                                  onChange={handleChange}
+                                  className={
+                                    touched.countryCodeValue && errors.countryCodeValue
+                                      ? "col-12 input-error"
+                                      : "col-12"
+                                  }
+                                  name="countryCodeValue"
+                                  onChange={val => setFieldValue("countryCodeValue", val)}
+                                  onBlur={val => setFieldTouched("countryCodeValue", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                   disabled={!this.state.countryIsActive}
                                 >
-                                  <option value="">Select country</option>
+                                  <Option value="">Select country</Option>
                                   {
                                     Array.isArray(this.state.countryOptions) && this.state.countryOptions.length > 0
                                       ? this.state.countryOptions.map((option, i) => {
                                         return (
-                                          <option value={option.name} key={"Country option " + i} >{option.description}</option>
+                                          <Option value={option.name} key={"Country option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                               </FormGroup>
 
                               <FormGroup>
                                 <label htmlFor="provinceId">Province</label>
-                                <select
-                                  name="provinceId"
-                                  className="custom-select custom-select-sm input-font-size"
+                                <Select
                                   value={values.provinceId}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  className={
+                                    touched.provinceId && errors.provinceId
+                                      ? "col-12 input-error"
+                                      : "col-12"
+                                  }
+                                  name="provinceId"
+                                  onChange={val => setFieldValue("provinceId", val)}
+                                  onBlur={val => setFieldTouched("provinceId", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select province</option>
+                                  <Option value="">Select province</Option>
                                   {
                                     Array.isArray(state.provinceOptions) && state.provinceOptions.length > 0
                                       ? state.provinceOptions.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"Province option " + i} >{option.description}</option>
+                                          <Option value={option.code} key={"Province option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                               </FormGroup>
 
                               <FormGroup>
                                 <label htmlFor="cityId">District / City</label>
-                                <select
-                                  name="cityId"
-                                  className="custom-select custom-select-sm input-font-size"
+                                <Select
                                   value={values.cityId}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  className={
+                                    touched.cityId && errors.cityId
+                                      ? "col-12 input-error"
+                                      : "col-12"
+                                  }
+                                  name="cityId"
+                                  onChange={val => setFieldValue("cityId", val)}
+                                  onBlur={val => setFieldTouched("cityId", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select city</option>
+                                  <Option value="">Select city</Option>
                                   {
                                     Array.isArray(state.cityOptionsFilter) && state.cityOptionsFilter.length > 0
                                       ? state.cityOptionsFilter.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"City option " + i} >{option.description}</option>
+                                          <Option value={option.code} key={"City option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                               </FormGroup>
 
                               <FormGroup>
@@ -2256,24 +2363,33 @@ class MemberDataEdit extends Component {
                           <div>
                             <FormGroup>
                               <label htmlFor="homeOwnershipStatus">Home Ownership Status</label>
-                              <select
-                                name="homeOwnershipStatus"
-                                className="custom-select custom-select-sm input-font-size"
+                              <Select
                                 value={values.homeOwnershipStatus}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
+                                className={
+                                  touched.homeOwnershipStatus && errors.homeOwnershipStatus
+                                    ? "col-12 input-error"
+                                    : "col-12"
+                                }
+                                name="homeOwnershipStatus"
+                                onChange={val => setFieldValue("homeOwnershipStatus", val)}
+                                onBlur={val => setFieldTouched("homeOwnershipStatus", val)}
+                                showSearch
+                                filterOption={(input, option) =>
+                                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                size="large"
                               >
-                                <option value="">Select Home Ownership Status</option>
+                                <Option value="">Select Home Ownership Status</Option>
                                 {
                                   Array.isArray(this.state.homeOwnershipStatusOption) && this.state.homeOwnershipStatusOption.length > 0
                                     ? this.state.homeOwnershipStatusOption.map((option, i) => {
                                       return (
-                                        <option value={option.id} key={"Home Ownership option " + i} >{option.description}</option>
+                                        <Option value={option.id} key={"Home Ownership option " + i} >{option.description}</Option>
                                       )
                                     })
                                     : ""
                                 }
-                              </select>
+                              </Select>
                             </FormGroup>
                             {
                               values.homeOwnershipStatus === "99"
@@ -2396,6 +2512,8 @@ class MemberDataEdit extends Component {
                         handleChange,
                         handleBlur,
                         handleSubmit,
+                        setFieldTouched,
+                        setFieldValue,
                         submitForm
                       } = formikProps
 
@@ -2478,72 +2596,96 @@ class MemberDataEdit extends Component {
                                 <label htmlFor="flagTaxCodeValue">
                                   Flag Tax <span className="red"> *</span>
                                 </label>
-                                <select
-                                  name="flagTaxCodeValue"
+                                <Select
+                                  value={values.flagTaxCodeValue}
                                   className={
                                     touched.flagTaxCodeValue && errors.flagTaxCodeValue
-                                      ? "custom-select custom-select-sm input-font-size input-error"
-                                      : "custom-select custom-select-sm input-font-size"
+                                      ? "col-12 input-error"
+                                      : "col-12"
                                   }
-                                  value={values.flagTaxCodeValue}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  name="flagTaxCodeValue"
+                                  onChange={val => setFieldValue("flagTaxCodeValue", val)}
+                                  onBlur={val => setFieldTouched("flagTaxCodeValue", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select Flag Tax</option>
+                                  <Option value="">Select Flag Tax</Option>
                                   {
                                     Array.isArray(this.state.flagTaxOptions) && this.state.flagTaxOptions.length > 0
                                       ? this.state.flagTaxOptions.map((option, i) => {
                                         return (
-                                          <option value={option.name} key={"Flag Tax option " + i} >{option.description}</option>
+                                          <Option value={option.name} key={"Flag Tax option " + i} >{option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                                 <div className="input-feedback">{touched.flagTaxCodeValue && errors.flagTaxCodeValue}</div>
                               </FormGroup>
 
                               <FormGroup>
                                 <label htmlFor="merchantInformationCode">Merchant Account Information Code</label>
-                                <select
-                                  name="merchantInformationCode"
-                                  className="custom-select custom-select-sm input-font-size"
+                                <Select
                                   value={values.merchantInformationCode}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
+                                  className={
+                                    touched.merchantInformationCode && errors.merchantInformationCode
+                                      ? "col-12 input-error"
+                                      : "col-12"
+                                  }
+                                  name="merchantInformationCode"
+                                  onChange={val => setFieldValue("merchantInformationCode", val)}
+                                  onBlur={val => setFieldTouched("merchantInformationCode", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select Merchant Account Information Code</option>
+                                  <Option value="">Select Merchant Account Information Code</Option>
                                   {
                                     Array.isArray(this.state.merchantInformationCodeOption) && this.state.merchantInformationCodeOption.length > 0
                                       ? this.state.merchantInformationCodeOption.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</option>
+                                          <Option value={option.code} key={"Merchant Acc info option " + i} >{option.code + " - " + option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                               </FormGroup>
 
                               <FormGroup>
                                 <label htmlFor="merchantCategoryCode">Merchant Category</label>
-                                <select
-                                  name="merchantCategoryCode"
-                                  className="custom-select custom-select-sm input-font-size"
+                                <Select
                                   value={values.merchantCategoryCode}
-                                  onChange={handleChange}
+                                  className={
+                                    touched.merchantCategoryCode && errors.merchantCategoryCode
+                                      ? "col-12 input-error"
+                                      : "col-12"
+                                  }
+                                  name="merchantCategoryCode"
+                                  onChange={val => setFieldValue("merchantCategoryCode", val)}
+                                  onBlur={val => setFieldTouched("merchantCategoryCode", val)}
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                  }
+                                  size="large"
                                 >
-                                  <option value="">Select Merchant Category</option>
+                                  <Option value="">Select Merchant Category</Option>
                                   {
                                     Array.isArray(this.state.merchantCategoryOption) && this.state.merchantCategoryOption.length > 0
                                       ? this.state.merchantCategoryOption.map((option, i) => {
                                         return (
-                                          <option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</option>
+                                          <Option value={option.code} key={"Merchant category option " + i} >{option.code + " - " + option.description}</Option>
                                         )
                                       })
                                       : ""
                                   }
-                                </select>
+                                </Select>
                               </FormGroup>
                             </div>
 

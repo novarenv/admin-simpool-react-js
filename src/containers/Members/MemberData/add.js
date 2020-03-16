@@ -37,7 +37,7 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment'
 import 'moment/locale/id'
 
-const { Option } = Select;
+const { Option } = Select
 
 const stepNavitemStyle = {
   backgroundColor: '#fcfcfc'
